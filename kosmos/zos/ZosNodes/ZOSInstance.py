@@ -3,7 +3,7 @@ from Jumpscale import j
 from .ZOSContainer import ZOSContainers
 
 
-class ZOSInstance(j.application.JSFactoryConfigsBaseClass):
+class ZOSInstance(j.baseclasses.object_config_collection):
     """
     is the host which runs a ZOS operating system
     TODO: maybe should call this ZOSHost?

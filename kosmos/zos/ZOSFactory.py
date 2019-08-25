@@ -3,7 +3,7 @@ from Jumpscale import j
 from .ZOSNodes import ZOSNodes
 
 
-class ZOSCmdFactory(j.application.JSFactoryConfigsBaseClass):
+class ZOSCmdFactory(j.baseclasses.object_config_collection):
 
     __jslocation__ = "j.kosmos.zos"
 
