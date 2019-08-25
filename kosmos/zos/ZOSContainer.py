@@ -576,5 +576,5 @@ class ZOSContainer(j.baseclasses.object_config):
     #     return get_zt_ip(self.client.info.nic())
 
 
-class ZOSContainers(j.baseclasses.factory):
+class ZOSContainers(j.baseclasses.object_config_collection):
     _CHILDCLASS = ZOSContainer
