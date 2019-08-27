@@ -1,1 +1,0 @@
-/sandbox/bin/redis-cli_ -s /sandbox/var/redis.sock "$@"

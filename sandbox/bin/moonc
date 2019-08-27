@@ -1,3 +1,0 @@
-#!/bin/sh
-
-lua $PBASE/bin/_moonc.lua "$@"
