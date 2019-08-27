@@ -22,7 +22,7 @@ from Jumpscale import j
 
 
 class USER(j.data.bcdb._BCDBModelClass):
-    def _init2(self):
+    def _init2(self, **kwargs):
         self.trigger_add(self.verify)
 
     def verify(self, obj, action, propertyname):
