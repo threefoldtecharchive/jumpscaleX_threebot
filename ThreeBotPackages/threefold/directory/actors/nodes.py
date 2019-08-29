@@ -3,10 +3,18 @@ from Jumpscale import j
 
 class nodes(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
+
         bcdb = j.data.bcdb.get("tf_directory")
         self.node_model = bcdb.model_get(url="tfgrid.node.2")
+        self.farm_model = bcdb.model_get(url="tfgrid.farm.1")
 
-    def add(self, node, schema_out=None):
+    def _find(self, node_id):
+        nodes = self.node_model.find(node_id=node_id)
+        if len(nodes) <= 0:
+            return None
+        return nodes[0]
+
+    def add(self, node, schema_out):
         """
         ```in
         node = (O) !tfgrid.node.2
@@ -18,16 +26,26 @@ class nodes(j.baseclasses.threebot_actor):
 
         """
         # TODO check the sender is actually the node itself
-        # TODO: first check of the node already exist and if so do an update ?
-
-        # FIXME: we should not have to use _ddict since node is already a JSX object
-
+        validation_errors = []
+        if not node.node_id:
+            validation_errors.append("node_id")
+        if not node.os_version:
+            validation_errors.append("os_version")
+        if not node.farmer_id:
+            validation_errors.append("farmer_id")
+        if not node.location:
+            validation_errors.append("location")
+        if validation_errors:
+            raise Exception("Can not create node without {}".format(" or ".join(validation_errors)))
+        old_node = self._find(node.node_id)
+        if old_node:
+            return self.node_model.set_dynamic(node._ddict, obj_id=old_node.id)
         return self.node_model.new(data=node).save()
 
-    def list(self, farm, country, city, cru, sru, mru, hru, schema_out):
+    def list(self, farmer_id, country, city, cru, sru, mru, hru, schema_out):
         """
         ```in
-        farm = (S)
+        farmer_id = (S)
         country = (S)
         city = (S)
         cru = -1 (I)
@@ -40,19 +58,22 @@ class nodes(j.baseclasses.threebot_actor):
         nodes = (LO) !tfgrid.node.2
         ```
         """
+
         output = schema_out.new()
         for node in self.node_model.iterate():
-            if country != "" and node.country != country:
+            if farmer_id and farmer_id != node.farmer_id:
                 continue
-            if city != "" and node.city != city:
+            if country != "" and node.location.country != country:
                 continue
-            if cru > -1 and node.cru < cru:
+            if city != "" and node.location.city != city:
                 continue
-            if mru > -1 and node.mru < mru:
+            if cru > -1 and node.total_resource.cru < cru:
                 continue
-            if sru > -1 and node.sru < sru:
+            if mru > -1 and node.total_resource.mru < mru:
                 continue
-            if hru > -1 and node.hru < hru:
+            if sru > -1 and node.total_resource.sru < sru:
+                continue
+            if hru > -1 and node.total_resource.hru < hru:
                 continue
             output.nodes.append(node)
 
@@ -68,9 +89,58 @@ class nodes(j.baseclasses.threebot_actor):
         node = (O) !tfgrid.node.2
         ```
         """
-        nodes = self.node_model.find(node_id=node_id)
-        if len(nodes) <= 0:
-            # raise RuntimeError("not found")
-            raise j.exceptions.NotFound("node %s not found" % node_id)
+        return self._find(node_id)
 
-        return nodes[0]
+    def update_total_capacity(self, node_id, resource):
+        """
+        ```in
+        node_id = (S)
+        resource = (O) !tfgrid.node.resource.1
+        ```
+
+        """
+        node = self._find(node_id)
+        if not node:
+            raise j.exceptions.NotFound("node %s not found" % id)
+        node.total_resource.mru = resource.mru
+        node.total_resource.cru = resource.cru
+        node.total_resource.hru = resource.hru
+        node.total_resource.sru = resource.sru
+        node.save()
+        return True
+
+    def update_reserved_capacity(self, node_id, resource):
+        """
+        ```in
+        node_id = (S)
+        resource = (O) !tfgrid.node.resource.1
+        ```
+        """
+        node = self._find(node_id)
+        if not node:
+            raise j.exceptions.NotFound("node %s not found" % id)
+        node.reserved_resource.mru = resource.mru
+        node.reserved_resource.cru = resource.cru
+        node.reserved_resource.hru = resource.hru
+        node.reserved_resource.sru = resource.sru
+
+        node.save()
+        return True
+
+    def update_used_capacity(self, node_id, resource):
+        """
+        ```in
+        node_id = (S)
+        resource = (O) !tfgrid.node.resource.1
+        ```
+        """
+
+        node = self._find(node_id)
+        if not node:
+            raise j.exceptions.NotFound("node %s not found" % id)
+        node.used_resource.mru = resource.mru
+        node.used_resource.cru = resource.cru
+        node.used_resource.hru = resource.hru
+        node.used_resource.sru = resource.sru
+        node.save()
+        return True
