@@ -12,6 +12,14 @@ class farms(j.baseclasses.threebot_actor):
         except j.exceptions.NotFound:
             raise j.exceptions.NotFound("farm %s not found" % farm_id)
 
+    def _validate_farm(self, farm):
+        for field in ['threebot_id', 'name', 'email', 'wallet_addresses']:
+            if not getattr(farm, field):
+                raise j.exceptions.Value("%s is required" % field)
+
+        if self.farm_model.find(name=farm.name):
+            raise j.exceptions.Value("Farm with name %s is already exist" % farm.name)
+
     def register(self, farm, schema_out):
         """
         ```in
@@ -22,6 +30,7 @@ class farms(j.baseclasses.threebot_actor):
         farm_id = (I)
         ```
         """
+        self._validate_farm(farm)
         farm = self.farm_model.new(farm).save()
         out = schema_out.new()
         out.farm_id = farm.id
@@ -35,6 +44,7 @@ class farms(j.baseclasses.threebot_actor):
         ```
         """
         self._get_farm(farm_id)
+        self._validate_farm(farm)
         self.farm_model.set_dynamic(farm._ddict, obj_id=farm_id)
         return True
 
@@ -62,12 +72,10 @@ class farms(j.baseclasses.threebot_actor):
         ```
         """
         out = schema_out.new()
-
         for farm in self.farm_model.iterate():
             if country != "" and farm.location.country != country:
                 continue
             if city != "" and farm.location.city != city:
                 continue
             out.farms.append(farm)
-
         return out
