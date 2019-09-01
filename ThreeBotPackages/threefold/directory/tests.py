@@ -1,108 +1,77 @@
-import unittest
+from gevent import monkey
+monkey.patch_all()
 import logging
+import gevent
+import os
 from Jumpscale import j
 
+def main():
+    j.servers.zdb.default.start()
+    try:
+        bcdb = j.data.bcdb.get('tf_directory') 
+    except:
+        bcdb = j.data.bcdb.new('tf_directory')
 
-class FarmActorsTests(unittest.TestCase):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.bcdb = j.data.bcdb.get("tf_directory")
-        self.model = self.bcdb.model_get(url="tfgrid.farm.1")
-        self.cl = j.clients.gedis.get("main", host="localhost", port=9901)
+    path = os.path.dirname(__file__)
+    bcdb.models_add(os.path.join(path, 'models')) 
+    bcdb = j.data.bcdb.get("tf_directory")
+    model = bcdb.model_get(url="tfgrid.farm.1")
 
-    def tearDown(self):
-        self.model.destroy()
+    gedis = j.servers.gedis.get("test", port=9901)
+    gedis.actors_add(os.path.join(path, 'actors'))
+    gevent.spawn(gedis.start)
 
-    def test01_farm_register(self):
-        """
-        Testcase to test register farm actor
-        #. Create new farm, should succeed
-        #. Get farm info
-        """
-        logging.info("Create new farm, should succeed")
-        farm = self.model.new()
-        farm.name = "farm1"
-        farm.location.county = "egypt"
-        farm.location.city = "cairo"
-        result = self.cl.actors.farms.register(farm._ddict)
-
-        logging.info("Get farm info")
-        farm = self.cl.actors.farms.get(result.farm_id)
-        self.assertEqual(farm.name, "farm1")
-
-    def test02_farms_list(self):
-        """
-        Testcase to test list farms actor
-        #. Create two farms.
-        #. List all farms, should succeed.
-        #. Filter by country, should succeed.
-        #. Filter by city, should succeed
-        """
+    cl = j.clients.gedis.get("test", port=9901)
+    try:
         logging.info("Create two farms")
-        farm_1 = self.model.new()
+        farm_1 = model.new()
         farm_1.name = "farm1"
         farm_1.location.country = "egypt"
         farm_1.location.city = "cairo"
-        self.cl.actors.farms.register(farm_1._ddict)
+        farm_1.threebot_id = '1234567'
+        farm_1.email = 'farm1@test.com'
+        farm_1.wallet_addresses = ['123456789']
+        result = cl.actors.farms.register(farm_1._ddict)
+        farm_1_id = result.farm_id
 
-        farm_2 = self.model.new()
+        farm_2 = model.new()
         farm_2.name = "farm2"
+        farm_2.threebot_id = '7654321'
+        farm_2.email = 'farm2@test.com'
+        farm_2.wallet_addresses = ['987654321']
         farm_2.location.country = "belgium"
         farm_2.location.city = "ghent"
-        self.cl.actors.farms.register(farm_2._ddict)
-
-        logging.info("List all farms, should succeed")
-        result = self.cl.actors.farms.list()
-        self.assertEqual(len(result.farms), 2)
-
-        logging.info("Filter by country, should succeed")
-        result = self.cl.actors.farms.list(country="egypt")
-        self.assertTrue(result.farms)
-        self.assertEqual(result.farms[0].location.country, "egypt")
-
-        logging.info("Filter by city, should succeed")
-        result = self.cl.actors.farms.list(city="ghent")
-        self.assertTrue(result.farms)
-        self.assertEqual(result.farms[0].location.city, "ghent")
-
-    def test03_farm_get(self):
-        """
-        Testcase to test get farm actor
-        #. Create new farm.
-        #. Get farm info, should succeed.
-        #. Try to get non-existing farm, should fail.
-        """
-        logging.info("Create new farm")
-        farm = self.model.new()
-        farm.name = "farm1"
-        result = self.cl.actors.farms.register(farm._ddict)
+        result = cl.actors.farms.register(farm_2._ddict)
+        farm_2_id = result.farm_id
 
         logging.info("Get farm info, should succeed")
-        farm = self.cl.actors.farms.get(result.farm_id)
-        self.assertEqual(farm.name, "farm1")
+        farm = cl.actors.farms.get(farm_1_id)
+        assert farm.name == "farm1"
 
-        logging.info("Try to get non-existing farm, should fail")
-        with self.assertRaises(j.exceptions.NotFound):
-            self.cl.actors.farms.get(1000)
+        logging.info("List all farms, should succeed")
+        result = cl.actors.farms.list()
+        assert len(result.farms) ==  2
 
-    def test04_farm_update(self):
-        """
-        Testcase to test update farm actor
-        #. Create new farm.
-        #. Update farm info, should succeed.
-        #. Try to update non-existing farm, should fail.
-        """
-        logging.info("Create new farm")
-        farm = self.model.new()
-        farm.name = "test-update"
-        result = self.cl.actors.farms.register(farm._ddict)
+        logging.info("Filter by country, should succeed")
+        result = cl.actors.farms.list(country="egypt")
+        assert result.farms 
+        assert result.farms[0].location.country == "egypt"
+
+        logging.info("Filter by city, should succeed")
+        result = cl.actors.farms.list(city="ghent")
+        assert result.farms 
+        assert result.farms[0].location.city == "ghent"
 
         logging.info("Update farm info, should succeed")
-        farm.name = "farm1"
-        self.cl.actors.farms.update(result.farm_id, farm._ddict)
-        farm = self.cl.actors.farms.get(result.farm_id)
-        self.assertEqual(farm.name, "farm1")
+        farm_2.location.city = "brussels"
+        cl.actors.farms.update(farm_2_id, farm_2._ddict)
+        farm = cl.actors.farms.get(farm_2_id)
+        assert farm_2.location.city == "brussels"
 
-        logging.info("Try to update non-existing farm, should fail")
-        with self.assertRaises(j.exceptions.NotFound):
-            self.cl.actors.farms.update(1000, farm._ddict)
+        print("OK")
+
+    finally:
+        model.destroy()
+
+if __name__ == '__main__':
+    main()
