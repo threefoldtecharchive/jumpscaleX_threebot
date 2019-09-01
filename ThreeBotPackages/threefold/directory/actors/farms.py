@@ -17,9 +17,6 @@ class farms(j.baseclasses.threebot_actor):
             if not getattr(farm, field):
                 raise j.exceptions.Value("%s is required" % field)
 
-        if self.farm_model.find(name=farm.name):
-            raise j.exceptions.Value("Farm with name %s is already exist" % farm.name)
-
     def register(self, farm, schema_out):
         """
         ```in
@@ -31,6 +28,10 @@ class farms(j.baseclasses.threebot_actor):
         ```
         """
         self._validate_farm(farm)
+
+        if self.farm_model.find(name=farm.name):
+            raise j.exceptions.Value("Farm with name %s is already exist" % farm.name)
+
         farm = self.farm_model.new(farm).save()
         out = schema_out.new()
         out.farm_id = farm.id
