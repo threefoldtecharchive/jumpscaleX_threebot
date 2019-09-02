@@ -12,23 +12,16 @@ class phonebook(j.baseclasses.threebot_actor):
         self._bcdb = self._bcdb_get("threebot_phonebook")
         self.phonebook_model = self._bcdb.model_get(url="threebot.phonebook.user.1")
 
-    def register(self, payload=None, signature=None, schema_out=None):
+    def register(self, name=None, email=None, ipaddr="", description="", pubkey=None, signature=None, schema_out=None):
         """
         ```in
-        payload = "" (bytes)
-        signature = "" (bytes)
+        name = (S)
+        email = (S)
+        pubkey = ""                             #public key of the 3bot
+        ipaddr = ""                             #how to reach the digitalme (3bot)
+        description = ""                        #optional
+        signature = ""                          #in hex
         ```
-
-        is a json encoded message with following props:
-
-            name = (S)
-            email = (S)
-            pubkey = ""                             #public key of the 3bot
-            ipaddr = ""                             #how to reach the digitalme (3bot)
-            description = ""                        #optional
-
-        signature = ""                          #proof that content is ok, is on id+name+email+pubkey
-
 
         ```out
         !threebot.phonebook.user.1
@@ -36,29 +29,38 @@ class phonebook(j.baseclasses.threebot_actor):
 
         """
 
-        data = j.data.serializers.json.loads(payload)
+        assert name
+        assert email
 
-        pubkey = binascii.unhexlify(data["pubkey"])
+        # pubkey2 = binascii.unhexlify(pubkey)
+        # n = j.data.nacl.default
 
-        n = j.data.nacl.default
+        signature_hex = j.clients.threebot._payload_check(
+            name=name, email=email, ipaddr=ipaddr, description=description, pubkey_hex=pubkey
+        )
 
-        # we check that the data send corresponds to the pubkey used
-        n.verify(payload, signature, verify_key=pubkey)
+        if not signature_hex == signature:
+            raise j.exceptions.Input("threebot cannot be registered, signature wrong")
 
-        data["signature"] = binascii.hexlify(signature)
-
-        res = self.phonebook_model.find(name=data["name"])
+        res = self.phonebook_model.find(name=name)
         if len(res) == 1:
-            data["id"] = res[0].id
-            if data["pubkey"] != res[0].pubkey:
-                j.shell()
+            id = res[0].id
+            if pubkey != res[0].pubkey:
                 raise j.exceptions.Input(
                     "public key cannot be changed once registered, it serves as the security for making changes"
                 )
         elif len(res) > 1:
             raise j.exceptions.Input("cannot have more than 1 user on name")
 
-        u = self.phonebook_model.new(data=data)
+        u = self.phonebook_model.new(
+            id=id,
+            name=name,
+            email=email,
+            ipaddr=ipaddr,
+            description=description,
+            pubkey=pubkey,
+            signature=signature_hex,
+        )
         u.save()
         return u
 
@@ -75,10 +77,10 @@ class phonebook(j.baseclasses.threebot_actor):
         ```
         """
         if user_id and not user_id == NONE:
-            if not self.phonebook_model.exists(id=user_id):
-                users = []
-            else:
-                users = [self.phonebook_model.new(id=user_id)]
+            user = self.phonebook_model.get(user_id, die=False)
+            if not user:
+                raise j.exceptions.NotFound("user not found id:{user_id}" % locals())
+            return user
         elif name:
             users = self.phonebook_model.find(name=name)
         elif email:
