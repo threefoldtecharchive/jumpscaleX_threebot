@@ -50,7 +50,8 @@ class phonebook(j.baseclasses.threebot_actor):
         res = self.phonebook_model.find(name=data["name"])
         if len(res) == 1:
             data["id"] = res[0].id
-            if data["signature"] != res[0].signature:
+            if data["pubkey"] != res[0].pubkey:
+                j.shell()
                 raise j.exceptions.Input(
                     "public key cannot be changed once registered, it serves as the security for making changes"
                 )
