@@ -81,7 +81,7 @@ class phonebook(j.baseclasses.threebot_actor):
             user = self.phonebook_model.get(tid, die=False)
             if not user:
                 raise j.exceptions.NotFound("user not found id:{user_id}" % locals())
-            return user
+            users = [user]
         elif name:
             users = self.phonebook_model.find(name=name)
         elif email:
@@ -94,4 +94,6 @@ class phonebook(j.baseclasses.threebot_actor):
         if len(users) > 1:
             raise j.exceptions.NotFound("more than 1 user found (%s)" % locals())
 
-        return users[0]
+        jsxobject = users[0]
+
+        return jsxobject
