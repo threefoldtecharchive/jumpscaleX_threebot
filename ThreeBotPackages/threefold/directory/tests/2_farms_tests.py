@@ -1,27 +1,25 @@
 from gevent import monkey
 
-monkey.patch_all()
+monkey.patch_all(thread=False)
 import logging
 import gevent
 import os
 from Jumpscale import j
 
 
-def main():
-    j.servers.zdb.default.start()
+def main(self):
     try:
         bcdb = j.data.bcdb.get("tf_directory")
     except:
         bcdb = j.data.bcdb.new("tf_directory")
 
-    path = os.path.dirname(__file__)
+    path = os.path.dirname(os.path.dirname(__file__))
     bcdb.models_add(os.path.join(path, "models"))
     bcdb = j.data.bcdb.get("tf_directory")
     model = bcdb.model_get(url="tfgrid.farm.1")
 
     gedis = j.servers.gedis.get("test", port=9901)
     gedis.actors_add(os.path.join(path, "actors"))
-    gevent.spawn(gedis.start)
 
     cl = j.clients.gedis.get("test", port=9901)
     try:
@@ -74,7 +72,3 @@ def main():
 
     finally:
         model.destroy()
-
-
-if __name__ == "__main__":
-    main()
