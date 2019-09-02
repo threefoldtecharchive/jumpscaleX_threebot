@@ -43,6 +43,7 @@ class phonebook(j.baseclasses.threebot_actor):
             raise j.exceptions.Input("threebot cannot be registered, signature wrong")
 
         res = self.phonebook_model.find(name=name)
+        id = None
         if len(res) == 1:
             id = res[0].id
             if pubkey != res[0].pubkey:
@@ -64,10 +65,10 @@ class phonebook(j.baseclasses.threebot_actor):
         u.save()
         return u
 
-    def get(self, user_id=None, name=None, email=None, schema_out=None):
+    def get(self, tid=None, name=None, email=None, schema_out=None):
         """
         ```in
-        user_id = (I)
+        tid = (I)
         name = (S)
         email = (S)
         ```
@@ -76,8 +77,8 @@ class phonebook(j.baseclasses.threebot_actor):
         !threebot.phonebook.user.1
         ```
         """
-        if user_id and not user_id == NONE:
-            user = self.phonebook_model.get(user_id, die=False)
+        if tid and not tid == NONE:
+            user = self.phonebook_model.get(tid, die=False)
             if not user:
                 raise j.exceptions.NotFound("user not found id:{user_id}" % locals())
             return user

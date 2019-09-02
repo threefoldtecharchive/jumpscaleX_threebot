@@ -13,7 +13,7 @@ class farms(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound("farm %s not found" % farm_id)
 
     def _validate_farm(self, farm):
-        for field in ['threebot_id', 'name', 'email', 'wallet_addresses']:
+        for field in ["threebot_id", "name", "email", "wallet_addresses"]:
             if not getattr(farm, field):
                 raise j.exceptions.Value("%s is required" % field)
 

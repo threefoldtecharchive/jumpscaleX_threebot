@@ -1,9 +1,9 @@
 from Jumpscale import j
 
+
 class ActorsFactory(j.baseclasses.factory):
 
     __jslocation__ = "j.cockpit.actors"
-
 
     def test(self, name=""):
         """

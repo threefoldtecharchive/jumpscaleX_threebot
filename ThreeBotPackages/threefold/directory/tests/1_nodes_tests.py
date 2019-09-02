@@ -1,24 +1,26 @@
 import gevent
 from gevent import monkey
+
 monkey.patch_all(thread=False)
 import logging
 
 import os
 from Jumpscale import j
 
+
 def main(self):
     try:
-        bcdb = j.data.bcdb.get('tf_directory')
+        bcdb = j.data.bcdb.get("tf_directory")
     except:
-        bcdb = j.data.bcdb.new('tf_directory')
+        bcdb = j.data.bcdb.new("tf_directory")
 
     path = os.path.dirname(os.path.dirname(__file__))
-    bcdb.models_add(os.path.join(path, 'models'))
+    bcdb.models_add(os.path.join(path, "models"))
     bcdb = j.data.bcdb.get("tf_directory")
     node_model = bcdb.model_get(url="tfgrid.node.2")
 
     gedis = j.servers.gedis.get("test", port=9901)
-    gedis.actors_add(os.path.join(path, 'actors'))
+    gedis.actors_add(os.path.join(path, "actors"))
     gevent.spawn(gedis.start)
 
     cl = j.clients.gedis.get("test", port=9901)
@@ -134,7 +136,7 @@ def main(self):
         result = cl.actors.nodes.add(node._ddict)
 
         logging.info("Update node total_resources, should succeed")
-        cl.actors.nodes.update_total_capacity(result.node_id, {'cru': 11, 'mru': 22, 'sru': 33, 'hru': 44})
+        cl.actors.nodes.update_total_capacity(result.node_id, {"cru": 11, "mru": 22, "sru": 33, "hru": 44})
         node = cl.actors.nodes.get(result.node_id)
         assert node.total_resource.cru == 11
         assert node.total_resource.mru == 22
@@ -157,7 +159,7 @@ def main(self):
         result = cl.actors.nodes.add(node._ddict)
 
         logging.info("Update node total_resources, should succeed")
-        cl.actors.nodes.update_reserved_capacity(result.node_id, {'cru': 11, 'mru': 22, 'sru': 33, 'hru': 44})
+        cl.actors.nodes.update_reserved_capacity(result.node_id, {"cru": 11, "mru": 22, "sru": 33, "hru": 44})
         node = cl.actors.nodes.get(result.node_id)
         assert node.reserved_resource.cru == 11
         assert node.reserved_resource.mru == 22
@@ -180,7 +182,7 @@ def main(self):
         result = cl.actors.nodes.add(node._ddict)
 
         logging.info("Update node used_resources, should succeed")
-        cl.actors.nodes.update_used_capacity(result.node_id, {'cru': 11, 'mru': 22, 'sru': 33, 'hru': 44})
+        cl.actors.nodes.update_used_capacity(result.node_id, {"cru": 11, "mru": 22, "sru": 33, "hru": 44})
         node = cl.actors.nodes.get(result.node_id)
         assert node.used_resource.cru == 11
         assert node.used_resource.mru == 22
