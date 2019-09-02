@@ -1,32 +1,63 @@
 from Jumpscale import j
+import binascii
+from io import BytesIO
 
 JSBASE = j.baseclasses.object
 NONE = 2147483647
 
 
-class phonebook(JSBASE):
-    def __init__(self, *args, **kwargs):
-        bcdb = j.data.bcdb.get("threebot_phonebook")
-        self.phonebook_model = bcdb.model_get(url="threebot.phonebook.user.1")
+class phonebook(j.baseclasses.threebot_actor):
+    def _init(self, *args, **kwargs):
 
-    def register(self, **kwargs):
+        self._bcdb = self._bcdb_get("threebot_phonebook")
+        self.phonebook_model = self._bcdb.model_get(url="threebot.phonebook.user.1")
+
+    def register(self, payload=None, signature=None, schema_out=None):
         """
         ```in
-        name = (S)
-        email = (S)
-        pubkey = ""                             #public key of the 3bot
-        ipaddr = ""                             #how to reach the digitalme (3bot)
-        description = ""                        #optional
+        payload = "" (bytes)
+        signature = "" (bytes)
+        ```
+
+        is a json encoded message with following props:
+
+            name = (S)
+            email = (S)
+            pubkey = ""                             #public key of the 3bot
+            ipaddr = ""                             #how to reach the digitalme (3bot)
+            description = ""                        #optional
+
         signature = ""                          #proof that content is ok, is on id+name+email+pubkey
 
-        ```
 
         ```out
         !threebot.phonebook.user.1
         ```
 
         """
-        u = self.phonebook_model.new(data=kwargs)
+
+        data = j.data.serializers.json.loads(payload)
+
+        pubkey = binascii.unhexlify(data["pubkey"])
+
+        n = j.data.nacl.default
+
+        # we check that the data send corresponds to the pubkey used
+        n.verify(payload, signature, verify_key=pubkey)
+
+        data["signature"] = binascii.hexlify(signature)
+
+        res = self.phonebook_model.find(name=data["name"])
+        if len(res) == 1:
+            data["id"] = res[0].id
+            if data["signature"] != res[0].signature:
+                raise j.exceptions.Input(
+                    "public key cannot be changed once registered, it serves as the security for making changes"
+                )
+        elif len(res) > 1:
+            raise j.exceptions.Input("cannot have more than 1 user on name")
+
+        u = self.phonebook_model.new(data=data)
         u.save()
         return u
 
