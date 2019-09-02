@@ -3,7 +3,7 @@ from Jumpscale import j
 
 class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
-        self.bcdb = self.package.threebot_server.bcdb_get("tf_directory")
+        self.bcdb = self._package.threebot_server.bcdb_get("tf_directory")
 
     def prepare(self):
         """
@@ -17,7 +17,6 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot starts
         :return:
         """
-
         self.bcdb.models_add(path=self.package_root + "/models")
 
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))

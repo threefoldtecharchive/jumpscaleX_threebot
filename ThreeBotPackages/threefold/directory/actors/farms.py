@@ -6,39 +6,64 @@ class farms(j.baseclasses.threebot_actor):
         bcdb = j.data.bcdb.get("tf_directory")
         self.farm_model = bcdb.model_get(url="tfgrid.farm.1")
 
-    def register(self, farm):
+    def _get_farm(self, farm_id):
+        try:
+            return self.farm_model.get(farm_id)
+        except j.exceptions.NotFound:
+            raise j.exceptions.NotFound("farm %s not found" % farm_id)
+
+    def _validate_farm(self, farm):
+        for field in ['threebot_id', 'name', 'email', 'wallet_addresses']:
+            if not getattr(farm, field):
+                raise j.exceptions.Value("%s is required" % field)
+
+    def register(self, farm, schema_out):
         """
         ```in
         farm = (O) !tfgrid.farm.1
         ```
-        """
-        self.farm_model.set(farm)
-        return True
 
-    # do we need this or can we abuse register ?
-    # def update(self, farm):
-    #     pass
+        ```out
+        farm_id = (I)
+        ```
+        """
+        self._validate_farm(farm)
+
+        if self.farm_model.find(name=farm.name):
+            raise j.exceptions.Value("Farm with name %s is already exist" % farm.name)
+
+        farm = self.farm_model.new(farm).save()
+        out = schema_out.new()
+        out.farm_id = farm.id
+        return out
+
+    def update(self, farm_id, farm):
+        """
+        ```in
+        farm_id = (I)
+        farm = (O) !tfgrid.farm.1
+        ```
+        """
+        self._get_farm(farm_id)
+        self._validate_farm(farm)
+        self.farm_model.set_dynamic(farm._ddict, obj_id=farm_id)
+        return True
 
     def get(self, farm_id, schema_out):
         """
         ```in
-        farm_id = (S)
+        farm_id = (I)
         ```
 
         ```out
         farm = (O) !tfgrid.farm.1
         ```
         """
-        farms = self.farm_model.find(farm_id=farm_id)
-        if len(farms) <= 0:
-            raise j.exceptions.NotFound("node %s not found" % farm_id)
+        return self._get_farm(farm_id)
 
-        return farms[0]
-
-    def list(self, farm, country, city, schema_out):
+    def list(self, country, city, schema_out):
         """
         ```in
-        farm = (S)
         country = (S)
         city = (S)
         ```
@@ -47,13 +72,11 @@ class farms(j.baseclasses.threebot_actor):
         farms = (LO) !tfgrid.farm.1
         ```
         """
-        output = schema_out.new()
-
+        out = schema_out.new()
         for farm in self.farm_model.iterate():
-            if country != "" and farm.country != country:
+            if country != "" and farm.location.country != country:
                 continue
-            if city != "" and farm.city != city:
+            if city != "" and farm.location.city != city:
                 continue
-            output.farms.append(farm)
-
-        return output
+            out.farms.append(farm)
+        return out
