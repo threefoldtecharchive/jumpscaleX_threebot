@@ -87,6 +87,27 @@ workloads.
 
 ### reservation.data
 
+The reservation data contains all required info for the workloads to be deployed,
+as well as info about who can sign to start the provisioning and deletion, and the expiry
+dates for the reservation. As the JSON representation of the data is signed by the customer
+after creating the reservation, all of these fields are immutable after being created.
+
+- description: Description of the reservation/workloads.
+- containers: Container workloads to be provisioned, see https://github.com/threefoldtech/zosv2/blob/master/docs/provision/provision.md
+- volumes: Volume workloads to be provisioned, see https://github.com/threefoldtech/zosv2/blob/master/docs/provision/provision.md
+- zdbs: ZDB workloads to be provisioned, see https://github.com/threefoldtech/zosv2/blob/master/docs/provision/provision.md
+- networks: Network workloads to be provisioned, see https://github.com/threefoldtech/zosv2/blob/master/docs/provision/provision.md
+- expiration_provisioning: The expiry time of the provisioning step. If the provisioning signatures
+in `signing_request_provision` are not collected before this time, the reservation is
+considered invalid and a new one must be created.
+- expiration_reservation: The expiry time of the reservation, i.e. the provisioned workloads.
+The farmer(s) agree(s) to keep the provisioned workloads available until at least this
+time.
+- signing_request_provision: The list of threebots which can sign for the provisioning to happen,
+and the minimum amount of signatures required to do so, as described in [signing request](#siginingrequest).
+- signing_request_delete: The list of threebots which can sign for the early deletion of the workloads
+to happen, and the minimum amount of signatures required to do so, as described in [signing request](#signingrequest).
+
 ### signing.request
 
 A signing request defines who (which threebots) can sign for a particular action,
