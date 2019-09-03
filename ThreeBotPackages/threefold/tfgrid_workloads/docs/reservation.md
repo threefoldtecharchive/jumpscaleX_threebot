@@ -40,6 +40,13 @@ corresponding signing request.
 - All signatures are valid with a public key owned by a referenced threebot (referenced
 in the aforementioned accompanying [signing request field](#signingrequest) or possibly other field).
 
+#### signature algorithm
+
+- signature algorithm: [ed25519](https://ed25519.cr.yp.to/)
+- public key size: 32 bytes
+- private key size: 32 bytes
+- signature size: 64 bytes
+
 ## models
 
 The following is an overview of the models available in the [models](./models) subdirectory,
