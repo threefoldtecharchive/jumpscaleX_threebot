@@ -12,9 +12,9 @@ customer_signature = (S)
 
 #state, allows anyone to see what can happen next e.g. sign means waiting for everyone to sign
 #delete means its deployed now we need to wait till enough people sign to delete
-next_action = "sign,pay,deploy,delete,invalid,deleted" (E)
+next_action = "create,sign,pay,deploy,delete,invalid,deleted" (E)
 signatures_provision = (LO) !tfgrid.reservation.signing.signature.1
-signature_farmer = (LO) !tfgrid.reservation.signing.signature.1
+signatures_farmer = (LO) !tfgrid.reservation.signing.signature.1
 signatures_delete = (LO) !tfgrid.reservation.signing.signature.1
 epoch = (D)
 results = (LO) !tfgrid.reservation.result.1
@@ -44,8 +44,8 @@ quorum_min = (I)
 @url = tfgrid.reservation.signing.signature.1
 #threebotid
 tid = (I)
-#isgnature in binary form of the json as stored in the root of this obj
-signature (B)
+#signature in binary form of the json as stored in the root of this obj
+signature = (B)
 #time of signature
 epoch = (D)
 
