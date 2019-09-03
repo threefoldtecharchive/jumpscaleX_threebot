@@ -3,7 +3,7 @@ from Jumpscale import j
 
 class TBOTFileServerFactory(j.baseclasses.object, j.baseclasses.testtools):
 
-    __jslocation__ = "j.tools.threebot_packages.fileserver"
+    __jslocation__ = "j.threebot.package.fileserver"
 
     def test(self, name=""):
         """
