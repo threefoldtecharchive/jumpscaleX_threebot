@@ -32,7 +32,7 @@ farmer threebot is allowed to deploy the reserved workloads.
 
 A signature is created by signing a piece of data using a private key. Afterwards,
 the corresponding public key can be used to check if the signature is valid. A
-[signature field](#signaturesigning) is valid if it meets the following conditions:
+[signature field](#signingsignature) is valid if it meets the following conditions:
 
 - It contains at least the minimum amount of signatures required, as defined in
 the `quorum_min` field of the corresponding [signing request field](#signingrequest), 1 if there is no such
@@ -126,3 +126,23 @@ the time of signing is also recorded.
 - epoch: Time of signing
 
 ### reservation.result
+
+A result is used by zero-os to add a response to a reservation. This result
+can inform users if an error occurred, or more commonly, it can relay back vital
+information such as the IP address of a container after it is started. The result
+object has a `workload_id` field, which is used to map the result to the actual
+workload. With the workload request, the `node_id` can be inspected, to get the
+nodes public key. The key can then be used to verify the signature of the data,
+proving that it is indeed this node which created the reply, and that the `data_json`
+has not been tampered with after it was created.
+
+- category: The type of workload for which the reply is.
+- workload_id: The id of the workload for which the reply is. This will be the same
+as one of the `workload_id`s in the [reservation data](#reservationdata).
+- data_json: The full data as a json object.
+- signature: The bytes of the signature. The signature is created by the node which
+creates the reply. The data signed is the `data_json` field. This proves authenticity
+of the reply as well as integrity of the response data.
+- state: Did the workload deploy ok ("ok") or not ("error").
+- message: Content of the message sent by the node.
+- epoch: Time at which the result has been created.
