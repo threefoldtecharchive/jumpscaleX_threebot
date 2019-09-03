@@ -56,7 +56,7 @@ and additional info for the reservation state.
 low level workloads to be provisioned. After the reservation is created, this field is
 immutable.
 - json: A representation of the `data` object, in json form. It is directly derived from
-the `data` field. As such, it is also immutable.
+the `data` field. As such, it is also immutable. This is the actual input for the signature algorithm.
 
 Next to the reservation data, there is also a reservation state. These fields describe
 the current state of the reservation, as well as the signatures provided by authorized threebots
