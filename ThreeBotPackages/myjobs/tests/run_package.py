@@ -14,7 +14,7 @@ def run_server():
     server = j.servers.threebot.get("mine")
     server.save()
 
-    package = j.tools.threebotpackage.get(
+    package = j.tools.threebot_packages.get(
         "myjobs", path=j.sal.fs.getParent(j.sal.fs.getDirName(__file__)), threebot_server_name="mine"
     )
     package.prepare()
