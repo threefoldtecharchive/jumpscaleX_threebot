@@ -3,7 +3,7 @@ from Jumpscale import j
 
 class TFPhonebookFactory(j.baseclasses.object, j.baseclasses.testtools):
 
-    __jslocation__ = "j.threebot_packages.phonebook"
+    __jslocation__ = "j.tools.threebot_packages.phonebook"
 
     def test(self, name=""):
         """
