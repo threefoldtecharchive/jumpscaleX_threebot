@@ -32,13 +32,13 @@ farmer threebot is allowed to deploy the reserved workloads.
 
 A signature is created by signing a piece of data using a private key. Afterwards,
 the corresponding public key can be used to check if the signature is valid. A
-[signature field](#signature.signing) is valid if it meets the following conditions:
+[signature field](#signaturesigning) is valid if it meets the following conditions:
 
 - It contains at least the minimum amount of signatures required, as defined in
-the `quorum_min` field of the corresponding [signing request field](#signing.request), 1 if there is no such
+the `quorum_min` field of the corresponding [signing request field](#signingrequest), 1 if there is no such
 corresponding signing request.
 - All signatures are valid with a public key owned by a referenced threebot (referenced
-in the aforementioned accompanying [signing request field](#singing.request) or possibly other field).
+in the aforementioned accompanying [signing request field](#signingrequest) or possibly other field).
 
 ## models
 
@@ -48,11 +48,11 @@ their fields, and what these fields are used for.
 ### reservation
 
 The [reservation object](./models/reservation.toml) is the high level object for dealing with a reservation
-on the threefold grid. It is composed of the [reservation.data](#reservation.data) object, which holds
+on the threefold grid. It is composed of the [reservation.data](#reservationdata) object, which holds
 all data for the workloads covered by this reservation (and is immutable after it is created),
 and additional info for the reservation state.
 
-- data: As explained, the data field holds the [reservation.data](#reservation.data) object, which contains all
+- data: As explained, the data field holds the [reservation.data](#reservationdata) object, which contains all
 low level workloads to be provisioned. After the reservation is created, this field is
 immutable.
 - json: A representation of the `data` object, in json form. It is directly derived from
@@ -70,18 +70,18 @@ the workloads specified in the reservation. Once this is done, the farmer's thre
 `deploy` these workloads. After the reservation expires, the farmer threebot can
 `delete` the provisioned workloads. This puts the reservation in its final `deleted` state,
 ending its life cycle.
-- signatures_provision: A list of [signatures](#signing.signature) needed to start the provisioning (deploy) step,
+- signatures_provision: A list of `signatures` needed to start the provisioning (deploy) step,
 i.e. after enough valid signatures are provided here, the farmer threebot can start to deploy
 the workloads defined. Validity of signatures and amount of valid signatures required
 is defined by the `signing_request_provision` field in the `data` object.
-- signature_farmer: the [signature](#signing.signature) of the farmer threebot, which declares that the farmer
+- signature_farmer: the [signature](#signingsignature) of the farmer threebot, which declares that the farmer
 agrees to provision the workloads as defined by the reservation once there is consensus
 about the provisioning (see previous field).
 - signatures_delete: Much like `signatures_provision`, however it is used when a currently
 deployed workload needs to be deleted (before it expires). It is tied to the `signing_request_delete`
 field in the `data` object.
 - epoch: The date of the last modification?
-- results: A list of [reservation results](#reservation.result). Every workload which is defined in the reservation
+- results: A list of [reservation results](#reservationresult). Every workload which is defined in the reservation
 will return a result describing the status. This allows fine grained error handling for individual
 workloads.
 
@@ -89,6 +89,40 @@ workloads.
 
 ### signing.request
 
+A signing request defines who (which threebots) can sign for a particular action,
+and the minimum amount of required signatures. The minimum amount of people needed
+can be anything between 1 and the number of signers.
+
+- signers: A list of threebot ids who can sign. To verify the signature, the public
+key of the threebot can be loaded, and then used to verify the signature.
+- quorum_min: The minimum amount of reqeusted signatures. At least this amount of
+threebots need to sign before the signature request is considered fulfilled.
+
+As an example of how this might be applied in practice, consider the following
+signing request:
+
+- signers: [threebot_a, threebot_b, threebot_c]
+- quorum_min: 1
+
+This means that any of the 3 listed threebots can sign the data, and the request
+is fulfilled as soon as anyone signs. For instance, a workload for testing is used
+by 3 developers, and any of those can choose to have the workload deployed or deleted.
+If however another person signs (perhaps a 4th developer who is new in the company),
+the signature will not be valid, as he is not listed in the `signers` field, and therefore
+he is not able to deploy the workload.
+
+Note that `quorum_min` is a _minimum_ and as such, it is possible, and legal, for more than 1 of the listed persons to sign.
+I.e. if both `threebot_a` and `threebot_b` sign, the request is still fulfilled.
+
 ### signing.signature
+
+A signature has the actual `signature` bytes, as well as the id of the threebot
+which signed. The threebot id is used to verify that this threebot is acutally
+allowed to sign, and to fetch its public key to verify the signature. Additionally,
+the time of signing is also recorded.
+
+- tid: Id of the threebot which signed.
+- signature: The actual signature in binary form
+- epoch: Time of signing
 
 ### reservation.result
