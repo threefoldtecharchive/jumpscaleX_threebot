@@ -73,12 +73,12 @@ to advance the state of the reservation.
 values, we can roughly describe a reservation life cycle as follows: After a reservation
 is initially created, the customer (or rather, his threebot) needs to `sign` the reservation.
 After this, the threebot uses funds in its wallet to `pay`, the amount depending on
-the workloads specified in the reservation. Once this is done, the farmer's threebot can
-`deploy` these workloads. After the reservation expires, the farmer threebot can
+the workloads specified in the reservation. Once this is done, the node can
+`deploy` these workloads. After the reservation expires, the node can
 `delete` the provisioned workloads. This puts the reservation in its final `deleted` state,
 ending its life cycle.
 - signatures_provision: A list of `signatures` needed to start the provisioning (deploy) step,
-i.e. after enough valid signatures are provided here, the farmer threebot can start to deploy
+i.e. after enough valid signatures are provided here, the nodes can start to deploy
 the workloads defined. Validity of signatures and amount of valid signatures required
 is defined by the `signing_request_provision` field in the `data` object.
 - signature_farmer: the [signature](#signingsignature) of the farmer threebot, which declares that the farmer
