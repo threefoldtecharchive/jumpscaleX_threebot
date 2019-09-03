@@ -8,7 +8,7 @@ class WorkloadManagerFactory(j.baseclasses.object, j.baseclasses.testtools):
     def test(self, name=""):
         """
 
-        kosmos 'j.threebot.packages.workloadmanager.test()'
+        kosmos 'j.threebot_packages.workloadmanager.test()'
 
         """
 
