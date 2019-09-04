@@ -1,38 +1,40 @@
 from Jumpscale import j
 
 
-class Wiki:
-    def __init__(self, name, url):
-        self.name = name
-        self.url = url
-        # TODO: use the myjobs, wiki per wiki
-
-    def load(self, name, url):
-        a = j.tools.markdowndocs.load(url=url, name=name)
-        a.write()
-
-
-class Wikis:
-    def add(self, name, url):
-        self.__dict__[name] = Wiki(name=name, url=url)
-
-
 class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
-        self.branch = "development"
+        if "branch" in kwargs.keys():
+            self.branch = kwargs["branch"]
+        else:
+            self.branch = "*"
 
-    def load(self, url):
+    def wiki_load(self, name, url):
+        a = j.tools.markdowndocs.load(path=url, name=name)
+        j.servers.myjobs.schedule(a.write)
 
-        self.wikis = Wikis()
-        self.wikis.add("tf_tokens", "https://github.com/threefoldfoundation/info_tokens/tree/%s/docs" % self.branch)
-        self.wikis.add(
-            "tf_foundation", "https://github.com/threefoldfoundation/info_foundation/tree/%s/docs" % self.branch
+    def load(self):
+
+        j.servers.myjobs.schedule(
+            self.wiki_load, "tf_tokens", "https://github.com/threefoldfoundation/info_tokens/tree/%s/docs" % self.branch
         )
-        self.wikis.add("tf_grid", "https://github.com/threefoldfoundation/info_grid/tree/%s/docs" % self.branch)
-        self.wikis.add("bettertoken", "https://github.com/BetterToken/info_bettertoken/tree/%s/docs" % self.branch)
-        self.wikis.add("harvested", "https://github.com/harvested-io/info_harvested.io/tree/%s/docs" % self.branch)
-        self.wikis.add(
-            "freeflowevents", "https://github.com/freeflownation/info_freeflowevents/tree/%s/docs" % self.branch
+        j.servers.myjobs.schedule(
+            self.wiki_load,
+            "tf_foundation",
+            "https://github.com/threefoldfoundation/info_foundation/tree/%s/docs" % self.branch,
+        )
+        j.servers.myjobs.schedule(
+            self.wiki_load, "tf_grid", "https://github.com/threefoldfoundation/info_grid/tree/%s/docs" % self.branch
+        )
+        j.servers.myjobs.schedule(
+            self.wiki_load, "bettertoken", "https://github.com/BetterToken/info_bettertoken/tree/%s/docs" % self.branch
+        )
+        j.servers.myjobs.schedule(
+            self.wiki_load, "harvested", "https://github.com/harvested-io/info_harvested.io/tree/%s/docs" % self.branch
+        )
+        j.servers.myjobs.schedule(
+            self.wiki_load,
+            "freeflowevents",
+            "https://github.com/freeflownation/info_freeflowevents/tree/%s/docs" % self.branch,
         )
 
     def prepare(self):
@@ -40,9 +42,7 @@ class Package(j.baseclasses.threebot_package):
         is called at install time
         :return:
         """
-
-        bcdb = self.package.threebot_server.bcdb_get("wiki")
-        self.load()
+        pass
 
         #
         # wikis_load_cmd = """
@@ -61,12 +61,29 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot starts
         :return:
         """
+        j.servers.myjobs.workers_start_tmux()
+        self.load()
 
-        bcdb = j.data.bcdb.get("threebot_phonebook")
+        server = j.servers.openresty.get("test")
+        server.install(reset=True)
+        server.configure()
+        website = server.websites.get("test")
+        website.ssl = False
+        locations = website.locations.get("main")
 
-        bcdb.models_add(path=self.package_root + "/models")
+        website_location = locations.locations_static.new()
+        website_location.name = "static"
+        website_location.path_url = "/static"
+        website_location.path_location = self._dirpath
 
-        self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
+        lapis_location = locations.locations_lapis.new()
+        lapis_location.name = "wikis"
+        lapis_location.path_url = "/"
+        lapis_location.path_location = self._dirpath
+
+        locations.configure()
+        website.configure()
+        server.start()
 
     def stop(self):
         """
