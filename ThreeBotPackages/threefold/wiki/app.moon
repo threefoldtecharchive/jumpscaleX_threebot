@@ -5,8 +5,8 @@ lfs = require "lfs"
 root = "applications"
 all_apps = {}
 for entity in lfs.dir(root) do
-    if entity ~= "." and entity ~= ".." and string.sub(entity, -5) == ".moon" then
-        app = string.sub(entity, 0, -6)
+    if entity ~= "." and entity ~= ".." and string.sub(entity, -4) == ".lua" then
+        app = string.sub(entity, 0, -5)
         all_apps[#all_apps + 1] = app
 
 
