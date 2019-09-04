@@ -69,7 +69,7 @@ class App(object):
             elif j.sal.bcdbfs.dir_exists(dir) and override:
                 self.db.dir_create(dir)
 
-            obj = self.db._dir_model.get_by_name(name=dir)[0]
+            obj = self.db._dir_model.get_by_name(name=dir)
             obj.epoch = int(time.time())
             obj.save()
 
@@ -121,7 +121,7 @@ class App(object):
                             content_type = ct
                     self.db.file_write(file, request.body, append=True, create=True)
 
-                obj = self.db._file_model.get_by_name(name=file)[0]
+                obj = self.db._file_model.get_by_name(name=file)
                 obj.content_type = content_type
                 obj.epoch = int(time.time())
                 obj.save()
@@ -161,14 +161,14 @@ class App(object):
                         content_type = ct
                 for line in request.body:
                     self.db.file_write(file, line.decode(), append=True, create=True)
-                obj = self.db._file_model.get_by_name(name=file)[0]
+                obj = self.db._file_model.get_by_name(name=file)
                 obj.content_type = content_type
                 obj.epoch = int(time.time())
                 obj.save()
 
             file = j.sal.fs.joinPaths('/', path)
             override = request.GET.get('override') == 'true'
-            obj = self.db._file_model.get_by_name(name=file)[0]
+            obj = self.db._file_model.get_by_name(name=file)
 
             if obj.size_bytes == 0:
                 override = True
@@ -286,18 +286,18 @@ class App(object):
                 files = self.db.list_files(path)
                 for file in files:
                     path_ = j.sal.fs.joinPaths(path, file)
-                    obj = self.db._file_model.get_by_name(name=path_)[0]
+                    obj = self.db._file_model.get_by_name(name=path_)
                     item = {'path': path_, 'name':j.sal.fs.getBaseName(file), 'size':obj.size_bytes, 'extension': '.{}'.format(j.sal.fs.getFileExtension(path)).rstrip('.'), 'modified': datetime.datetime.fromtimestamp(obj.epoch).strftime("%Y-%m-%dT%H:%M:%S.%f%Z"), 'mode':420, "isDir": False, 'type': get_type(obj.content_type)}
                     items.append(item)
 
                 for dir in dirs:
                     path_ = j.sal.fs.joinPaths(path, dir)
-                    obj = self.db._dir_model.get_by_name(name=path_)[0]
+                    obj = self.db._dir_model.get_by_name(name=path_)
                     item = {'path': path_, 'name': j.sal.fs.getBaseName(dir), 'size': 4096, 'extension': '', 'modified': datetime.datetime.fromtimestamp(obj.epoch).strftime("%Y-%m-%dT%H:%M:%S.%f%Z"), 'mode': 2147484141, "isDir": True, 'type': ''}
                     items.append(item)
 
                 response.set_header('X-Renew-Token', 'true')
-                parent_obj = self.db._dir_model.get_by_name(name=path)[0]
+                parent_obj = self.db._dir_model.get_by_name(name=path)
                 return json.dumps(
                     {"items": items,
                      "numDirs": len(dirs),
@@ -318,7 +318,7 @@ class App(object):
             size = 0
             content = ''
             if self.db.file_exists(path):
-                obj = self.db._file_model.get_by_name(name=path)[0]
+                obj = self.db._file_model.get_by_name(name=path)
                 modified = obj.epoch
                 size = obj.size_bytes
                 content = obj.content
@@ -373,7 +373,7 @@ class App(object):
                 return route.call(files=path)
             # download single file
             inline = request.GET.get('inline') == 'true'
-            obj = self.db._file_model.get_by_name(name=path)[0]
+            obj = self.db._file_model.get_by_name(name=path)
 
             response.set_header('X-Renew-Token', 'true')
             response.set_header('Content-Type', obj.content_type)
