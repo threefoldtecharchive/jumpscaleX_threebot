@@ -81,9 +81,11 @@ ending its life cycle.
 i.e. after enough valid signatures are provided here, the nodes can start to deploy
 the workloads defined. Validity of signatures and amount of valid signatures required
 is defined by the `signing_request_provision` field in the `data` object.
-- signature_farmer: the [signature](#signingsignature) of the farmer threebot, which declares that the farmer
+- signature_farmer: the [signatures](#signingsignature) of the farmer threebots, which declares that the farmer
 agrees to provision the workloads as defined by the reservation once there is consensus
-about the provisioning (see previous field).
+about the provisioning (see previous field). Every farmer who deploys a workload will need to sign
+this. To find out which threebots need to sign, you can iterate over the workloads
+defined in the [reservation data](#reservationdata), and collect a set of unique farmer id's from them.
 - signatures_delete: Much like `signatures_provision`, however it is used when a currently
 deployed workload needs to be deleted (before it expires). It is tied to the `signing_request_delete`
 field in the `data` object.
