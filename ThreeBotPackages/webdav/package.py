@@ -19,7 +19,7 @@ class Package(j.baseclasses.threebot_package):
         """
         # TODO: ADD REVERSE PROXY
 
-        # Couldn't import file app.py directly!
+        # Couldn't import file directly!
         import importlib
 
         root = os.path.dirname(os.path.abspath(__file__))
@@ -28,8 +28,8 @@ class Package(j.baseclasses.threebot_package):
         spec.loader.exec_module(app)
 
         rack = j.servers.rack.get()
-        app = app.App(root=root)()
-        rack.bottle_server_add(name="fileman", port=7000, app=app)
+        app = app.App(path="/", port=7001).app
+        rack.bottle_server_add(name="webdav", port=7001, app=app)
 
     def stop(self):
         """
