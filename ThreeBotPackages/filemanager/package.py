@@ -24,6 +24,7 @@ class Package(j.baseclasses.threebot_package):
         sys.path.append(root)
 
         from app import App
+
         rack = j.servers.rack.get()
         app = App(root=root)()
         rack.bottle_server_add(name="fileman", port=7000, app=app)

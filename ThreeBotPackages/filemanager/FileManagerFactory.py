@@ -8,7 +8,7 @@ class FileManagerFactory(j.baseclasses.object, j.baseclasses.testtools):
     def test(self, name=""):
         self.client = j.servers.threebot.local_start_default()
 
-        if not j.tools.threebot_packages.exists('threebot_filemanager'):
+        if not j.tools.threebot_packages.exists("threebot_filemanager"):
             self.client.actors.package_manager.package_add(
                 "threebot_filemanager",
                 git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/filemanager",
