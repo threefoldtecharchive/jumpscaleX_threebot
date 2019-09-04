@@ -5,15 +5,15 @@ lfs = require "lfs"
 root = "applications"
 all_apps = {}
 for entity in lfs.dir(root) do
-    if entity ~= "." and entity ~= ".." and string.sub(entity, -4) == ".lua" then
-        app = string.sub(entity, 0, -5)
+    if entity ~= "." and entity ~= ".." and string.sub(entity, -5) == ".moon" then
+        app = string.sub(entity, 0, -6)
         all_apps[#all_apps + 1] = app
 
 
 class extends lapis.Application
     @enable "etlua"
     for _, app in pairs all_apps
-        @include "applications." .. app
+        @include root .. "." ..app
 
     [index: "/"]: =>
         render: "home"
