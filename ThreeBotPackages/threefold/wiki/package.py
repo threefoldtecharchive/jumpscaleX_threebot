@@ -1,38 +1,39 @@
 from Jumpscale import j
 
 
+def load_wiki(name, url):
+    wiki = j.tools.markdowndocs.load(path=url, name=name)
+    wiki.write()
+
+
 class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
         if "branch" in kwargs.keys():
             self.branch = kwargs["branch"]
         else:
-            self.branch = "*"
-
-    def wiki_load(self, name, url):
-        a = j.tools.markdowndocs.load(path=url, name=name)
-        j.servers.myjobs.schedule(a.write)
+            self.branch = "master"
 
     def load(self):
 
         j.servers.myjobs.schedule(
-            self.wiki_load, "tf_tokens", "https://github.com/threefoldfoundation/info_tokens/tree/%s/docs" % self.branch
+            load_wiki, "tf_tokens", "https://github.com/threefoldfoundation/info_tokens/tree/%s/docs" % self.branch
         )
         j.servers.myjobs.schedule(
-            self.wiki_load,
+            load_wiki,
             "tf_foundation",
             "https://github.com/threefoldfoundation/info_foundation/tree/%s/docs" % self.branch,
         )
         j.servers.myjobs.schedule(
-            self.wiki_load, "tf_grid", "https://github.com/threefoldfoundation/info_grid/tree/%s/docs" % self.branch
+            load_wiki, "tf_grid", "https://github.com/threefoldfoundation/info_grid/tree/%s/docs" % self.branch
         )
         j.servers.myjobs.schedule(
-            self.wiki_load, "bettertoken", "https://github.com/BetterToken/info_bettertoken/tree/%s/docs" % self.branch
+            load_wiki, "bettertoken", "https://github.com/BetterToken/info_bettertoken/tree/%s/docs" % self.branch
         )
         j.servers.myjobs.schedule(
-            self.wiki_load, "harvested", "https://github.com/harvested-io/info_harvested.io/tree/%s/docs" % self.branch
+            load_wiki, "harvested", "https://github.com/harvested-io/info_harvested.io/tree/%s/docs" % self.branch
         )
         j.servers.myjobs.schedule(
-            self.wiki_load,
+            load_wiki,
             "freeflowevents",
             "https://github.com/freeflownation/info_freeflowevents/tree/%s/docs" % self.branch,
         )
@@ -61,20 +62,21 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot starts
         :return:
         """
-        j.servers.myjobs.workers_start_tmux()
+        j.servers.myjobs.workers_tmux_start()
         self.load()
 
-        server = j.servers.openresty.get("test")
+        server = j.servers.openresty.get("wikis")
         server.install(reset=True)
         server.configure()
-        website = server.websites.get("test")
+        website = server.websites.get("wiki")
         website.ssl = False
-        locations = website.locations.get("main")
+        locations = website.locations.get("main_wiki")
 
         website_location = locations.locations_static.new()
         website_location.name = "static"
         website_location.path_url = "/static"
         website_location.path_location = self._dirpath
+        website_location.use_jumpscale_weblibs = True
 
         lapis_location = locations.locations_lapis.new()
         lapis_location.name = "wikis"
