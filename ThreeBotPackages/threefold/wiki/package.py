@@ -16,15 +16,13 @@ class Package(j.baseclasses.threebot_package):
     def load(self):
 
         j.servers.myjobs.schedule(
-            load_wiki, "tf_tokens", "https://github.com/threefoldfoundation/info_tokens/tree/%s/docs" % self.branch
+            load_wiki, "tokens", "https://github.com/threefoldfoundation/info_tokens/tree/%s/docs" % self.branch
         )
         j.servers.myjobs.schedule(
-            load_wiki,
-            "tf_foundation",
-            "https://github.com/threefoldfoundation/info_foundation/tree/%s/docs" % self.branch,
+            load_wiki, "foundation", "https://github.com/threefoldfoundation/info_foundation/tree/%s/docs" % self.branch
         )
         j.servers.myjobs.schedule(
-            load_wiki, "tf_grid", "https://github.com/threefoldfoundation/info_grid/tree/%s/docs" % self.branch
+            load_wiki, "grid", "https://github.com/threefoldfoundation/info_grid/tree/%s/docs" % self.branch
         )
         j.servers.myjobs.schedule(
             load_wiki, "bettertoken", "https://github.com/BetterToken/info_bettertoken/tree/%s/docs" % self.branch
@@ -86,6 +84,10 @@ class Package(j.baseclasses.threebot_package):
         locations.configure()
         website.configure()
         server.start()
+
+        # TODO: start rack server (port 4442)
+        #       and gedis (port 4444)
+        #       in tmux? also openresty (because it's blocking)
 
     def stop(self):
         """
