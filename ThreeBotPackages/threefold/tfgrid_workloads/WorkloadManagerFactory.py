@@ -3,12 +3,12 @@ from Jumpscale import j
 
 class WorkloadManagerFactory(j.baseclasses.object, j.baseclasses.testtools):
 
-    __jslocation__ = "j.tools.threebot_packages.workloadmanager"
+    __jslocation__ = "j.threebot.package.workloadmanager"
 
     def test(self, name=""):
         """
 
-        kosmos 'j.tools.threebot_packages.workloadmanager.test()'
+        kosmos 'j.threebot.package.workloadmanager.test()'
 
         """
 
