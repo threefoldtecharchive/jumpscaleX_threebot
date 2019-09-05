@@ -65,9 +65,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
         ```
         """
         network = self._network_get(networkname)
-        wg = j.tools.wireguard.get(
-            name=f"{networkname}-{sshclient_name}", needexist=True
-        )
+        wg = j.tools.wireguard.get(name=f"{networkname}-{sshclient_name}", needexist=True)
         wid = wg.wid
         wg.delete()
         if wid in network.members:
@@ -99,9 +97,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
     def _network_get(self, networkname):
         networks = self.networkmodel.find(name=networkname)
         if len(networks) != 1:
-            raise j.exceptions.NotFound(
-                f"Could not find exactly 1 network with name {networkname}"
-            )
+            raise j.exceptions.NotFound(f"Could not find exactly 1 network with name {networkname}")
         return networks[0]
 
     def _get_free_ip(self, network):
@@ -194,9 +190,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
             if member.name == fullname:
                 neededmember = member
         if not neededmember:
-            raise j.exceptions.NotFound(
-                f"Could not find peer {peername} inside network {networkname}"
-            )
+            raise j.exceptions.NotFound(f"Could not find peer {peername} inside network {networkname}")
         network.members.remove(neededmember.wid)
         network.save()
         for endpoint in endpoints:
