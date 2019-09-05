@@ -9,6 +9,7 @@ Job visualizer for myjobs
 
 - cd myjobs package directory
 - `kosmos -p run_server.py`
+- server will start at `172.17.0.2:8080`
 
 
 ## the package file
