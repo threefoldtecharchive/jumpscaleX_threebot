@@ -21,18 +21,17 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot starts
         :return:
         """
-        j.servers.myjobs.workers_tmux_start()
 
         server = j.servers.openresty.get("test")
         server.install(reset=False)
         server.configure()
-        website = server.websites.get("myjobs")
+        website = server.websites.get("pastebin")
         website.ssl = False
-        website.port = 8080
-        locations = website.locations.get("myjobs")
+        website.port = 8082
+        locations = website.locations.get("pastebin")
 
         website_location = locations.locations_static.new()
-        website_location.name = "myjobs"
+        website_location.name = "pastebin"
         website_location.path_url = ""
         website_location.use_jumpscale_weblibs = True
         # import pdb; pdb.set_trace()
