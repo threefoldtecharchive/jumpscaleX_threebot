@@ -13,9 +13,11 @@ class myjobs(j.baseclasses.threebot_actor):
             worker_types_dict = dict(zip(range(3), "tmux,subprocess,inprocess".split(",")))
 
             worker_dict = worker_obj._ddict
-            worker_dict["state"] = states_dict[worker_dict["state"]]
-            worker_dict["type"] = worker_types_dict[worker_dict["type"]]
-
+            try:
+                worker_dict["state"] = states_dict[worker_dict["state"]]
+                worker_dict["type"] = worker_types_dict[worker_dict["type"]]
+            except Exception as e:
+                print(e)
             return worker_dict
 
         workers = j.data.serializers.json.dumps(
@@ -24,22 +26,23 @@ class myjobs(j.baseclasses.threebot_actor):
         print("returning workers  ", workers)
         return workers
 
-    def list_action(self):
-        return []
-
     def list_jobs(self):
         def transform_job(job_obj):
             states_dict = dict(zip(range(5), "NEW,ERROR,OK,RUNNING,HALTED".split(",")))
             job_dict = job_obj._ddict
-            job_dict["state"] = states_dict[job_dict["state"]]
-            job_dict["args"] = str(job_dict["args"])
-            job_dict["kwargs"] = str(job_dict["kwargs"])
-            job_dict["result"] = str(job_dict["result"])
-            job_dict["error"] = str(job_dict["error"])
+
+            try:
+                job_dict["state"] = states_dict[job_dict["state"]]
+                job_dict["args"] = str(job_dict["args"])
+                job_dict["kwargs"] = str(job_dict["kwargs"])
+                job_dict["result"] = str(job_dict["result"])
+                job_dict["error"] = str(job_dict["error"])
+            except Exception as e:
+                print(e)
             try:
                 job_dict["action_id"] = self.action_model.get(job_dict["action_id"]).methodname
-            except:
-                pass
+            except Exception as e:
+                print(e)
             return job_dict
 
         jobs = j.data.serializers.json.dumps({"jobs": [transform_job(job) for job in self.job_model.find()]})

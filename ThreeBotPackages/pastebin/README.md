@@ -8,8 +8,7 @@ code sharing system built using svelte and gedis actors
 
 ## Running 
 
-- cd pastebin package directory
-- `kosmos -p run_server.py`
+- execute `kosmos -p 'j.threebot.package.pastebin.start()'`
 - server will start at `172.17.0.2:8082`
 
 ## the package file
@@ -84,4 +83,36 @@ class pastebin(j.baseclasses.threebot_actor):
         paste.save()
         res = j.data.serializers.json.dumps(paste._ddict)
         return res
+```
+
+## PastebinFactory
+
+
+```
+from Jumpscale import j
+
+
+class PastebinDashboardFactory(j.baseclasses.object, j.baseclasses.testtools):
+
+    __jslocation__ = "j.threebot.package.pastebin"
+
+    def install(self):
+        server = j.servers.threebot.default
+        server.save()
+
+        package = j.tools.threebot_packages.get("pastebin", path=self._dirpath, threebot_server_name=server.name)
+        package.prepare()
+        package.save()
+        self._log_info("pastebin loaded")
+
+        return "OK"
+
+    def start(self):
+        self.install()
+        server = j.servers.threebot.default
+        server.start(web=True, ssl=False)
+
+    def test(self, name=""):
+        pass
+
 ```

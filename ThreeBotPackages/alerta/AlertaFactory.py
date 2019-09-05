@@ -1,20 +1,18 @@
 from Jumpscale import j
 
 
-class MyJobsDashboardFactory(j.baseclasses.object, j.baseclasses.testtools):
+class AlertaFactory(j.baseclasses.object, j.baseclasses.testtools):
 
-    __jslocation__ = "j.threebot.package.myjobs_dashboard"
+    __jslocation__ = "j.threebot.package.alerta"
 
     def install(self):
         server = j.servers.threebot.default
         server.save()
 
-        package = j.tools.threebot_packages.get(
-            "myjobs_dashboard", path=self._dirpath, threebot_server_name=server.name
-        )
+        package = j.tools.threebot_packages.get("alerta", path=self._dirpath, threebot_server_name=server.name)
         package.prepare()
         package.save()
-        self._log_info("MyJobs dashboard loaded")
+        self._log_info("Alerta loaded")
 
         return "OK"
 
