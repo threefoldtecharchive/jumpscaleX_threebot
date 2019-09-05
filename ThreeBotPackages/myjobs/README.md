@@ -1,13 +1,46 @@
-# Running this package
+# MyJobs
 
-A simple visualizer for myjobs task queue system
-
-just for quick testing of how to run this package,
+Job visualizer for myjobs
 
 
-`cd /sandbox/code/github/threefoldtech/digitalmeX/threebot/packages/myjobs/tests`
+## Running 
 
-`kosmos run_package.py`
+- cd myjobs package directory
+- `kosmos -p run_server.py`
 
-should add "<container_ip>  myjobs.dev" to /etc/hosts to test
-then go to https://myjobs.dev/myjobs/index.html
+
+## the package file
+
+- create openresty server on a port
+- create a location to server from
+- `use_jumpscale_weblibs` to support gedis/extra jsx assets
+- add actors
+
+```python3
+    def start(self):
+        """
+        called when the 3bot starts
+        :return:
+        """
+        j.servers.myjobs.workers_tmux_start()
+
+        server = j.servers.openresty.get("test")
+        server.install(reset=False)
+        server.configure()
+        website = server.websites.get("myjobs")
+        website.ssl = False
+        website.port = 8080
+        locations = website.locations.get("myjobs")
+
+        website_location = locations.locations_static.new()
+        website_location.name = "myjobs"
+        website_location.path_url = ""
+        website_location.use_jumpscale_weblibs = True
+        fullpath = join(dirname(abspath(__file__)), "html/")
+        website_location.path_location = fullpath
+        locations.configure()
+        website.configure()
+        self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
+        server.start()
+
+```
