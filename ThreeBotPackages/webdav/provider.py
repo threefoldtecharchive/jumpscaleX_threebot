@@ -31,37 +31,6 @@ _logger = util.get_module_logger(__name__)
 BUFFER_SIZE = 8192
 
 
-class IOInterface(object):
-    def __init__(self, db, filename):
-        self.db = db
-        self.filename = filename
-
-    def tell(self):
-        raise NotImplementedError
-
-    def read(self, size=-1):
-        raise NotImplementedError
-
-    def seek(self, offset, whence=0):
-        raise NotImplementedError
-
-    @property
-    def name(self):
-        raise NotImplementedError
-
-    def write(self, data):
-        self.db.file_write(self.filename, data)
-
-    def truncate(self, size=None):
-        raise NotImplementedError
-
-    def flush(self):
-        raise NotImplementedError
-
-    def fileno(self):
-        raise NotImplementedError
-
-
 # ========================================================================
 # FileResource
 # ========================================================================
