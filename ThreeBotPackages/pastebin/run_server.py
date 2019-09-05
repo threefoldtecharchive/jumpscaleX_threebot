@@ -7,13 +7,14 @@ def run_server():
     then go to
     http://172.17.0.2
     """
+
     server = j.servers.threebot.get("test")
     server.save()
 
     package = j.tools.threebot_packages.get("pastebin", path=j.sal.fs.getDirName(__file__), threebot_server_name="test")
     package.prepare()
     package.save()
-    server.start()
+    server.start(web=True)
 
 
 run_server()
