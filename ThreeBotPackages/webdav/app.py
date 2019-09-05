@@ -25,9 +25,7 @@ class App(object):
     def app(self):
 
         root = os.path.dirname(os.path.abspath(__file__))
-        spec = importlib.util.spec_from_file_location("provider", os.path.join(root, "provider.py"))
-        provider = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(provider)
+        from webdav import provider
 
         config = {
             "provider_mapping": {"/": provider.BCDBFSProvider(self.path)},

@@ -10,7 +10,7 @@ class Package(j.baseclasses.threebot_package):
         is called at install time
         :return:
         """
-        j.builders.runtimes.python3.pip_package_install("filetype")
+        pass
 
     def start(self):
         """
@@ -19,12 +19,12 @@ class Package(j.baseclasses.threebot_package):
         """
         # TODO: ADD REVERSE PROXY
 
-        # Couldn't import file directly!
-        from webdav.app import App
+        # Couldn't import file app.py directly!
+        from smtp.app import MailServer
 
         rack = j.servers.rack.get()
-        app = App(path="/", port=7001).app
-        rack.bottle_server_add(name="webdav", port=7001, app=app)
+        server = MailServer(("0.0.0.0", 7002))
+        rack.add(name="smtp", server=server)
 
     def stop(self):
         """
@@ -38,4 +38,4 @@ class Package(j.baseclasses.threebot_package):
         called when the package is no longer needed and will be removed from the threebot
         :return:
         """
-        j.builders.runtimes.python3.pip_package_uninstall("filetype")
+        pass
