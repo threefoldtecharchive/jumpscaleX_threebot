@@ -13,9 +13,7 @@ class WikisFactory(j.baseclasses.object, j.baseclasses.testtools):
         server = j.servers.threebot.get("test_wikis")
         server.save()
 
-        package = j.tools.threebot_packages.get(
-            "wiki", path=self._dirpath, threebot_server_name="test_wikis"
-        )
+        package = j.tools.threebot_packages.get("wiki", path=self._dirpath, threebot_server_name="test_wikis")
         package.prepare()
         package.save()
         server.start(web=True, ssl=False)
