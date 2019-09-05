@@ -24,7 +24,7 @@ class Package(j.baseclasses.threebot_package):
         j.servers.myjobs.workers_tmux_start()
 
         server = j.servers.openresty.get("test")
-        # server.install(reset=False)
+        server.install(reset=False)
         server.configure()
         website = server.websites.get("myjobs")
         website.ssl = False
@@ -33,10 +33,10 @@ class Package(j.baseclasses.threebot_package):
 
         website_location = locations.locations_static.new()
         website_location.name = "myjobs"
-        website_location.path_url = "/"
+        website_location.path_url = ""
         website_location.use_jumpscale_weblibs = True
         # import pdb; pdb.set_trace()
-        fullpath = join(dirname(abspath(__file__)), "html/JobVisualSvelte/public")
+        fullpath = join(dirname(abspath(__file__)), "html/JobsVisualSvelte/public")
         print(fullpath)
         print(fullpath)
         website_location.path_location = fullpath
@@ -44,7 +44,7 @@ class Package(j.baseclasses.threebot_package):
         locations.configure()
         website.configure()
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
-
+        server.start()
 
     def stop(self):
         """
