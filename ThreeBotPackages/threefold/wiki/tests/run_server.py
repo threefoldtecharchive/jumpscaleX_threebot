@@ -18,7 +18,7 @@ def run_server():
     )
     package.prepare()
     package.save()
-    server.start(web=True, ssl=True)
+    server.start(web=True, ssl=False)
 
 
 run_server()
