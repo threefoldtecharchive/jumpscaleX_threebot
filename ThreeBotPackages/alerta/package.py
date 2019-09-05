@@ -1,6 +1,7 @@
 from Jumpscale import j
 from os.path import dirname, abspath, join
 
+
 class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
         if "branch" in kwargs.keys():
@@ -14,7 +15,6 @@ class Package(j.baseclasses.threebot_package):
         :return:
         """
         pass
-
 
     def start(self):
         """
@@ -59,5 +59,3 @@ class Package(j.baseclasses.threebot_package):
         """
         # TODO: clean up bcdb ?
         pass
-
-

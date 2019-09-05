@@ -21,12 +21,14 @@ redis_password = ""
 def enable_cors(fn):
     def _enable_cors(*args, **kwargs):
         # set CORS headers
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, OPTIONS"
+        response.headers[
+            "Access-Control-Allow-Headers"
+        ] = "Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token"
+        response.headers["Access-Control-Allow-Credentials"] = "true"
 
-        if bottle.request.method != 'OPTIONS':
+        if bottle.request.method != "OPTIONS":
             # actual request; reply with the actual response
             return fn(*args, **kwargs)
 
@@ -36,13 +38,13 @@ def enable_cors(fn):
 app = bottle.app()
 
 
-@app.route('/api/alerts/get-alerts/<type>', method=['OPTIONS', 'GET', 'POST'])
+@app.route("/api/alerts/get-alerts/<type>", method=["OPTIONS", "GET", "POST"])
 @enable_cors
 def get_alerts(type):
     data = get_data()
     dataList = data["alerts"]
-    if(type.upper() != "ALL"):
-        filterData = [item for item in dataList if item['environment'].upper() == type]
+    if type.upper() != "ALL":
+        filterData = [item for item in dataList if item["environment"].upper() == type]
     else:
         filterData = dataList
     time.sleep(4)
@@ -50,7 +52,7 @@ def get_alerts(type):
 
 
 def get_data():
-    with open('/home/rafy/svelte/central-alert-system/back-end/data.json') as json_file:
+    with open("/home/rafy/svelte/central-alert-system/back-end/data.json") as json_file:
         data = json.load(json_file)
         # print(data)
         return data
@@ -127,4 +129,4 @@ def get_data():
 #     except Exception as e:
 #         print(e)
 
-run(host='localhost', port=8080, debug=True)
+run(host="localhost", port=8080, debug=True)
