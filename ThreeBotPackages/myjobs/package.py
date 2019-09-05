@@ -1,30 +1,50 @@
 from Jumpscale import j
-
+from os.path import dirname, abspath, join
 
 class Package(j.baseclasses.threebot_package):
+    def _init(self, **kwargs):
+        if "branch" in kwargs.keys():
+            self.branch = kwargs["branch"]
+        else:
+            self.branch = "*"
+
     def prepare(self):
         """
         is called at install time
         :return:
         """
+        pass
 
-        html_root = j.sal.fs.joinPaths(self.package_root, "html")
-
-        # should add myjobs.dev to /etc/hosts to test
-        website = self.openresty.websites.new(
-            name="myjobs", port=3800, location="myjobs", domain="myjobs.dev", path=html_root
-        )
-        website.configure()
-
-        # FIXME: need to update this hardcoded path
-        j.sal.fs.symlink(html_root, f"/sandbox/var/web/threebot/html/myjobs")
 
     def start(self):
         """
         called when the 3bot starts
         :return:
         """
+        j.servers.myjobs.workers_tmux_start()
+
+        server = j.servers.openresty.get("test")
+        # server.install(reset=False)
+        server.configure()
+        website = server.websites.get("myjobs")
+        website.ssl = False
+        website.port = 8080
+        locations = website.locations.get("myjobs")
+
+        website_location = locations.locations_static.new()
+        website_location.name = "myjobs"
+        website_location.path_url = "/"
+        website_location.use_jumpscale_weblibs = True
+        # import pdb; pdb.set_trace()
+        fullpath = join(dirname(abspath(__file__)), "html/JobVisualSvelte/public")
+        print(fullpath)
+        print(fullpath)
+        website_location.path_location = fullpath
+        # import pdb; pdb.set_trace()
+        locations.configure()
+        website.configure()
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
+
 
     def stop(self):
         """
@@ -38,4 +58,7 @@ class Package(j.baseclasses.threebot_package):
         called when the package is no longer needed and will be removed from the threebot
         :return:
         """
+        # TODO: clean up bcdb ?
         pass
+
+

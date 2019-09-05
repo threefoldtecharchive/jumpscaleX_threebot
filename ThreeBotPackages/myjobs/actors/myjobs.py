@@ -94,9 +94,9 @@ JOBS = """
 
 class myjobs(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        self.worker_model = j.servers.myjobs.model_worker
         self.job_model = j.servers.myjobs.model_job
         self.action_model = j.servers.myjobs.model_action
+        self.worker_model = j.data.bcdb.myjobs.model_get(url="jumpscale.myjobs.worker")                                       
 
     # def list_workers(self, schema_out):
     #     """
