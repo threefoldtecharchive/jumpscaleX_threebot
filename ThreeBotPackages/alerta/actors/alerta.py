@@ -46,7 +46,7 @@ class alerta(j.baseclasses.threebot_actor):
 
         self.alert_model = j.data.bcdb.system.model_get(schema=alert_schema)
         # self.alert_model.save()
-        for i in range(10):
+        for i in range(100):
             alert = self.alert_model.new()
             alert.severity = choice(["critical", "major", "minor", "warning"])
             alert.status = choice(["closed", "new"])
