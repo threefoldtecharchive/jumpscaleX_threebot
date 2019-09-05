@@ -20,15 +20,11 @@ class Package(j.baseclasses.threebot_package):
         # TODO: ADD REVERSE PROXY
 
         # Couldn't import file app.py directly!
-        import importlib
+        from filemanager.app import App
 
         root = os.path.dirname(os.path.abspath(__file__))
-        spec = importlib.util.spec_from_file_location("app", os.path.join(root, "app.py"))
-        app = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(app)
-
         rack = j.servers.rack.get()
-        app = app.App(root=root)()
+        app = App(root=root)()
         rack.bottle_server_add(name="fileman", port=7000, app=app)
 
     def stop(self):
