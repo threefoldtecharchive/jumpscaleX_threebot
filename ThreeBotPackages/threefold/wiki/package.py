@@ -63,8 +63,7 @@ class Package(j.baseclasses.threebot_package):
         j.servers.myjobs.workers_tmux_start()
         self.load()
 
-        server = j.servers.openresty.get("wikis")
-        server.install(reset=True)
+        server = self.openresty
         server.configure()
         website = server.websites.get("wiki")
         website.ssl = False
@@ -83,11 +82,6 @@ class Package(j.baseclasses.threebot_package):
 
         locations.configure()
         website.configure()
-        server.start()
-
-        # TODO: start rack server (port 4442)
-        #       and gedis (port 4444)
-        #       in tmux? also openresty (because it's blocking)
 
     def stop(self):
         """
