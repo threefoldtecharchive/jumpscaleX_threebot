@@ -37,7 +37,7 @@ class Package(j.baseclasses.threebot_package):
         proxy_location.path_url = "/"
         proxy_location.ipaddr_dest = "0.0.0.0"
         proxy_location.port_dest = 6999
-        proxy_location.scheme = 'http'
+        proxy_location.scheme = "http"
 
         website_location = locations.locations_static.new()
         website_location.name = "static"
@@ -47,8 +47,6 @@ class Package(j.baseclasses.threebot_package):
 
         locations.configure()
         website.configure()
-
-
 
     def stop(self):
         """
