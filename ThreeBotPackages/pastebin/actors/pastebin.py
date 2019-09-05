@@ -1,7 +1,6 @@
 from Jumpscale import j
 
 
-
 class pastebin(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
 

@@ -10,9 +10,7 @@ def run_server():
     server = j.servers.threebot.get("test")
     server.save()
 
-    package = j.tools.threebot_packages.get(
-        "pastebin", path=j.sal.fs.getDirName(__file__), threebot_server_name="test"
-    )
+    package = j.tools.threebot_packages.get("pastebin", path=j.sal.fs.getDirName(__file__), threebot_server_name="test")
     package.prepare()
     package.save()
     server.start()
