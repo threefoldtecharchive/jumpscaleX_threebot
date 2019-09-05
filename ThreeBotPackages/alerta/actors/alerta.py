@@ -62,12 +62,10 @@ class alerta(j.baseclasses.threebot_actor):
             alert.save()
 
     def list_alerts(self):
-        alerts = j.data.serializers.json.dumps(
-            {"alerts": [alert._ddict for alert in self.alert_model.find()]}
-        )
+        alerts = j.data.serializers.json.dumps({"alerts": [alert._ddict for alert in self.alert_model.find()]})
         return alerts
 
-    def list_alerts_by_env(self, env_name='all', schema_out=None):
+    def list_alerts_by_env(self, env_name="all", schema_out=None):
         """
         ```in
         env_name = (S)
@@ -75,9 +73,9 @@ class alerta(j.baseclasses.threebot_actor):
 
         """
         alerts = j.data.serializers.json.dumps(
-            {"alerts": [alert._ddict for alert in self.alert_model.find() if alert.environment==env_name.lower()]}
+            {"alerts": [alert._ddict for alert in self.alert_model.find() if alert.environment == env_name.lower()]}
         )
-        
+
         print("ALERTS: ", alerts)
         return alerts
 
@@ -93,7 +91,7 @@ class alerta(j.baseclasses.threebot_actor):
         value="n/a",
         messageType="error",
         text="error text",
-        schema_out=None
+        schema_out=None,
     ):
         """
         ```in 
