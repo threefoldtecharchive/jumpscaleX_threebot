@@ -14,16 +14,10 @@ class Package(j.baseclasses.threebot_package):
         is called at install time
         :return:
         """
-        pass
-
-    def start(self):
-        """
-        called when the 3bot starts
-        :return:
-        """
         j.servers.myjobs.workers_tmux_start()
+        self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
 
-        server = j.servers.openresty.get("test")
+        server = j.servers.openresty.get("myjobs")
         server.install(reset=False)
         server.configure()
         website = server.websites.get("myjobs")
@@ -33,17 +27,19 @@ class Package(j.baseclasses.threebot_package):
 
         website_location = locations.locations_static.new()
         website_location.name = "myjobs"
-        website_location.path_url = ""
+        website_location.path_url = "/"
         website_location.use_jumpscale_weblibs = True
-        # import pdb; pdb.set_trace()
-        fullpath = join(dirname(abspath(__file__)), "html/")
-        print(fullpath)
-        print(fullpath)
+        fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
         website_location.path_location = fullpath
-        # import pdb; pdb.set_trace()
         locations.configure()
         website.configure()
-        self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
+
+    def start(self):
+        """
+        called when the 3bot starts
+        :return:
+        """
+        server = j.servers.openresty.get("myjobs")
         server.start()
 
     def stop(self):
