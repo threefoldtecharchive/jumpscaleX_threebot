@@ -1,5 +1,5 @@
 load_metadata = (name) ->
-    path = "/sandbox/var/docsites/"..name.."/.data"
+    path = "/docsites/"..name.."/.data"
     file = io.open(path)
     if file
         return file\read("*all")
