@@ -36,7 +36,7 @@ class Package(j.baseclasses.threebot_package):
         website_location.path_url = ""
         website_location.use_jumpscale_weblibs = True
         # import pdb; pdb.set_trace()
-        fullpath = join(dirname(abspath(__file__)), "html/JobsVisualSvelte/public")
+        fullpath = join(dirname(abspath(__file__)), "html/")
         print(fullpath)
         print(fullpath)
         website_location.path_location = fullpath

@@ -1,5 +1,38 @@
 from Jumpscale import j
 
+'''
+
+
+schema_job = """
+@url = jumpscale.myjobs.job
+category*= ""
+time_start = 0 (T)
+time_stop = 0 (T)
+state* = "NEW,ERROR,OK,RUNNING,HALTED" (E)
+timeout = 0
+action_id* = 0
+args = (json)
+kwargs = (dict)
+result = (S)
+error = (dict)
+return_queues = (LS)
+#will not execute this one before others done
+dependencies = (LI)
+
+
+"""
+
+schema_action = """
+@url = jumpscale.myjobs.action
+actorname = ""
+methodname = ""
+key* = ""  #hash
+code = ""
+
+"""
+'''
+
+
 
 WORKERS = """
 {
@@ -138,10 +171,29 @@ class myjobs(j.baseclasses.threebot_actor):
     #     return out
 
     def list_workers(self):
+        print("called...  will return ", WORKERS)
         return WORKERS
 
     def list_action(self):
         return []
 
     def list_jobs(self):
-        return JOBS
+        def transform_job(job_obj):
+            states_dict = dict(zip(range(5), "NEW,ERROR,OK,RUNNING,HALTED".split(",")))
+            job_dict = job_obj._ddict
+            job_dict["state"] = states_dict[job_dict["state"]]
+            job_dict["args"] = str(job_dict["args"])
+            job_dict["kwargs"] = str(job_dict["kwargs"])
+            job_dict["result"] = str(job_dict["result"])
+            job_dict["error"] = str(job_dict["error"])
+            try:
+                job_dict["action_id"] = self.action_model.get(job_dict["action_id"]).methodname
+            except:
+                pass
+            return job_dict
+
+        print("called...  will return ", JOBS)
+        jobs = j.data.serializers.json.dumps({"jobs": [transform_job(job) for job in self.job_model.find()]})
+        print("returning jobs  ", jobs)
+        return jobs
+        # return JOBS
