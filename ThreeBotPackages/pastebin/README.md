@@ -1,6 +1,6 @@
 # Pastebin
 
-central monitoring system built using svelte and gedis actors
+code sharing system built using svelte and gedis actors
 
 ![pastebin1](./pastebin1.jpg)
 ![pastebin2](./pastebin2.jpg)
