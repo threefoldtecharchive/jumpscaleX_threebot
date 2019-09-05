@@ -1,38 +1,39 @@
 from Jumpscale import j
 
 
-class Wiki:
-    def __init__(self, name, url):
-        self.name = name
-        self.url = url
-        # TODO: use the myjobs, wiki per wiki
-
-    def load(self, name, url):
-        a = j.tools.markdowndocs.load(url=url, name=name)
-        a.write()
-
-
-class Wikis:
-    def add(self, name, url):
-        self.__dict__[name] = Wiki(name=name, url=url)
+def load_wiki(name, url):
+    wiki = j.tools.markdowndocs.load(path=url, name=name)
+    wiki.write()
 
 
 class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
-        self.branch = "development"
+        if "branch" in kwargs.keys():
+            self.branch = kwargs["branch"]
+        else:
+            self.branch = "master"
 
-    def load(self, url):
+    def load(self):
 
-        self.wikis = Wikis()
-        self.wikis.add("tf_tokens", "https://github.com/threefoldfoundation/info_tokens/tree/%s/docs" % self.branch)
-        self.wikis.add(
-            "tf_foundation", "https://github.com/threefoldfoundation/info_foundation/tree/%s/docs" % self.branch
+        j.servers.myjobs.schedule(
+            load_wiki, "tokens", "https://github.com/threefoldfoundation/info_tokens/tree/%s/docs" % self.branch
         )
-        self.wikis.add("tf_grid", "https://github.com/threefoldfoundation/info_grid/tree/%s/docs" % self.branch)
-        self.wikis.add("bettertoken", "https://github.com/BetterToken/info_bettertoken/tree/%s/docs" % self.branch)
-        self.wikis.add("harvested", "https://github.com/harvested-io/info_harvested.io/tree/%s/docs" % self.branch)
-        self.wikis.add(
-            "freeflowevents", "https://github.com/freeflownation/info_freeflowevents/tree/%s/docs" % self.branch
+        j.servers.myjobs.schedule(
+            load_wiki, "foundation", "https://github.com/threefoldfoundation/info_foundation/tree/%s/docs" % self.branch
+        )
+        j.servers.myjobs.schedule(
+            load_wiki, "grid", "https://github.com/threefoldfoundation/info_grid/tree/%s/docs" % self.branch
+        )
+        j.servers.myjobs.schedule(
+            load_wiki, "bettertoken", "https://github.com/BetterToken/info_bettertoken/tree/%s/docs" % self.branch
+        )
+        j.servers.myjobs.schedule(
+            load_wiki, "harvested", "https://github.com/harvested-io/info_harvested.io/tree/%s/docs" % self.branch
+        )
+        j.servers.myjobs.schedule(
+            load_wiki,
+            "freeflowevents",
+            "https://github.com/freeflownation/info_freeflowevents/tree/%s/docs" % self.branch,
         )
 
     def prepare(self):
@@ -40,9 +41,7 @@ class Package(j.baseclasses.threebot_package):
         is called at install time
         :return:
         """
-
-        bcdb = self.package.threebot_server.bcdb_get("wiki")
-        self.load()
+        pass
 
         #
         # wikis_load_cmd = """
@@ -61,12 +60,34 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot starts
         :return:
         """
+        j.servers.myjobs.workers_tmux_start()
+        self.load()
 
-        bcdb = j.data.bcdb.get("threebot_phonebook")
+        server = j.servers.openresty.get("wikis")
+        server.install(reset=True)
+        server.configure()
+        website = server.websites.get("wiki")
+        website.ssl = False
+        locations = website.locations.get("main_wiki")
 
-        bcdb.models_add(path=self.package_root + "/models")
+        website_location = locations.locations_static.new()
+        website_location.name = "static"
+        website_location.path_url = "/static"
+        website_location.path_location = self._dirpath
+        website_location.use_jumpscale_weblibs = True
 
-        self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
+        lapis_location = locations.locations_lapis.new()
+        lapis_location.name = "wikis"
+        lapis_location.path_url = "/"
+        lapis_location.path_location = self._dirpath
+
+        locations.configure()
+        website.configure()
+        server.start()
+
+        # TODO: start rack server (port 4442)
+        #       and gedis (port 4444)
+        #       in tmux? also openresty (because it's blocking)
 
     def stop(self):
         """
