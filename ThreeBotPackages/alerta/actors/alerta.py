@@ -1,6 +1,28 @@
 from Jumpscale import j
 
 
+"""
+
+JSX> anew.actors.alerta.list_alerts() 
+... a very long list
+JSX> anew.actors.alerta.new_alert(        severity="major", 
+   2         status="new", 
+   3         time=None, 
+   4         environment="ALL", 
+   5         service="JSX", 
+   6         resource="xmonader", 
+   7         event="event 1", 
+   8         value="n/a", 
+   9         messageType="error", 
+  10         text="rafir text")                                                                                        
+## actors.default.alerta.new_alert.16c54214bfcd2a5b61f789be085a1d14
+res                 : True
+
+
+
+"""
+
+
 class alerta(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
 
@@ -24,12 +46,12 @@ class alerta(j.baseclasses.threebot_actor):
 
         self.alert_model = j.data.bcdb.system.model_get(schema=alert_schema)
         # self.alert_model.save()
-        for i in range(100):
+        for i in range(10):
             alert = self.alert_model.new()
             alert.severity = choice(["critical", "major", "minor", "warning"])
             alert.status = choice(["closed", "new"])
             alert.time = j.data.time.epoch
-            alert.environment = choice(["production", "staging", "testing"])
+            alert.environment = choice(["production", "staging", "testing", "infrastructure", "all"])
             alert.service = choice(["jsx", "0-os", "portal", "threebot"])
             alert.resource = choice(["xmonader", "rafy", "andrew"])
             alert.event = choice(["event 1", "event 2"])
@@ -45,19 +67,55 @@ class alerta(j.baseclasses.threebot_actor):
         )
         return alerts
 
+    def list_alerts_by_env(self, env_name='all', schema_out=None):
+        """
+        ```in
+        env_name = (S)
+        ```
+
+        """
+        alerts = j.data.serializers.json.dumps(
+            {"alerts": [alert._ddict for alert in self.alert_model.find() if alert.environment==env_name.lower()]}
+        )
+        
+        print("ALERTS: ", alerts)
+        return alerts
+
     def new_alert(
         self,
         severity="major",
         status="new",
         time=None,
-        environment="ALL",
+        environment="all",
         service="JSX",
         resource="xmonader",
         event="event 1",
         value="n/a",
         messageType="error",
         text="error text",
+        schema_out=None
     ):
+        """
+        ```in 
+        severity="" (S)
+        status="" (S)
+        time="" (S)  
+        environment = "" (S)
+        service = "" (S)
+        resource = "" (S)
+        event = "" (S)
+        value = "" (S)
+        messageType = "" (S)
+        text = "" (S)
+        ```
+
+        ```out
+        res = (B)
+        ```        
+
+        """
+
+        print(locals())
         alert = self.alert_model.new()
         alert.severity = severity
         alert.status = status
@@ -72,4 +130,6 @@ class alerta(j.baseclasses.threebot_actor):
 
         alert.save()
 
-        return True
+        res = schema_out.new()
+        res.res = True
+        return res

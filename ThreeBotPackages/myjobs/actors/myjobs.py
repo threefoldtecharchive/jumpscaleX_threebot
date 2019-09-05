@@ -8,8 +8,22 @@ class myjobs(j.baseclasses.threebot_actor):
         self.worker_model = j.data.bcdb.myjobs.model_get(url="jumpscale.myjobs.worker")
 
     def list_workers(self):
-        return WORKERS
 
+        def transform_worker(worker_obj):
+            states_dict = dict(zip(range(5), "NEW,ERROR,BUSY,WAITING,HALTED".split(",")))
+            worker_types_dict = dict(zip(range(3), "tmux,subprocess,inprocess".split(",")))
+
+            worker_dict = worker_obj._ddict
+            worker_dict["state"] = states_dict[worker_dict["state"]]
+            worker_dict["type"] = worker_types_dict[worker_dict["type"]]
+
+            return worker_dict
+        workers = j.data.serializers.json.dumps(
+            {"workers": [transform_worker(worker) for worker in self.worker_model.find()]}
+        )
+        print("returning workers  ", workers)
+        return workers
+        
     def list_action(self):
         return []
 
@@ -30,7 +44,6 @@ class myjobs(j.baseclasses.threebot_actor):
                 pass
             return job_dict
 
-        print("called...  will return ", JOBS)
         jobs = j.data.serializers.json.dumps(
             {"jobs": [transform_job(job) for job in self.job_model.find()]}
         )

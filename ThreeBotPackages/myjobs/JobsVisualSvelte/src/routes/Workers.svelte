@@ -13,7 +13,8 @@
   const state = {
     RESULT: "OK",
     ERROR: "ERROR",
-    NEW: "NEW"
+    NEW: "NEW",
+    HALTED: "HALTED"
   };
   var successCount = 0;
   var failureCount = 0;
@@ -55,14 +56,12 @@
 </style>
 
 <!--[Header]-->
-<h1>Workers</h1>
-<!--[Statstics-Data]-->
+<h1>Workers ({workers.length})</h1>
+<!--
 <div class="row mt-3">
-  <!--[Tasks-Data]-->
+
   <div class="col-xs-12">
-    <!-- content here -->
     <table class="table table-striped">
-      <!--[Tasks-Data-Headers]-->
       <thead>
         <tr>
           <th class="text-center" scope="col">Total Workers</th>
@@ -80,6 +79,7 @@
     </table>
   </div>
 </div>
+-->
 {#if workers && workers.length > 0}
   <!--[Containder]-->
   <div>
@@ -90,30 +90,27 @@
           <!--[Workers-Data-Headers]-->
           <thead>
             <tr>
+              <!-- <th scope="col">#</th> -->
               <th scope="col">#</th>
-              <th scope="col">Id</th>
+              <th scope="col">State</th>
               <th scope="col">Halt</th>
               <th scope="col">Pid</th>
-              <th scope="col">State</th>
-              <th scope="col">Error</th>
               <th scope="col">Current Job</th>
               <th scope="col">Last Update</th>
               <th scope="col">Time Start</th>
               <th scope="col">Timeout</th>
+              <th scope="col">Type</th>
+              <th scope="col">Error</th>
+
             </tr>
           </thead>
           <!--[Workers-Data-Body]-->
           <tbody>
             {#each workers as worker, i}
               <tr>
-                <th scope="row">{i + 1}</th>
-                <td>
-                  <a href="/single-worker-tasks/{worker.id}" use:link>
-                    {worker.id}
-                  </a>
-                </td>
-                <td>{worker.halt}</td>
-                <td>{worker.pid}</td>
+                <!-- <th scope="row">{i + 1}</th> -->
+                <td>{worker.id}</td>
+
                 {#if worker.state == state.RESULT}
                   <td>
                     <span class="label label-pill label-success">
@@ -132,12 +129,22 @@
                       {worker.state}
                     </span>
                   </td>
+                {:else}
+                  <td>
+                    <span class="label label-pill label-warning">
+                      {worker.state}
+                    </span>
+                  </td>
                 {/if}
-                <td>{worker.error}</td>
+                <td>{worker.halt}</td>
+                <td>{worker.pid}</td>
                 <td>{worker.current_job}</td>
                 <td>{worker.last_update}</td>
                 <td>{worker.time_start}</td>
                 <td>{worker.timeout}</td>
+                <td>{worker.type}</td>
+                <td>{worker.error}</td>
+
               </tr>
             {/each}
           </tbody>

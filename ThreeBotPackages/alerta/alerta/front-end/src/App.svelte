@@ -50,7 +50,7 @@
     console.log("chosed environemnt", environment);
     alerts = [];
 
-    getAlerts()
+    getAlerts(environment)
       .then(response => {
         let parsedJson = JSON.parse(response);
         // handle success
