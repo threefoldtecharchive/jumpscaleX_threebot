@@ -1,4 +1,4 @@
-import time
+import time, binascii
 from Jumpscale import j
 
 
@@ -21,14 +21,16 @@ class workload_manager(j.baseclasses.threebot_actor):
         :param signature: the signature to be verified
         :param key: public key to verify the signature
         """
-        return self.nacl.verify(payload, signature, verify_key=key)
+        key = binascii.unhexlify(key)
+        signature = binascii.unhexlify(signature.encode())
+        return self.nacl.verify(payload.encode(), signature, verify_key=key)
 
     def _validate_signing_signature(self, payload, signature):
         """
         :param payload: the payload
         :param signature: the signature object (tfgrid.reservation.signing.signature)
         """
-        user = self.user_model.get(tid=signature.tid, die=False)
+        user = self.user_model.get(signature.tid)
         if not user:
             return False
         return self._validate_signature(payload, signature.signature, user.pubkey)
@@ -54,7 +56,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         Checks if the signature of the customer is valid or not
         """
-        user = self.user_model.get(tid=jsxobj.customer_tid, die=False)
+        user = self.user_model.get(jsxobj.customer_tid)
         if not user:
             return False
         return self._validate_signature(jsxobj.json, jsxobj.customer_signature, user.pubkey)
@@ -65,7 +67,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         farmers_tids = set()
         for workload_type in ["zdbs", "networks", "volumes", "containers"]:
-            for workload in getattr(jsxobj.data, workload_type):
+            for workload in getattr(jsxobj.data_reservation, workload_type):
                 farmers_tids.add(workload.farmer_tid)
 
         for signature in jsxobj.signatures_farmer:
@@ -109,15 +111,15 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         payload = jsxobj.json
         if jsxobj.next_action == "create":
-            if jsxobj.data.expiration_provisioning > time.time():
-                jsxobj.next_action = "invalid"
-            else:
+            if jsxobj.customer_signature:
                 if self._validate_customer_signature(jsxobj):
                     jsxobj.next_action = "sign"
+                else:
+                    jsxobj.next_action = "invalid"
 
         elif jsxobj.next_action == "sign":
             signatures = jsxobj.signatures_provision
-            request = jsxobj.data.signing_request_provision
+            request = jsxobj.data_reservation.signing_request_provision
             if self._request_check(payload, request, signatures):
                 jsxobj.next_action = "pay"
 
@@ -127,7 +129,7 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         elif jsxobj.next_action == "deploy":
             signatures = jsxobj.signatures_delete
-            request = jsxobj.data.signing_request_delete
+            request = jsxobj.data_reservation.signing_request_delete
             if self._request_check(payload, request, signatures):
                 jsxobj.next_action = "delete"
 
@@ -161,7 +163,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         return self._reservation_get(reservation_id)
 
-    def sign_provision(self, reservation_id, tid, signature, schema_out):
+    def sign_provision(self, reservation_id, tid, signature):
         """
         :param reservation_id: is the id of the reservation, unique in BCDB
         :param tid: the threebot id of who signs (in HEX format hexifly in python)
@@ -177,12 +179,11 @@ class workload_manager(j.baseclasses.threebot_actor):
         signature_obj = self.signature_model.new()
         signature_obj.tid = tid
         signature_obj.signature = signature
-        signature_obj.epoch = time.time()
         reservation.signatures_provision.append(signature_obj)
         reservation.save()
         return True
 
-    def sign_delete(self, reservation_id, tid, signature, schema_out):
+    def sign_delete(self, reservation_id, tid, signature):
         """
         :param reservation_id: is the id of the reservation, unique in BCDB
         :param tid: the threebot id of who signs (in HEX format hexifly in python)
@@ -198,7 +199,6 @@ class workload_manager(j.baseclasses.threebot_actor):
         signature_obj = self.signature_model.new()
         signature_obj.tid = tid
         signature_obj.signature = signature
-        signature_obj.epoch = time.time()
         reservation.signatures_delete.append(signature_obj)
         reservation.save()
         return True

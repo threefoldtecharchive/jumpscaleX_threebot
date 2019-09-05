@@ -3,7 +3,7 @@
 
 #json of the reservation.data object, will not change over time
 json = "" (S)
-data = (O) !tfgrid.reservation.data.1
+data_reservation = (O) !tfgrid.reservation.data.1
 
 #id of threebot which pays for it
 customer_tid = (I)
@@ -44,8 +44,8 @@ quorum_min = (I)
 @url = tfgrid.reservation.signing.signature.1
 #threebotid
 tid = (I)
-#signature in binary form of the json as stored in the root of this obj
-signature = (B)
+#signature in string form of the json as stored in the root of this obj
+signature = (S)
 #time of signature
 epoch = (D)
 
