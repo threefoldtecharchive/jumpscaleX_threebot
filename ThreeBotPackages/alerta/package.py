@@ -32,7 +32,7 @@ class Package(j.baseclasses.threebot_package):
 
         website_location = locations.locations_static.new()
         website_location.name = "alerta"
-        website_location.path_url = ""
+        website_location.path_url = "/"
         website_location.use_jumpscale_weblibs = True
         # import pdb; pdb.set_trace()
         fullpath = join(dirname(abspath(__file__)), "html/")
