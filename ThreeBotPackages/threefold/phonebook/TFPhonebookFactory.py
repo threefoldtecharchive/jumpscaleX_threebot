@@ -7,7 +7,7 @@ class TFPhonebookFactory(j.baseclasses.object, j.baseclasses.testtools):
 
     def test(self, name=""):
         """
-
+        kosmos -p 'j.threebot.package.phonebook.test()'
         """
 
         self.client = j.servers.threebot.local_start_default()
