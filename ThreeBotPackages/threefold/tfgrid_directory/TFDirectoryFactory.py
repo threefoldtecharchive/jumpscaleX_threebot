@@ -1,7 +1,7 @@
 from Jumpscale import j
 
 
-class TFDirectoryFactory(j.baseclasses.factory):
+class TFDirectoryFactory(j.baseclasses.factory_testtools):
 
     __jslocation__ = "j.threebot.package.directory"
 
