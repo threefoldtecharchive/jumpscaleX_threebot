@@ -1,7 +1,7 @@
 @url = threebot.phonebook.user.1
 @acl = false
-name* = ""                              #e.g. kristof.ibiza or kristof.3bot
-email* = ""                             #optional, not required
+name** = ""                              #e.g. kristof.ibiza or kristof.3bot
+email** = ""                             #optional, not required
 pubkey = ""                             #public key of the 3bot
 ipaddr = ""                             #how to reach the digitalme (3bot)
 description = ""                        #optional

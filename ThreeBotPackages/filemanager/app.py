@@ -410,7 +410,7 @@ class App(object):
                 response.set_header("Accept-Ranges", "bytes")
             else:
                 response.set_header(
-                    "Content-Disposition", "attachment; filename*=utf-8" "%s" % j.sal.fs.getBaseName(file)
+                    "Content-Disposition", "attachment; filename**=utf-8" "%s" % j.sal.fs.getBaseName(file)
                 )
             return self.db.file_read(path)
 
@@ -477,7 +477,7 @@ class App(object):
                 file_name = "filemanager.tar.xz"
                 tar(files, name, mode="xz")
 
-            response.set_header("Content-Disposition", "attachment; filename*=utf-8''%s" % file_name)
+            response.set_header("Content-Disposition", "attachment; filename**=utf-8''%s" % file_name)
             response.set_header("X-Renew-Token", "true")
             response.set_header("Content-Type", content_type)
 
