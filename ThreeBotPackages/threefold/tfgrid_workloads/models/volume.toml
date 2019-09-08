@@ -4,7 +4,7 @@
 #unique id inside the reservation is an autoincrement
 workload_id = (I)
 nodeid = (I)
-reservation_id* = (I)
+reservation_id** =  (I)
 size = (I)
 type = "HDD,SSD" (E)
 #where to send the statistics too

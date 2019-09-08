@@ -4,7 +4,7 @@
 #unique id inside the reservation is an autoincrement
 workload_id = (I)
 nodeid = (I)
-reservation_id* = (I)
+reservation_id** =  (I)
 size = (I)
 mode = "seq,user" (E)
 password = (S)
