@@ -89,12 +89,14 @@ class farms(j.baseclasses.threebot_actor):
         farms = response.json()
 
         for farm in farms:
-            if self.farm_model.find(name=farm["name"]):
-                continue
+            if not self.farm_model.find(name=farm["name"]):
+                farm_object = self.farm_model.new(farm).save()
 
-            farm_object = self.farm_model.new(farm).save()
             nodes = j.clients.threefold_directory.client.ListCapacity(query_params={"farmer": farm["iyo_organization"]})[1].json()
             for node in nodes:
+                if self.node_model.find(node_id=node["node_id"]):
+                    continue
+
                 if "used_resources" in node:
                     node["used_resource"] = node["used_resources"]
                 if "reserved_resources" in node:
