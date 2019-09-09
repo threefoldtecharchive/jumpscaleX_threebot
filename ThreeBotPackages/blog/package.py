@@ -26,6 +26,7 @@ title = "" (S)
 slug = "" (S)
 content = "" (S)
 tags = (LS)
+published_at = "" (S)
 """
 
 schema_blog = """
@@ -45,12 +46,11 @@ class Package(j.baseclasses.threebot_package):
         else:
             self.branch = "*"
 
-    def prepare(self, blog_name, repo_url=None):
+    def prepare(self, blog_name, repo_url):
         """
         is called at install time
         :return:
         """
-        repo_url = repo_url or "git@gitlab.com:xmonader/sample-blog-jsx.git"
         dest = j.clients.git.pullGitRepo(repo_url)
 
         # JSX> j.sal.fs.listDirsInDir(dest)
@@ -122,7 +122,7 @@ class Package(j.baseclasses.threebot_package):
 
         website_location = locations.locations_static.new()
         website_location.name = "blog"
-        website_location.path_url = "/"
+        website_location.path_url = f"/{blog_name}"
         website_location.use_jumpscale_weblibs = True
         fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
         website_location.path_location = fullpath
