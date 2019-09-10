@@ -2,7 +2,7 @@ import {
     writable
 } from 'svelte/store';
 
-import moment from 'moment'
+// import moment from 'moment'
 
 // }
 class BlogStore {
@@ -21,7 +21,9 @@ class BlogStore {
             }
         }
         console.log(info);
-        return GEDIS_CLIENT.execute(info);
+
+        return GEDIS_CLIENT.execute(info)
+
     }
     getMeta(blog_name) {
         let info = {
@@ -36,8 +38,13 @@ class BlogStore {
                 "content_type": "json",
             }
         }
-        console.log(info);
-        return GEDIS_CLIENT.execute(info);
+        GEDIS_CLIENT.execute(info)
+            .then((resp) => {
+                let parsed = JSON.parse(resp);
+                return parsed
+            })
+            .catch((err) => console.log(err))
+
     }
 
     getPostsByTag(blog_name, tag) {
@@ -55,11 +62,17 @@ class BlogStore {
             }
         }
         console.log(info);
-        return GEDIS_CLIENT.execute(info);
+        GEDIS_CLIENT.execute(info)
+            .then((resp) => {
+                let parsed = JSON.parse(resp);
+                return parsed
+            })
+            .catch((err) => console.log(err))
+
     }
 
     getTags(blog_name) {
-
+        console.log(`blog is ${blog_name}`)
         let info = {
             "namespace": "default",
             "actor": "blog",
@@ -73,7 +86,13 @@ class BlogStore {
             }
         }
         console.log(info);
-        return GEDIS_CLIENT.execute(info);
+        GEDIS_CLIENT.execute(info)
+            .then((resp) => {
+                let parsed = JSON.parse(resp);
+                return parsed
+            })
+            .catch((err) => console.log(err))
+
 
     }
 

@@ -2,8 +2,18 @@
   import { onMount } from "svelte";
   import { blogStore } from "./blogstore.js";
   import Tags from "./Tags.svelte";
-  export let params;
-  $: blog_name = window.location.path.split("/")[1];
+  let posts = [];
+  let tags = [];
+  onMount(() => {
+    $blogStore.getPosts(blog_name).then(data => {
+      posts = JSON.parse(data);
+    });
+    console.log("POSTS: ", posts);
+    // $blogStore.getTags(blog_name).then(data => {
+    //   tags = JSON.parse(data);
+    // });
+    console.log("TAGS: ", tags);
+  });
 </script>
 
 <style>
@@ -21,8 +31,7 @@
 <div class="row">
 
   <div class="col-md-9 pull-xs-left">
-
-    {#each $blogStore.getPosts() as post}
+    {#each posts as post}
       <div class="row">
         <a rel="prefetch" href="blog/{post.slug}">
           <h1>{post.title}</h1>
@@ -40,7 +49,7 @@
   <div class="col-md-3 pull-xs-right">
     <div class="sidebar">
       <h2>Popular Tags</h2>
-      <Tags tags={$blogStore.getTags()} />
+      <Tags {tags} />
     </div>
   </div>
 </div>

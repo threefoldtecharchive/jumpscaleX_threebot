@@ -4,7 +4,6 @@
 
   export let slug;
   let post;
-  $: blog_name = window.location.path.split("/")[1];
 
   onMount(() => (post = blogStore.getPost(blog_name, slug)));
 
