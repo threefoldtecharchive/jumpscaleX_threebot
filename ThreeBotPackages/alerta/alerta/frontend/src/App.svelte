@@ -54,7 +54,8 @@
 
     getAlerts(environment)
       .then(response => {
-        let parsedJson = JSON.parse(response);
+       // let parsedJson = JSON.parse(response);
+        let parsedJson = response;
         // handle success
 
         console.log("response in success", parsedJson.alerts);
@@ -141,6 +142,7 @@
   function deleteAllAlerts() {
     deleteAll()
       .then(res => {
+        console.log("response in case delete all after handler",res);
         alerts = [];
         isAllAlertsDeleted = true;
         console.log("successful delted all alerts")
