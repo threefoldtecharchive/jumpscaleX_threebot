@@ -116,7 +116,11 @@
                   </div>
                   <!--[Details-Alert-BTN]-->
                   <div>
-                    <button type="button" class="btn btn-warning pointer" data-toggle="modal" data-target="#modal{i}">
+                    <button
+                      type="button"
+                      class="btn btn-warning pointer"
+                      data-toggle="modal"
+                      data-target="#modal{i}">
                       Details
                     </button>
                   </div>
@@ -144,7 +148,56 @@
                         <span aria-hidden="true">&times;</span>
                       </button>
                     </div>
-                    <div class="modal-body">{myAlert.text}</div>
+                    <div class="modal-body">
+                      <!--[Data-Listing]-->
+                      <ul class="list-group">
+                        <li class="list-group-item">
+                          <b>Severity :</b>
+                          {myAlert.severity}
+                        </li>
+                        <li class="list-group-item">
+                          <b>Status :</b>
+                          {myAlert.status}
+                        </li>
+                        <li class="list-group-item">
+                          <b>Time :</b>
+                          {myAlert.time}
+                        </li>
+                        <li class="list-group-item">
+                          <b>Dupl. :</b>
+                          {myAlert.dupl}
+                        </li>
+                        <li class="list-group-item">
+                          <b>Environment :</b>
+                          {myAlert.environment}
+                        </li>
+                        <li class="list-group-item">
+                          <b>Service :</b>
+                          {myAlert.service}
+                        </li>
+                        <li class="list-group-item">
+                          <b>Resource :</b>
+                          {myAlert.resource}
+                        </li>
+                        <li class="list-group-item">
+                          <b>Event :</b>
+                          {myAlert.event}
+                        </li>
+                        <li class="list-group-item">
+                          <b>Value :</b>
+                          {myAlert.value}
+                        </li>
+                        <li class="list-group-item">
+                          <b>message Type :</b>
+                          {myAlert.messageType}
+                        </li>
+                        <li class="list-group-item">
+                          <b>Text :</b>
+                          {myAlert.text}
+                        </li>
+                      </ul>
+
+                    </div>
                     <div class="modal-footer">
                       <button
                         type="button"
