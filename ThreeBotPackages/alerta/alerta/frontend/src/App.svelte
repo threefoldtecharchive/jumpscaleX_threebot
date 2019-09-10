@@ -1,7 +1,7 @@
 <script>
   import Navigation from "./Navigation.svelte";
   import Alerts from "./components/Alerts.svelte";
-  import { getAlerts } from "./data";
+  import { getAlerts, deleteAll } from "./data";
 
   let alerts;
   let searchText = "";
@@ -9,6 +9,7 @@
   let currentFilteredAlerts;
   let isAlertsLoaded = false;
   let servicesLoading = true;
+  let isAllAlertsDeleted = false;
   const environments = {
     ALL: "ALL",
     PROD: "PRODUCTION",
@@ -31,7 +32,7 @@
     INFORMATION: "INFORMATION",
     WARNING: "WARNING"
   };
-  const status = { ALL: "ALL", OPEN: "OPEN", CLOSED: "CLOSED" };
+  const status = { ALL: "ALL", OPEN: "OPEN", CLOSED: "CLOSED",NEW:"NEW" };
   let currentFilters = {
     service: "ALL",
     messageType: messageTypes.ALL,
@@ -47,6 +48,7 @@
   //Get Data from the API
   function updateAlerts(environment) {
     isAlertsLoaded = false;
+    isAllAlertsDeleted = false; //The alerts all available now and not deleted (reintialize the state)
     console.log("chosed environemnt", environment);
     alerts = [];
 
@@ -54,6 +56,7 @@
       .then(response => {
         let parsedJson = JSON.parse(response);
         // handle success
+
         console.log("response in success", parsedJson.alerts);
         alerts = parsedJson.alerts;
         formatedAlerts = convertDataToUpperCase(parsedJson.alerts);
@@ -134,6 +137,18 @@
     console.log("services", services);
     servicesLoading = false;
   }
+
+  function deleteAllAlerts() {
+    deleteAll()
+      .then(res => {
+        alerts = [];
+        isAllAlertsDeleted = true;
+        console.log("successful delted all alerts")
+      })
+      .catch(err =>{
+        console.log("error while deleting all alerts",err);
+      });
+  }
 </script>
 
 <style>
@@ -145,13 +160,13 @@
 </div>
 
 <!--[Container]-->
-<div class="container">
+<div class="container-fluid">
   <!--[Title]-->
   <div class="m-3 text-center">
     <h1>Central Alert System</h1>
   </div>
   <!--[Filters]-->
-  <div class="row">
+  <div class="row  m-5">
     <div class="col-sm-12">
       <div class="d-flex justify-content-around">
         <!--[Services]-->
@@ -240,6 +255,12 @@
               on:click={() => updateFilters(currentFilters.service, currentFilters.messageType, status.ALL)}>
               All
             </a>
+             <a
+              class="dropdown-item"
+              href="#"
+              on:click={() => updateFilters(currentFilters.service, currentFilters.messageType, status.NEW)}>
+              New
+            </a>
             <a
               class="dropdown-item"
               href="#"
@@ -275,12 +296,22 @@
             Reset Filters
           </button>
         </div>
+        <!--[Delete-Alerts]-->
+        <div>
+          <button
+            type="button"
+            class="btn btn-light pointer"
+            on:click={() => deleteAllAlerts()}
+            disabled={servicesLoading}>
+            Delete Alerts
+          </button>
+        </div>
       </div>
     </div>
   </div>
   <!--[Tabs]-->
   <div class="row mt-4">
-    <div class="col-sm-12">
+    <div class="col-sm-12  ml-4">
       <div>
         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
           <li class="nav-item">
@@ -363,16 +394,20 @@
     </div>
   </div>
   <!--[Alerts]-->
-  {#if alerts && alerts != '' && isAlertsLoaded}
+  {#if alerts && alerts != '' && isAlertsLoaded && !isAllAlertsDeleted}
     <!-- content here -->
     <div class="row">
       <div class="col-sm-12">
         <Alerts {alerts} />
       </div>
     </div>
-  {:else if !isAlertsLoaded}
+  {:else if !isAlertsLoaded && !isAllAlertsDeleted}
     <div class="text-center">
       <img src={'/img/loader.gif'} class="img-fluid" alt="Responsive image" />
+    </div>
+  {:else if isAlertsLoaded && isAllAlertsDeleted}
+    <div class="mt-5 text-center">
+      <h2>All the alerts have been deleted.</h2>
     </div>
   {:else}
     <div class="mt-5 text-center">
