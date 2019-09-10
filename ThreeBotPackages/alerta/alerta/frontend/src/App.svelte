@@ -152,6 +152,9 @@
 </script>
 
 <style>
+.search-width{
+  width: 350px;
+}
 
 </style>
 
@@ -168,10 +171,20 @@
   <!--[Filters]-->
   <div class="row  m-5">
     <div class="col-sm-12">
-      <div class="d-flex justify-content-around">
+      <div class="d-flex justify-content-start">
+      <!--[Search]-->
+        <div class="mx-4 search-width">
+          <input
+            type="search"
+            class="form-control"
+            id="InputSearch"
+            placeholder="Search text"
+            bind:value={searchText} />
+
+        </div>
         <!--[Services]-->
         <!-- content here -->
-        <div class="dropdown">
+        <div class="dropdown mx-2">
           <button
             class="btn btn-light dropdown-toggle pointer"
             type="button"
@@ -197,7 +210,7 @@
           {/if}
         </div>
         <!--[Message-Type]-->
-        <div class="dropdown">
+        <div class="dropdown mx-2">
           <button
             class="btn btn-light dropdown-toggle pointer"
             type="button"
@@ -237,7 +250,7 @@
           </div>
         </div>
         <!--[Status]-->
-        <div class="dropdown">
+        <div class="dropdown mx-2">
           <button
             class="btn btn-light dropdown-toggle pointer"
             type="button"
@@ -276,18 +289,9 @@
 
           </div>
         </div>
-        <!--[Search]-->
-        <div>
-          <input
-            type="search"
-            class="form-control"
-            id="InputSearch"
-            placeholder="Search text"
-            bind:value={searchText} />
-
-        </div>
+        
         <!--[Reset-Filter]-->
-        <div>
+        <div class="mx-2">
           <button
             type="button"
             class="btn btn-light pointer"
@@ -297,7 +301,7 @@
           </button>
         </div>
         <!--[Delete-Alerts]-->
-        <div>
+        <div class="mx-2">
           <button
             type="button"
             class="btn btn-light pointer"
