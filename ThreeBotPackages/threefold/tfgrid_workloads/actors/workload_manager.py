@@ -1,6 +1,6 @@
 import time, binascii
 from Jumpscale import j
-
+import time
 
 class workload_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
@@ -96,6 +96,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         except j.exceptions.NotFound:
             raise j.exceptions.NotFound("reservation with id: (%s) not found" % reservation_id)
 
+    
     def _reservation_check(self, jsxobj):
         """
         will do
@@ -110,21 +111,27 @@ class workload_manager(j.baseclasses.threebot_actor):
         will return the updated jsxobj
         """
         payload = jsxobj.json
-        if jsxobj.next_action == "create":
-            if jsxobj.customer_signature:
-                if self._validate_customer_signature(jsxobj):
-                    jsxobj.next_action = "sign"
-                else:
-                    jsxobj.next_action = "invalid"
+        if jsxobj.data_reservation.expiration_reservation < time.time():
+            jsxobj.next_action = "delete"
+
+        elif jsxobj.next_action == "create":
+            if jsxobj.data_reservation.expiration_provisioning > time.time():
+                if jsxobj.customer_signature:
+                    if self._validate_customer_signature(jsxobj):
+                        jsxobj.next_action = "sign"
+                    else:
+                        jsxobj.next_action = "invalid"
+            else:
+                jsxobj.next_action = "invalid"
 
         elif jsxobj.next_action == "sign":
             signatures = jsxobj.signatures_provision
             request = jsxobj.data_reservation.signing_request_provision
             if self._request_check(payload, request, signatures):
                 jsxobj.next_action = "pay"
-
+                
         elif jsxobj.next_action == "pay":
-            if self._validate_farmer_signature(jsxobj):
+            if self._validate_farmers_signature(jsxobj):
                 jsxobj.next_action = "deploy"
 
         elif jsxobj.next_action == "deploy":
@@ -132,6 +139,7 @@ class workload_manager(j.baseclasses.threebot_actor):
             request = jsxobj.data_reservation.signing_request_delete
             if self._request_check(payload, request, signatures):
                 jsxobj.next_action = "delete"
+        
 
         jsxobj.save()
         return jsxobj
@@ -144,11 +152,11 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         ```out
         reservation = (O) !tfgrid.reservation.1
-        json = (S)
         ```
         """
         reservation.next_action = "create"
-        self.reservation_model.new(reservation).save()
+        reservation = self.reservation_model.new(reservation)
+        reservation.save()
         return reservation
 
     def reservation_get(self, reservation_id, schema_out):
@@ -200,5 +208,47 @@ class workload_manager(j.baseclasses.threebot_actor):
         signature_obj.tid = tid
         signature_obj.signature = signature
         reservation.signatures_delete.append(signature_obj)
+        reservation.save()
+        return True
+
+    def sign_farmer(self, reservation_id, tid, signature):
+        """
+        :param reservation_id: is the id of the reservation, unique in BCDB
+        :param tid: the threebot id of who signs (in HEX format hexifly in python)
+        :param signature: the signature with private key of signer on the json (do reservation_get_json to get json)
+
+        ```in
+        reservation_id = (I)
+        tid = (I)
+        signature = (S)
+        ```
+        """
+        reservation = self._reservation_get(reservation_id)
+        farmers_tids = set()
+        for workload_type in ["zdbs", "networks", "volumes", "containers"]:
+            for workload in getattr(reservation.data_reservation, workload_type):
+                farmers_tids.add(workload.farmer_tid)
+        if tid not in farmers_tids:
+            raise j.exceptions.NotFound("Can not find a farmer with tid: {}" .format(tid))
+        signature_obj = self.signature_model.new()
+        signature_obj.tid = tid
+        signature_obj.signature = signature
+        reservation.signatures_farmer.append(signature_obj)
+        reservation.save()
+        return True
+
+
+    def sign_customer(self, reservation_id, signature):
+        """
+        :param reservation_id: is the id of the reservation, unique in BCDB
+        :param signature: the signature with private key of signer on the json (do reservation_get_json to get json)
+
+        ```in
+        reservation_id = (I)
+        signature = (S)
+        ```
+        """
+        reservation = self._reservation_get(reservation_id)
+        reservation.customer_signature = signature
         reservation.save()
         return True
