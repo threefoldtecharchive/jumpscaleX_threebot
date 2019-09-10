@@ -21,8 +21,10 @@ class TFPhonebookFactory(j.baseclasses.object, j.baseclasses.testtools):
 
         self.client.reload()
 
-        print(name)
-        self._test_run(name=name)
+        j.shell()
+
+        # print(name)
+        # self._test_run(name=name)
 
         self._log_info("All TESTS DONE")
         return "OK"
