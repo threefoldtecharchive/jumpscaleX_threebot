@@ -2,6 +2,36 @@ from Jumpscale import j
 from os.path import dirname, abspath, join
 
 
+import re
+import unicodedata
+
+__version__ = "0.0.1"
+
+
+# TODO: improve and move to jsx
+def slugify(string):
+
+    """
+    Slugify a unicode string.
+    Example:
+        >>> slugify(u"Héllø Wörld")
+        u"hello-world"
+    """
+
+    return re.sub(
+        r"[-\s]+",
+        "-",
+        re.sub(r"[^\w\s-]", "", unicodedata.normalize("NFKD", string).encode("ascii", "ignore").decode())
+        .strip()
+        .lower(),
+    )
+
+
+# TODO: improve and move to jsx
+def remove_date(filename):
+    return re.sub("(\d+\-)+", "", filename)
+
+
 schema_blogmetadata = """
 
 @url = jumpscale.blog.metadata
@@ -94,13 +124,15 @@ class Package(j.baseclasses.threebot_package):
 
         posts = j.sal.fs.listFilesInDir(posts_dir_path)
         for post in posts:
+            print("post")
             basename = j.sal.fs.getBaseName(post)
             content = j.sal.fs.readFile(post)
             parsed = j.data.markdown.document_get(content)
             meta = parsed.meta
             post_obj = post_model.new()
-            post_obj.title = meta.get("title", ["no title"])[0]
-            post_obj.slug = basename
+            post_title = remove_date(basename)
+            post_obj.title = meta.get("title", [post_title])[0]
+            post_obj.slug = slugify(post_title)
             post_obj.content = content
             tags = meta.get("tags", [""])[0]
             tags = [t.strip() for t in tags.split(",")]
@@ -123,9 +155,17 @@ class Package(j.baseclasses.threebot_package):
         website_location = locations.locations_static.new()
         website_location.name = "blog"
         website_location.path_url = f"/{blog_name}"
-        website_location.use_jumpscale_weblibs = True
+        website_location.use_jumpscale_weblibs = False
         fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
         website_location.path_location = fullpath
+
+        website_location_assets = locations.locations_static.new()
+        website_location_assets.name = "assets"
+        website_location_assets.path_url = "/"
+        website_location_assets.use_jumpscale_weblibs = True
+        fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
+        website_location_assets.path_location = fullpath
+
         locations.configure()
         website.configure()
 
