@@ -26,6 +26,27 @@ class Package(j.baseclasses.threebot_package):
         app = App(path="/", port=7001).app
         rack.bottle_server_add(name="webdav", port=7001, app=app)
 
+        website = self.openresty.websites.get("webdav")
+        website.ssl = False
+        website.port = 7500
+
+        locations = website.locations.get("webdav")
+        proxy_location = locations.locations_proxy.new()
+        proxy_location.name = "webdav"
+        proxy_location.path_url = "/"
+        proxy_location.ipaddr_dest = "0.0.0.0"
+        proxy_location.port_dest = 7001
+        proxy_location.scheme = "http"
+
+        website_location = locations.locations_static.new()
+        website_location.name = "static"
+        website_location.path_url = "/static/"
+        website_location.path_location = f"{self._dirpath}/static"
+        # website_location.use_jumpscale_weblibs = True
+
+        locations.configure()
+        website.configure()
+
     def stop(self):
         """
         called when the 3bot stops
