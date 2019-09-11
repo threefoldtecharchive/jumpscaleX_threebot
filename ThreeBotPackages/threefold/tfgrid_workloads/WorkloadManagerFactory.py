@@ -5,15 +5,13 @@ import os
 class WorkloadManagerFactory(j.baseclasses.object, j.baseclasses.testtools):
 
     __jslocation__ = "j.threebot.package.workloadmanager"
-    
+
     def install(self):
         j.servers.zdb.default.start()
         server = j.servers.threebot.default
         server.save()
 
-        package = j.tools.threebot_packages.get(
-            "workloadmanager", path=self._dirpath, threebot_server_name=server.name
-        )
+        package = j.tools.threebot_packages.get("workloadmanager", path=self._dirpath, threebot_server_name=server.name)
         package.prepare()
         package.save()
         self._log_info("workloadmanager is loaded")
@@ -24,7 +22,6 @@ class WorkloadManagerFactory(j.baseclasses.object, j.baseclasses.testtools):
         self.install()
         server = j.servers.threebot.default
         server.start(web=True, ssl=False, background=True)
-
 
     def test(self, name=""):
         """

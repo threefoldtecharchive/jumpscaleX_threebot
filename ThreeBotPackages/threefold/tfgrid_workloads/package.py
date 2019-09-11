@@ -1,6 +1,7 @@
 from Jumpscale import j
 import os
 
+
 class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
         self.workloads_bcdb = self._package.threebot_server.bcdb_get("tf_workloads")
@@ -11,7 +12,7 @@ class Package(j.baseclasses.threebot_package):
         is called at install time
         :return:
         """
-        phonebook_models_path = os.path.join(os.path.dirname(self.package_root), 'phonebook/models')
+        phonebook_models_path = os.path.join(os.path.dirname(self.package_root), "phonebook/models")
         self.workloads_bcdb.models_add(path=self.package_root + "/models")
         self.phonebook_bcdb.models_add(path=phonebook_models_path)
 
