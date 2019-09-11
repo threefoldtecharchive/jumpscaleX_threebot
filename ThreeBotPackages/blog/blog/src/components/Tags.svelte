@@ -9,7 +9,7 @@
   <div className="tag-list">
     {#each tags as tag}
       <a
-        href="."
+        href="/tag/{tag}"
         class="tag-default tag-pill"
         on:click={() => dispatch('select', { tag })}>
         {tag}

@@ -3,7 +3,7 @@
   import { onMount } from "svelte";
 
   export let slug;
-  let post;
+  export let post;
 
   onMount(() => (post = blogStore.getPost(blog_name, slug)));
 

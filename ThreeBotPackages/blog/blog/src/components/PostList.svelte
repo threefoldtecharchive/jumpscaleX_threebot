@@ -4,15 +4,25 @@
   import Tags from "./Tags.svelte";
   let posts = [];
   let tags = [];
+  let blog_meta = {};
+  export let tag = "";
+
   onMount(() => {
-    $blogStore.getPosts(blog_name).then(data => {
+    blogStore.getPosts(blog_name).then(data => {
       posts = JSON.parse(data);
+      console.log("POSTS: ", posts);
+
+      blogStore.getTags(blog_name).then(data => {
+        console.log("received data for tags:", data);
+        tags = JSON.parse(data);
+        console.log("TAGS: ", tags);
+
+        blogStore.getMeta(blog_name).then(data => {
+          blog_meta = JSON.parse(data);
+        });
+      });
+      console.log("TAGS: ", tags);
     });
-    console.log("POSTS: ", posts);
-    // $blogStore.getTags(blog_name).then(data => {
-    //   tags = JSON.parse(data);
-    // });
-    console.log("TAGS: ", tags);
   });
 </script>
 
@@ -33,7 +43,7 @@
   <div class="col-md-9 pull-xs-left">
     {#each posts as post}
       <div class="row">
-        <a rel="prefetch" href="blog/{post.slug}">
+        <a rel="prefetch" href="./{post.slug}">
           <h1>{post.title}</h1>
         </a>
 
@@ -47,9 +57,12 @@
   </div>
 
   <div class="col-md-3 pull-xs-right">
-    <div class="sidebar">
-      <h2>Popular Tags</h2>
-      <Tags {tags} />
-    </div>
+    {#if tags}
+      <div class="sidebar">
+        <h2>Popular Tags</h2>
+        <Tags {tags} />
+      </div>
+    {/if}
+
   </div>
 </div>

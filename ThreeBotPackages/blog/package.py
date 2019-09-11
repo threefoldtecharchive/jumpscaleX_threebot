@@ -1,11 +1,18 @@
 from Jumpscale import j
-from os.path import dirname, abspath, join
+from os.path import dirname, abspath, join, splitext
 
 
 import re
 import unicodedata
 
 __version__ = "0.0.1"
+
+
+
+
+# TODO: improve and move to jsx
+def remove_date(filename):
+    return re.sub("(\d+\-)+", "", filename)
 
 
 # TODO: improve and move to jsx
@@ -17,7 +24,7 @@ def slugify(string):
         >>> slugify(u"Héllø Wörld")
         u"hello-world"
     """
-
+    string = remove_date(string)
     return re.sub(
         r"[-\s]+",
         "-",
@@ -27,17 +34,12 @@ def slugify(string):
     )
 
 
-# TODO: improve and move to jsx
-def remove_date(filename):
-    return re.sub("(\d+\-)+", "", filename)
-
-
 schema_blogmetadata = """
 
 @url = jumpscale.blog.metadata
 
-blog_name = "" (S)
-blog_title = "JSX blog" (S)
+blog_name** = "" (S)
+blog_title** = "JSX blog" (S)
 blog_description = "JSX blog description" (S)
 author_name = "" (S)
 author_email = "" (S)
@@ -46,14 +48,14 @@ base_url = "" (S)
 url = "" (S)
 posts_dir = "posts"
 github_username = "" (S)
-github_repo_url = "" (S)
+github_repo_url** = "" (S)
 """
 schema_blogpost = """
 
 @url = jumpscale.blog.post
 
-title = "" (S)
-slug = "" (S)
+title** = "" (S)
+slug** = "" (S)
 content = "" (S)
 tags = (LS)
 published_at = "" (S)
@@ -62,7 +64,7 @@ published_at = "" (S)
 schema_blog = """
 @url = jumpscale.blog
 
-git_repo_url = "" (S)
+git_repo_url** = "" (S)
 metadata = (O) !jumpscale.blog.metadata
 posts =  (LO) !jumpscale.blog.post
 
@@ -121,11 +123,13 @@ class Package(j.baseclasses.threebot_package):
         blog.metadata.github_repo_url = repo_url
         blog.metadata.blog_name = blog_name
         blog.posts = []
+        blog.save()
 
         posts = j.sal.fs.listFilesInDir(posts_dir_path)
         for post in posts:
             print("post")
             basename = j.sal.fs.getBaseName(post)
+            basename = splitext(basename)[0]
             content = j.sal.fs.readFile(post)
             parsed = j.data.markdown.document_get(content)
             meta = parsed.meta
@@ -138,6 +142,8 @@ class Package(j.baseclasses.threebot_package):
             tags = [t.strip() for t in tags.split(",")]
             post_obj.tags = tags
             post_obj.save()
+            print("POST INFO: ", post_obj)
+
             blog.posts.append(post_obj)
 
         blog.save()

@@ -13,8 +13,8 @@ class blog(j.baseclasses.threebot_actor):
         """
         blogs = self.blog_model.find()
         for b in blogs:
-            if b == blog.metadata.blog_name:
-                return j.data.serializers.json.dumps(blog.metadata._ddict)
+            if blog == b.metadata.blog_name:
+                return j.data.serializers.json.dumps(b.metadata._ddict)
 
         return False
 
@@ -29,12 +29,12 @@ class blog(j.baseclasses.threebot_actor):
         # TODO: better way to search by name.
         blogs = self.blog_model.find()
         res = None
-
         for b in blogs:
             # print("Blog: ", b)
             if b.metadata.blog_name == blog:
                 res = [p._ddict for p in b.posts]
                 break
+
         return j.data.serializers.json.dumps(res)
 
     def get_posts_by_tag(self, blog, tag, page=0):

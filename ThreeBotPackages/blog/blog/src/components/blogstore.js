@@ -1,10 +1,3 @@
-import {
-    writable
-} from 'svelte/store';
-
-// import moment from 'moment'
-
-// }
 class BlogStore {
 
     getPosts(blog_name) {
@@ -38,12 +31,8 @@ class BlogStore {
                 "content_type": "json",
             }
         }
-        GEDIS_CLIENT.execute(info)
-            .then((resp) => {
-                let parsed = JSON.parse(resp);
-                return parsed
-            })
-            .catch((err) => console.log(err))
+        return GEDIS_CLIENT.execute(info)
+
 
     }
 
@@ -62,12 +51,8 @@ class BlogStore {
             }
         }
         console.log(info);
-        GEDIS_CLIENT.execute(info)
-            .then((resp) => {
-                let parsed = JSON.parse(resp);
-                return parsed
-            })
-            .catch((err) => console.log(err))
+        return GEDIS_CLIENT.execute(info)
+
 
     }
 
@@ -86,14 +71,7 @@ class BlogStore {
             }
         }
         console.log(info);
-        GEDIS_CLIENT.execute(info)
-            .then((resp) => {
-                let parsed = JSON.parse(resp);
-                return parsed
-            })
-            .catch((err) => console.log(err))
-
-
+        return GEDIS_CLIENT.execute(info)
     }
 
 }
@@ -103,4 +81,4 @@ class BlogStore {
 > s.split("/")
 [ '', 'blog', 'postname' 
 */
-export let blogStore = writable(new BlogStore())
+export let blogStore = new BlogStore()
