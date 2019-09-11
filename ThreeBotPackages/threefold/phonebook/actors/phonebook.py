@@ -8,9 +8,8 @@ NONE = 2147483647
 
 class phonebook(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-
-        self._bcdb = self._bcdb_get("threebot_phonebook")
-        self.phonebook_model = self._bcdb.model_get(url="threebot.phonebook.user.1")
+        bcdb = j.data.bcdb.get("threebot_phonebook")
+        self.phonebook_model = bcdb.model_get(url="threebot.phonebook.user.1")
 
     def register(self, name=None, email=None, ipaddr="", description="", pubkey=None, signature=None, schema_out=None):
         """

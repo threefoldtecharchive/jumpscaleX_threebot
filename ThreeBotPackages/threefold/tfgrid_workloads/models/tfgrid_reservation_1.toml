@@ -3,7 +3,7 @@
 
 #json of the reservation.data object, will not change over time
 json = "" (S)
-data = (O) !tfgrid.reservation.data.1
+data_reservation = (O) !tfgrid.reservation.data.1
 
 #id of threebot which pays for it
 customer_tid = (I)
@@ -12,11 +12,11 @@ customer_signature = (S)
 
 #state, allows anyone to see what can happen next e.g. sign means waiting for everyone to sign
 #delete means its deployed now we need to wait till enough people sign to delete
-next_action = "sign,pay,deploy,delete,invalid,deleted" (E)
+next_action = "create,sign,pay,deploy,delete,invalid,deleted" (E)
 signatures_provision = (LO) !tfgrid.reservation.signing.signature.1
-signature_farmer = (LO) !tfgrid.reservation.signing.signature.1
+signatures_farmer = (LO) !tfgrid.reservation.signing.signature.1
 signatures_delete = (LO) !tfgrid.reservation.signing.signature.1
-epoch = (D)
+epoch = (T)
 results = (LO) !tfgrid.reservation.result.1
 
 @url = tfgrid.reservation.data.1
@@ -30,9 +30,9 @@ volumes = (LO) !tfgrid.reservation.volume.1
 zdbs = (LO) !tfgrid.reservation.zdb.1
 networks = (LO) !tfgrid.reservation.network.1
 #till whe is request for provisioning valid, if not signed in required time then obsolete
-expiration_provisioning = (D)
+expiration_provisioning = (T)
 #till whe is reservation valid
-expiration_reservation = (D)
+expiration_reservation = (T)
 
 @url = tfgrid.reservation.signing.request.1
 #part of the reservation.data, because should never be possible to delete this
@@ -44,8 +44,8 @@ quorum_min = (I)
 @url = tfgrid.reservation.signing.signature.1
 #threebotid
 tid = (I)
-#isgnature in binary form of the json as stored in the root of this obj
-signature (B)
+#signature in string form of the json as stored in the root of this obj
+signature = (S)
 #time of signature
-epoch = (D)
+epoch = (T)
 
