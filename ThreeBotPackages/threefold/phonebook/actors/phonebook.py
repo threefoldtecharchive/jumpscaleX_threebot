@@ -11,8 +11,49 @@ class phonebook(j.baseclasses.threebot_actor):
         bcdb = j.data.bcdb.get("threebot_phonebook")
         self.phonebook_model = bcdb.model_get(url="threebot.phonebook.user.1")
 
-    def register(self, name=None, email=None, ipaddr="", description="", pubkey=None, signature=None, schema_out=None):
+    def wallet_create(self, name, sender_signature_hex):
         """
+
+        the threebot will create a wallet for you as a user and you can leave money on there to be used for
+        paying services on the threefold network
+
+        if a wallet stays empty during 1 day it will be removed automatically
+
+        :param: name is the name of the 3bot like how will be used in following functions like threebot_register_name
+        :param: sender_signature_hex off the name as done by private key of the person who asks
+
+        :return: a TFT wallet address
+        """
+        # just to be 100% transparant to other implementation we will only use the redis client implementation
+        # TODO: needs to be implemented
+
+        tfchain = j.clients.tfchain.get(name="default", network_type="TEST")
+        wallet = j.clients.tfchain.default.wallets.get("phonebook_%s" % name)
+        return wallet.address
+
+    def name_register(self, name, tft_transaction_id, sender_signature_hex):
+        """
+
+        is the first step of a registration, this is the step where money is involved.
+        without enough funding it won't happen. The cost is 20 TFT today to register a name.
+
+        :param: name you want to register can eg $name.$extension of $name if no extension will be $name.3bot
+                needs to correspond on the name as used in threebot_wallet_create
+        :param: sender_signature_hex signed by private key of the sender
+
+        each name registration costs 100 TFT
+
+        :return:
+        """
+        self._log_info("register step1: for 3bot name: %s" % name)
+        cl = self.explorer
+        cl.ping()
+
+    def record_register(
+        self, name=None, email=None, ipaddr="", description="", pubkey=None, sender_signature_hex=None, schema_out=None
+    ):
+        """
+
         ```in
         name = (S)
         email = (S)
@@ -26,13 +67,22 @@ class phonebook(j.baseclasses.threebot_actor):
         !threebot.phonebook.user.1
         ```
 
-        """
+        this is the 2nd step
 
-        assert name
-        assert email
+        :param: name you want to register can eg $name.$extension of $name if no extension will be $name.3bot
+                needs to correspond on the name as used in threebot_wallet_create
+        :param email:
+        :param ipaddr:
+        :param description:
+        :return:
+        """
 
         # pubkey2 = binascii.unhexlify(pubkey)
         # n = j.data.nacl.default
+
+        assert pubkey
+        assert name
+        assert sender_signature_hex
 
         res = self.phonebook_model.find(name=name)
         if len(res) == 1:
