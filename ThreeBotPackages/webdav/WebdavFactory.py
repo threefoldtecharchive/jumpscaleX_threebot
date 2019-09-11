@@ -4,6 +4,7 @@ from Jumpscale import j
 class WebdavFactory(j.baseclasses.object, j.baseclasses.testtools):
 
     __jslocation__ = "j.threebot.package.webdav"
+
     def install(self):
         server = j.servers.threebot.default
         server.save()
@@ -14,12 +15,11 @@ class WebdavFactory(j.baseclasses.object, j.baseclasses.testtools):
         self._log_info("webdav loaded")
 
         return "OK"
-    
+
     def start(self):
         self.install()
         server = j.servers.threebot.default
         server.start(web=True, ssl=False)
-
 
     def test(self, name=""):
         self.client = j.servers.threebot.local_start_default()
