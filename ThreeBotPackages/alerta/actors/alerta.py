@@ -1,5 +1,5 @@
 from Jumpscale import j
-
+import json
 
 """
 
@@ -51,7 +51,8 @@ class alerta(j.baseclasses.threebot_actor):
             alert.severity = choice(["critical", "major", "minor", "warning"])
             alert.status = choice(["closed", "new"])
             alert.time = j.data.time.epoch
-            alert.environment = choice(["production", "staging", "testing", "infrastructure", "all"])
+            alert.environment = choice(
+                ["production", "staging", "testing", "infrastructure", "all"])
             alert.service = choice(["jsx", "0-os", "portal", "threebot"])
             alert.resource = choice(["xmonader", "rafy", "andrew"])
             alert.event = choice(["event 1", "event 2"])
@@ -62,7 +63,8 @@ class alerta(j.baseclasses.threebot_actor):
             alert.save()
 
     def list_alerts(self):
-        alerts = j.data.serializers.json.dumps({"alerts": [alert._ddict for alert in self.alert_model.find()]})
+        alerts = j.data.serializers.json.dumps(
+            {"alerts": [alert._ddict for alert in self.alert_model.find()]})
         return alerts
 
     def list_alerts_by_env(self, env_name="all", schema_out=None):
@@ -72,12 +74,13 @@ class alerta(j.baseclasses.threebot_actor):
         ```
 
         """
-        alerts = j.data.serializers.json.dumps(
-            {"alerts": [alert._ddict for alert in self.alert_model.find() if alert.environment == env_name.lower()]}
-        )
+        alerts = {
+            "alerts": [alert._ddict for alert in self.alert_model.find() if alert.environment == env_name.lower()]
+        }
 
         print("ALERTS: ", alerts)
-        return alerts
+        response = {"result": alerts, "error_code": "", "error_message": ""}
+        return j.data.serializers.json.dumps(response)
 
     def new_alert(
         self,
@@ -131,3 +134,12 @@ class alerta(j.baseclasses.threebot_actor):
         res = schema_out.new()
         res.res = True
         return res
+
+    def delete_all_alerts(self):
+        # TODO: implement
+        response = {"result": True, "error_code": "", "error_message": ""}
+        return j.data.serializers.json.dumps(response)
+
+    def delete_alert(self, alert_id):
+        # TODO: implement
+        return True
