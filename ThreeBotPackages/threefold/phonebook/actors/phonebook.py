@@ -17,7 +17,7 @@ class phonebook(j.baseclasses.threebot_actor):
         ```in
         name = (S)
         email = (S)
-        pubkey = ""                             #public key of the 3bot
+        pubkey = ""                             #public key of the 3bot (is hexflify)
         ipaddr = ""                             #how to reach the digitalme (3bot)
         description = ""                        #optional
         signature = ""                          #in hex
@@ -35,14 +35,36 @@ class phonebook(j.baseclasses.threebot_actor):
         # pubkey2 = binascii.unhexlify(pubkey)
         # n = j.data.nacl.default
 
-        signature_hex = j.clients.threebot._payload_check(
-            name=name, email=email, ipaddr=ipaddr, description=description, pubkey_hex=pubkey
-        )
-
-        if not signature_hex == signature:
-            raise j.exceptions.Input("threebot cannot be registered, signature wrong")
-
         res = self.phonebook_model.find(name=name)
+        if len(res) == 1:
+            u = res[0]
+
+            id = res[0].id
+
+            if pubkey != res[0].pubkey:
+                raise j.exceptions.Input(
+                    "public key cannot be changed once registered, it serves as the security for making changes"
+                )
+
+            signature_hex = j.clients.threebot._payload_check(
+                id=u.id, name=name, email=email, ipaddr=ipaddr, description=description, pubkey_hex=pubkey
+            )
+
+            if not signature_hex == signature:
+                raise j.exceptions.Input("threebot cannot be registered, signature wrong")
+
+        elif len(res) > 1:
+            raise j.exceptions.JSBUG("more thant 1 should never be the case")
+        else:
+            # is a new one, signature not known yet
+            u = self.phonebook_model.new(
+                name=name, email=email, ipaddr=ipaddr, description=description, pubkey=pubkey, signature=""
+            )
+
+            signature_hex = j.clients.threebot._payload_check(
+                id=u.id, name=name, email=email, ipaddr=ipaddr, description=description, pubkey_hex=pubkey
+            )
+
         id = None
         if len(res) == 1:
             id = res[0].id
