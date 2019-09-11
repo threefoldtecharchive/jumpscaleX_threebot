@@ -2,6 +2,7 @@ import time, binascii
 from Jumpscale import j
 import time
 
+
 class workload_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         bcdb = j.data.bcdb.get("tf_workloads")
@@ -96,7 +97,6 @@ class workload_manager(j.baseclasses.threebot_actor):
         except j.exceptions.NotFound:
             raise j.exceptions.NotFound("reservation with id: (%s) not found" % reservation_id)
 
-    
     def _reservation_check(self, jsxobj):
         """
         will do
@@ -129,7 +129,7 @@ class workload_manager(j.baseclasses.threebot_actor):
             request = jsxobj.data_reservation.signing_request_provision
             if self._request_check(payload, request, signatures):
                 jsxobj.next_action = "pay"
-                
+
         elif jsxobj.next_action == "pay":
             if self._validate_farmers_signature(jsxobj):
                 jsxobj.next_action = "deploy"
@@ -139,7 +139,6 @@ class workload_manager(j.baseclasses.threebot_actor):
             request = jsxobj.data_reservation.signing_request_delete
             if self._request_check(payload, request, signatures):
                 jsxobj.next_action = "delete"
-        
 
         jsxobj.save()
         return jsxobj
@@ -229,14 +228,13 @@ class workload_manager(j.baseclasses.threebot_actor):
             for workload in getattr(reservation.data_reservation, workload_type):
                 farmers_tids.add(workload.farmer_tid)
         if tid not in farmers_tids:
-            raise j.exceptions.NotFound("Can not find a farmer with tid: {}" .format(tid))
+            raise j.exceptions.NotFound("Can not find a farmer with tid: {}".format(tid))
         signature_obj = self.signature_model.new()
         signature_obj.tid = tid
         signature_obj.signature = signature
         reservation.signatures_farmer.append(signature_obj)
         reservation.save()
         return True
-
 
     def sign_customer(self, reservation_id, signature):
         """
