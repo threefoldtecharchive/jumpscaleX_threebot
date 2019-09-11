@@ -95,7 +95,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         ```in
         node_id = (S)
-        resource = (O) !tfgrid.node.resource.1
+        resource = (O) !tfgrid.node.resource.amount.1
         ```
 
         """
@@ -113,7 +113,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         ```in
         node_id = (S)
-        resource = (O) !tfgrid.node.resource.1
+        resource = (O) !tfgrid.node.resource.amount.1
         ```
         """
         node = self._find(node_id)
@@ -131,7 +131,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         ```in
         node_id = (S)
-        resource = (O) !tfgrid.node.resource.1
+        resource = (O) !tfgrid.node.resource.amount.1
         ```
         """
 
