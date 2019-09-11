@@ -20,7 +20,7 @@ class WikisFactory(j.baseclasses.object, j.baseclasses.testtools):
 
         return "OK"
 
-    def start(self):
+    def start(self, ssl=False):
         self.install()
         server = j.servers.threebot.default
-        server.start(web=True, ssl=False)
+        server.start(web=True, ssl=ssl)
