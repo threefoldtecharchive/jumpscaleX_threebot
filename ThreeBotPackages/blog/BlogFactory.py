@@ -14,6 +14,9 @@ class BlogFactory(j.baseclasses.object, j.baseclasses.testtools):
         package.save()
         self._log_info("blog loaded")
 
+
+
+
         return "OK"
 
     def start(self, blog_name, repo_url=None):

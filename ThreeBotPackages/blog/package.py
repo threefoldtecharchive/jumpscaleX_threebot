@@ -150,6 +150,8 @@ class Package(j.baseclasses.threebot_package):
 
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
 
+
+
         server = j.servers.openresty.get("blog")
         server.install(reset=False)
         server.configure()
@@ -171,6 +173,24 @@ class Package(j.baseclasses.threebot_package):
         website_location_assets.use_jumpscale_weblibs = True
         fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
         website_location_assets.path_location = fullpath
+
+
+        ## START BOTTLE ACTORS ENDPOINT
+
+        rack = j.servers.rack.get()
+        app = j.servers.gedishttp.get_app()
+        rack.bottle_server_add(name="gedishttp", port=9201, app=app)
+
+
+        locations = website.locations.get("gedishttp")
+        proxy_location = locations.locations_proxy.new()
+        proxy_location.name = "gedishttp"
+        proxy_location.path_url = "/actors"
+        proxy_location.ipaddr_dest = "0.0.0.0"
+        proxy_location.port_dest = 9201
+        proxy_location.scheme = "http"
+        ## END BOTTLE ACTORS ENDPOINT
+
 
         locations.configure()
         website.configure()
