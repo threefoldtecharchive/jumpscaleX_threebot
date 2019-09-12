@@ -31,7 +31,7 @@ class phonebook(j.baseclasses.threebot_actor):
         wallet = j.clients.tfchain.default.wallets.get("phonebook_%s" % name)
         return wallet.address
 
-    def name_register(self, name, tft_transaction_id, sender_signature_hex):
+    def name_register(self, name, sender_signature_hex):
         """
 
         is the first step of a registration, this is the step where money is involved.
@@ -50,7 +50,15 @@ class phonebook(j.baseclasses.threebot_actor):
         cl.ping()
 
     def record_register(
-        self, name=None, email=None, ipaddr="", description="", pubkey=None, sender_signature_hex=None, schema_out=None
+        self,
+        id=None,
+        name=None,
+        email=None,
+        ipaddr="",
+        description="",
+        pubkey=None,
+        sender_signature_hex=None,
+        schema_out=None,
     ):
         """
 
