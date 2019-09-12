@@ -27,9 +27,9 @@ latitude = (F)
 longitude = (F)
 
 @url = tfgrid.node.2
-node_id* = (S)
-farmer_id* = (S)
-os_version* = (S)
+node_id** = (S)
+farmer_id** = (S)
+os_version** = (S)
 #parameters = (dict)
 created = (T)
 updated = (T)
@@ -46,9 +46,9 @@ approved = false (B)
 
 
 @url = tfgrid.farm.1
-threebot_id* = (S) 
-iyo_organization* = (S) # for backward compatibility
-name* = (S)
+threebot_id** = (S)
+iyo_organization** = (S) # for backward compatibility
+name** = (S)
 wallet_addresses = (LS)
 location = (O) !tfgrid.location.1
 email = (email)

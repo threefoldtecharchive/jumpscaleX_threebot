@@ -11,7 +11,7 @@ class ZOSInstance(j.baseclasses.object_config_collection):
 
     _SCHEMATEXT = """
     @url = jumpscale.clients.zoscmd.zosnode.1
-    name* = ""
+    name** = ""
     zos_addr = "127.0.0.1" (S)
     zos_port = 6379 (I)
     local_addr = "127.0.0.1" (S)  #when a private network is available, e.g. in local VirtualBox, can be used to create e.g. ssh connections locally

@@ -91,4 +91,3 @@ class blog(j.baseclasses.threebot_actor):
 
         tags = list(tags)
         return j.data.serializers.json.dumps(tags)
-

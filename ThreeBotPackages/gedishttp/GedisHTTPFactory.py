@@ -1,18 +1,17 @@
 from Jumpscale import j
 
 
-class WebdavFactory(j.baseclasses.object, j.baseclasses.testtools):
+class GedisHTTPFactory(j.baseclasses.object, j.baseclasses.testtools):
 
-    __jslocation__ = "j.threebot.package.webdav"
+    __jslocation__ = "j.threebot.package.gedishttp"
 
     def install(self):
         server = j.servers.threebot.default
         server.save()
 
-        package = j.tools.threebot_packages.get("webdav", path=self._dirpath, threebot_server_name=server.name)
-        package.prepare()
+        package = j.tools.threebot_packages.get("gedishttp", path=self._dirpath, threebot_server_name=server.name)
         package.save()
-        self._log_info("webdav loaded")
+        self._log_info("gedishttp loaded")
 
         return "OK"
 
@@ -24,10 +23,10 @@ class WebdavFactory(j.baseclasses.object, j.baseclasses.testtools):
     def test(self, name=""):
         self.client = j.servers.threebot.local_start_default()
 
-        if not j.tools.threebot_packages.exists("threebot_webdav"):
+        if not j.tools.threebot_packages.exists("threebot_gedishttp"):
             self.client.actors.package_manager.package_add(
-                "threebot_webdav",
-                git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/webdav",
+                "threebot_gedishttp",
+                git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/gedishttp",
             )
         self.client.reload()
         print(name)
