@@ -1,8 +1,8 @@
 from Jumpscale import j
 
 
-def load_wiki(name, url):
-    wiki = j.tools.markdowndocs.load(path=url, name=name)
+def load_wiki(**kwargs):
+    wiki = j.tools.markdowndocs.load(path=kwargs["url"], name=kwargs["repo"])
     wiki.write()
 
 
@@ -16,24 +16,32 @@ class Package(j.baseclasses.threebot_package):
     def load(self):
 
         j.servers.myjobs.schedule(
-            load_wiki, "tokens", "https://github.com/threefoldfoundation/info_tokens/tree/%s/docs" % self.branch
-        )
-        j.servers.myjobs.schedule(
-            load_wiki, "foundation", "https://github.com/threefoldfoundation/info_foundation/tree/%s/docs" % self.branch
-        )
-        j.servers.myjobs.schedule(
-            load_wiki, "grid", "https://github.com/threefoldfoundation/info_grid/tree/%s/docs" % self.branch
-        )
-        j.servers.myjobs.schedule(
-            load_wiki, "bettertoken", "https://github.com/BetterToken/info_bettertoken/tree/%s/docs" % self.branch
-        )
-        j.servers.myjobs.schedule(
-            load_wiki, "harvested", "https://github.com/harvested-io/info_harvested.io/tree/%s/docs" % self.branch
+            load_wiki,
+            repo="tokens",
+            url="https://github.com/threefoldfoundation/info_tokens/tree/%s/docs" % self.branch,
         )
         j.servers.myjobs.schedule(
             load_wiki,
-            "freeflowevents",
-            "https://github.com/freeflownation/info_freeflowevents/tree/%s/docs" % self.branch,
+            repo="foundation",
+            url="https://github.com/threefoldfoundation/info_foundation/tree/%s/docs" % self.branch,
+        )
+        j.servers.myjobs.schedule(
+            load_wiki, repo="grid", url="https://github.com/threefoldfoundation/info_grid/tree/%s/docs" % self.branch
+        )
+        j.servers.myjobs.schedule(
+            load_wiki,
+            repo="bettertoken",
+            url="https://github.com/BetterToken/info_bettertoken/tree/%s/docs" % self.branch,
+        )
+        j.servers.myjobs.schedule(
+            load_wiki,
+            repo="harvested",
+            url="https://github.com/harvested-io/info_harvested.io/tree/%s/docs" % self.branch,
+        )
+        j.servers.myjobs.schedule(
+            load_wiki,
+            repo="freeflowevents",
+            url="https://github.com/freeflownation/info_freeflowevents/tree/%s/docs" % self.branch,
         )
 
     def prepare(self):
