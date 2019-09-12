@@ -6,6 +6,7 @@ central monitoring system built using svelte and gedis actors
 
 ## Running 
 
+- install bottle module `pip3 install bottle`
 - execute `kosmos -p 'j.threebot.package.alerta.start()'`
 - `kosmos -p run_server.py`
 - server will start at `172.17.0.2:8081`

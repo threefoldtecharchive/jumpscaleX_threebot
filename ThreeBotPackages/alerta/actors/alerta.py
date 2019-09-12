@@ -1,5 +1,5 @@
 from Jumpscale import j
-
+import json
 
 """
 
@@ -72,12 +72,13 @@ class alerta(j.baseclasses.threebot_actor):
         ```
 
         """
-        alerts = j.data.serializers.json.dumps(
-            {"alerts": [alert._ddict for alert in self.alert_model.find() if alert.environment == env_name.lower()]}
-        )
+        alerts = {
+            "alerts": [alert._ddict for alert in self.alert_model.find() if alert.environment == env_name.lower()]
+        }
 
         print("ALERTS: ", alerts)
-        return alerts
+        response = {"result": alerts, "error_code": "", "error_message": ""}
+        return j.data.serializers.json.dumps(response)
 
     def new_alert(
         self,
@@ -131,3 +132,13 @@ class alerta(j.baseclasses.threebot_actor):
         res = schema_out.new()
         res.res = True
         return res
+
+    def delete_all_alerts(self):
+        # TODO: implement
+        response = {"result": True, "error_code": "", "error_message": ""}
+        return j.data.serializers.json.dumps(response)
+
+    def delete_alert(self, alert_id):
+        # TODO: implement
+        response = {"result": True, "error_code": "", "error_message": ""}
+        return j.data.serializers.json.dumps(response)
