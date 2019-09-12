@@ -1,23 +1,7 @@
 <script>
-  import { blogStore } from "./blogstore.js";
-  import { onMount } from "svelte";
   import { link } from "svelte-spa-router";
 
-  let post = { tags: [] };
-  export let params;
-
-  onMount(() => {
-    blogStore.getPostBySlug(blog_name, params.slug).then(data => {
-      console.log(`postBySlug ${data}`);
-      post = JSON.parse(data);
-    });
-    //   .then(data => {
-    //     console.log("IN HERE..", params);
-    //     console.log(data);
-    //     post = JSON.parse(data);
-    //   })
-    //   .catch(err => console.log(`err ${err}`));
-  });
+  export let post = { tags: [] };
 </script>
 
 <article class="hentry h-entry">
@@ -28,6 +12,7 @@
   </header>
 
   <!-- /.entry-content -->
+  here
   <footer class="post-info">
     <div class="tag-list">
       {#each post.tags as tag, idx}
@@ -56,12 +41,6 @@
           alt="" />
       </a>
     </div>
-
-    <header>
-      <h2 class="entry-title p-name">{post.title}</h2>
-    </header>
-    <div class="entry-content e-content">
-      {@html post.content}
-    </div>
   </footer>
+  <!-- /.post-info -->
 </article>

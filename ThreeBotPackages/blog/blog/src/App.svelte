@@ -7,12 +7,14 @@
 <div>
   <Nav />
 </div>
+<div class="wrapper content">
 
-<!--[Container]-->
-<div class="container-fluid">
-  <!--[Title]-->
-  <div class="m-3 text-center">blog</div>
-  <!-- Show the router -->
-  <Router {routes} />
+  <!--[Container]-->
+  <div class="container-fluid">
+    <!--[Title]-->
+    <div class="m-3 text-center">blog</div>
+    <!-- Show the router -->
+    <Router {routes} />
 
+  </div>
 </div>

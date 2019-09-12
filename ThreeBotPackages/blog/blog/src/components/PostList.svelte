@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import { blogStore } from "./blogstore.js";
   import Tags from "./Tags.svelte";
+  import PostCard from "./PostCard.svelte";
   let posts = [];
   let tags = [];
   let blog_meta = {};
@@ -40,25 +41,15 @@
   <title>Blog main</title>
 
 </svelte:head>
+<section class="cold-md-9 pull-xs-left post-list">
 
-<div class="row">
-
-  <div class="col-md-9 pull-xs-left">
-    {#each posts as post}
-      <div class="row">
-        <a rel="prefetch" href="/post/{post.slug}" use:link>
-          <h1>{post.title}</h1>
-        </a>
-
-      </div>
-    {:else}
-      <div class="row">
-        <p>no posts yet..</p>
-      </div>
-    {/each}
-
-  </div>
-
+  {#each posts as post}
+    <PostCard {post} />
+  {:else}
+    <div class="row">
+      <p>no posts yet..</p>
+    </div>
+  {/each}
   <div class="col-md-3 pull-xs-right">
     {#if tags}
       <div class="sidebar">
@@ -68,4 +59,4 @@
     {/if}
 
   </div>
-</div>
+</section>

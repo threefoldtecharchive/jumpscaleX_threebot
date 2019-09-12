@@ -17,29 +17,18 @@
   }
 </style>
 
-<div>
-  <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Blog</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarText"
-      aria-controls="navbarText"
-      aria-expanded="false"
-      aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon" />
-    </button>
-    <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="/">
-            Home
-            <span class="sr-only">(current)</span>
-          </a>
-        </li>
-      </ul>
-      <span class="navbar-text">Blog</span>
-    </div>
-  </nav>
-</div>
+<header id="banner" class="header">
+  <div class="bg" />
+  <div class="wrapper">
+    <a class="logo" href="https://blog.taiga.io/">
+      <img
+        class="logo"
+        src="https://blog.taiga.io/theme/images/logo-color.png"
+        alt="Taiga" />
+    </a>
+    <h1 class="title">
+      <a href="https://blog.taiga.io/">TF Blog Blog</a>
+    </h1>
+  </div>
+</header>
+<!-- /#banner -->
