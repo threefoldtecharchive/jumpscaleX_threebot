@@ -25,7 +25,7 @@
 <div>
   <Navigtation />
 </div>
-<div class="container my-5">
+<div class="container-fluid my-5">
   <!-- Show the router -->
   <Router {routes} />
 </div>
