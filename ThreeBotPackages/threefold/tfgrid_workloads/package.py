@@ -11,8 +11,9 @@ class Package(j.baseclasses.threebot_package):
         is called at install time
         :return:
         """
+        workloads_models_path = j.sal.fs.joinPaths(self.package_root, "models")
         phonebook_models_path = j.sal.fs.joinPaths(j.sal.fs.getDirName(self.package_root), "phonebook/models")
-        self.workloads_bcdb.models_add(path=self.package_root + "/models")
+        self.workloads_bcdb.models_add(path=workloads_models_path)
         self.phonebook_bcdb.models_add(path=phonebook_models_path)
 
     def start(self):
