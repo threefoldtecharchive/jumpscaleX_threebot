@@ -27,7 +27,7 @@ class WebdavFactory(j.baseclasses.object, j.baseclasses.testtools):
         if not j.tools.threebot_packages.exists("threebot_webdav"):
             self.client.actors.package_manager.package_add(
                 "threebot_webdav",
-                git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/webdav",
+                git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/webdavserver",
             )
         self.client.reload()
         print(name)

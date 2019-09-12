@@ -23,13 +23,13 @@ class App(object):
 
     @property
     def app(self):
-
         root = os.path.dirname(os.path.abspath(__file__))
-        from webdav import provider
+        from webdavserver import provider
 
         config = {
             "provider_mapping": {"/": provider.BCDBFSProvider(self.path)},
             "verbose": 5,
+            "port": self.port,
             "middleware_stack": [
                 WsgiDavDebugFilter,
                 ErrorPrinter,
@@ -51,3 +51,6 @@ class App(object):
             self._app.debug = True
 
         return self._app
+
+
+
