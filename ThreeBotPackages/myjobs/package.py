@@ -17,7 +17,7 @@ class Package(j.baseclasses.threebot_package):
         j.servers.myjobs.workers_tmux_start()
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
 
-        server = j.servers.openresty.get("myjobs")
+        server = self.openresty
         server.install(reset=False)
         server.configure()
         website = server.websites.get("myjobs")
@@ -39,8 +39,7 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot starts
         :return:
         """
-        server = j.servers.openresty.get("myjobs")
-        server.start()
+        pass
 
     def stop(self):
         """

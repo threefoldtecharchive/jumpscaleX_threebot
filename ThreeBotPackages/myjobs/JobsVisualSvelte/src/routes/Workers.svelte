@@ -14,21 +14,34 @@
     RESULT: "OK",
     ERROR: "ERROR",
     NEW: "NEW",
-    HALTED: "HALTED"
+    HALTED: "HALTED",
+    WAITING: "WAITING",
+    RUNNING: "RUNNING",
+    WARNING: "WARNING",
+    ALL: "all"
   };
-  var successCount = 0;
-  var failureCount = 0;
-  var newCount = 0;
-  const status = { ONLINE: "online", OFFLINE: "offline" };
+  let isAllWorkersAvailable = false;
+  let counters = {
+    success: 0,
+    error: 0,
+    new: 0,
+    running: 0,
+    halted: 0,
+    waiting: 0,
+    warning: 0
+  };
+
+  let currentFilter = state.ALL;
   let workers = [];
 
   onMount(async () => {
+    isAllWorkersAvailable = false;
     getWorkers().then(function(data) {
       if (!data) {
         return;
       }
+      isAllWorkersAvailable = true;
       console.log(`DATA : ${data}`);
-      //Todo:The data will need to be parsed to json
       workers = JSON.parse(data).workers;
 
       workers.forEach(worker => {
@@ -36,17 +49,58 @@
       });
       //Calculating the statstics relatedt to the workers
       statsticsCalculation();
-      function statsticsCalculation() {
-        workers.forEach(worker => {
-          if (worker.state == state.RESULT) successCount++;
-          else if (worker.state == state.ERROR) failureCount++;
-          else if (worker.state == state.NEW) newCount++;
-          else {
-          }
-        });
-      }
     });
   });
+
+  function statsticsCalculation() {
+    workers.forEach(worker => {
+      if (worker.state == state.RESULT) counters["success"]++;
+      else if (worker.state == state.ERROR) counters["error"]++;
+      else if (worker.state == state.NEW) counters["new"]++;
+      else if (worker.state == state.RUNNING) counters["running"]++;
+      else if (worker.state == state.HALTED) counters["halted"]++;
+      else if (worker.state == state.WAITING) counters["waiting"]++;
+      else if (worker.state == state.WARNING) counters["warning"]++;
+      else {
+      }
+    });
+  }
+  $: filteredWorkers = () => {
+    counters = {
+      success: 0,
+      error: 0,
+      new: 0,
+      running: 0,
+      halted: 0,
+      waiting: 0,
+      warning: 0
+    };
+    statsticsCalculation();
+    if (currentFilter == state.ALL) return workers;
+    else if (currentFilter == state.RESULT)
+      return WorkersFiltering(state.RESULT);
+    else if (currentFilter == state.ERROR) return WorkersFiltering(state.ERROR);
+    else if (currentFilter == state.NEW) return WorkersFiltering(state.NEW);
+    else if (currentFilter == state.RUNNING)
+      return WorkersFiltering(state.RUNNING);
+    else if (currentFilter == state.HALTED)
+      return WorkersFiltering(state.HALTED);
+    else if (currentFilter == state.WARNING)
+      return WorkersFiltering(state.WARNING);
+    else if (currentFilter == state.WAITING)
+      return WorkersFiltering(state.WAITING);
+  };
+
+  function updateFilter(filter) {
+    currentFilter = filter;
+  }
+  function WorkersFiltering(state) {
+    let filteredWorkers = [];
+    workers.forEach(worker => {
+      if (worker.state == state) filteredWorkers.push(worker);
+    });
+    return filteredWorkers;
+  }
 </script>
 
 <style>
@@ -56,36 +110,113 @@
 </style>
 
 <!--[Header]-->
-<h1>Workers ({workers.length})</h1>
-<!--
-<div class="row mt-3">
+<h1>Workers</h1>
+<!--[Filter]-->
+<div class="d-flex justify-content-start">
+  <div class="mr-3">
+    <button
+      class="btn"
+      on:click={() => updateFilter(state.ALL)}
+      class:active={currentFilter === state.ALL}>
+      All
+    </button>
+  </div>
+  <div class="mr-3">
+    <button
+      class="btn"
+      on:click={() => updateFilter(state.NEW)}
+      class:active={currentFilter === state.NEW}>
+      New
+    </button>
+  </div>
+  <div class="mr-3">
+    <button
+      class="btn"
+      on:click={() => updateFilter(state.RESULT)}
+      class:active={currentFilter === state.RESULT}>
+      Success
+    </button>
+  </div>
+  <div class="mr-3">
+    <button
+      class="btn"
+      on:click={() => updateFilter(state.ERROR)}
+      class:active={currentFilter === state.ERROR}>
+      Failure
+    </button>
+  </div>
+  <div class="mr-3">
+    <button
+      class="btn"
+      on:click={() => updateFilter(state.WARNING)}
+      class:active={currentFilter === state.WARNING}>
+      Warning
+    </button>
+  </div>
+  <div class="mr-3">
+    <button
+      class="btn"
+      on:click={() => updateFilter(state.RUNNING)}
+      class:active={currentFilter === state.RUNNING}>
+      Running
+    </button>
+  </div>
+  <div class="mr-3">
+    <button
+      class="btn"
+      on:click={() => updateFilter(state.HALTED)}
+      class:active={currentFilter === state.HALTED}>
+      Halted
+    </button>
+  </div>
 
-  <div class="col-xs-12">
+  <div class="mr-3">
+    <button
+      class="btn"
+      on:click={() => updateFilter(state.WAITING)}
+      class:active={currentFilter === state.WAITING}>
+      Waiting
+    </button>
+  </div>
+</div>
+
+<!--[Statstics]-->
+<div class="row mt-5">
+
+  <div class="col-sm-12">
     <table class="table table-striped">
       <thead>
         <tr>
-          <th class="text-center" scope="col">Total Workers</th>
-          <th class="text-center" scope="col">New Workers</th>
-          <th class="text-center" scope="col">Success Workers</th>
-          <th class="text-center" scope="col">Failure Workers</th>
+          <th class="text-center" scope="col">Total</th>
+          <th class="text-center" scope="col">New</th>
+          <th class="text-center" scope="col">Success</th>
+          <th class="text-center" scope="col">Failure</th>
+          <th class="text-center" scope="col">Warning</th>
+          <th class="text-center" scope="col">Running</th>
+          <th class="text-center" scope="col">Halted</th>
+          <th class="text-center" scope="col">Waiting</th>
         </tr>
       </thead>
       <tbody class="text-center">
         <td>{workers.length}</td>
-        <td>{newCount}</td>
-        <td>{successCount}</td>
-        <td>{failureCount}</td>
+        <td>{counters['new']}</td>
+        <td>{counters['success']}</td>
+        <td>{counters['error']}</td>
+        <td>{counters['warning']}</td>
+        <td>{counters['running']}</td>
+        <td>{counters['halted']}</td>
+        <td>{counters['waiting']}</td>
       </tbody>
     </table>
   </div>
 </div>
--->
-{#if workers && workers.length > 0}
+
+{#if filteredWorkers() && filteredWorkers().length > 0 && isAllWorkersAvailable}
   <!--[Containder]-->
   <div>
-    <div class="row">
+    <div class="row mt-5">
       <!--[Workers-Data]-->
-      <div class="col-xs-12">
+      <div class="col-sm-12">
         <table class="table table-striped">
           <!--[Workers-Data-Headers]-->
           <thead>
@@ -113,27 +244,31 @@
 
                 {#if worker.state == state.RESULT}
                   <td>
-                    <span class="label label-pill label-success">
-                      {worker.state}
-                    </span>
+                    <span class="badge badge-success">{worker.state}</span>
                   </td>
                 {:else if worker.state == state.ERROR}
                   <td>
-                    <span class="label label-pill label-danger">
-                      {worker.state}
-                    </span>
+                    <span class="badge badge-danger">{worker.state}</span>
                   </td>
                 {:else if worker.state == state.NEW}
                   <td>
-                    <span class="label label-pill label-primary">
-                      {worker.state}
-                    </span>
+                    <span class="badge badge-primary">{worker.state}</span>
+                  </td>
+                {:else if worker.state == state.RUNNING}
+                  <td>
+                    <span class="badge badge-info">{worker.state}</span>
+                  </td>
+                {:else if worker.state == state.HALTED}
+                  <td>
+                    <span class="badge badge-secondary">{worker.state}</span>
+                  </td>
+                {:else if worker.state == state.WAITING}
+                  <td>
+                    <span class="badge badge-dark">{worker.state}</span>
                   </td>
                 {:else}
                   <td>
-                    <span class="label label-pill label-warning">
-                      {worker.state}
-                    </span>
+                    <span class="badge badge-warning">{worker.state}</span>
                   </td>
                 {/if}
                 <td>{worker.halt}</td>
@@ -153,7 +288,11 @@
     </div>
 
   </div>
-{:else}
+{:else if filteredWorkers().length == 0 && isAllWorkersAvailable}
+  <div>
+    <h2>There is no Workers matching your criteria</h2>
+  </div>
+{:else if !isAllWorkersAvailable}
   <!-- this block renders when photos.length === 0 -->
   <!-- <p>loading...</p> -->
   <div class="text-center">
