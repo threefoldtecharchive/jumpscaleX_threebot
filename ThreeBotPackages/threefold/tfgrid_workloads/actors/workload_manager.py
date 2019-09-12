@@ -1,7 +1,8 @@
 import time, binascii
 from Jumpscale import j
 import time
-
+import operator
+from functools import reduce
 
 class workload_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
@@ -15,6 +16,27 @@ class workload_manager(j.baseclasses.threebot_actor):
         tb_bcdb = j.data.bcdb.get("threebot_phonebook")
         self.user_model = tb_bcdb.model_get(url="threebot.phonebook.user.1")
         self.nacl = j.data.nacl.default
+        
+        class IndexTable(j.clients.peewee.Model):
+            class Meta:
+            database = None
+
+            id = j.clients.peewee.IntegerField(unique=True)
+            epoch = j.clients.peewee.IntegerField(index=True)
+            node_id = j.clients.peewee.IntegerField(index=True)
+
+        def trigger_func(model, obj, action, **kwargs):
+            if action == 'set_post':
+                for workload_type in ["zdbs", "volumes", "containers"]:
+                    for workload in getattr(obj.data_reservation, workload_type):
+                    record = model.IndexTable.create(id=obj.id, node_id=workload.node_id, epoch=obj.epoch)
+                    record.save()
+
+        IndexTable._meta.database = self.reservation_model.bcdb.sqlite_index_client
+        IndexTable.create_table(safe=True)
+        self.reservation_model.IndexTable = IndexTable
+        self.reservation_model.trigger_add(trigger_func)
+
 
     def _validate_signature(self, payload, signature, key):
         """
@@ -154,6 +176,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
         """
         reservation.next_action = "create"
+        reservation.epoch = j.data.time.epoch
         reservation = self.reservation_model.new(reservation)
         reservation.save()
         return reservation
@@ -169,6 +192,32 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
         """
         return self._reservation_get(reservation_id)
+    
+    def reservations_list(self, reservation_id=None, node_id=None, epoch=None, schema_out):
+        """
+        ```in
+        reservation_id = (I)
+        node_id = (I)
+        epoch = (I)
+        ```
+
+        ```out
+        reservations = (LO) !tfgrid.farm.1
+        ```
+        """
+        query = []
+        reservations = []
+        if node_id:
+            query.append((self.reservation_model.IndexTable.node_id == node_id))
+        
+        if epoch:
+            query.append((self.reservation_model.IndexTable.epoch >= epoch))
+
+        result = self.reservation_model.IndexTable.select().where(reduce(operator.and_, query)).execute()
+        for item in result:
+            reservations.append(self._reservation_get(item.id))
+
+        return reservations
 
     def sign_provision(self, reservation_id, tid, signature):
         """
@@ -227,8 +276,10 @@ class workload_manager(j.baseclasses.threebot_actor):
         for workload_type in ["zdbs", "networks", "volumes", "containers"]:
             for workload in getattr(reservation.data_reservation, workload_type):
                 farmers_tids.add(workload.farmer_tid)
+
         if tid not in farmers_tids:
             raise j.exceptions.NotFound("Can not find a farmer with tid: {}".format(tid))
+
         signature_obj = self.signature_model.new()
         signature_obj.tid = tid
         signature_obj.signature = signature
