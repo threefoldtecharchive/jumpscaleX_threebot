@@ -13,10 +13,10 @@ gw6 = (ipaddr)
 version = (I)
 
 @url = tfgrid.node.resource.1
-cru = (i)
-mru = (i)
-hru = (i)
-sru = (i)
+cru = (I)
+mru = (I)
+hru = (I)
+sru = (I)
 
 
 @url = tfgrid.location.1
