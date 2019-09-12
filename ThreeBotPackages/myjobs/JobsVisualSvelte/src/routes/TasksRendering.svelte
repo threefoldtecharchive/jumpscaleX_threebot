@@ -1,7 +1,7 @@
 <script>
   export let allTasks = [];
   export let isError = false;
-  import JobModel from "./JobModel.svelte";
+  import JobModal from "./JobModal.svelte";
 
   const state = {
     RESULT: "OK",
@@ -223,7 +223,7 @@
                 </td>
                 <!--[Modal]-->
                 <div>
-                  <JobModel {task} index={i} />
+                  <JobModal {task} index={i} />
                 </div>
               </tr>
             {/each}
