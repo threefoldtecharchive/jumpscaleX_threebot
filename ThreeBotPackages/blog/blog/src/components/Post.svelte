@@ -2,18 +2,25 @@
   import { blogStore } from "./blogstore.js";
   import { onMount } from "svelte";
 
-  export let slug;
-  export let post;
+  let post = { tags: [] };
+  export let params;
 
-  onMount(() => (post = blogStore.getPost(blog_name, slug)));
-
-  var converter = new showdown.Converter();
+  onMount(() => {
+    blogStore.getPostBySlug(blog_name, params.slug).then(data => {
+      console.log(`postBySlug ${data}`);
+      post = JSON.parse(data);
+    });
+    //   .then(data => {
+    //     console.log("IN HERE..", params);
+    //     console.log(data);
+    //     post = JSON.parse(data);
+    //   })
+    //   .catch(err => console.log(`err ${err}`));
+  });
 </script>
 
-<svelte:head>
-  <title>Blog main {slug}</title>
-</svelte:head>
 <div>
+  in post
   <div>
     <span class="date">POST DATE</span>
     <div class="tag-list">

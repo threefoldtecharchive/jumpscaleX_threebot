@@ -6,9 +6,10 @@ import Post from './components/Post.svelte';
 
 let routes
 routes = new Map()
-routes.set('/', PostList)
-routes.set('/:postId', Post)
+routes.set('/post/:slug', Post)
 routes.set('/tag/:tag', PostList)
+routes.set('/', PostList)
+
 // Catch-all, must be last
 routes.set('*', NotFound)
 

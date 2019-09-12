@@ -1,10 +1,13 @@
 <script>
+  import { link } from "svelte-spa-router";
+
   import { onMount } from "svelte";
   import { blogStore } from "./blogstore.js";
   import Tags from "./Tags.svelte";
   let posts = [];
   let tags = [];
   let blog_meta = {};
+  export let params;
   export let tag = "";
 
   onMount(() => {
@@ -43,7 +46,7 @@
   <div class="col-md-9 pull-xs-left">
     {#each posts as post}
       <div class="row">
-        <a rel="prefetch" href="./{post.slug}">
+        <a rel="prefetch" href="/post/{post.slug}" use:link>
           <h1>{post.title}</h1>
         </a>
 

@@ -1,12 +1,12 @@
 class BlogStore {
 
-    getPosts(blog_name) {
+    getPosts(blogName) {
         let info = {
             "namespace": "default",
             "actor": "blog",
             "command": "get_posts",
             "args": {
-                'blog': blog_name
+                'blog': blogName
             },
             "headers": {
                 "response_type": "json",
@@ -18,13 +18,33 @@ class BlogStore {
         return GEDIS_CLIENT.execute(info)
 
     }
-    getMeta(blog_name) {
+
+    getPostBySlug(blogName, slug) {
+        let info = {
+            "namespace": "default",
+            "actor": "blog",
+            "command": "get_post_by_slug",
+            "args": {
+                'blog': blogName,
+                'slug': slug,
+            },
+            "headers": {
+                "response_type": "json",
+                "content_type": "json",
+            }
+        }
+        console.log(info);
+
+        return GEDIS_CLIENT.execute(info)
+
+    }
+    getMeta(blogName) {
         let info = {
             "namespace": "default",
             "actor": "blog",
             "command": "get_metadata",
             "args": {
-                'blog': blog_name
+                'blog': blogName
             },
             "headers": {
                 "response_type": "json",
@@ -32,17 +52,15 @@ class BlogStore {
             }
         }
         return GEDIS_CLIENT.execute(info)
-
-
     }
 
-    getPostsByTag(blog_name, tag) {
+    getPostsByTag(blogName, tag) {
         let info = {
             "namespace": "default",
             "actor": "blog",
             "command": "get_posts_by_tag",
             "args": {
-                'blog': blog_name,
+                'blog': blogName,
                 'tag': tag
             },
             "headers": {
@@ -53,17 +71,16 @@ class BlogStore {
         console.log(info);
         return GEDIS_CLIENT.execute(info)
 
-
     }
 
-    getTags(blog_name) {
-        console.log(`blog is ${blog_name}`)
+    getTags(blogName) {
+        console.log(`blog is ${blogName}`)
         let info = {
             "namespace": "default",
             "actor": "blog",
             "command": "get_tags",
             "args": {
-                'blog': blog_name,
+                'blog': blogName,
             },
             "headers": {
                 "response_type": "json",

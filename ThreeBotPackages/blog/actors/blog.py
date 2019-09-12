@@ -37,6 +37,25 @@ class blog(j.baseclasses.threebot_actor):
 
         return j.data.serializers.json.dumps(res)
 
+    def get_post_by_slug(self, blog, slug):
+        """
+        ```in
+            blog = (S)
+            slug = (S)
+        ```
+        """
+        blogs = self.blog_model.find()
+        for b in blogs:
+            # print("Blog: ", b)
+            if b.metadata.blog_name == blog:
+                res = [p._ddict for p in b.posts]
+                for post in b.posts:
+                    if post.slug == slug:
+                        return post._json
+                else:
+                    return {}
+
+
     def get_posts_by_tag(self, blog, tag, page=0):
         """
         ```in

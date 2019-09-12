@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte";
+  import { link } from "svelte-spa-router";
 
   export let tags;
   const dispatch = createEventDispatcher();
@@ -11,7 +12,8 @@
       <a
         href="/tag/{tag}"
         class="tag-default tag-pill"
-        on:click={() => dispatch('select', { tag })}>
+        on:click={() => dispatch('select', { tag })}
+        use:link>
         {tag}
       </a>
     {/each}
