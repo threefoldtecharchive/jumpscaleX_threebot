@@ -293,8 +293,6 @@
     <h2>There is no Workers matching your criteria</h2>
   </div>
 {:else if !isAllWorkersAvailable}
-  <!-- this block renders when photos.length === 0 -->
-  <!-- <p>loading...</p> -->
   <div class="text-center">
     <img src={'/img/loader.gif'} class="img-fluid" alt="Responsive image" />
   </div>
