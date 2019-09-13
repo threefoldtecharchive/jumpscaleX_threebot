@@ -34,7 +34,7 @@ version = (I)
 
 
 @url = tfgrid.node.resource.amount.1
-cru = (F)
-mru = (F)
-hru = (F)
-sru = (F)
+cru = (I)
+mru = (I)
+hru = (I)
+sru = (I)
