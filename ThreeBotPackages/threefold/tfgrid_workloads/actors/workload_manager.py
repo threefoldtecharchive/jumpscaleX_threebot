@@ -1,8 +1,5 @@
-import time, binascii
+import binascii
 from Jumpscale import j
-import time
-import operator
-from functools import reduce
 
 
 class workload_manager(j.baseclasses.threebot_actor):
@@ -135,11 +132,11 @@ class workload_manager(j.baseclasses.threebot_actor):
         will return the updated jsxobj
         """
         payload = jsxobj.json
-        if jsxobj.data_reservation.expiration_reservation < time.time():
+        if jsxobj.data_reservation.expiration_reservation < j.data.time.epoch:
             jsxobj.next_action = "delete"
 
         elif jsxobj.next_action == "create":
-            if jsxobj.data_reservation.expiration_provisioning > time.time():
+            if jsxobj.data_reservation.expiration_provisioning > j.data.time.epoch:
                 if jsxobj.customer_signature:
                     if self._validate_customer_signature(jsxobj):
                         jsxobj.next_action = "sign"
