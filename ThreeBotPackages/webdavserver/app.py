@@ -51,6 +51,3 @@ class App(object):
             self._app.debug = True
 
         return self._app
-
-
-
