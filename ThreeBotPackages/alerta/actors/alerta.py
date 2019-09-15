@@ -1,4 +1,3 @@
-from Jumpscale.tools.alerthandler.AlertHandler import SCHEMA_ALERT
 from Jumpscale import j
 
 
@@ -26,7 +25,7 @@ res                 : True
 
 class alerta(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        self.alert_model = j.data.bcdb.system.model_get(schema=SCHEMA_ALERT)
+        self.alert_model = j.tools.alerthandler.model
 
     def list_alerts(self):
         alerts = j.data.serializers.json.dumps({"alerts": [alert._ddict for alert in self.alert_model.find()]})
