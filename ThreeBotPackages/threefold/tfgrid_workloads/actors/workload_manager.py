@@ -4,6 +4,7 @@ import time
 import operator
 from functools import reduce
 
+
 class workload_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         bcdb = j.data.bcdb.get("tf_workloads")
@@ -13,42 +14,26 @@ class workload_manager(j.baseclasses.threebot_actor):
         tb_bcdb = j.data.bcdb.get("threebot_phonebook")
         self.user_model = tb_bcdb.model_get(url="threebot.phonebook.user.1")
         self.nacl = j.data.nacl.default
-        
-        class IndexTable(j.clients.peewee.Model):
-            class Meta:
-            database = None
-
-            id = j.clients.peewee.IntegerField(unique=True)
-            epoch = j.clients.peewee.IntegerField(index=True)
-            node_id = j.clients.peewee.IntegerField(index=True)
-
-        def trigger_func(model, obj, action, **kwargs):
-            if action == 'set_post':
-                for workload_type in ["zdbs", "volumes", "containers"]:
-                    for workload in getattr(obj.data_reservation, workload_type):
-                    record = model.IndexTable.create(id=obj.id, node_id=workload.node_id, epoch=obj.epoch)
-                    record.save()
-
-        IndexTable._meta.database = self.reservation_model.bcdb.sqlite_index_client
-        IndexTable.create_table(safe=True)
-        self.reservation_model.IndexTable = IndexTable
-        self.reservation_model.trigger_add(trigger_func)
-
 
         class IndexTable(j.clients.peewee.Model):
             class Meta:
                 database = None
 
-            id = j.clients.peewee.IntegerField(unique=True)
-            epoch = j.clients.peewee.IntegerField(index=True)
-            node_id = j.clients.peewee.IntegerField(index=True)
+            pw = j.clients.peewee
+            id = pw.PrimaryKeyField()
+            reservation_id = pw.IntegerField(index=True, default=0)
+            workload_id = pw.IntegerField(index=True, default=0)
+            node_id = pw.IntegerField(index=True, default=0)
 
         def trigger_func(model, obj, action, **kwargs):
-            if action == "set_post":
-                for workload_type in ["zdbs", "volumes", "containers"]:
-                    for workload in getattr(obj.data_reservation, workload_type):
-                        record = model.IndexTable.create(id=obj.id, node_id=workload.node_id, epoch=obj.epoch)
-                        record.save()
+            if action == "save":
+                index = model.IndexTable.get_or_none(reservation_id=obj.id)
+                if not index:
+                    for workload_type in ["zdbs", "volumes", "containers"]:
+                        for workload in getattr(obj.data_reservation, workload_type):
+                            record = model.IndexTable.create(
+                                reservation_id=obj.id, workload_id=workload.workload_id, node_id=workload.node_id
+                            )
 
         IndexTable._meta.database = self.reservation_model.bcdb.sqlite_index_client
         IndexTable.create_table(safe=True)
@@ -209,56 +194,36 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
         """
         return self._reservation_get(reservation_id)
-    
-    def reservations_list(self, reservation_id=None, node_id=None, epoch=None, schema_out):
+
+    def reservations_list(self, node_id, state, epoch, schema_out):
         """
         ```in
-        reservation_id = (I)
-        node_id = (I)
-        epoch = (I)
-        ```
-
-        ```out
-        reservations = (LO) !tfgrid.farm.1
-        ```
-        """
-        query = []
-        reservations = []
-        if node_id:
-            query.append((self.reservation_model.IndexTable.node_id == node_id))
-        
-        if epoch:
-            query.append((self.reservation_model.IndexTable.epoch >= epoch))
-
-        result = self.reservation_model.IndexTable.select().where(reduce(operator.and_, query)).execute()
-        for item in result:
-            reservations.append(self._reservation_get(item.id))
-
-        return reservations
-
-    def reservations_list(self, node_id, epoch, schema_out):
-        """
-        ```in
-        node_id = (I)
-        epoch = (I)
+        node_id = (I)  # filter results by node id
+        state = "" (S)  # filter results by next_action
+        epoch = (I)  # filter results which created after this epoch
         ```
 
         ```out
         reservations = (LO) !tfgrid.reservation.1
         ```
         """
-        query = []
-        reservations = []
+        query = None
         if node_id:
-            query.append((self.reservation_model.IndexTable.node_id == node_id))
+            query = self.reservation_model.IndexTable.node_id == node_id
 
-        if epoch:
-            query.append((self.reservation_model.IndexTable.epoch >= epoch))
+        result = self.reservation_model.IndexTable.select().where(query).execute()
+        reservations_ids = set([item.reservation_id for item in result])
 
-        result = self.reservation_model.IndexTable.select().where(reduce(operator.and_, query)).execute()
-        for item in result:
-            reservations.append(self._reservation_get(item.id))
+        reservations = []
+        for reservation_id in reservations_ids:
+            reservation = self._reservation_get(reservation_id)
+            if state and state.upper() != reservation.next_action:
+                continue
 
+            if epoch and epoch < reservation.epoch:
+                continue
+
+            reservations.append(reservation)
         return reservations
 
     def sign_provision(self, reservation_id, tid, signature):
