@@ -11,7 +11,7 @@ class phonebook(j.baseclasses.threebot_actor):
         bcdb = j.data.bcdb.get("threebot_phonebook")
         self.phonebook_model = bcdb.model_get(url="threebot.phonebook.user.1")
 
-    def wallet_create(self, name, sender_signature_hex):
+    def wallet_create(self, name, sender_signature_hex, schema_out=None, user_session=None):
         """
 
         the threebot will create a wallet for you as a user and you can leave money on there to be used for
@@ -31,7 +31,7 @@ class phonebook(j.baseclasses.threebot_actor):
         wallet = j.clients.tfchain.default.wallets.get("phonebook_%s" % name)
         return wallet.address
 
-    def name_register(self, name, sender_signature_hex):
+    def name_register(self, name, sender_signature_hex, schema_out=None, user_session=None):
         """
 
         is the first step of a registration, this is the step where money is involved.
@@ -59,6 +59,7 @@ class phonebook(j.baseclasses.threebot_actor):
         pubkey=None,
         sender_signature_hex=None,
         schema_out=None,
+        user_session=None,
     ):
         """
 
@@ -144,7 +145,7 @@ class phonebook(j.baseclasses.threebot_actor):
         u.save()
         return u
 
-    def get(self, tid=None, name=None, email=None, schema_out=None):
+    def get(self, tid=None, name=None, email=None, schema_out=None, user_session=None):
         """
         ```in
         tid = (I)

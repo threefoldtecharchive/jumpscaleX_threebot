@@ -1,0 +1,10 @@
+@url = tft.explorer.transaction.1
+@acl = false
+from** = ""
+to** = ""
+
+
+@url = tft.explorer.wallet.1
+@acl = false
+address** = ""
+
