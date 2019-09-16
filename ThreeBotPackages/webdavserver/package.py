@@ -20,22 +20,21 @@ class Package(j.baseclasses.threebot_package):
         # TODO: ADD REVERSE PROXY
 
         # Couldn't import file directly!
-        from webdav.app import App
+        from webdavserver.app import App
 
         rack = j.servers.rack.get()
-        app = App(path="/", port=7001).app
-        rack.bottle_server_add(name="webdav", port=7001, app=app)
-
+        app = App(path="/", port=7501).app
+        rack.bottle_server_add(name="webdav", port=7501, app=app)
         website = self.openresty.websites.get("webdav")
         website.ssl = False
-        website.port = 7500
+        website.port = 80
 
         locations = website.locations.get("webdav")
         proxy_location = locations.locations_proxy.new()
         proxy_location.name = "webdav"
         proxy_location.path_url = "/"
         proxy_location.ipaddr_dest = "0.0.0.0"
-        proxy_location.port_dest = 7001
+        proxy_location.port_dest = 7501
         proxy_location.scheme = "http"
 
         website_location = locations.locations_static.new()
