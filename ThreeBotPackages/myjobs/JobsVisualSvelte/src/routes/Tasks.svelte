@@ -12,19 +12,24 @@
 
   onMount(async () => {
     isAllTasksAvailable = false;
-    getJobs().then(function(data) {
-      isAllTasksAvailable = true;
-      console.log(`DATA : ${data}`);
 
-      if (!data) {
-        return;
-      }
-      allTasks = JSON.parse(data).jobs;
-      //Make all the states UpperCase
-      allTasks.forEach(task => {
-        task.state = task.state.toUpperCase();
+    getJobs()
+      .then(data => {
+        isAllTasksAvailable = true;
+        console.log(`DATA : ${data}`);
+
+        if (!data) {
+          return;
+        }
+        allTasks = data.data;
+        //Make all the states UpperCase
+        allTasks.forEach(task => {
+          task.state = task.state.toUpperCase();
+        });
+      })
+      .catch(err => {
+        console.log(err);
       });
-    });
   });
 </script>
 

@@ -36,20 +36,24 @@
 
   onMount(async () => {
     isAllWorkersAvailable = false;
-    getWorkers().then(function(data) {
-      if (!data) {
-        return;
-      }
-      isAllWorkersAvailable = true;
-      console.log(`DATA : ${data}`);
-      workers = JSON.parse(data).workers;
+    getWorkers()
+      .then(function(data) {
+        if (!data) {
+          return;
+        }
+        isAllWorkersAvailable = true;
+        console.log(`DATA : ${data}`);
+        workers = data.data.workers;
+        workers.forEach(worker => {
+          worker.state = worker.state.toUpperCase();
+        });
 
-      workers.forEach(worker => {
-        worker.state = worker.state.toUpperCase();
+        //Calculating the statstics relatedt to the workers
+        statsticsCalculation();
+      })
+      .catch(err => {
+        console.log(err);
       });
-      //Calculating the statstics relatedt to the workers
-      statsticsCalculation();
-    });
   });
 
   function statsticsCalculation() {
