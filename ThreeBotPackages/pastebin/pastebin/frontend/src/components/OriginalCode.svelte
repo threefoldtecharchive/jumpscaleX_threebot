@@ -13,8 +13,7 @@
     highlightedCode = hljs.highlightAuto(originalCode);
     newPaste(originalCode)
       .then(function(response) {
-        let parsedJson = JSON.parse(response);
-        shareableUrl = `${window.location.href}#/share/${parsedJson.id}`;
+        shareableUrl = `${window.location.href}#/share/${response.data.id}`;
       })
       .catch(function(error) {});
   }

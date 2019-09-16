@@ -12,11 +12,8 @@
     getPaste(codeId)
       .then(function(response) {
         // handle success
-        //call highlitedCode
-
         //Get the orginal code from the response to be highlighted
-        let parsedJson = JSON.parse(response);
-        let actualCode = parsedJson.code;
+        let actualCode = response.data.code;
         highlightCode(actualCode);
       })
       .catch(function(error) {

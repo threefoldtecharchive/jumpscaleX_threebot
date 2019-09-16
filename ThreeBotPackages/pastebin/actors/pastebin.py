@@ -17,6 +17,9 @@ class pastebin(j.baseclasses.threebot_actor):
             paste.code = """print("hello")"""
 
     def get_paste(self, paste_id):
+        # import pdb
+
+        # pdb.set_trace()
         paste = j.data.serializers.json.dumps(self.paste_model.get(paste_id)._ddict)
         return paste
 
