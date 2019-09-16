@@ -2,12 +2,14 @@
   import { link } from "svelte-spa-router";
 
   export let post = { tags: [] };
+  let post_link = `/post/${post.slug}`;
+  console.log(`post link ${post_link}`);
 </script>
 
 <article class="hentry h-entry">
   <header>
     <h2 class="entry-title p-name">
-      <a rel="bookmark" href="/post/{post.slug}" use:link>{post.title}</a>
+      <a rel="bookmark" href={post_link} use:link>{post.title}</a>
     </h2>
   </header>
 

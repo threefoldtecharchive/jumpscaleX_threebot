@@ -69,6 +69,18 @@ button:focus {
 * {
 	box-sizing: border-box;
 }
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300);
+body {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
+}
+div {
+	width: 480px;
+	margin: 5em auto 2.5em;
+}
+div:first-child {
+	margin-top: 3em;
+}
 
 /*taiga theme*/
 

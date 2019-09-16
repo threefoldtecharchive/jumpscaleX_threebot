@@ -8,8 +8,6 @@ import unicodedata
 __version__ = "0.0.1"
 
 
-
-
 # TODO: improve and move to jsx
 def remove_date(filename):
     return re.sub("(\d+\-)+", "", filename)
@@ -49,6 +47,8 @@ url = "" (S)
 posts_dir = "posts"
 github_username = "" (S)
 github_repo_url** = "" (S)
+links = (LS)
+
 """
 schema_blogpost = """
 
@@ -57,6 +57,7 @@ schema_blogpost = """
 title** = "" (S)
 slug** = "" (S)
 content = "" (S)
+content_with_meta = "" (S)
 tags = (LS)
 published_at = "" (S)
 """
@@ -67,7 +68,7 @@ schema_blog = """
 git_repo_url** = "" (S)
 metadata = (O) !jumpscale.blog.metadata
 posts =  (LO) !jumpscale.blog.post
-
+pages = (LO) !jumpscale.blog.post
 """
 
 
@@ -110,7 +111,8 @@ class Package(j.baseclasses.threebot_package):
         else:
             blog = found[0]
 
-        posts_dir_path = j.sal.fs.joinPaths(dest, meta["posts_dir"])
+        posts_dir_path = j.sal.fs.joinPaths(dest, meta.get("posts_dir", "posts"))
+        pages_dir_path = j.sal.fs.joinPaths(dest, meta.get("pages_dir", "pages"))
 
         blog.metadata.blog_title = meta.get("blog_title", "blog title")
         blog.metadata.blog_description = meta.get("blog_description", "blog desc")
@@ -118,6 +120,8 @@ class Package(j.baseclasses.threebot_package):
         blog.metadata.author_email = meta["author_email"]
         blog.metadata.author_image_filepath = j.sal.fs.joinPaths(dest, meta["author_image_filename"])
         blog.metadata.posts_dir = posts_dir_path
+        blog.metadata.links = meta["links"]
+
         blog.metadata.github_username = meta["github_username"]
         blog.metadata.posts_per_page = int(meta.get("posts_per_page", "3"))
         blog.metadata.github_repo_url = repo_url
@@ -127,7 +131,6 @@ class Package(j.baseclasses.threebot_package):
 
         posts = j.sal.fs.listFilesInDir(posts_dir_path)
         for post in posts:
-            print("post")
             basename = j.sal.fs.getBaseName(post)
             basename = splitext(basename)[0]
             content = j.sal.fs.readFile(post)
@@ -137,7 +140,8 @@ class Package(j.baseclasses.threebot_package):
             post_title = remove_date(basename)
             post_obj.title = meta.get("title", [post_title])[0]
             post_obj.slug = slugify(post_title)
-            post_obj.content = content
+            post_obj.content_with_meta = content
+            post_obj.content = parsed.strip_meta(content)
             tags = meta.get("tags", [""])[0]
             tags = [t.strip() for t in tags.split(",")]
             post_obj.tags = tags
@@ -146,11 +150,30 @@ class Package(j.baseclasses.threebot_package):
 
             blog.posts.append(post_obj)
 
+        pages = j.sal.fs.listFilesInDir(pages_dir_path)
+        for post in pages:
+            basename = j.sal.fs.getBaseName(post)
+            basename = splitext(basename)[0]
+            content = j.sal.fs.readFile(post)
+            parsed = j.data.markdown.document_get(content)
+            meta = parsed.meta
+            post_obj = post_model.new()
+            post_title = remove_date(basename)
+            post_obj.title = meta.get("title", [post_title])[0]
+            post_obj.slug = slugify(post_title)
+            post_obj.content_with_meta = content
+            post_obj.content = parsed.strip_meta(content)
+            tags = meta.get("tags", [""])[0]
+            tags = [t.strip() for t in tags.split(",")]
+            post_obj.tags = tags
+            post_obj.save()
+            print("POST INFO: ", post_obj)
+
+            blog.pages.append(post_obj)
+
         blog.save()
 
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
-
-
 
         server = j.servers.openresty.get("blog")
         server.install(reset=False)
@@ -174,15 +197,12 @@ class Package(j.baseclasses.threebot_package):
         fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
         website_location_assets.path_location = fullpath
 
-
         ## START BOTTLE ACTORS ENDPOINT
 
         rack = j.servers.rack.get()
         app = j.servers.gedishttp.get_app()
         rack.bottle_server_add(name="gedishttp", port=9201, app=app)
 
-
-        locations = website.locations.get("gedishttp")
         proxy_location = locations.locations_proxy.new()
         proxy_location.name = "gedishttp"
         proxy_location.path_url = "/actors"
@@ -190,7 +210,6 @@ class Package(j.baseclasses.threebot_package):
         proxy_location.port_dest = 9201
         proxy_location.scheme = "http"
         ## END BOTTLE ACTORS ENDPOINT
-
 
         locations.configure()
         website.configure()

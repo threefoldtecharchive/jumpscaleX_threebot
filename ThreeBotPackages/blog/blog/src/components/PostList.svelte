@@ -5,8 +5,11 @@
   import { blogStore } from "./blogstore.js";
   import Tags from "./Tags.svelte";
   import PostCard from "./PostCard.svelte";
+  import Links from "./Links.svelte";
+
   let posts = [];
   let tags = [];
+  let links = [];
   let blog_meta = {};
   export let params;
   export let tag = "";
@@ -23,6 +26,7 @@
 
         blogStore.getMeta(blog_name).then(data => {
           blog_meta = JSON.parse(data);
+          links = blog_meta.links;
         });
       });
       console.log("TAGS: ", tags);
@@ -51,12 +55,14 @@
     </div>
   {/each}
   <div class="col-md-3 pull-xs-right">
-    {#if tags}
-      <div class="sidebar">
-        <h2>Popular Tags</h2>
+    <div class="sidebar">
+      {#if links}
+        <Links {links} />
+      {/if}
+      {#if tags}
         <Tags {tags} />
-      </div>
-    {/if}
+      {/if}
+    </div>
 
   </div>
 </section>

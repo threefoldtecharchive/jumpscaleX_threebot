@@ -5,11 +5,16 @@
 
   let post = { tags: [] };
   export let params;
+  let mdtext = "";
 
   onMount(() => {
     blogStore.getPostBySlug(blog_name, params.slug).then(data => {
       console.log(`postBySlug ${data}`);
       post = JSON.parse(data);
+      let converter = new showdown.Converter({ metadata: true });
+      converter.setFlavor("github");
+
+      mdtext = converter.makeHtml(post.content);
     });
     //   .then(data => {
     //     console.log("IN HERE..", params);
@@ -21,13 +26,7 @@
 </script>
 
 <article class="hentry h-entry">
-  <header>
-    <h2 class="entry-title p-name">
-      <a rel="bookmark" href="/post/{post.slug}" use:link>{post.title}</a>
-    </h2>
-  </header>
 
-  <!-- /.entry-content -->
   <footer class="post-info">
     <div class="tag-list">
       {#each post.tags as tag, idx}
@@ -37,7 +36,8 @@
         </span>
       {/each}
     </div>
-    <div class="author">
+  </footer>
+  <!-- <div class="author">
       <div style="display: inline; max-width: 450px">
         <span class="article-by">Written by</span>
         <a class="url fn" href="https://blog.taiga.io/author/taiga-team.html">
@@ -55,13 +55,12 @@
           src="https://www.gravatar.com/avatar/5288feba63b137c766fabd9f03f420db"
           alt="" />
       </a>
-    </div>
+    </div> -->
 
-    <header>
-      <h2 class="entry-title p-name">{post.title}</h2>
-    </header>
-    <div class="entry-content e-content">
-      {@html post.content}
-    </div>
-  </footer>
+  <header>
+    <h2 class="entry-title p-name">{post.title}</h2>
+  </header>
+  <div class="entry-content e-content">
+    {@html mdtext}
+  </div>
 </article>
