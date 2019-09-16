@@ -88,8 +88,139 @@ For more information about the router check <https://www.npmjs.com/package/svelt
 ## Creating components
 * Add all the front-end libraries <b> example</b> ```Bootstrap and Font awesome``` in ```public/index.html```
 
-- Create Worker Component ```src/routes/Workers.svelte``` which will contain all the logic to Render and Visualize the workers
+* Add ```Axios``` to handle the HTTP requests ```$ npm install axios```
+example 
+```javascript
+import axios from "axios";
+function getJobs() {
+    return (axios.post("/actors/myjobs/list_jobs"));
+}
+function getWorkers() {
+    return (axios.post("/actors/myjobs/list_workers"));
+}
+export {
+    getJobs,
+    getWorkers
+}
+```
+
+* Create Worker Component ```src/routes/Workers.svelte``` which will contain all the logic to Render and Visualize the workers
 ```html
+<script>
+  import { getWorkers } from "../data";
+  import { onMount } from "svelte";
+  import {
+    link,
+    push,
+    pop,
+    replace,
+    location,
+    querystring
+  } from "svelte-spa-router";
+
+  const state = {
+    RESULT: "OK",
+    ERROR: "ERROR",
+    NEW: "NEW",
+    HALTED: "HALTED",
+    WAITING: "WAITING",
+    RUNNING: "RUNNING",
+    WARNING: "WARNING",
+    ALL: "all"
+  };
+  let isAllWorkersAvailable = false;
+  let counters = {
+    success: 0,
+    error: 0,
+    new: 0,
+    running: 0,
+    halted: 0,
+    waiting: 0,
+    warning: 0
+  };
+
+  let currentFilter = state.ALL;
+  let workers = [];
+
+  onMount(async () => {
+    isAllWorkersAvailable = false;
+    getWorkers()
+      .then(function(data) {
+        if (!data) {
+          return;
+        }
+        isAllWorkersAvailable = true;
+        console.log(`DATA : ${data}`);
+        workers = data.data.workers;
+        workers.forEach(worker => {
+          worker.state = worker.state.toUpperCase();
+        });
+
+        //Calculating the statstics relatedt to the workers
+        statsticsCalculation();
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  });
+
+  function statsticsCalculation() {
+    workers.forEach(worker => {
+      if (worker.state == state.RESULT) counters["success"]++;
+      else if (worker.state == state.ERROR) counters["error"]++;
+      else if (worker.state == state.NEW) counters["new"]++;
+      else if (worker.state == state.RUNNING) counters["running"]++;
+      else if (worker.state == state.HALTED) counters["halted"]++;
+      else if (worker.state == state.WAITING) counters["waiting"]++;
+      else if (worker.state == state.WARNING) counters["warning"]++;
+      else {
+      }
+    });
+  }
+  $: filteredWorkers = () => {
+    counters = {
+      success: 0,
+      error: 0,
+      new: 0,
+      running: 0,
+      halted: 0,
+      waiting: 0,
+      warning: 0
+    };
+    statsticsCalculation();
+    if (currentFilter == state.ALL) return workers;
+    else if (currentFilter == state.RESULT)
+      return WorkersFiltering(state.RESULT);
+    else if (currentFilter == state.ERROR) return WorkersFiltering(state.ERROR);
+    else if (currentFilter == state.NEW) return WorkersFiltering(state.NEW);
+    else if (currentFilter == state.RUNNING)
+      return WorkersFiltering(state.RUNNING);
+    else if (currentFilter == state.HALTED)
+      return WorkersFiltering(state.HALTED);
+    else if (currentFilter == state.WARNING)
+      return WorkersFiltering(state.WARNING);
+    else if (currentFilter == state.WAITING)
+      return WorkersFiltering(state.WAITING);
+  };
+
+  function updateFilter(filter) {
+    currentFilter = filter;
+  }
+  function WorkersFiltering(state) {
+    let filteredWorkers = [];
+    workers.forEach(worker => {
+      if (worker.state == state) filteredWorkers.push(worker);
+    });
+    return filteredWorkers;
+  }
+</script>
+
+<style>
+  .mt-3 {
+    margin-top: 20px;
+  }
+</style>
+
 <!--[Header]-->
 <h1>Workers</h1>
 <!--[Filter]-->
@@ -296,19 +427,24 @@ For more information about the router check <https://www.npmjs.com/package/svelt
 
   onMount(async () => {
     isAllTasksAvailable = false;
-    getJobs().then(function(data) {
-      isAllTasksAvailable = true;
-      console.log(`DATA : ${data}`);
 
-      if (!data) {
-        return;
-      }
-      allTasks = JSON.parse(data).jobs;
-      //Make all the states UpperCase
-      allTasks.forEach(task => {
-        task.state = task.state.toUpperCase();
+    getJobs()
+      .then(data => {
+        isAllTasksAvailable = true;
+        console.log(`DATA : ${data}`);
+
+        if (!data) {
+          return;
+        }
+        allTasks = data.data;
+        //Make all the states UpperCase
+        allTasks.forEach(task => {
+          task.state = task.state.toUpperCase();
+        });
+      })
+      .catch(err => {
+        console.log(err);
       });
-    });
   });
 </script>
 
@@ -329,6 +465,7 @@ For more information about the router check <https://www.npmjs.com/package/svelt
     <img src={'/img/loader.gif'} class="img-fluid" alt="Responsive image" />
   </div>
 {/if}
+
 ```
 
 * Create TasksRendering component ```src/routes/TasksRendering.svelte``` which contains the logic to render the tasks and filter them.
