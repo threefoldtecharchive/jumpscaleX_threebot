@@ -8,9 +8,9 @@ class ibiza_actor(j.baseclasses.threebot_actor):
         bcdb = j.data.bcdb.get("test")
         self.model = bcdb.model_get(url="jumpscale.test.ibiza.wallet")
 
-    def info(self, something, schema_out=None, user_session=None):
+    def info(self, data={}, schema_out=None, user_session=None):
         """
         TODO: what info is sent here?
 
         """
-        return None
+        return data
