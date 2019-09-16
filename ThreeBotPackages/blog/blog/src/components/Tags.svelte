@@ -341,7 +341,7 @@
 
 {#if tags}
   <div class="tagcloud01">
-    <ul>
+    <ul class="nav-list">
       {#each tags as tag}
         <li>
           <a

@@ -19,17 +19,16 @@
       posts = data.data;
       console.log("POSTS: ", posts);
 
-      blogStore.getTags(blog_name).then(data => {
-        console.log("received data for tags:", data);
-        tags = data.data;
-        console.log("TAGS: ", tags);
-
-        blogStore.getMeta(blog_name).then(data => {
-          blog_meta = data.data;
-          links = blog_meta.links;
-        });
-      });
       console.log("TAGS: ", tags);
+    });
+    blogStore.getTags(blog_name).then(data => {
+      console.log("received data for tags:", data);
+      tags = data.data;
+      console.log("TAGS: ", tags);
+    });
+    blogStore.getMeta(blog_name).then(data => {
+      blog_meta = data.data;
+      links = blog_meta.links;
     });
   });
 </script>

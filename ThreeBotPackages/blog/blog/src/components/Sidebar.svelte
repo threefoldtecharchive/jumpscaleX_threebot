@@ -27,7 +27,7 @@
 </script>
 
 <nav class="nav">
-
+  <h3 class="about">about our blog</h3>
   {#if links}
     <Links {links} />
   {/if}
