@@ -1,10 +1,8 @@
 from Jumpscale import j
 import sys
 
-JSBASE = j.application.JSBaseClass
 
-
-class sailor(JSBASE):
+class sailor(j.baseclasses.threebot_actor):
     """
     """
 

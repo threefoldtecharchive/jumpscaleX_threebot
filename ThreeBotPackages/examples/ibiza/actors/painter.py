@@ -1,31 +1,7 @@
 from Jumpscale import j
-import sys
-
-JSBASE = j.application.JSBaseClass
 
 
-schema_text = """
-    @url = jumpscale.kds
-    jwt = "" (S)                # JWT Token
-    addr* = ""                   # Address
-    ipaddr = (ipaddr)           # IP Address
-    email = "" (S)              # Email address
-    username = "" (S)           # User name
-    """
-
-schema_text2 = """
-    @url = jumpscale.example.wallet
-    jwt = "" (S)                # JWT Token
-    addr* = ""                  # Address
-    ipaddr = (ipaddr)           # IP Address
-    email = "" (S)              # Email address
-    username = "" (S)           # User name
-    """
-j.data.schema.get_from_text(schema_text)
-j.data.schema.get_from_text(schema_text2)
-
-
-class painter(JSBASE):
+class painter(j.baseclasses.threebot_actor):
     """
     """
 
@@ -38,7 +14,7 @@ class painter(JSBASE):
     def example1(self, addr, schema_out):
         """
         ```out
-        !jumpscale.example.wallet
+        !jumpscale.test.ibiza.wallet
         ```
         """
         w = schema_out.new()
@@ -48,11 +24,11 @@ class painter(JSBASE):
     def example2(self, wallet, schema_out):
         """
         ```in
-        wallet = (O) !jumpscale.example.wallet
+        wallet = (O) !jumpscale.test.ibiza.wallet
         ```
 
         ```out
-        !jumpscale.example.wallet
+        !jumpscale.test.ibiza.wallet
         ```
 
         """
@@ -82,11 +58,11 @@ class painter(JSBASE):
     def example4(self, wallet, schema_out):
         """
         ```in
-        wallet = (O) !jumpscale.example.wallet
+        wallet = (O) !jumpscale.test.ibiza.wallet
         ```
 
         ```out
-        result = (O) !jumpscale.example.wallet
+        result = (O) !jumpscale.test.ibiza.wallet
         custom = (S)
         ```
         """
