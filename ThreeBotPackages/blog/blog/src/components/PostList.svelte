@@ -16,16 +16,16 @@
 
   onMount(() => {
     blogStore.getPosts(blog_name).then(data => {
-      posts = JSON.parse(data);
+      posts = data.data;
       console.log("POSTS: ", posts);
 
       blogStore.getTags(blog_name).then(data => {
         console.log("received data for tags:", data);
-        tags = JSON.parse(data);
+        tags = data.data;
         console.log("TAGS: ", tags);
 
         blogStore.getMeta(blog_name).then(data => {
-          blog_meta = JSON.parse(data);
+          blog_meta = data.data;
           links = blog_meta.links;
         });
       });
@@ -45,24 +45,14 @@
   <title>Blog main</title>
 
 </svelte:head>
-<section class="cold-md-9 pull-xs-left post-list">
+<section class="post-list">
 
   {#each posts as post}
     <PostCard {post} />
   {:else}
-    <div class="row">
+    <article class="hentry h-entry">
       <p>no posts yet..</p>
-    </div>
+    </article>
   {/each}
-  <div class="col-md-3 pull-xs-right">
-    <div class="sidebar">
-      {#if links}
-        <Links {links} />
-      {/if}
-      {#if tags}
-        <Tags {tags} />
-      {/if}
-    </div>
 
-  </div>
 </section>

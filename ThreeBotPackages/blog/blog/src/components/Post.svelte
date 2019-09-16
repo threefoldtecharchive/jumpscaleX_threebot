@@ -10,7 +10,7 @@
   onMount(() => {
     blogStore.getPostBySlug(blog_name, params.slug).then(data => {
       console.log(`postBySlug ${data}`);
-      post = JSON.parse(data);
+      post = data.data;
       let converter = new showdown.Converter({ metadata: true });
       converter.setFlavor("github");
 

@@ -1,5 +1,6 @@
 <script>
   import Nav from "./components/Nav.svelte";
+  import Sidebar from "./components/Sidebar.svelte";
   import Router from "svelte-spa-router";
   import routes from "./routes";
 </script>
@@ -10,11 +11,11 @@
 <div class="wrapper content">
 
   <!--[Container]-->
-  <div class="container-fluid">
+  <div class="main">
     <!--[Title]-->
-    <div class="m-3 text-center">blog</div>
     <!-- Show the router -->
     <Router {routes} />
 
   </div>
+  <Sidebar />
 </div>
