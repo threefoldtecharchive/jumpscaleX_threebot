@@ -143,7 +143,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         jsxobj.save()
         return jsxobj
 
-    def reservation_register(self, reservation, schema_out):
+    def reservation_register(self, reservation, schema_out=None, user_session=None):
         """
         ```in
         reservation = (O) !tfgrid.reservation.1
@@ -158,7 +158,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation.save()
         return reservation
 
-    def reservation_get(self, reservation_id, schema_out):
+    def reservation_get(self, reservation_id, schema_out=None, user_session=None):
         """
         ```in
         reservation_id = (I)
@@ -170,7 +170,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         return self._reservation_get(reservation_id)
 
-    def sign_provision(self, reservation_id, tid, signature):
+    def sign_provision(self, reservation_id, tid, signature, schema_out=None, user_session=None):
         """
         :param reservation_id: is the id of the reservation, unique in BCDB
         :param tid: the threebot id of who signs (in HEX format hexifly in python)
@@ -190,7 +190,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation.save()
         return True
 
-    def sign_delete(self, reservation_id, tid, signature):
+    def sign_delete(self, reservation_id, tid, signature, schema_out=None, user_session=None):
         """
         :param reservation_id: is the id of the reservation, unique in BCDB
         :param tid: the threebot id of who signs (in HEX format hexifly in python)
@@ -210,7 +210,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation.save()
         return True
 
-    def sign_farmer(self, reservation_id, tid, signature):
+    def sign_farmer(self, reservation_id, tid, signature, schema_out=None, user_session=None):
         """
         :param reservation_id: is the id of the reservation, unique in BCDB
         :param tid: the threebot id of who signs (in HEX format hexifly in python)
@@ -236,7 +236,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation.save()
         return True
 
-    def sign_customer(self, reservation_id, signature):
+    def sign_customer(self, reservation_id, signature, schema_out=None, user_session=None):
         """
         :param reservation_id: is the id of the reservation, unique in BCDB
         :param signature: the signature with private key of signer on the json (do reservation_get_json to get json)

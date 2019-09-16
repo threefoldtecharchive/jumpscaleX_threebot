@@ -118,7 +118,7 @@ class alerta(j.baseclasses.threebot_actor):
         )
         return alerts
 
-    def list_alerts_by_env(self, env_name='all', schema_out=None):
+    def list_alerts_by_env(self, env_name='all',schema_out=None, user_session=None):
         """
         ```in
         env_name = (S)
