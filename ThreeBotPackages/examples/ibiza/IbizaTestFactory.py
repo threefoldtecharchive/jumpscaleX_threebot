@@ -5,9 +5,10 @@ class IbizaTestFactory(j.baseclasses.object, j.baseclasses.testtools):
 
     __jslocation__ = "j.threebot.package.ibiza"
 
-    def test(self, name=""):
+    def client_get(self):
         """
-        kosmos -p 'j.threebot.package.ibiza.test()'
+        j.threebot.package.ibiza.client_get()
+        :return:
         """
 
         self.client = j.servers.threebot.local_start_default()
@@ -15,13 +16,19 @@ class IbizaTestFactory(j.baseclasses.object, j.baseclasses.testtools):
         # TODO: check the actor is already loaded if not do following:
 
         self.client.actors.package_manager.package_add(
-            "threebot_tftexplorer",
+            "ibiza",
             git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/examples/ibiza",
         )
 
         self.client.reload()
+        return self.client
 
-        # lets now do example where we go over redis interface
+    def test(self, name=""):
+        """
+        kosmos -p 'j.threebot.package.ibiza.test()'
+        """
+
+        self.client_get()
 
         j.shell()
 
