@@ -1,0 +1,6 @@
+@url = jumpscale.ibiza.model
+@acl = false
+from** = ""
+to** = ""
+
+
