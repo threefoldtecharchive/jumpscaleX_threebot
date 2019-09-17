@@ -11,7 +11,7 @@ class phonebook(j.baseclasses.threebot_actor):
         bcdb = j.data.bcdb.get("threebot_phonebook")
         self.phonebook_model = bcdb.model_get(url="threebot.phonebook.user.1")
 
-    def wallet_create(self, name, sender_signature_hex, schema_out=None, user_session=None):
+    def wallet_create(self, name, schema_out=None, user_session=None):
         """
 
         the threebot will create a wallet for you as a user and you can leave money on there to be used for
@@ -24,15 +24,16 @@ class phonebook(j.baseclasses.threebot_actor):
 
         :return: a TFT wallet address
         """
-        # just to be 100% transparant to other implementation we will only use the redis client implementation
-        # TODO: needs to be implemented
-
         tfchain = j.clients.tfchain.get(name="default", network_type="TEST")
         wallet = j.clients.tfchain.default.wallets.get("phonebook_%s" % name)
         return wallet.address
 
-    def name_register(self, name, sender_signature_hex, schema_out=None, user_session=None):
+    def name_register(self, name, schema_out=None, user_session=None):
         """
+
+        ```in
+        name = (S)
+        ```
 
         is the first step of a registration, this is the step where money is involved.
         without enough funding it won't happen. The cost is 20 TFT today to register a name.
@@ -43,11 +44,20 @@ class phonebook(j.baseclasses.threebot_actor):
 
         each name registration costs 100 TFT
 
+        returns json of empty object
+
         :return:
         """
         self._log_info("register step1: for 3bot name: %s" % name)
-        cl = self.explorer
-        cl.ping()
+        res = self.phonebook_model.find(name=name)
+        if len(res) == 1:
+            return res[0]
+        elif len(res) > 1:
+            raise j.exceptions.JSBUG("more thant 1 should never be the case")
+        else:
+            # is a new one, signature not known yet
+            u = self.phonebook_model.new(name=name)
+        return u
 
     def record_register(
         self,
@@ -69,7 +79,7 @@ class phonebook(j.baseclasses.threebot_actor):
         pubkey = ""                             #public key of the 3bot (is hexflify)
         ipaddr = ""                             #how to reach the digitalme (3bot)
         description = ""                        #optional
-        signature = ""                          #in hex
+        sender_signature_hex = ""                          #in hex
         ```
 
         ```out

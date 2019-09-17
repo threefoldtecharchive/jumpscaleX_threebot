@@ -13,11 +13,6 @@ class Package(j.baseclasses.threebot_package):
 
         """
 
-        self.client.actors.package_manager.package_add(
-            "ibiza",
-            git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/examples/ibiza",
-        )
-
     def start(self):
         """
         called when the 3bot starts
@@ -26,8 +21,6 @@ class Package(j.baseclasses.threebot_package):
 
         self.bcdb.models_add(path=self.package_root + "/models")
         self.gedis_server.actors_add(self.package_root + "/actors", namespace="ibiza")
-
-        j.shell()
 
     def stop(self):
         """
