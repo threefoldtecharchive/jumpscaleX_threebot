@@ -1,0 +1,1 @@
+export const partners = [{ "name": "Test1", "description": "description", "stars": 4, "logo": "logo.png" }, { "name": "Test2", "description": "description", "stars": 5, "logo": "logo.png" }]
