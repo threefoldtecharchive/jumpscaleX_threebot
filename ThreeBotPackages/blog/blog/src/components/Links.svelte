@@ -5,25 +5,18 @@
 
   export let params;
   export let links = [];
-  onMount(() => {
-    if (!links) {
-      blogStore.getMeta(blog_name).then(data => {
-        meta = JSON.parse(data);
-        links = meta.links;
-      });
-    }
-  });
+  export let title = "";
 </script>
 
 {#if links}
   <ul class="nav-list">
     <li class="nav-header">
-      <h4>Links</h4>
+      <h4>{title}</h4>
     </li>
 
     {#each links as link}
       <li>
-        <a href={link}>{link}</a>
+        <a href={link.link}>{link.title}</a>
       </li>
     {/each}
   </ul>

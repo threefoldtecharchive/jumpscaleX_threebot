@@ -1,13 +1,19 @@
 <script>
-  // import active from 'svelte-spa-router/active';
-  // import {
-  // 	link,
-  // 	push,
-  // 	pop,
-  // 	replace,
-  // 	location,
-  // 	querystring,
-  // } from 'svelte-spa-router';
+  import { link } from "svelte-spa-router";
+
+  import { onMount } from "svelte";
+  import { blogStore } from "./blogstore.js";
+  import Tags from "./Tags.svelte";
+  import PostCard from "./PostCard.svelte";
+  import Links from "./Links.svelte";
+
+  let blog_meta = { nav_links: [] };
+
+  onMount(() => {
+    blogStore.getMeta(blog_name).then(data => {
+      blog_meta = data.data;
+    });
+  });
 </script>
 
 <style>
@@ -26,9 +32,13 @@
         src="https://blog.taiga.io/theme/images/logo-color.png"
         alt="Taiga" />
     </a>
-    <h1 class="title">
-      <a href="https://blog.taiga.io/">TF Blog Blog</a>
-    </h1>
+    {#each blog_meta.nav_links as link}
+      <!-- content here -->
+      <h1 class="title">
+        <a href={link.link}>{link.title}</a>
+      </h1>
+    {/each}
+
   </div>
 </header>
 <!-- /#banner -->

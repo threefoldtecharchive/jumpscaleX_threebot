@@ -32,6 +32,14 @@ def slugify(string):
     )
 
 
+schema_link = """
+@url = jumpscale.blog.link
+
+title = "" (S)
+link = "" (S)
+page = "" (S)
+"""
+
 schema_blogmetadata = """
 
 @url = jumpscale.blog.metadata
@@ -47,7 +55,9 @@ url = "" (S)
 posts_dir = "posts"
 github_username = "" (S)
 github_repo_url** = "" (S)
-links = (LS)
+nav_links = (LO)      !jumpscale.blog.link
+sidebar_social_links = (LO) !jumpscale.blog.link
+sidebar_links = (LO)  !jumpscale.blog.link
 
 """
 schema_blogpost = """
@@ -90,7 +100,7 @@ class Package(j.baseclasses.threebot_package):
         # ['/sandbox/code/gitlab/xmonader/sample-blog-jsx/.git', '/sandbox/code/gitlab/xmonader/sample-blog-jsx/posts']
         # JSX> j.sal.fs.listFilesInDir(dest)
         # ['/sandbox/code/gitlab/xmonader/sample-blog-jsx/metadata.yml']
-
+        link_model = j.data.bcdb.system.model_get(schema=schema_link)
         metadata = j.data.bcdb.system.model_get(schema=schema_blogmetadata)
         post_model = j.data.bcdb.system.model_get(schema=schema_blogpost)
         blog_model = j.data.bcdb.system.model_get(schema=schema_blog)
@@ -120,7 +130,12 @@ class Package(j.baseclasses.threebot_package):
         blog.metadata.author_email = meta["author_email"]
         blog.metadata.author_image_filepath = j.sal.fs.joinPaths(dest, meta["author_image_filename"])
         blog.metadata.posts_dir = posts_dir_path
-        blog.metadata.links = meta["links"]
+        for link_obj in meta.get("sidebar_links", []):
+            blog.metadata.sidebar_links.append(link_obj)
+        for link_obj in meta.get("sidebar_social_links", []):
+            blog.metadata.sidebar_social_links.append(link_obj)
+        for link_obj in meta.get("nav_links", []):
+            blog.metadata.nav_links.append(link_obj)
 
         blog.metadata.github_username = meta["github_username"]
         blog.metadata.posts_per_page = int(meta.get("posts_per_page", "3"))
