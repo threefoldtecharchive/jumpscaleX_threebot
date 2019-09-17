@@ -32,7 +32,7 @@
     INFORMATION: "INFORMATION",
     WARNING: "WARNING"
   };
-  const status = { ALL: "ALL", OPEN: "OPEN", CLOSED: "CLOSED",NEW:"NEW" };
+  const status = { ALL: "ALL", OPEN: "OPEN", CLOSED: "CLOSED", NEW: "NEW" };
   let currentFilters = {
     service: "ALL",
     messageType: messageTypes.ALL,
@@ -49,28 +49,21 @@
   function updateAlerts(environment) {
     isAlertsLoaded = false;
     isAllAlertsDeleted = false; //The alerts all available now and not deleted (reintialize the state)
-    console.log("chosed environemnt", environment);
     alerts = [];
 
     getAlerts(environment)
       .then(response => {
-       // let parsedJson = JSON.parse(response);
-        let parsedJson = response;
         // handle success
-
-        console.log("response in success", parsedJson.alerts);
+        let parsedJson = response.data.result;
         alerts = parsedJson.alerts;
         formatedAlerts = convertDataToUpperCase(parsedJson.alerts);
         filterAlerts(formatedAlerts);
         getServices();
         isAlertsLoaded = true;
-        console.log("alerts after filtering", parsedJson.alerts);
       })
       .catch(err => {
         console.log("error ", err);
       });
-
-    //   .get("http://localhost:8080/api/alerts/get-alerts/" + environment)
   }
 
   function updateFilters(selectedService, selectedMessageType, selectedState) {
@@ -110,11 +103,9 @@
   }
 
   $: if (searchText) {
-    console.log(searchText);
     searchAlertsText();
   }
   function searchAlertsText() {
-    console.log("alerts in search", currentFilteredAlerts);
     alerts = currentFilteredAlerts.filter(singleAlert => {
       return singleAlert.text.includes(searchText);
     });
@@ -131,33 +122,27 @@
   function getServices() {
     servicesLoading = true;
     services = formatedAlerts.map(singleAlert => singleAlert.service);
-    //services = [...new Set(services)]; //Making services unique
     services = Array.from([...new Set(services)]); //Making services unique and convert it from set to array
-    console.log("the type ", typeof services);
     services.unshift("ALL"); //Add "All" in the begining of the array
-    console.log("services", services);
     servicesLoading = false;
   }
 
   function deleteAllAlerts() {
     deleteAll()
       .then(res => {
-        console.log("response in case delete all after handler",res);
         alerts = [];
         isAllAlertsDeleted = true;
-        console.log("successful delted all alerts")
       })
-      .catch(err =>{
-        console.log("error while deleting all alerts",err);
+      .catch(err => {
+        console.log("error while deleting all alerts", err);
       });
   }
 </script>
 
 <style>
-.search-width{
-  width: 350px;
-}
-
+  .search-width {
+    width: 350px;
+  }
 </style>
 
 <div>
@@ -171,10 +156,10 @@
     <h1>Central Alert System</h1>
   </div>
   <!--[Filters]-->
-  <div class="row  m-5">
+  <div class="row m-5">
     <div class="col-sm-12">
       <div class="d-flex justify-content-start">
-      <!--[Search]-->
+        <!--[Search]-->
         <div class="mx-4 search-width">
           <input
             type="search"
@@ -270,7 +255,7 @@
               on:click={() => updateFilters(currentFilters.service, currentFilters.messageType, status.ALL)}>
               All
             </a>
-             <a
+            <a
               class="dropdown-item"
               href="#"
               on:click={() => updateFilters(currentFilters.service, currentFilters.messageType, status.NEW)}>
@@ -291,7 +276,7 @@
 
           </div>
         </div>
-        
+
         <!--[Reset-Filter]-->
         <div class="mx-2">
           <button
@@ -317,7 +302,7 @@
   </div>
   <!--[Tabs]-->
   <div class="row mt-4">
-    <div class="col-sm-12  ml-4">
+    <div class="col-sm-12 ml-4">
       <div>
         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
           <li class="nav-item">
