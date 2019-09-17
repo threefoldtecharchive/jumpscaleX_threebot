@@ -9,9 +9,10 @@ class tft_explorer(j.baseclasses.threebot_actor):
         self.phonebook_model = bcdb.model_get(url="tft.explorer.transaction.1")
         self.phonebook_model = bcdb.model_get(url="tft.explorer.wallet.1")
 
-    def info(self, something, schema_out=None, user_session=None):
+    def data_dump(self, data, schema_out=None, user_session=None):
         """
-        TODO: what info is sent here?
+
+        data is the data coming from the blockchain and has info about ...
 
         """
-        return wallet.address
+        return

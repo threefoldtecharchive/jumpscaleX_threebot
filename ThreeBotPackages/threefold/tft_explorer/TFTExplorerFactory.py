@@ -5,21 +5,28 @@ class TFTExplorerFactory(j.baseclasses.object, j.baseclasses.testtools):
 
     __jslocation__ = "j.threebot.package.tftexplorer"
 
+    def client_get(self):
+        """
+        j.threebot.package.tftexplorer.client_get()
+        :return:
+        """
+        self.client = j.servers.threebot.local_start_default()
+
+        self.client.actors.package_manager.package_add(
+            "threebot_phonebook",
+            git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/threefold/tft_explorer",
+        )
+
+        # self.client.reload(namespace="default")
+
+        return self.client
+
     def test(self, name=""):
         """
         kosmos -p 'j.threebot.package.tftexplorer.test()'
         """
 
-        self.client = j.servers.threebot.local_start_default()
-
-        # TODO: check the actor is already loaded if not do following:
-
-        self.client.actors.package_manager.package_add(
-            "threebot_tftexplorer",
-            git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/threefold/tft_explorer",
-        )
-
-        self.client.reload()
+        self.client_get()
 
         info = {}
         j.data.serializers.json.dumps(info)
