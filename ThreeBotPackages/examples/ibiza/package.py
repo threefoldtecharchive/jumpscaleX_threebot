@@ -9,8 +9,14 @@ class Package(j.baseclasses.threebot_package):
         """
         is called at install time
         :return:
+
+
         """
-        pass
+
+        self.client.actors.package_manager.package_add(
+            "ibiza",
+            git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/examples/ibiza",
+        )
 
     def start(self):
         """
@@ -19,8 +25,9 @@ class Package(j.baseclasses.threebot_package):
         """
 
         self.bcdb.models_add(path=self.package_root + "/models")
+        self.gedis_server.actors_add(self.package_root + "/actors", namespace="ibiza")
 
-        self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
+        j.shell()
 
     def stop(self):
         """
