@@ -38,15 +38,12 @@
   //Calculating the stastics related to the tasks
   function statsticsCalculation() {
     allTasks.forEach(task => {
-      console.log(`task.state: ${task.state}`);
-
       if (task.state === state.RESULT) counters["success"]++;
       else if (task.state === state.ERROR) counters["error"]++;
       else if (task.state === state.NEW) counters["new"]++;
       else if (task.state === state.RUNNING) counters["running"]++;
       else if (task.state === state.HALTED) counters["halted"]++;
       else {
-        console.log(`task.state: ${task.state}`);
       }
     });
   }

@@ -40,7 +40,7 @@
         </li>
         <li class="nav-item active">
           <a class="nav-link text-white" href="/tasks" use:link>
-            Tasks
+            Jobs
             <span class="sr-only">(current)</span>
           </a>
         </li>

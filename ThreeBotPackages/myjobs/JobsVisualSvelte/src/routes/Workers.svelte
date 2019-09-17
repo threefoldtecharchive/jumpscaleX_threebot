@@ -42,7 +42,6 @@
           return;
         }
         isAllWorkersAvailable = true;
-        console.log(`DATA : ${data}`);
         workers = data.data.workers;
         workers.forEach(worker => {
           worker.state = worker.state.toUpperCase();

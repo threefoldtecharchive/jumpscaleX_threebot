@@ -16,8 +16,6 @@
     getJobs()
       .then(data => {
         isAllTasksAvailable = true;
-        console.log(`DATA : ${data}`);
-
         if (!data) {
           return;
         }
@@ -38,7 +36,7 @@
 </style>
 
 <!--[Header]-->
-<h1>Tasks</h1>
+<h1>Jobs</h1>
 {#if allTasks && allTasks.length > 0 && isAllTasksAvailable}
   <TasksRendering {allTasks} />
 {:else if allTasks.length == 0 && isAllTasksAvailable}
