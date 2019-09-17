@@ -1,8 +1,5 @@
 from Jumpscale import j
 
-# FIXME: re-use macros (or make them re-usbale!)
-#       now, we cannot even import them normally here!
-# TODO: cache with expiration
 
 REPO = "https://github.com/threefoldfoundation/data_team/tree/master/team"
 
@@ -85,8 +82,14 @@ class team(j.baseclasses.threebot_actor):
             contribution_types = (LI)
         ```
         """
-        if not self.path:
-            self.clone_repo()
 
-        data = get_data(self.path, projects=projects, contribution_types=contribution_types)
-        return j.data.serializers.json.dumps(data)
+        def get_team_members():
+            if not self.path:
+                self.clone_repo()
+
+            data = get_data(self.path, projects=projects, contribution_types=contribution_types)
+            return j.data.serializers.json.dumps(data)
+
+        key = f"members_actor_{image_path}_{projects}_{contribution_types}"
+        # cache for 5 mins
+        return self._cache.get(key, method=get_team_members, expire=300)

@@ -1,7 +1,5 @@
 from Jumpscale import j
 
-# FIXME: re-use macro code (or make get_data generic)
-# TODO: cache with expiration
 
 REPO = "https://github.com/abom/test_community/tree/master/partners"
 
@@ -40,8 +38,14 @@ class community(j.baseclasses.threebot_actor):
             image_path = (S)
         ```
         """
-        if not self.path:
-            self.clone_repo()
 
-        data = get_data(self.path, image_path=image_path)
-        return j.data.serializers.json.dumps(data)
+        def get_partners():
+            if not self.path:
+                self.clone_repo()
+
+            data = get_data(self.path, image_path=image_path)
+            return j.data.serializers.json.dumps(data)
+
+        key = f"community_actor_{image_path}"
+        # cache for 5 mins
+        return self._cache.get(key, method=get_partners, expire=300)

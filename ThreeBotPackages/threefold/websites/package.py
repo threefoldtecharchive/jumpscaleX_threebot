@@ -31,7 +31,6 @@ class Package(j.baseclasses.threebot_package):
 
         path = j.clients.git.getContentPathFromURLorPath(self.threefold_io_repo, branch=self.branch, pull=True)
         j.sal.fs.chown(path, "www", "www")
-        j.sal.fs.chmod(path, 0o755)
         website_location.path_location = path
 
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
