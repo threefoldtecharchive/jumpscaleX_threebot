@@ -1,10 +1,11 @@
-from datetime import datetime
-from Jumpscale import j
 
-timeformat = "%a, %d %b %Y %H:%M:%S %Z"
-syncformat = "%d/%m/%Y %H:%M"
 
 def sync_directory():
+    from datetime import datetime
+
+    old_format = "%a, %d %b %Y %H:%M:%S %Z"
+    new_format = "%d/%m/%Y %H:%M"
+
     bcdb = j.data.bcdb.get("tf_directory")
     farm_model = bcdb.model_get(url="tfgrid.farm.1")
     node_model = bcdb.model_get(url="tfgrid.node.2")
@@ -24,9 +25,9 @@ def sync_directory():
         response.raise_for_status()
         nodes = response.json()
 
-        node["farm_id"] = farm_object.id
-
         for node in nodes:
+            node["farm_id"] = farm_object.id
+
             if "used_resources" in node:
                 node["used_resource"] = node["used_resources"]
             if "reserved_resources" in node:
@@ -35,11 +36,11 @@ def sync_directory():
                 node["total_resource"] = node["total_resources"]
 
             if "updated" in node:
-                updated = datetime.strptime(node["updated"], timeformat)
-                node["updated"] = updated.strftime(syncformat)
+                updated = datetime.strptime(node["updated"], old_format)
+                node["updated"] = updated.strftime(new_format)
             if "created" in node:
-                created = datetime.strptime(node["created"], timeformat)
-                node["created"] = created.strftime(syncformat)
+                created = datetime.strptime(node["created"], old_format)
+                node["created"] = created.strftime(new_format)
 
 
             existing_nodes = node_model.find(node_id=node["node_id"])
