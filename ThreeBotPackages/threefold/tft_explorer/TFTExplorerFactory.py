@@ -27,15 +27,28 @@ class TFTExplorerFactory(j.baseclasses.object, j.baseclasses.testtools):
         """
 
         self.client_get()
+        cl = j.clients.redis.get(port=8901)
+        assert cl.execute_command("PING")
+        data = {"from_addr": "0xmkjxlhxzledhzkjhdzekhdze", "to_addr": "54d65dez46ez4de564d6z4de3dz", "amount": 3}
+        data2 = j.data.serializers.json.dumps(data)
+        data3 = cl.execute_command("default.tft_explorer.data_dump_transaction", data2)
+        assert (
+            data3
+            == b'{"from_addr": "0xmkjxlhxzledhzkjhdzekhdze", "to_addr": "54d65dez46ez4de564d6z4de3dz", "amount": 3}'
+        )
 
-        info = {}
-        j.data.serializers.json.dumps(info)
-
-        self.client.actors.tft_explorer.info_load(info)
-
-        # lets now do example where we go over redis interface
-
+        # bcdb = j.data.bcdb.get("tft_explorer")
+        """  tft_ex_t = bcdb.model_get(url="tft.explorer.transaction.1")
+        o = tft_ex_t.new()
+        o.from_addr = "0xmkjxlhxzledhzkjhdzekhdze"
+        o.to_addr = "54d65dez46ez4de564d6z4de3dz"
+        o.amount = 8
+        self.client.actors.tft_explorer.data_dump_transaction(o) """
         j.shell()
+        # e = self.client.actors.tft_explorer.data_dump_transaction(data2)
+        # z = self.client.actors.tft_explorer.data_dump_transaction(data2)
+        # x = self.client.actors.tft_explorer.get_transactions()
+        # lets now do example where we go over redis interface
 
         # print(name)
         # self._test_run(name=name)
