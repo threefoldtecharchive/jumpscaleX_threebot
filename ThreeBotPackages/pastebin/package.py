@@ -23,7 +23,6 @@ class Package(j.baseclasses.threebot_package):
         """
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
 
-        # server = j.servers.openresty.get("test")
         server = self.openresty
         server.install(reset=False)
         server.configure()
@@ -60,8 +59,6 @@ class Package(j.baseclasses.threebot_package):
 
         locations.configure()
         website.configure()
-        # self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
-        # server.start()
 
     def stop(self):
         """
