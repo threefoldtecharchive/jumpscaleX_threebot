@@ -5,7 +5,6 @@ class farms(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         bcdb = j.data.bcdb.get("tf_directory")
         self.farm_model = bcdb.model_get(url="tfgrid.farm.1")
-        self.node_model = bcdb.model_get(url="tfgrid.node.2")
 
     def _get_farm(self, farm_id):
         try:

@@ -31,8 +31,8 @@ class nodes(j.baseclasses.threebot_actor):
             validation_errors.append("node_id")
         if not node.os_version:
             validation_errors.append("os_version")
-        if not node.farmer_id:
-            validation_errors.append("farmer_id")
+        if not node.farm_id:
+            validation_errors.append("farm_id")
         if not node.location:
             validation_errors.append("location")
         if validation_errors:
@@ -42,10 +42,10 @@ class nodes(j.baseclasses.threebot_actor):
             return self.node_model.set_dynamic(node._ddict, obj_id=old_node.id)
         return self.node_model.new(data=node).save()
 
-    def list(self, farmer_id, country, city, cru, sru, mru, hru, schema_out):
+    def list(self, farm_id, country, city, cru, sru, mru, hru, schema_out):
         """
         ```in
-        farmer_id = (S)
+        farm_id = (S)
         country = (S)
         city = (S)
         cru = -1 (I)
@@ -61,7 +61,7 @@ class nodes(j.baseclasses.threebot_actor):
 
         output = schema_out.new()
         for node in self.node_model.iterate():
-            if farmer_id and farmer_id != node.farmer_id:
+            if farm_id and farm_id != node.farm_id:
                 continue
             if country != "" and node.location.country != country:
                 continue
