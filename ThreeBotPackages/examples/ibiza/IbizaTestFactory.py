@@ -13,14 +13,6 @@ class IbizaTestFactory(j.baseclasses.object, j.baseclasses.testtools):
 
         self.client = j.servers.threebot.local_start_default()
 
-        # TODO: check the actor is already loaded if not do following:
-
-        self.client.actors.package_manager.package_add(
-            "ibiza",
-            git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/examples/ibiza",
-        )
-
-        self.client.reload()
         return self.client
 
     def test(self, name=""):
