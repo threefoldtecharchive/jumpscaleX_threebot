@@ -85,7 +85,7 @@ routes.set('/MyComponent', MyComponent)
 
 For more information about the router check <https://www.npmjs.com/package/svelte-spa-router>
 
-## Creating components
+## Working on frontend
 * Add all the front-end libraries <b> example</b> ```Bootstrap and Font awesome``` in ```public/index.html```
 
 * Add ```Axios``` to handle the HTTP requests ```$ npm install axios```

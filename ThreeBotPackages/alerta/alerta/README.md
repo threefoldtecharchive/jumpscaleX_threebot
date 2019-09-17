@@ -668,39 +668,6 @@ export function deleteAlert(alertId) {
 }
 ```
 
-## Working on back-end
-* Create python file <b>example</b> ```back-end/Api.py``` which will contain the code to handle the APIs
-
-* Install bottle Web FrameWork ```pip install bottle```
-
-* Import what you need from the server in the python file <b>example</b> ```from bottle import route``` then create your APIs to handle the coming requests 
-```python
-@app.route('/api/alerts/get-alerts/<type>', method=['OPTIONS', 'GET', 'POST'])
-@enable_cors
-def get_alerts(type):
-    """
-    Get alerts depending on the environment
-    """
-    data = get_data()
-    dataList = data["alerts"]
-    if(type.upper() != "ALL"):
-        filterData = [
-            item for item in dataList if item['environment'].upper() == type]
-    else:
-        filterData = dataList
-    time.sleep(4)
-    return {"alerts": filterData}
-
-
-def get_data():
-    with open('/home/rafy/svelte/central-alert-system/back-end/data.json') as json_file:
-        data = json.load(json_file)
-        # print(data)
-        return data
-
-```
-
-
 ## Deploying to the web
 
 ### With [now](https://zeit.co/now)

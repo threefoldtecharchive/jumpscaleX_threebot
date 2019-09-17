@@ -330,57 +330,6 @@ export function newPaste(code) {
 }
 ```
 
-## Working on back-end
-* Create python file <b>example</b> ```back-end/UrlApi.py``` which will contain the code to handle the APIs
-
-* Install bottle Web FrameWork ```pip install bottle```
-
-* Import what you need from the server in the python file <b>example</b> ```from bottle import route``` then create your APIs to handle the comming requests 
-```python
-@app.route('/api/code/add-highlighted-code', method=['OPTIONS', 'GET', 'POST'])
-@enable_cors
-def add_Highlighted_code():
-    """
-    Add the highlighted code to the Redis database
-    """
-    if request.method == "POST":
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Content-type'] = 'application/json'
-    data = request.json['code']
-    encodedData = stringToBase64(data)
-    generatedVal = str(generate_random_no())
-    # add to redis data base
-    add_highlighted_code(radndomNo=generatedVal,
-                         data=encodedData)
-    return generatedVal
-```
-* Create random number genrator which will create the random number used in URL creation for sharing  ```import random```  and <b>example</b> for the logic 
-```python
-def generate_random_no():
-    random.seed(a=None)
-    return randint(0, 1000000)  # randint is inclusive at both ends
-```
-
-* Install Redis in your system 
-``` bash
-    sudo apt update
-    sudo apt install redis-server
-```
-
-* Install Redis database in your project ```pip install redis```
-we will store the <b>Random No(URL)</b> (which is randomly generated) and the <b>code</b>
-
-* Import Redis into the python file ```import redis```,Create a Redis client with your configurations 
-```python
-redis_host = "localhost"
-redis_port = 6379
-redis_password = ""
-r = redis.StrictRedis(host=redis_host, port=redis_port,
-                          password=redis_password, decode_responses=True)
-```
- * use Redis commands to store and get the data in Redis database ```        r.set(radndomNo, data)``` and ```r.get(codeId)```
-
-
 ## Deploying to the web
 
 ### With [now](https://zeit.co/now)
