@@ -14,3 +14,10 @@ class ibiza_actor(j.baseclasses.threebot_actor):
 
         """
         return data
+
+    def info2(self, abool=False, astr="", schema_out=None, user_session=None):
+        """
+        TODO: what info is sent here?
+
+        """
+        return data
