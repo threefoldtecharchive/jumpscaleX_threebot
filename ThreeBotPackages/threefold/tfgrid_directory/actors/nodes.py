@@ -67,13 +67,13 @@ class nodes(j.baseclasses.threebot_actor):
                 continue
             if city != "" and node.location.city != city:
                 continue
-            if cru > -1 and node.total_resource.cru < cru:
+            if cru > -1 and node.total_resources.cru < cru:
                 continue
-            if mru > -1 and node.total_resource.mru < mru:
+            if mru > -1 and node.total_resources.mru < mru:
                 continue
-            if sru > -1 and node.total_resource.sru < sru:
+            if sru > -1 and node.total_resources.sru < sru:
                 continue
-            if hru > -1 and node.total_resource.hru < hru:
+            if hru > -1 and node.total_resources.hru < hru:
                 continue
             output.nodes.append(node)
 
@@ -102,10 +102,10 @@ class nodes(j.baseclasses.threebot_actor):
         node = self._find(node_id)
         if not node:
             raise j.exceptions.NotFound("node %s not found" % id)
-        node.total_resource.mru = resource.mru
-        node.total_resource.cru = resource.cru
-        node.total_resource.hru = resource.hru
-        node.total_resource.sru = resource.sru
+        node.total_resources.mru = resource.mru
+        node.total_resources.cru = resource.cru
+        node.total_resources.hru = resource.hru
+        node.total_resources.sru = resource.sru
         node.save()
         return True
 
@@ -119,10 +119,10 @@ class nodes(j.baseclasses.threebot_actor):
         node = self._find(node_id)
         if not node:
             raise j.exceptions.NotFound("node %s not found" % id)
-        node.reserved_resource.mru = resource.mru
-        node.reserved_resource.cru = resource.cru
-        node.reserved_resource.hru = resource.hru
-        node.reserved_resource.sru = resource.sru
+        node.reserved_resources.mru = resource.mru
+        node.reserved_resources.cru = resource.cru
+        node.reserved_resources.hru = resource.hru
+        node.reserved_resources.sru = resource.sru
 
         node.save()
         return True
@@ -138,9 +138,9 @@ class nodes(j.baseclasses.threebot_actor):
         node = self._find(node_id)
         if not node:
             raise j.exceptions.NotFound("node %s not found" % id)
-        node.used_resource.mru = resource.mru
-        node.used_resource.cru = resource.cru
-        node.used_resource.hru = resource.hru
-        node.used_resource.sru = resource.sru
+        node.used_resources.mru = resource.mru
+        node.used_resources.cru = resource.cru
+        node.used_resources.hru = resource.hru
+        node.used_resources.sru = resource.sru
         node.save()
         return True

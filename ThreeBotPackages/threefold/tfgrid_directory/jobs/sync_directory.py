@@ -15,6 +15,8 @@ def sync_directory():
     farms = response.json()
 
     for farm in farms:
+        j.core.tools.log("Processing farm %s" % farm["name"], level=20)
+
         farmobjs = farm_model.find(name=farm["name"])
         if not farmobjs:
             farm_object = farm_model.new(farm).save()
@@ -26,14 +28,9 @@ def sync_directory():
         nodes = response.json()
 
         for node in nodes:
-            node["farm_id"] = farm_object.id
+            j.core.tools.log("Processing node %s" % node["node_id"], level=20)
 
-            if "used_resources" in node:
-                node["used_resource"] = node["used_resources"]
-            if "reserved_resources" in node:
-                node["reserved_resource"] = node["reserved_resources"]
-            if "total_resources":
-                node["total_resource"] = node["total_resources"]
+            node["farm_id"] = farm_object.id
 
             if "updated" in node:
                 updated = datetime.strptime(node["updated"], old_format)
@@ -45,8 +42,10 @@ def sync_directory():
 
             existing_nodes = node_model.find(node_id=node["node_id"])
             if existing_nodes:
+                j.core.tools.log("Updating existing node %s" % node["node_id"], level=20)
                 node_object = existing_nodes[0]
                 node_model.set_dynamic(node, node_object.id)
             else:
+                j.core.tools.log("Creating new node %s" % node["node_id"], level=20)
                 node_object = node_model.new(node)
                 node_object.save()
