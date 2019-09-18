@@ -13,6 +13,7 @@ This module will allow :
 
 ## Technical Requirements
 
+We will take advantga e of the caldav protocol
 What kind of info do we need on an event ?.
 
 - peoples attached
@@ -28,6 +29,8 @@ This is what we call actors and lives in the actors folder. To have an overview 
 The structure of data during those client /server exchanges are called models and are defined as schema in the models folder.
 
 to sum up an external client would call this threebot actors method through redis protocol exchanging data according to the models.
+
+![3Bot module example with mail module](../doc/images/3bot_actors_models.jpg)
 
 ## RUN
 

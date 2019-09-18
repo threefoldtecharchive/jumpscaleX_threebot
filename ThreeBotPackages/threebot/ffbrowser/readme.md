@@ -4,22 +4,18 @@
 
 This module will allow :
 
-- add/modify/delete an event based on a date and a time
-- list events based on a period (define by a From and To date-time)
-- **do we need periodicity** ?
-- **do we need notifications** ?
-- **do we need several calendar** ?
-- **do we need handle timezone** ?
+- launch a browser in browser
+- **what else do we need** ?
 
 ## Technical Requirements
 
-What kind of info do we need on an event ?.
+We will rely on the jimber tech
+What kind of info do we need on a ff browser ?.
 
-- peoples attached
-- location
+- location of the proxy
+- browser compatibility ?
 - description
-- link to ffconnect ?
-- title
+- link ?
 
 ## Threebot Actors and Models
 
@@ -28,6 +24,8 @@ This is what we call actors and lives in the actors folder. To have an overview 
 The structure of data during those client /server exchanges are called models and are defined as schema in the models folder.
 
 to sum up an external client would call this threebot actors method through redis protocol exchanging data according to the models.
+
+![3Bot module example with mail module](../doc/images/3bot_actors_models.jpg)
 
 ## RUN
 
