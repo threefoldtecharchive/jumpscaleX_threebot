@@ -1,7 +1,7 @@
 
 @url = tfgrid.node.2
 node_id** = (S)
-farmer_id** = (S)
+farm_id** = (S)
 os_version** = (S)
 #parameters = (dict)
 created = (T)
@@ -9,9 +9,10 @@ updated = (T)
 uptime = (I)
 address = (S)
 location = (O) !tfgrid.location.1
-total_resource = (O) !tfgrid.node.resource.amount.1
-used_resource = (O) !tfgrid.node.resource.amount.1
-reserved_resource = (O) !tfgrid.node.resource.amount.1
+total_resources = (O) !tfgrid.node.resource.amount.1
+used_resources = (O) !tfgrid.node.resource.amount.1
+reserved_resources = (O) !tfgrid.node.resource.amount.1
+proofs = (LO) !tfgrid.node.proof.1
 ifaces = (LO) !tfgrid.node.iface.1
 public_config = (O)!tfgrid.node.public_iface.1
 exit_node = (B)
@@ -38,3 +39,10 @@ cru = (I)
 mru = (I)
 hru = (I)
 sru = (I)
+
+@url = tfgrid.node.proof.1
+created = (T)
+hardware_hash = (S)
+disk_hash = (S)
+hardware = (dict)
+disks = (dict)
