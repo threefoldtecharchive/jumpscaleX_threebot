@@ -3,27 +3,26 @@
 ## questions
 
 is it a blog or a wiki ? if it is a wiki then we need acl
+if it is a blog then let's use the blog we have
 
 ## Module Requirements
 
 This module will allow :
 
-- publish content that will be viewable through http
+- publish content that will be accessible through http
 - editing published content
 - removed content
 - search for content
 - link content ?
-- share screen/doc/chat with the room ?
 - **what else do we need\*** ?
 
 ## Technical Requirements
 
-We will rely upon the ??? tech
 What kind of info do we need to interface the 3bot with the freeflow content ?.
 
 - content
-- participants
-- description
+- tags
+- meta data
 - link ?
 
 ## Threebot Actors and Models
