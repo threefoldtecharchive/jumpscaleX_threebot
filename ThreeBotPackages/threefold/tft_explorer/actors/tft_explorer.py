@@ -10,7 +10,6 @@ class tft_explorer(j.baseclasses.threebot_actor):
         self.tft_ex_w = bcdb.model_get(url="tft.explorer.wallet.1")
 
     def data_dump_transaction(self, transaction_data, schema_out=None, user_session=None):
-
         # we can't use schema_out because it is not linked to a bcdb
         # neither to a namespace id
         # t = schema_out.new()
@@ -28,3 +27,8 @@ class tft_explorer(j.baseclasses.threebot_actor):
     def get_transactions(self, schema_out=None, user_session=None):
         ts = j.data.serializers.json.dumps({"transactions": [t for t in self.tft_ex_t.find()]})
         return ts
+
+    def set_block(blockheight, [transactions tft.explorer.transaction.1], balances):
+        
+    def get_balance()
+
