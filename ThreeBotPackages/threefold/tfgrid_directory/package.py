@@ -2,7 +2,7 @@ from Jumpscale import j
 import gevent
 import os
 
-DIR_SYNC_TIME = 3600 * 4
+DIR_SYNC_TIME = 10
 
 
 class Package(j.baseclasses.threebot_package):
