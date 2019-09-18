@@ -12,12 +12,18 @@ This module will allow :
 We will rely on the Jimber tech
 What kind of info do we need on a ff browser ?.
 
+### Demo
+
 For demo purposes we can use the existing service https://browser.threefold.io/
 
 - description 
 - link https://browser.threefold.io/
 
 We can probably rely on static html where we call the browser service from threebot location, connect to remote websockets.
+
+### Real life
+
+We probably need to run browsers in a central service (like FFconnect MTU's) and get the url from the correct MTU once the user browses to it.
 
 ## Threebot Actors and Models
 
