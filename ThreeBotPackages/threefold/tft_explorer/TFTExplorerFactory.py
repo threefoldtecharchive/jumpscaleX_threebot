@@ -32,11 +32,15 @@ class TFTExplorerFactory(j.baseclasses.object, j.baseclasses.testtools):
         data = {"from_addr": "0xmkjxlhxzledhzkjhdzekhdze", "to_addr": "54d65dez46ez4de564d6z4de3dz", "amount": 3}
         data2 = j.data.serializers.json.dumps(data)
         data3 = cl.execute_command("default.tft_explorer.data_dump_transaction", data2)
-        assert (
-            data3
-            == b'{"from_addr": "0xmkjxlhxzledhzkjhdzekhdze", "to_addr": "54d65dez46ez4de564d6z4de3dz", "amount": 3}'
-        )
+        j.shell()
 
+        # we can't decode the jsx data because we don't have the schema
+        # so we need to import the schema somehow ?
+        data_dec = j.data.serializers.jsxdata.loads(data3)
+
+        assert data_dec.amount == 3
+        assert data_dec.from_addr == "0xmkjxlhxzledhzkjhdzekhdze"
+        assert data_dec.to_addr == "54d65dez46ez4de564d6z4de3dz"
         # bcdb = j.data.bcdb.get("tft_explorer")
         """  tft_ex_t = bcdb.model_get(url="tft.explorer.transaction.1")
         o = tft_ex_t.new()
@@ -44,7 +48,7 @@ class TFTExplorerFactory(j.baseclasses.object, j.baseclasses.testtools):
         o.to_addr = "54d65dez46ez4de564d6z4de3dz"
         o.amount = 8
         self.client.actors.tft_explorer.data_dump_transaction(o) """
-        j.shell()
+        # j.shell()
         # e = self.client.actors.tft_explorer.data_dump_transaction(data2)
         # z = self.client.actors.tft_explorer.data_dump_transaction(data2)
         # x = self.client.actors.tft_explorer.get_transactions()
