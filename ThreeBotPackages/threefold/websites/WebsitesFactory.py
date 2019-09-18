@@ -9,13 +9,13 @@ class WebsitesFactory(j.baseclasses.object, j.baseclasses.testtools):
         """
         install website packages
         """
-
         server = j.servers.threebot.default
         server.save()
 
         # threefold.io
         threefold_io_package = j.tools.threebot_packages.get(
             "threefold.io",
+            branch=branch,
             giturl=f"https://github.com/threefoldfoundation/www_threefold.io_new/tree/{branch}/package",
             threebot_server_name=server.name,
         )
