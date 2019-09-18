@@ -84,6 +84,7 @@ pages = (LO) !jumpscale.blog.post
 
 class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
+        self.blog_name = None
         if "branch" in kwargs.keys():
             self.branch = kwargs["branch"]
         else:
@@ -94,6 +95,7 @@ class Package(j.baseclasses.threebot_package):
         is called at install time
         :return:
         """
+        self.blog_name = blog_name
         dest = j.clients.git.pullGitRepo(repo_url)
 
         # JSX> j.sal.fs.listDirsInDir(dest)
@@ -190,8 +192,13 @@ class Package(j.baseclasses.threebot_package):
 
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
 
-        server = j.servers.openresty.get("blog")
-        server.install(reset=False)
+    def start(self):
+        """
+        called when the 3bot starts
+        :return:
+        """
+        server = self.openresty
+        server.install()
         server.configure()
         website = server.websites.get("blog")
         website.ssl = False
@@ -199,17 +206,17 @@ class Package(j.baseclasses.threebot_package):
         locations = website.locations.get("blog")
 
         website_location = locations.locations_static.new()
-        website_location.name = "blog"
-        website_location.path_url = f"/{blog_name}"
+        website_location.name = f"{self.blog_name}"
+        website_location.path_url = f"/{self.blog_name}"
         website_location.use_jumpscale_weblibs = False
-        fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
+        fullpath = j.sal.fs.joinPaths(self._dirpath, "html/")
         website_location.path_location = fullpath
 
         website_location_assets = locations.locations_static.new()
         website_location_assets.name = "assets"
         website_location_assets.path_url = "/"
         website_location_assets.use_jumpscale_weblibs = True
-        fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
+        fullpath = j.sal.fs.joinPaths(self._dirpath, "html/")
         website_location_assets.path_location = fullpath
 
         ## START BOTTLE ACTORS ENDPOINT
@@ -229,12 +236,6 @@ class Package(j.baseclasses.threebot_package):
         locations.configure()
         website.configure()
 
-    def start(self):
-        """
-        called when the 3bot starts
-        :return:
-        """
-        server = j.servers.openresty.get("blog")
         server.start()
 
     def stop(self):
