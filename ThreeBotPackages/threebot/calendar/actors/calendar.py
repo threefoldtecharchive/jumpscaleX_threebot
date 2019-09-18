@@ -24,4 +24,6 @@ class tft_explorer(j.baseclasses.threebot_actor):
 
     def update(self, event, schema_out=None, user_session=None):
 
+    def accept(self, event, schema_out=None, user_session=None):
+
     def list_by_period(self, event, schema_out=None, user_session=None): 

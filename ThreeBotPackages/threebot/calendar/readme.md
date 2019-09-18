@@ -13,7 +13,7 @@ This module will allow :
 
 ## Technical Requirements
 
-We will take advantga e of the caldav protocol
+We will take advantga e of the caldav protocol and the icalendar mime type
 What kind of info do we need on an event ?.
 
 - peoples attached
