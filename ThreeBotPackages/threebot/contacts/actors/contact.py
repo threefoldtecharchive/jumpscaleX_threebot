@@ -32,4 +32,3 @@ class tft_explorer(j.baseclasses.threebot_actor):
     def get_transactions(self, schema_out=None, user_session=None):
         ts = j.data.serializers.json.dumps({"transactions": [t for t in self.tft_ex_t.find()]})
         return ts
-
