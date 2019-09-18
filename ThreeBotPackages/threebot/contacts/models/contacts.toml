@@ -1,11 +1,17 @@
-@url = tft.explorer.transaction.1
+@url = contact.people.1
 @acl = false
-from_addr** = ""
-to_addr** = ""
-amount = 0
+phone_numbers =  []
+addresses =  []
+emails = [] 
+picture= "" 
+birthdate= ""
 
-@url = tft.explorer.wallet.1
+
+
+@url = contact.people.phone.1
 @acl = false
-address** = ""
-balance = 0
-
+number = ""
+extensions= ""
+description= ""
+priority= ""
+type= ""
