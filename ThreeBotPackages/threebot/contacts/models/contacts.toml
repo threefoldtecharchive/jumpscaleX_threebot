@@ -7,7 +7,6 @@ picture= ""
 birthdate= ""
 
 
-
 @url = contact.people.phone.1
 @acl = false
 number = ""

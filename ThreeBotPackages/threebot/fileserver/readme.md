@@ -1,5 +1,10 @@
 # file server
 
+## questions
+
+do we need an actor ?
+actor to wrap the webdav protocol ?
+
 ## Module Requirements
 
 This module will allow :

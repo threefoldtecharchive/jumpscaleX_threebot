@@ -1,25 +1,30 @@
 # ff content
 
+## questions
+
+is it a blog or a wiki ? if it is a wiki then we need acl
+
 ## Module Requirements
 
 This module will allow :
 
-- add/modify/delete an event based on a date and a time
-- list events based on a period (define by a From and To date-time)
-- **do we need periodicity** ?
-- **do we need notifications** ?
-- **do we need several calendar** ?
-- **do we need handle timezone** ?
+- publish content that will be viewable through http
+- editing published content
+- removed content
+- search for content
+- link content ?
+- share screen/doc/chat with the room ?
+- **what else do we need\*** ?
 
 ## Technical Requirements
 
-What kind of info do we need on an event ?.
+We will rely upon the ??? tech
+What kind of info do we need to interface the 3bot with the freeflow content ?.
 
-- peoples attached
-- location
+- content
+- participants
 - description
-- link to ffconnect ?
-- title
+- link ?
 
 ## Threebot Actors and Models
 
