@@ -18,15 +18,9 @@ This module will allow :
 
 ## Technical Requirements
 
-We will rely upon the imap smtp protocols
+We will rely upon the imap, smtp protocols
 What kind of info do we need to interface the 3bot ?
 What kind of action do we want to expose through the actor ?
-
-- content
-- status
-- from and to addresses
-- signature verification
-- link ?
 
 ## Threebot Actors and Models
 
