@@ -20,4 +20,4 @@ class tft_explorer(j.baseclasses.threebot_actor):
 
         """
 
-
+    #put here the needed functions to interface with ffbrowser
