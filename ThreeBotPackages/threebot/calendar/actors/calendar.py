@@ -3,7 +3,7 @@ import binascii
 from io import BytesIO
 
 
-class tft_explorer(j.baseclasses.threebot_actor):
+class calendar(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
         bcdb = j.data.bcdb.get("calendar")
         self.tft_ex_t = bcdb.model_get(url="calendar.request.1")

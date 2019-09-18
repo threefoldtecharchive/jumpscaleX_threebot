@@ -9,16 +9,16 @@ actor to wrap the webdav protocol ?
 
 This module will allow :
 
-- add/modify/delete an event based on a date and a time
-- list events based on a period (define by a From and To date-time)
-- **do we need periodicity** ?
-- **do we need notifications** ?
-- **do we need several calendar** ?
-- **do we need handle timezone** ?
+- add/modify/delete/read a file or directory
+- list files/directories based on a path
+- move files/directories
+- rename files/directories
+- add authentication for external users to access the filesystem
+- create a shareable link for another 3bot to read ? NTH
 
 ## Technical Requirements
 
-What kind of info do we need on an event ?.
+We will take advantage of the webdav protocol to access the BCDB. A filemanager_ui already exists adn let us access the filesystem
 
 - peoples attached
 - location

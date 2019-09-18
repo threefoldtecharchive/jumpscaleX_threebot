@@ -1,18 +1,19 @@
-@url = contact.people.1
+@url = contact.1
 @acl = false
 firstname** =""
 lastname** = ""
-phone_numbers =  (LO) !contact.people.phone.1
-addresses =  (LO) !contact.people.addresses.1
+phone_numbers =  (LO) !contact.phone.1
+addresses =  (LO) !contact.addresses.1
 email = "" (LS)
 picture= "" 
 birthdate= ""
 website=""
 job_title=""
 salutation = "Mr,Miss,Mme"
-3bot_ids = "" (LI)
+default_3bot = !threebot.phonebook.user.1
+3bots = (LO) !threebot.phonebook.user.1
 
-@url = contact.people.phone.1
+@url = contact.phone.1
 @acl = false
 number** = ""
 extensions= ""
@@ -20,7 +21,7 @@ description= ""
 priority= ""
 type= ""
 
-@url = contact.people.addresses.1
+@url = contact.addresses.1
 building_number = ""
 street_number= ""
 street_name** =""
