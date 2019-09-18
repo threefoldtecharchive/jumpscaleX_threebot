@@ -7,10 +7,12 @@ This module will allow :
 - add/modify/delete a contact
 - list contacts
 - search contacts
+- send/share contacts ?
 
 ## questions
 
 will it be integrated to the phonebook ? ?
+do we need a link to some 3botids ?
 
 ## Technical Requirements
 

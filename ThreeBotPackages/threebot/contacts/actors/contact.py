@@ -23,6 +23,9 @@ class tft_explorer(j.baseclasses.threebot_actor):
     def remove(self, event, schema_out=None, user_session=None):
 
     def update(self, event, schema_out=None, user_session=None):
+    
+    #share or send ?
+    def share(self, event, schema_out=None, user_session=None):
 
     def list_by_name(self, event, schema_out=None, user_session=None): 
 
