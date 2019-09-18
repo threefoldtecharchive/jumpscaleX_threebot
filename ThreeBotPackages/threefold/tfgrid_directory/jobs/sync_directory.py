@@ -23,7 +23,7 @@ def sync_directory():
         else:
             farm_object = farmobjs[0]
 
-        response = j.clients.threefold_directory.client.ListCapacity(query_params={"farmer": farm["iyo_organization"]})[1]
+        response = j.clients.threefold_directory.client.ListCapacity(query_params={"farmer": farm["iyo_organization"], "proofs": True})[1]
         response.raise_for_status()
         nodes = response.json()
 
@@ -39,6 +39,9 @@ def sync_directory():
                 created = datetime.strptime(node["created"], old_format)
                 node["created"] = created.strftime(new_format)
 
+            for proof in node["proofs"]:
+                created = datetime.strptime(proof["created"], old_format)
+                proof["created"] = created.strftime(new_format)
 
             existing_nodes = node_model.find(node_id=node["node_id"])
             if existing_nodes:
