@@ -9,14 +9,14 @@ This module will allow :
 
 ## Technical Requirements
 
-We will rely on the Jimber tech
+We will rely upon the jimber tech
 What kind of info do we need on a ff browser ?.
 
 ### Demo
 
 For demo purposes we can use the existing service https://browser.threefold.io/
 
-- description 
+- description
 - link https://browser.threefold.io/
 
 We can probably rely on static html where we call the browser service from threebot location, connect to remote websockets.

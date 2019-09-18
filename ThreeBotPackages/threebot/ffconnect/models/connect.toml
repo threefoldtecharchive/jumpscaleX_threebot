@@ -1,11 +1,7 @@
-@url = tft.explorer.transaction.1
+@url = ffconnect.room.1
 @acl = false
-from_addr** = ""
-to_addr** = ""
-amount = 0
-
-@url = tft.explorer.wallet.1
-@acl = false
-address** = ""
-balance = 0
+participants =[]
+description = ""
+creation_date = ""
+ 
 
