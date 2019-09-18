@@ -1,29 +1,31 @@
-# ff content
-
-## questions
-
-is it a blog or a wiki ? if it is a wiki then we need acl
+# mail
 
 ## Module Requirements
 
 This module will allow :
 
-- publish content that will be viewable through http
-- editing published content
-- removed content
-- search for content
-- link content ?
-- share screen/doc/chat with the room ?
+- sending emails
+- receiving emails
+- answer emails
+- search for emails
+- add account that will be able to send mail through smtp ?
+- add account that will be able to receive mail through imap ?
+- Do we want a group by e.g. by subject (conversation) or by sender or by date
+- add to spam
+- add to and clean trashbin
+- archive
 - **what else do we need\*** ?
 
 ## Technical Requirements
 
-We will rely upon the ??? tech
-What kind of info do we need to interface the 3bot with the freeflow content ?.
+We will rely upon the imap smtp protocols
+What kind of info do we need to interface the 3bot ?
+What kind of action do we want to expose through the actor ?
 
 - content
-- participants
-- description
+- status
+- from and to addresses
+- signature verification
 - link ?
 
 ## Threebot Actors and Models
