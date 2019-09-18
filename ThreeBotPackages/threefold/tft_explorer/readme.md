@@ -1,10 +1,13 @@
 # Requirements
 
+do we relaly want all the transactions ?
+maybe a wallet balance for a start
+
 we want every threebot to be able to :
 
 - verify a transaction with a transaction hash (is it really necessary ?)
-- verify a wallet balance
-- verify a name registration
+- verify a wallet balance - for sure
+- verify a name registration ? probably not
 
 # Technical Requirements
 
