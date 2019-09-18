@@ -25,7 +25,7 @@ class Package(j.baseclasses.threebot_package):
         self.bcdb.models_add(path=self.package_root + "/models")
         # start one worker to sync farms
         j.servers.myjobs.workers_tmux_start(1)
-        gevent.spawn_later(DIR_SYNC_TIME, self.sync_directory)
+        gevent.spawn_later(0, self.sync_directory)
 
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
 
