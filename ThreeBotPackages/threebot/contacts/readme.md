@@ -8,6 +8,10 @@ This module will allow :
 - list contacts
 - search contacts
 
+## questions
+
+will it be integrated to the phonebook ? ?
+
 ## Technical Requirements
 
 What kind of backend will we use ? standar format ?
