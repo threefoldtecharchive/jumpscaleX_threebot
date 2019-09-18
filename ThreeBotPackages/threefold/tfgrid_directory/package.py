@@ -2,7 +2,7 @@ from Jumpscale import j
 import gevent
 import os
 
-DIR_SYNC_TIME = 10
+DIR_SYNC_TIME = 3600 * 4
 
 
 class Package(j.baseclasses.threebot_package):
@@ -34,8 +34,8 @@ class Package(j.baseclasses.threebot_package):
         try:
             job.wait()
         except Exception as e:
-            # TODO: handle the exception of syncing
-            pass
+            j.errorhandler.exception_handle(e, die=False)
+
         gevent.spawn_later(DIR_SYNC_TIME, self.sync_directory)
 
     def stop(self):
