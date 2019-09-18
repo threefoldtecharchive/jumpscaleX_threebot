@@ -18,9 +18,11 @@ farm_id = (S)
 reachability_v4 = "PUBLIC,HIDDEN" (E)
 reachability_v6 = "PUBLIC,HIDDEN" (E)
 
+#wireguard instance
 @url = tfgrid.network.net_resource.1
 node_id = (O) !tfgrid.network.node_id.1
 prefix = (iprange)
+#
 exit_point = (I)
 # wireguard private key. encrypted with the public key of the node
 private_key = (S)
