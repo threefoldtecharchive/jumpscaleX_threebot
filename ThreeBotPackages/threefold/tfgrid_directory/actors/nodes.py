@@ -42,7 +42,7 @@ class nodes(j.baseclasses.threebot_actor):
             return self.node_model.set_dynamic(node._ddict, obj_id=old_node.id)
         return self.node_model.new(data=node).save()
 
-    def list(self, farm_id, country, city, cru, sru, mru, hru, schema_out):
+    def list(self, farm_id, country, city, cru, sru, mru, hru, proofs, schema_out):
         """
         ```in
         farm_id = (S)
@@ -52,6 +52,7 @@ class nodes(j.baseclasses.threebot_actor):
         mru = -1 (I)
         sru = -1 (I)
         hru = -1 (I)
+        proofs = False (B)
         ```
 
         ```out
@@ -75,6 +76,8 @@ class nodes(j.baseclasses.threebot_actor):
                 continue
             if hru > -1 and node.total_resources.hru < hru:
                 continue
+            if not proofs:
+                node.proofs = []
             output.nodes.append(node)
 
         return output
