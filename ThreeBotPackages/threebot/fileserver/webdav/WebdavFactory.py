@@ -16,10 +16,12 @@ class WebdavFactory(j.baseclasses.object, j.baseclasses.testtools):
 
         return "OK"
 
-    def start(self):
+    def start(self, background=False, web=True, ssl=False):
         self.install()
         server = j.servers.threebot.default
-        server.start(web=True, ssl=False)
+        server.web = web
+        server.ssl = ssl
+        server.start(background=background)
 
     def test(self, name=""):
         self.client = j.servers.threebot.local_start_default()
@@ -27,10 +29,11 @@ class WebdavFactory(j.baseclasses.object, j.baseclasses.testtools):
         if not j.tools.threebot_packages.exists("threebot_webdav"):
             self.client.actors.package_manager.package_add(
                 "threebot_webdav",
-                git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/webdav",
+                git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/webdavserver",
             )
         self.client.reload()
         print(name)
+        self.start(background=True, web=True)
         self._test_run(name=name)
 
         self._log_info("All TESTS DONE")
