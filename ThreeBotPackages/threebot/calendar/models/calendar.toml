@@ -1,0 +1,23 @@
+@url = calendar.core.1
+@acl = false
+version = ""
+events = (LO) !calendar.event.1
+
+
+@url = calendar.event.1
+@acl = false
+id = ""
+participants = (LO) !contact.1
+alarm = !calendar.alarm.1
+organizer=!contact.1
+start_time="19970714T170000Z"
+end_time="19970715T035959Z"
+summary = "Bastille Day Party"
+description = ""
+location="48.85299;2.36885"
+
+
+@url = calendar.alarm.1
+trigger = "-PT1440M"
+action = "DISPLAY"
+description = "Reminder"

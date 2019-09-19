@@ -7,7 +7,7 @@ class myjobs(j.baseclasses.threebot_actor):
         self.action_model = j.servers.myjobs.model_action
         self.worker_model = j.data.bcdb.myjobs.model_get(url="jumpscale.myjobs.worker")
 
-    def list_workers(self):
+    def list_workers(self, schema_out=None, user_session=None):
         def transform_worker(worker_obj):
             states_dict = dict(zip(range(5), "NEW,ERROR,BUSY,WAITING,HALTED".split(",")))
             worker_types_dict = dict(zip(range(3), "tmux,subprocess,inprocess".split(",")))
@@ -26,7 +26,7 @@ class myjobs(j.baseclasses.threebot_actor):
         print("returning workers  ", workers)
         return workers
 
-    def list_jobs(self):
+    def list_jobs(self, schema_out=None, user_session=None):
         def transform_job(job_obj):
             states_dict = dict(zip(range(5), "NEW,ERROR,OK,RUNNING,HALTED".split(",")))
             job_dict = job_obj._ddict

@@ -4,7 +4,7 @@
 #unique id inside the reservation is an autoincrement
 workload_id = (I)
 #links to unique node on the TFGrid
-nodeid = (I)
+node_id = (I)
 flist = (S)
 hub_url = (S)
 #env variables
