@@ -106,4 +106,4 @@ TBD
 
 ## Actors
 
-check [actors](/home/ahmed/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/blog/actors)
+check [actors](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/blog/actors/blog.py)
