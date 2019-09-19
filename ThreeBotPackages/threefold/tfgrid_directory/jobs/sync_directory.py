@@ -1,5 +1,3 @@
-
-
 def sync_directory():
     from datetime import datetime
 
@@ -23,7 +21,9 @@ def sync_directory():
         else:
             farm_object = farmobjs[0]
 
-        response = j.clients.threefold_directory.client.ListCapacity(query_params={"farmer": farm["iyo_organization"], "proofs": True})[1]
+        response = j.clients.threefold_directory.client.ListCapacity(
+            query_params={"farmer": farm["iyo_organization"], "proofs": True}
+        )[1]
         response.raise_for_status()
         nodes = response.json()
 

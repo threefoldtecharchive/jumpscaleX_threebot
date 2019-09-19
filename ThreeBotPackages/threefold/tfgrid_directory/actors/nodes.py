@@ -14,7 +14,7 @@ class nodes(j.baseclasses.threebot_actor):
             return None
         return nodes[0]
 
-    def add(self, node, schema_out):
+    def add(self, node, schema_out=None, user_session=None):
         """
         ```in
         node = (O) !tfgrid.node.2
@@ -42,7 +42,7 @@ class nodes(j.baseclasses.threebot_actor):
             return self.node_model.set_dynamic(node._ddict, obj_id=old_node.id)
         return self.node_model.new(data=node).save()
 
-    def list(self, farm_id, country, city, cru, sru, mru, hru, proofs, schema_out):
+    def list(self, farm_id, country, city, cru, sru, mru, hru, proofs, schema_out=None, user_session=None):
         """
         ```in
         farm_id = (S)
@@ -82,7 +82,7 @@ class nodes(j.baseclasses.threebot_actor):
 
         return output
 
-    def get(self, node_id, schema_out):
+    def get(self, node_id, schema_out=None, user_session=None):
         """
         ```in
         node_id = (S)
@@ -94,7 +94,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         return self._find(node_id)
 
-    def update_total_capacity(self, node_id, resource):
+    def update_total_capacity(self, node_id, resource, schema_out=None, user_session=None):
         """
         ```in
         node_id = (S)
@@ -112,7 +112,7 @@ class nodes(j.baseclasses.threebot_actor):
         node.save()
         return True
 
-    def update_reserved_capacity(self, node_id, resource):
+    def update_reserved_capacity(self, node_id, resource, schema_out=None, user_session=None):
         """
         ```in
         node_id = (S)
@@ -130,7 +130,7 @@ class nodes(j.baseclasses.threebot_actor):
         node.save()
         return True
 
-    def update_used_capacity(self, node_id, resource):
+    def update_used_capacity(self, node_id, resource, schema_out=None, user_session=None):
         """
         ```in
         node_id = (S)
