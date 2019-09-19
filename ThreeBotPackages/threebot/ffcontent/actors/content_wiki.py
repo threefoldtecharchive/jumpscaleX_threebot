@@ -9,4 +9,3 @@ class ffcontent(j.baseclasses.threebot_actor):
 
 
 # let's take the blog actor ?
-
