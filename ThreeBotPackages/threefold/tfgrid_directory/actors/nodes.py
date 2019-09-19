@@ -82,17 +82,21 @@ class nodes(j.baseclasses.threebot_actor):
 
         return output
 
-    def get(self, node_id, schema_out=None, user_session=None):
+    def get(self, node_id, proofs, schema_out=None, user_session=None):
         """
         ```in
         node_id = (S)
+        proofs = False (B)
         ```
 
         ```out
         node = (O) !tfgrid.node.2
         ```
         """
-        return self._find(node_id)
+        node = self._find(node_id)
+        if not proofs:
+            node.proofs = []
+        return node
 
     def update_total_capacity(self, node_id, resource, schema_out=None, user_session=None):
         """
