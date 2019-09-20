@@ -32,43 +32,6 @@ def remove_date(filename):
     return re.sub("(\d+\-)+", "", filename)
 
 
-schema_blogmetadata = """
-
-@url = jumpscale.blog.metadata
-
-blog_name = "" (S)
-blog_title = "JSX blog" (S)
-blog_description = "JSX blog description" (S)
-author_name = "" (S)
-author_email = "" (S)
-author_image_filename = ""
-base_url = "" (S)
-url = "" (S)
-posts_dir = "posts"
-github_username = "" (S)
-github_repo_url = "" (S)
-"""
-schema_blogpost = """
-
-@url = jumpscale.blog.post
-
-title = "" (S)
-slug = "" (S)
-content = "" (S)
-tags = (LS)
-published_at = "" (S)
-"""
-
-schema_blog = """
-@url = jumpscale.blog
-
-git_repo_url = "" (S)
-metadata = (O) !jumpscale.blog.metadata
-posts =  (LO) !jumpscale.blog.post
-
-"""
-
-
 class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
         if "branch" in kwargs.keys():
