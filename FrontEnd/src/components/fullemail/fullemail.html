@@ -1,0 +1,30 @@
+<section class="fullemail">
+  <v-container style="max-width: 100%;">
+    <v-row class="px-2">
+      <v-avatar class="secondary">PMC</v-avatar>
+      <v-flex class="pl-5">
+        <p>{{email.from}}</p>
+        <p>{{email.subject}}</p>
+        <p class="mt-0 pt-0">{{email.timestamp}}</p>
+      </v-flex>
+    </v-row>
+    <div class="text-center mail-actions my-5">
+      <span class="primary pa-2 pb-3 all-round">
+        <v-btn small dark text>
+          <v-icon small>fas fa-trash</v-icon>
+        </v-btn>
+        <v-btn small dark text>
+          <v-icon small>fas fa-reply</v-icon>
+        </v-btn>
+        <v-btn small dark text>
+          <v-icon small>fas fa-reply-all</v-icon>
+        </v-btn>
+        <v-btn small dark text>
+          <v-icon small>fas fa-share</v-icon>
+        </v-btn>
+      </span>
+    </div>
+    <div class="pt-5" v-html="$sanitize(email.body)">
+    </div>
+  </v-container>
+</section>
