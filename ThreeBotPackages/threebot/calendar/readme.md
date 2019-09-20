@@ -2,7 +2,8 @@
 
 ## User Storie
 
-As a 3bot owner I can through the 3botApp display and manage(add,modify,delete) a web calendar that will be stored on my 3bot
+As a 3bot owner I want to display and manage(add,modify,delete) a web calendar through the 3botApp so
+that my calendar data will be stored on my 3bot but still accessible from my 3bot app
 
 ## Module Requirements
 
