@@ -1,5 +1,6 @@
 @url = calendar.1
 version = "" (S)
+category = ""
 title = "" (S)
 description = "" (S)
 events = (LO) !calendar.event.1
