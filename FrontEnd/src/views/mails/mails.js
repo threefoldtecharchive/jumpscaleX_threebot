@@ -1,14 +1,16 @@
 import emailNavigation from '../../components/emailnavigation'
 import fullEmail from '../../components/fullemail'
 import emailListItem from '../../components/emaillistitem'
+import richInput from '../../components/richinput'
 export default {
   name: 'mails',
-  components: { emailNavigation, fullEmail, emailListItem },
+  components: { emailNavigation, fullEmail, emailListItem, richInput },
   props: [],
   data () {
     return {
       openMail: null,
       selected: [],
+      extraInputOptions: true,
       sortingSelection: [
         'Date',
         'From',
