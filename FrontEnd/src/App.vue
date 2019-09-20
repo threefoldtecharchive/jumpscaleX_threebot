@@ -119,4 +119,8 @@ export default {
 .v-navigation-drawer__border {
   display: none;
 }
+textarea {
+  width: 100%;
+  height: 100%;
+}
 </style>

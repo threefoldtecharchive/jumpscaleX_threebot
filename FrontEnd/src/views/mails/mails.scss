@@ -3,4 +3,11 @@
     .right-border {
         border-right: 1px solid rgba(0, 0, 0, 0.12);
     }
+    .newMail {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        width: 500px;
+        border-radius: 15px 15px 0 0 !important;
+    }
 }

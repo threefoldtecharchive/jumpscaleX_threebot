@@ -42,7 +42,8 @@
                   </v-btn>
                 </v-row>
               </v-toolbar>
-              <div class="pa-0" style="position: relative; width: 100%; height: 100%; overflow: auto; min-height: 100px;">
+              <div class="pa-0"
+                style="position: relative; width: 100%; height: 100%; overflow: auto; min-height: 100px;">
                 <div style="position: absolute; height:100%; width: 100%;" class="pa-3">
                   <v-list three-line>
                     <v-list-item-group v-model="selected">
@@ -65,4 +66,39 @@
       </v-card>
     </v-flex>
   </v-row>
+  <v-card class="newMail mr-2">
+    <v-card-title dark class="primary white--text">
+      New mail
+      <v-spacer />
+      <v-btn dark small icon>
+        <v-icon small>fas fa-window-minimize</v-icon>
+      </v-btn>
+      <v-btn dark small icon>
+        <v-icon small>fas fa-times</v-icon>
+      </v-btn>
+    </v-card-title>
+    <v-card-text class="pb-0">
+      <v-text-field label="To" required></v-text-field>
+      <v-text-field label="Subject" required></v-text-field>
+      <v-divider></v-divider>
+      <rich-input :fullToolbar="extraInputOptions"/>
+    </v-card-text>
+    <v-card-actions class="pl-4">
+      <v-btn color="secondary">
+        <v-icon left small>fas fa-paper-plane</v-icon>
+        Send
+      </v-btn>
+      <v-btn icon text>
+        <v-icon small>fas fa-paperclip</v-icon>
+      </v-btn>
+      <!-- <v-btn :class=" extraInputOptions ? 'primary' : '' " icon text @click="extraInputOptions = !extraInputOptions">
+        <v-icon small>fas fa-font</v-icon>
+      </v-btn> -->
+      <v-spacer></v-spacer>
+      <v-btn icon text>
+        <v-icon small>fas fa-trash</v-icon>
+      </v-btn>
+
+    </v-card-actions>
+  </v-card>
 </section>
