@@ -7,13 +7,21 @@ This module will allow :
 - sending emails
 - receiving emails
 - answer emails
+- forward emails
 - search for emails
 - add account that will be able to send mail through smtp ?
 - add account that will be able to receive mail through imap ?
 - Do we want a group by e.g. by subject (conversation) or by sender or by date
 - add to spam
 - add to and clean trashbin
+- create/modify/delete folders
+- move mails between folders
+- label mails
 - archive
+- attach document to content
+- search for addresses list
+- add/remove address to/from contact list
+
 - **what else do we need\*** ?
 
 ## Technical Requirements

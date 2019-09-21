@@ -1,20 +1,26 @@
 # calendar
 
+## User Storie
+
+As a 3bot owner I want to display and manage(add,modify,delete) a web calendar through the 3botApp so
+that my calendar data will be stored on my 3bot but still accessible from my 3bot app
+
 ## Module Requirements
 
 This module will allow :
 
+- add a calendar
 - add/modify/delete an event based on a date and a time
+- add/modify/delete an alarm to an event
 - list events based on a period (define by a From and To date-time)
-- **do we need periodicity** ?
-- **do we need notifications** ?
-- **do we need several calendar** ?
-- **do we need handle timezone** ?
+- list all events of a calendar
 
 ## Technical Requirements
 
-We will take advantga e of the caldav protocol and the icalendar mime type
-What kind of info do we need on an event ?.
+We will use the iCalendar [specs](https://www.kanzaki.com/docs/ical/) for the calendar, events and alarm objects.
+We should be able to access the calendar through caldav.
+
+Nice to have : grant other user/3bot read/write access to one calendar
 
 - peoples attached
 - location
