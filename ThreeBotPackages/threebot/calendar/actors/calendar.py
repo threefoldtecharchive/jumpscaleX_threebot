@@ -6,19 +6,10 @@ from io import BytesIO
 class calendar(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
         bcdb = j.data.bcdb.get("calendar")
-        self.tft_ex_t = bcdb.model_get(url="calendar.request.1")
+        self.tft_ex_t = bcdb.model_get(url="calendar.1")
 
-    def add(self, event, schema_out=None, user_session=None):
-        """
-        ```in
-        event = (O) !calendar.request.1
-        ```
-
-        ```out
-        !tft.explorer.transaction.1
-        ```
-
-        """
+    # Do we need these fonctions if we go through caldav ?
+    """ def add(self, event, schema_out=None, user_session=None):
 
     def remove(self, event, schema_out=None, user_session=None):
 
@@ -26,4 +17,4 @@ class calendar(j.baseclasses.threebot_actor):
 
     def accept(self, event, schema_out=None, user_session=None):
 
-    def list_by_period(self, event, schema_out=None, user_session=None): 
+    def list_by_period(self, event, schema_out=None, user_session=None):  """

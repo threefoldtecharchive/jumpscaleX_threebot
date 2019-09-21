@@ -1,23 +1,29 @@
-@url = calendar.core.1
-@acl = false
-version = ""
+@url = calendar.1
+version = "" (S)
+category = ""
+title = "" (S)
+description = "" (S)
 events = (LO) !calendar.event.1
 
 
 @url = calendar.event.1
-@acl = false
 id = ""
 participants = (LO) !contact.1
 alarm = !calendar.alarm.1
-organizer=!contact.1
-start_time="19970714T170000Z"
-end_time="19970715T035959Z"
-summary = "Bastille Day Party"
-description = ""
-location="48.85299;2.36885"
+organizer= !contact.1 
+start_time="" (D)
+end_time="" (D)
+summary = "" (S)
+description = "" (S)
+location="" (LF) #GPS coordinates 
+status="confirmed,tentative,cancelled" (E) !
+sequence="" (I)
+category=  (LO)
 
 
 @url = calendar.alarm.1
 trigger = "-PT1440M"
-action = "DISPLAY"
-description = "Reminder"
+action = "DISPLAY,AUDIO," (E)
+repeat = "4" (I)
+duration = "PT0H15M0S" (S) #Positive time x hours y minutes z seconds
+description = "Reminder" (S)
