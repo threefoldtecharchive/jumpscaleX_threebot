@@ -10,14 +10,14 @@ class ibiza_actor(j.baseclasses.threebot_actor):
 
     def info(self, data={}, schema_out=None, user_session=None):
         """
-        TODO: what info is sent here?
-
         """
         return data
 
-    def info2(self, abool=False, astr="", schema_out=None, user_session=None):
+    def info2(self, data={}, schema_out=None, user_session=None):
         """
-        TODO: what info is sent here?
 
         """
+        assert user_session.authenticated
+        assert user_session.data_verified
+
         return data
