@@ -157,12 +157,13 @@ class phonebook(j.baseclasses.threebot_actor):
         u.save()
         return u
 
-    def get(self, tid=None, name=None, email=None, schema_out=None, user_session=None):
+    def get(self, tid=None, name=None, email=None, die=True, schema_out=None, user_session=None):
         """
         ```in
         tid = (I)
         name = (S)
         email = (S)
+        die = true (B)
         ```
 
         ```out
@@ -182,6 +183,8 @@ class phonebook(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound("param error need to specify user_id or name or email")
 
         if len(users) <= 0:
+            if die == False:
+                return None
             raise j.exceptions.NotFound("user not found (%s)" % locals())
         if len(users) > 1:
             raise j.exceptions.NotFound("more than 1 user found (%s)" % locals())
