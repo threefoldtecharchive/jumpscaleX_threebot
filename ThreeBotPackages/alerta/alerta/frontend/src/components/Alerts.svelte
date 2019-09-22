@@ -1,11 +1,9 @@
 <script>
   import { deleteAlert } from "../data";
-  import Model from "./Model.svelte"
-  // import jquery from 'jquery';
+  import AlertModal from "./AlertModal.svelte";
 
   export let alerts;
   $: alerts;
-  console.log("alerts in Alerts component", alerts);
   const severity = {
     CRITICAL: "CRITICAL",
     MAJOR: "MAJOR",
@@ -20,10 +18,8 @@
         let toBeDeletedArrayIndex = getIndexOfAlert(alertId);
         alerts.splice(toBeDeletedArrayIndex, 1);
         alerts = [...alerts];
-        console.log("Delete btn is pushed", alerts);
       })
       .catch(err => {
-        console.log("Delete btn is pushed BUt gedis didn't delete");
         console.log(err);
       });
   }
@@ -32,11 +28,6 @@
     for (let i = 0; i < alerts.length; i++) {
       if (alerts[i].id == alertId) return i;
     }
-  }
-  function showAlertDetailsModel(alertIndex) {
-    // jquery('#exampleModalLabel').modal('show')
-    var jq = jQuery.noConflict();
-    jq("#exampleModal").modal("show");
   }
 </script>
 
@@ -69,7 +60,6 @@
 
           <!-- content here -->
           {#each alerts as myAlert, i}
-            <!-- <tr on:click={() => showAlertDetailsModel(i)}> -->
             <tr>
               <th scope="row">{i + 1}</th>
               {#if myAlert.severity == severity.CRITICAL}
@@ -102,7 +92,6 @@
               <td>{myAlert.event}</td>
               <td>{myAlert.value}</td>
               <td>{myAlert.messageType}</td>
-              <!-- <td>{myAlert.text}</td> -->
               <td>
                 <!--[Actions]-->
                 <div class="d-flex d-flex justify-content-center">
@@ -128,9 +117,9 @@
                 </div>
               </td>
               <!--[Modal]-->
-             <div>
-             <Model {myAlert} index={i}/>
-             </div>
+              <div>
+                <AlertModal {myAlert} index={i} />
+              </div>
             </tr>
           {/each}
         </tbody>

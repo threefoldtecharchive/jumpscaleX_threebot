@@ -4,25 +4,30 @@
   import { onMount } from "svelte";
 
   let allTasks = [];
+  let isAllTasksAvailable = false;
   //Make all the states UpperCase
   allTasks.forEach(task => {
     task.state = task.state.toUpperCase();
   });
 
   onMount(async () => {
-    getJobs().then(function(data) {
-      console.log(`DATA : ${data}`);
+    isAllTasksAvailable = false;
 
-      if (!data) {
-        return;
-      }
-      allTasks = JSON.parse(data).jobs;
-      //   allTasks = data.jobs;
-      //Make all the states UpperCase
-      allTasks.forEach(task => {
-        task.state = task.state.toUpperCase();
+    getJobs()
+      .then(data => {
+        isAllTasksAvailable = true;
+        if (!data) {
+          return;
+        }
+        allTasks = data.data;
+        //Make all the states UpperCase
+        allTasks.forEach(task => {
+          task.state = task.state.toUpperCase();
+        });
+      })
+      .catch(err => {
+        console.log(err);
       });
-    });
   });
 </script>
 
@@ -31,5 +36,15 @@
 </style>
 
 <!--[Header]-->
-<h1>Tasks</h1>
-<TasksRendering {allTasks} />
+<h1>Jobs</h1>
+{#if allTasks && allTasks.length > 0 && isAllTasksAvailable}
+  <TasksRendering {allTasks} />
+{:else if allTasks.length == 0 && isAllTasksAvailable}
+  <div>
+    <h2>There is no Jobs</h2>
+  </div>
+{:else if !isAllTasksAvailable}
+  <div class="text-center">
+    <img src={'/img/loader.gif'} class="img-fluid" alt="Responsive image" />
+  </div>
+{/if}
