@@ -104,8 +104,10 @@ venv.bak/
 .mypy_cache/
 
 node_modules
+package-lock.json
 
 # editors
 .vscode
 .idea
 static 
+html
