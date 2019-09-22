@@ -38,7 +38,6 @@ class Package(j.baseclasses.threebot_package):
         self.bcdb = j.data.bcdb.system
         models_location = j.sal.fs.joinPaths(self.package_root, "models")
         self.bcdb.models_add(models_location)
-        self.blog_name = None
 
         if "branch" in kwargs.keys():
             self.branch = kwargs["branch"]
@@ -71,16 +70,16 @@ class Package(j.baseclasses.threebot_package):
             raise j.exceptions.RuntimeError("no metadata.yml file found in the rep.")
 
         meta = j.data.serializers.yaml.load(metafile)
-        found = blog_model.find(git_repo_url=repo_url)
+        found = blog_model.find(name=blog_name)
 
         if not found:
             blog = blog_model.new()
+            blog.name = self.blog_name
         else:
             blog = found[0]
 
         posts_dir_path = j.sal.fs.joinPaths(dest, meta.get("posts_dir", "posts"))
         pages_dir_path = j.sal.fs.joinPaths(dest, meta.get("pages_dir", "pages"))
-
         blog.metadata.blog_title = meta.get("blog_title", "blog title")
         blog.metadata.blog_description = meta.get("blog_description", "blog desc")
         blog.metadata.author_name = meta["author_name"]

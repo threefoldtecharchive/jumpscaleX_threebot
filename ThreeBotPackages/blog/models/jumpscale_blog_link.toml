@@ -32,6 +32,7 @@ published_at = "" (S)
 
 
 @url = jumpscale.blog
+name** = "" (S)
 git_repo_url** = "" (S)
 metadata = (O) !jumpscale.blog.metadata
 posts =  (LO) !jumpscale.blog.post
