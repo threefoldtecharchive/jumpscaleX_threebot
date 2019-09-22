@@ -32,59 +32,14 @@ def slugify(string):
     )
 
 
-schema_link = """
-@url = jumpscale.blog.link
-
-title = "" (S)
-link = "" (S)
-page = "" (S)
-"""
-
-schema_blogmetadata = """
-
-@url = jumpscale.blog.metadata
-
-blog_name** = "" (S)
-blog_title** = "JSX blog" (S)
-blog_description = "JSX blog description" (S)
-author_name = "" (S)
-author_email = "" (S)
-author_image_filename = ""
-base_url = "" (S)
-url = "" (S)
-posts_dir = "posts"
-github_username = "" (S)
-github_repo_url** = "" (S)
-nav_links = (LO)      !jumpscale.blog.link
-sidebar_social_links = (LO) !jumpscale.blog.link
-sidebar_links = (LO)  !jumpscale.blog.link
-
-"""
-schema_blogpost = """
-
-@url = jumpscale.blog.post
-
-title** = "" (S)
-slug** = "" (S)
-content = "" (S)
-content_with_meta = "" (S)
-tags = (LS)
-published_at = "" (S)
-"""
-
-schema_blog = """
-@url = jumpscale.blog
-
-git_repo_url** = "" (S)
-metadata = (O) !jumpscale.blog.metadata
-posts =  (LO) !jumpscale.blog.post
-pages = (LO) !jumpscale.blog.post
-"""
-
-
 class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
+        # add models
+        self.bcdb = j.data.bcdb.system
+        models_location = j.sal.fs.joinPaths(self.package_root, "models")
+        self.bcdb.models_add(models_location)
         self.blog_name = None
+
         if "branch" in kwargs.keys():
             self.branch = kwargs["branch"]
         else:
@@ -102,10 +57,10 @@ class Package(j.baseclasses.threebot_package):
         # ['/sandbox/code/gitlab/xmonader/sample-blog-jsx/.git', '/sandbox/code/gitlab/xmonader/sample-blog-jsx/posts']
         # JSX> j.sal.fs.listFilesInDir(dest)
         # ['/sandbox/code/gitlab/xmonader/sample-blog-jsx/metadata.yml']
-        link_model = j.data.bcdb.system.model_get(schema=schema_link)
-        metadata = j.data.bcdb.system.model_get(schema=schema_blogmetadata)
-        post_model = j.data.bcdb.system.model_get(schema=schema_blogpost)
-        blog_model = j.data.bcdb.system.model_get(schema=schema_blog)
+        link_model = self.bcdb.model_get(url="jumpscale.blog.link")
+        metadata = self.bcdb.model_get(url="jumpscale.blog.metadata")
+        post_model = self.bcdb.model_get(url="jumpscale.blog.post")
+        blog_model = self.bcdb.model_get(url="jumpscale.blog")
 
         dirs = j.sal.fs.listDirsInDir(dest)
         files = j.sal.fs.listFilesInDir(dest)
@@ -216,7 +171,7 @@ class Package(j.baseclasses.threebot_package):
         website_location_assets.name = "assets"
         website_location_assets.path_url = "/"
         website_location_assets.use_jumpscale_weblibs = True
-        fullpath = j.sal.fs.joinPaths(self._dirpath, "html/")
+        fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
         website_location_assets.path_location = fullpath
 
         ## START BOTTLE ACTORS ENDPOINT
