@@ -29,6 +29,7 @@ def main(self):
     for threebot in threebots:
         tbot = model.new()
         role = threebot["role"]
+        tbot.name = role
         tbot.email = "{}@{}.com".format(role, role)
         tbot.pubkey = threebot["pubkey"]
         tbot.save()
