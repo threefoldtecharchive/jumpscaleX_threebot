@@ -31,6 +31,17 @@ class blog(j.baseclasses.threebot_actor):
             res = [p._ddict for p in found_blog.posts]
             return j.data.serializers.json.dumps(res)
 
+    def _list_posts(self, blog, page=0, user_session=None):
+        """
+        ```in
+            blog = (S)
+            page = 0 (I)
+        ```
+        """
+        found_blog = self.blog_model.find(name=blog)[0]
+        if found_blog:
+            return found_blog.posts
+
     def get_post_by_slug(self, blog, slug, user_session=None):
         """
         ```in
@@ -38,7 +49,7 @@ class blog(j.baseclasses.threebot_actor):
             slug = (S)
         ```
         """
-        all_posts = self.get_posts(blog)
+        all_posts = self._list_posts(blog)
         for post in all_posts:
             if post.slug == slug:
                 return post._json
@@ -54,7 +65,7 @@ class blog(j.baseclasses.threebot_actor):
         ```
         """
         posts = []
-        all_posts = self.get_posts(blog)
+        all_posts = self._list_posts(blog)
         for post in all_posts:
             if tag in post.tags:
                 posts.append(post._ddict)
@@ -71,8 +82,7 @@ class blog(j.baseclasses.threebot_actor):
         if found_blog:
             for post in found_blog.posts:
                 for tag in post.tags:
-                    if tag:
-                        tags.add(tag)
+                    tags.add(tag)
 
         tags = list(tags)
         return j.data.serializers.json.dumps(tags)

@@ -70,7 +70,7 @@ class Package(j.baseclasses.threebot_package):
             raise j.exceptions.RuntimeError("no metadata.yml file found in the rep.")
 
         meta = j.data.serializers.yaml.load(metafile)
-        found = blog_model.find(name=blog_name)
+        found = blog_model.find(name=self.blog_name)
 
         if not found:
             blog = blog_model.new()
@@ -80,12 +80,14 @@ class Package(j.baseclasses.threebot_package):
 
         posts_dir_path = j.sal.fs.joinPaths(dest, meta.get("posts_dir", "posts"))
         pages_dir_path = j.sal.fs.joinPaths(dest, meta.get("pages_dir", "pages"))
+
         blog.metadata.blog_title = meta.get("blog_title", "blog title")
         blog.metadata.blog_description = meta.get("blog_description", "blog desc")
         blog.metadata.author_name = meta["author_name"]
         blog.metadata.author_email = meta["author_email"]
         blog.metadata.author_image_filepath = j.sal.fs.joinPaths(dest, meta["author_image_filename"])
         blog.metadata.posts_dir = posts_dir_path
+
         for link_obj in meta.get("sidebar_links", []):
             blog.metadata.sidebar_links.append(link_obj)
         for link_obj in meta.get("sidebar_social_links", []):
