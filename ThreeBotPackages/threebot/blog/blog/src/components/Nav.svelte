@@ -1,13 +1,19 @@
 <script>
-  // import active from 'svelte-spa-router/active';
-  // import {
-  // 	link,
-  // 	push,
-  // 	pop,
-  // 	replace,
-  // 	location,
-  // 	querystring,
-  // } from 'svelte-spa-router';
+  import { link } from "svelte-spa-router";
+
+  import { onMount } from "svelte";
+  import { blogStore } from "./blogstore.js";
+  import Tags from "./Tags.svelte";
+  import PostCard from "./PostCard.svelte";
+  import Links from "./Links.svelte";
+
+  let blog_meta = { nav_links: [] };
+
+  onMount(() => {
+    blogStore.getMeta(blog_name).then(data => {
+      blog_meta = data.data;
+    });
+  });
 </script>
 
 <style>
@@ -17,29 +23,22 @@
   }
 </style>
 
-<div>
-  <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Blog</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarText"
-      aria-controls="navbarText"
-      aria-expanded="false"
-      aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon" />
-    </button>
-    <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="/">
-            Home
-            <span class="sr-only">(current)</span>
-          </a>
-        </li>
-      </ul>
-      <span class="navbar-text">Blog</span>
-    </div>
-  </nav>
-</div>
+<header id="banner" class="header">
+  <div class="bg" />
+  <div class="wrapper">
+    <a class="logo" href="https://blog.taiga.io/">
+      <img
+        class="logo"
+        src="https://blog.taiga.io/theme/images/logo-color.png"
+        alt="Taiga" />
+    </a>
+    {#each blog_meta.nav_links as link}
+      <!-- content here -->
+      <h1 class="title">
+        <a href={link.link}>{link.title}</a>
+      </h1>
+    {/each}
+
+  </div>
+</header>
+<!-- /#banner -->
