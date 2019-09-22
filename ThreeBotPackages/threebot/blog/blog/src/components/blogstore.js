@@ -1,106 +1,55 @@
-import {
-    writable
-} from 'svelte/store';
+import axios from "axios"
 
-// import moment from 'moment'
+const BLOG_API = "/actors/blog"
 
-// }
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+
 class BlogStore {
 
-    getPosts(blog_name) {
-        let info = {
-            "namespace": "default",
-            "actor": "blog",
-            "command": "get_posts",
-            "args": {
-                'blog': blog_name
-            },
-            "headers": {
-                "response_type": "json",
-                "content_type": "json",
+    getPosts(blogName) {
+        return axios.post(`${BLOG_API}/get_posts`, {
+            args: {
+                blog: blogName
             }
-        }
-        console.log(info);
-
-        return GEDIS_CLIENT.execute(info)
-
-    }
-    getMeta(blog_name) {
-        let info = {
-            "namespace": "default",
-            "actor": "blog",
-            "command": "get_metadata",
-            "args": {
-                'blog': blog_name
-            },
-            "headers": {
-                "response_type": "json",
-                "content_type": "json",
-            }
-        }
-        GEDIS_CLIENT.execute(info)
-            .then((resp) => {
-                let parsed = JSON.parse(resp);
-                return parsed
-            })
-            .catch((err) => console.log(err))
+        })
 
     }
 
-    getPostsByTag(blog_name, tag) {
-        let info = {
-            "namespace": "default",
-            "actor": "blog",
-            "command": "get_posts_by_tag",
-            "args": {
-                'blog': blog_name,
-                'tag': tag
-            },
-            "headers": {
-                "response_type": "json",
-                "content_type": "json",
+    getPostBySlug(blogName, slug) {
+        return axios.post(`${BLOG_API}/get_post_by_slug`, {
+            args: {
+                blog: blogName,
+                slug: slug
             }
-        }
-        console.log(info);
-        GEDIS_CLIENT.execute(info)
-            .then((resp) => {
-                let parsed = JSON.parse(resp);
-                return parsed
-            })
-            .catch((err) => console.log(err))
+        })
 
     }
-
-    getTags(blog_name) {
-        console.log(`blog is ${blog_name}`)
-        let info = {
-            "namespace": "default",
-            "actor": "blog",
-            "command": "get_tags",
-            "args": {
-                'blog': blog_name,
-            },
-            "headers": {
-                "response_type": "json",
-                "content_type": "json",
+    getMeta(blogName) {
+        return axios.post(`${BLOG_API}/get_metadata`, {
+            args: {
+                blog: blogName
             }
-        }
-        console.log(info);
-        GEDIS_CLIENT.execute(info)
-            .then((resp) => {
-                let parsed = JSON.parse(resp);
-                return parsed
-            })
-            .catch((err) => console.log(err))
+        })
+    }
 
+    getPostsByTag(blogName, tag) {
 
+        return axios.post(`${BLOG_API}/get_posts_by_tag`, {
+            args: {
+                blog: blogName,
+                tag: tag,
+            }
+        })
+    }
+
+    getTags(blogName) {
+        return axios.post(`${BLOG_API}/get_tags`, {
+            args: {
+                blog: blogName,
+            }
+        })
     }
 
 }
-/*
-> s = "/blog/postname"
-'/blog/postname'
-> s.split("/")
-[ '', 'blog', 'postname' 
-*/
-export let blogStore = writable(new BlogStore())
+
+export let blogStore = new BlogStore()

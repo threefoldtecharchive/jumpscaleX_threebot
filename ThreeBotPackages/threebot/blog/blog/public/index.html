@@ -5,7 +5,7 @@
 	<meta charset='utf8'>
 	<meta name='viewport' content='width=device-width'>
 
-	<title>Svelte app</title>
+	<title>Blog</title>
 
 	<link rel='icon' type='image/png' href='/favicon.png'>
 	<link rel='stylesheet' href='/global.css'>
@@ -28,15 +28,22 @@
 		crossorigin="anonymous"></script>
 	<!--[Font-Awesome-5]-->
 	<script src="https://kit.fontawesome.com/c238a4204e.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/showdown"></script>
 
-	<script src="/static/weblibs/gedis/gedis_client.js"></script>
-    <script>
-    const blog_name =  window.location.pathname.split("/")[1];
-    </script>
+	<script>
+		const blog_name = window.location.pathname.split("/")[1];
+
+	</script>
 
 </head>
 
-<body>
+
+
+</head>
+
+<body id="index" class="home">
+
 </body>
+
 
 </html>
