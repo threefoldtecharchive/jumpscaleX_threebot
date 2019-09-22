@@ -109,4 +109,7 @@ package-lock.json
 # editors
 .vscode
 .idea
- 
+static 
+html/
+
+
