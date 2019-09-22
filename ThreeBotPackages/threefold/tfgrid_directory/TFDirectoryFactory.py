@@ -1,9 +1,9 @@
 from Jumpscale import j
 
 
-class TFDirectoryFactory(j.baseclasses.threebot_factory):
+class TFDirectoryFactory(j.baseclasses.factory_testtools):
+
     __jslocation__ = "j.threebot.package.directory"
-    _web = False
 
     def test(self, name=""):
         """

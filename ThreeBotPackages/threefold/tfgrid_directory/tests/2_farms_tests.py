@@ -7,7 +7,7 @@ import os
 from Jumpscale import j
 
 
-def main(self=None):
+def main(self):
     try:
         bcdb = j.data.bcdb.get("tf_directory")
     except:
@@ -20,7 +20,7 @@ def main(self=None):
 
     gedis = j.servers.gedis.get("test", port=9901)
     gedis.actors_add(os.path.join(path, "actors"))
-    gevent.spawn(gedis.gevent_server.start)
+    gevent.spawn(gedis.start)
 
     cl = j.clients.gedis.get("test", port=9901)
     try:

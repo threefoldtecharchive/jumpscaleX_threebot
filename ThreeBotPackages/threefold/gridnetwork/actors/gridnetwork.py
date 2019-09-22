@@ -8,7 +8,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
         self.networkmodel = bcdb.model_get(url="tfgrid.network.network.1")
         self.endpointmodel = bcdb.model_get(url="tfgrid.network.endpoint.1")
 
-    def network_add(self, name, subnet, schema_out=None, user_session=None):
+    def network_add(self, name, subnet, schema_out):
         """"
         ```in
         name = (S)
@@ -24,7 +24,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
         out.res = True
         return out
 
-    def network_endpoint_add(self, networkname, sshclient_name, schema_out=None, user_session=None):
+    def network_endpoint_add(self, networkname, sshclient_name, schema_out):
         """"
         ```in
         networkname = (S)
@@ -54,7 +54,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
         out.res = True
         return out
 
-    def network_endpoint_delete(self, networkname, sshclient_name, schema_out=None, user_session=None):
+    def network_endpoint_delete(self, networkname, sshclient_name, schema_out):
         """"
         ```in
         networkname = (S)
@@ -75,7 +75,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
         out.res = True
         return out
 
-    def networks_find(self, name, schema_out=None, user_session=None):
+    def networks_find(self, name, schema_out):
         """"
         ```in
         name = (S)
@@ -116,7 +116,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
             raise j.exceptions.Runtime("No free IPAdress inside network")
         return f"{newip}/{subnet.prefixlen}"
 
-    def network_peer_add(self, networkname, peername, publickey, schema_out=None, user_session=None):
+    def network_peer_add(self, networkname, peername, publickey, schema_out):
         """
         ```in
         networkname = (S)
@@ -169,7 +169,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
 
         return out
 
-    def network_peer_remove(self, networkname, peername, schema_out=None, user_session=None):
+    def network_peer_remove(self, networkname, peername, schema_out):
         """
         ```in
         networkname = (S)

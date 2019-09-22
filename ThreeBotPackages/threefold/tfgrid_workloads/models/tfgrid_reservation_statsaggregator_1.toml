@@ -15,6 +15,6 @@ data_json = (S)
 signature = (bytes)
 state = "error,ok" (E)
 message = ""
-epoch = (T)
+epoch = (D)
 
 

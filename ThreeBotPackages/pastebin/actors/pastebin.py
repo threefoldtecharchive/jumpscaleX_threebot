@@ -16,11 +16,14 @@ class pastebin(j.baseclasses.threebot_actor):
             paste = self.paste_model.new()
             paste.code = """print("hello")"""
 
-    def get_paste(self, paste_id, schema_out=None, user_session=None):
+    def get_paste(self, paste_id):
+        # import pdb
+
+        # pdb.set_trace()
         paste = j.data.serializers.json.dumps(self.paste_model.get(paste_id)._ddict)
         return paste
 
-    def new_paste(self, code, schema_out=None, user_session=None):
+    def new_paste(self, code):
         paste = self.paste_model.new()
         paste.code = code
         paste.save()

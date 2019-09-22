@@ -19,7 +19,8 @@ class Package(j.baseclasses.threebot_package):
         """
 
         self.bcdb.models_add(path=self.package_root + "/models")
-        self.gedis_server.actors_add(self.package_root + "/actors", namespace="default")
+
+        self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
 
     def stop(self):
         """
