@@ -1,19 +1,13 @@
+import axios from "axios";
+
 function getJobs() {
-    return GEDIS_CLIENT.execute(info = {
-        "namespace": "default",
-        "actor": "myjobs",
-        "command": "list_jobs"
-    })
+    return (axios.post("/actors/myjobs/list_jobs"));
 }
 
 
 
 function getWorkers() {
-    return GEDIS_CLIENT.execute(info = {
-        "namespace": "default",
-        "actor": "myjobs",
-        "command": "list_workers"
-    })
+    return (axios.post("/actors/myjobs/list_workers"));
 }
 
 

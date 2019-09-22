@@ -140,4 +140,5 @@ class alerta(j.baseclasses.threebot_actor):
 
     def delete_alert(self, alert_id,schema_out=None, user_session=None):
         # TODO: implement
-        return True
+        response = {"result": True, "error_code": "", "error_message": ""}
+        return j.data.serializers.json.dumps(response)
