@@ -5,7 +5,7 @@ class blog(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.blog_model = j.data.bcdb.system.model_get(url="jumpscale.blog")
 
-    def get_metadata(self, blog):
+    def get_metadata(self, blog, user_session=None):
         """
         ```in
             blog = (S)
@@ -18,7 +18,7 @@ class blog(j.baseclasses.threebot_actor):
 
         return False
 
-    def get_posts(self, blog, page=0):
+    def get_posts(self, blog, page=0, user_session=None):
         """
         ```in
             blog = (S)
@@ -37,7 +37,7 @@ class blog(j.baseclasses.threebot_actor):
 
         return j.data.serializers.json.dumps(res)
 
-    def get_post_by_slug(self, blog, slug):
+    def get_post_by_slug(self, blog, slug, user_session=None):
         """
         ```in
             blog = (S)
@@ -55,8 +55,7 @@ class blog(j.baseclasses.threebot_actor):
                 else:
                     return {}
 
-
-    def get_posts_by_tag(self, blog, tag, page=0):
+    def get_posts_by_tag(self, blog, tag, page=0, user_session=None):
         """
         ```in
             blog = (S)
@@ -74,7 +73,7 @@ class blog(j.baseclasses.threebot_actor):
 
         return j.data.serializers.json.dumps(posts)
 
-    def get_tags(self, blog):
+    def get_tags(self, blog, user_session=None):
         """
         ```in
             blog = (S)
