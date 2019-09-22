@@ -14,7 +14,7 @@ class nodes(j.baseclasses.threebot_actor):
             return None
         return nodes[0]
 
-    def add(self, node, schema_out):
+    def add(self, node, schema_out=None, user_session=None):
         """
         ```in
         node = (O) !tfgrid.node.2
@@ -31,8 +31,8 @@ class nodes(j.baseclasses.threebot_actor):
             validation_errors.append("node_id")
         if not node.os_version:
             validation_errors.append("os_version")
-        if not node.farmer_id:
-            validation_errors.append("farmer_id")
+        if not node.farm_id:
+            validation_errors.append("farm_id")
         if not node.location:
             validation_errors.append("location")
         if validation_errors:
@@ -42,16 +42,17 @@ class nodes(j.baseclasses.threebot_actor):
             return self.node_model.set_dynamic(node._ddict, obj_id=old_node.id)
         return self.node_model.new(data=node).save()
 
-    def list(self, farmer_id, country, city, cru, sru, mru, hru, schema_out):
+    def list(self, farm_id, country, city, cru, sru, mru, hru, proofs, schema_out=None, user_session=None):
         """
         ```in
-        farmer_id = (S)
+        farm_id = (S)
         country = (S)
         city = (S)
         cru = -1 (I)
         mru = -1 (I)
         sru = -1 (I)
         hru = -1 (I)
+        proofs = False (B)
         ```
 
         ```out
@@ -61,86 +62,92 @@ class nodes(j.baseclasses.threebot_actor):
 
         output = schema_out.new()
         for node in self.node_model.iterate():
-            if farmer_id and farmer_id != node.farmer_id:
+            if farm_id and farm_id != node.farm_id:
                 continue
             if country != "" and node.location.country != country:
                 continue
             if city != "" and node.location.city != city:
                 continue
-            if cru > -1 and node.total_resource.cru < cru:
+            if cru > -1 and node.total_resources.cru < cru:
                 continue
-            if mru > -1 and node.total_resource.mru < mru:
+            if mru > -1 and node.total_resources.mru < mru:
                 continue
-            if sru > -1 and node.total_resource.sru < sru:
+            if sru > -1 and node.total_resources.sru < sru:
                 continue
-            if hru > -1 and node.total_resource.hru < hru:
+            if hru > -1 and node.total_resources.hru < hru:
                 continue
+            if not proofs:
+                node.proofs = []
             output.nodes.append(node)
 
         return output
 
-    def get(self, node_id, schema_out):
+    def get(self, node_id, proofs, schema_out=None, user_session=None):
         """
         ```in
         node_id = (S)
+        proofs = False (B)
         ```
 
         ```out
         node = (O) !tfgrid.node.2
         ```
         """
-        return self._find(node_id)
+        node = self._find(node_id)
+        if not proofs:
+            node.proofs = []
+        return node
 
-    def update_total_capacity(self, node_id, resource):
+    def update_total_capacity(self, node_id, resource, schema_out=None, user_session=None):
         """
         ```in
         node_id = (S)
-        resource = (O) !tfgrid.node.resource.1
+        resource = (O) !tfgrid.node.resource.amount.1
         ```
 
         """
         node = self._find(node_id)
         if not node:
             raise j.exceptions.NotFound("node %s not found" % id)
-        node.total_resource.mru = resource.mru
-        node.total_resource.cru = resource.cru
-        node.total_resource.hru = resource.hru
-        node.total_resource.sru = resource.sru
+        node.total_resources.mru = resource.mru
+        node.total_resources.cru = resource.cru
+        node.total_resources.hru = resource.hru
+        node.total_resources.sru = resource.sru
         node.save()
         return True
 
-    def update_reserved_capacity(self, node_id, resource):
+    def update_reserved_capacity(self, node_id, resource, schema_out=None, user_session=None):
         """
         ```in
         node_id = (S)
-        resource = (O) !tfgrid.node.resource.1
+        resource = (O) !tfgrid.node.resource.amount.1
         ```
         """
         node = self._find(node_id)
         if not node:
             raise j.exceptions.NotFound("node %s not found" % id)
-        node.reserved_resource.mru = resource.mru
-        node.reserved_resource.cru = resource.cru
-        node.reserved_resource.hru = resource.hru
-        node.reserved_resource.sru = resource.sru
+        node.reserved_resources.mru = resource.mru
+        node.reserved_resources.cru = resource.cru
+        node.reserved_resources.hru = resource.hru
+        node.reserved_resources.sru = resource.sru
 
         node.save()
         return True
 
-    def update_used_capacity(self, node_id, resource):
+    def update_used_capacity(self, node_id, resource, schema_out=None, user_session=None):
         """
         ```in
         node_id = (S)
-        resource = (O) !tfgrid.node.resource.1
+        resource = (O) !tfgrid.node.resource.amount.1
         ```
         """
 
         node = self._find(node_id)
         if not node:
             raise j.exceptions.NotFound("node %s not found" % id)
-        node.used_resource.mru = resource.mru
-        node.used_resource.cru = resource.cru
-        node.used_resource.hru = resource.hru
-        node.used_resource.sru = resource.sru
+        node.used_resources.mru = resource.mru
+        node.used_resources.cru = resource.cru
+        node.used_resources.hru = resource.hru
+        node.used_resources.sru = resource.sru
         node.save()
         return True
