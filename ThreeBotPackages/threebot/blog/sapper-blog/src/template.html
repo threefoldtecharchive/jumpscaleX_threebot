@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
 	<meta charset='utf-8'>
 	<meta name='viewport' content='width=device-width,initial-scale=1.0'>
@@ -11,17 +12,18 @@
 	<link rel='icon' type='image/png' href='favicon.png'>
 	<!--[Font-Awesome-5]-->
 	<script src="https://kit.fontawesome.com/c238a4204e.js"></script>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/showdown"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-   
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+		crossorigin="anonymous"></script>
+
 	<link rel='stylesheet' href='global.css'>
-   
-    <script>
-        const blog_name = window.location.pathname.split("/")[1];
-        let converter = new showdown.Converter({ metadata: true });
-        converter.setFlavor("github");
-    </script>
+
+	<script>
+		const blog_name = window.location.pathname.split("/")[1];
+
+	</script>
 	<!-- Sapper generates a <style> tag containing critical CSS
 	     for the current page. CSS for the rest of the app is
 	     lazily loaded when it precaches secondary pages -->
@@ -31,6 +33,7 @@
 	     the current page has one -->
 	%sapper.head%
 </head>
+
 <body>
 	<!-- The application will be rendered inside this element,
 	     because `src/client.js` references it -->
@@ -41,4 +44,5 @@
 	     initialise the router -->
 	%sapper.scripts%
 </body>
+
 </html>
