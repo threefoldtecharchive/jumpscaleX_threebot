@@ -1,7 +1,6 @@
 
 @url = jumpscale.blog.link
-name** = "" (S)
-title = "" (S)
+title** = "" (S)
 link = "" (S)
 page = "" (S)
 
