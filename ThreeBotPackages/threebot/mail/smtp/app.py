@@ -1,7 +1,6 @@
 from Jumpscale import j
-import smtpd
 from .gsmtpd import SMTPServer
-from .handleMail import parse_email_body
+from ..handleMail import parse_email_body
 
 
 class MailServer(SMTPServer):
