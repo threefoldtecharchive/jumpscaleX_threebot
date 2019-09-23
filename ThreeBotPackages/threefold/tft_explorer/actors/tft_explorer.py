@@ -28,7 +28,9 @@ class tft_explorer(j.baseclasses.threebot_actor):
         ts = j.data.serializers.json.dumps({"transactions": [t for t in self.tft_ex_t.find()]})
         return ts
 
-    def set_block(blockheight, [transactions tft.explorer.transaction.1], balances):
-        
-    def get_balance()
+    def set_block(self, blockheight, transactions, balances):
+        pass
+
+    def get_balance(self):
+        pass
 
