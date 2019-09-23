@@ -20,6 +20,7 @@
   import Nav from "../components/Nav.svelte";
   import Sidebar from "../components/Sidebar.svelte";
   import Footer from "../components/Footer.svelte";
+  import Header from "../components/Header.svelte";
 
   export let segment;
   export let pages = [];
@@ -37,6 +38,14 @@
     box-sizing: border-box;
   }
 </style>
+
+{#await metadata then value}
+  <Header
+    blogName={value.blog_name}
+    blogDescription={value.blog_description}
+    blogLogo={value.blog_logo}
+    authorName={value.authorName} />
+{/await}
 
 {#await pages}
   loading
