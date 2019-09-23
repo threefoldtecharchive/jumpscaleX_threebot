@@ -189,16 +189,7 @@ class workload_manager(j.baseclasses.threebot_actor):
             reservations.append(reservation)
         return reservations
 
-    def reservation_register(self, reservation, schema_out, user_session):
-        """
-        ```in
-        reservation = (O) !tfgrid.reservation.1
-        ```
-
-        ```out
-        reservation = (O) !tfgrid.reservation.1
-        ```
-        """
+    def _reservation_validate(self, reservation):
         workloads = [l for _, l in self._iterate_over_workloads(reservation)]
         if not workloads:
             raise j.exceptions.Value("At least one workload should be defined")
@@ -218,6 +209,17 @@ class workload_manager(j.baseclasses.threebot_actor):
         if not reservation.data_reservation.expiration_reservation:
             raise j.exceptions.Value("expiration_reservation field is required")
 
+    def reservation_register(self, reservation, schema_out, user_session):
+        """
+        ```in
+        reservation = (O) !tfgrid.reservation.1
+        ```
+
+        ```out
+        reservation = (O) !tfgrid.reservation.1
+        ```
+        """
+        self._reservation_validate(reservation)
         reservation.next_action = "create"
         reservation.epoch = j.data.time.epoch
         reservation = self.reservation_model.new(reservation)
