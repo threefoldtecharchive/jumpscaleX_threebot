@@ -4,7 +4,7 @@
 </script>
 
 {#if header}
-  <h1>{header}</h1>
+  <h3>{header}</h3>
 {/if}
 
 {#if links}

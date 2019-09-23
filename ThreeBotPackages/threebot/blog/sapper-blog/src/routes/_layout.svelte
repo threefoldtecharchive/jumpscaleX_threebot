@@ -50,12 +50,12 @@
     <div class="col-md-3 hidden-xs">
       <Sidebar {metadata} />
     </div>
-  </div>
 
-  <div class="col-md-9">
-    <main>
-      <slot />
-    </main>
+    <div class="col-md-9">
+      <main>
+        <slot />
+      </main>
+    </div>
   </div>
   <Footer />
 </div>

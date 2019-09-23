@@ -1,6 +1,5 @@
 <script>
-  import PostCard from "./PostCard.svelte";
-  export let posts = [];
+  export let tags = [];
   export let title = "";
 </script>
 
@@ -14,11 +13,13 @@
 <h1>{title}</h1>
 
 <ul>
-  {#each posts as post}
+  {#each tags as tag}
     <!-- we're using the non-standard `rel=prefetch` attribute to
 				tell Sapper to load the data for the page as soon as
 				the user hovers over the link or taps it, instead of
 				waiting for the 'click' event -->
-    <PostCard {post} />
+    <li>
+      <a href="blog/tags/{tag}">{tag}</a>
+    </li>
   {/each}
 </ul>

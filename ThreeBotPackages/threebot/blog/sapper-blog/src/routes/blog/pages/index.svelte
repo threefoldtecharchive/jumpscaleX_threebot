@@ -25,14 +25,16 @@
 
 <h1>Pages</h1>
 
-<ul>
-  {#each pages as page}
-    <!-- we're using the non-standard `rel=prefetch` attribute to
+{#await pages then value}
+  <ul>
+    {#each value as page}
+      <!-- we're using the non-standard `rel=prefetch` attribute to
 				tell Sapper to load the data for the page as soon as
 				the user hovers over the link or taps it, instead of
 				waiting for the 'click' event -->
-    <li>
-      <a rel="prefetch" href="blog/pages/{page.slug}">{page.title}</a>
-    </li>
-  {/each}
-</ul>
+      <li>
+        <a rel="prefetch" href="blog/pages/{page.slug}">{page.title}</a>
+      </li>
+    {/each}
+  </ul>
+{/await}
