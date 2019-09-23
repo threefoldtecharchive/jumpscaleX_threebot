@@ -134,15 +134,12 @@ class BlogLoader(j.baseclasses.object):
 
 class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
-        # add models
+        self.branch = kwargs["package"].branch or "master"
+
+        # load models
         self.bcdb = j.data.bcdb.system
         models_location = j.sal.fs.joinPaths(self.package_root, "models")
         self.bcdb.models_add(models_location)
-
-        if "branch" in kwargs.keys():
-            self.branch = kwargs["branch"]
-        else:
-            self.branch = "*"
 
     def prepare(self, blog_name, repo_url):
         """
@@ -169,11 +166,9 @@ class Package(j.baseclasses.threebot_package):
             metafile = metafiles[0]
         else:
             raise j.exceptions.RuntimeError("no metadata.yml file found in the rep.")
-
         meta = j.data.serializers.yaml.load(metafile)
 
         found = blog_model.find(name=self.blog_name)
-
         if not found:
             blog = blog_model.new()
             blog.name = self.blog_name
@@ -184,7 +179,6 @@ class Package(j.baseclasses.threebot_package):
         blogobj = BlogLoader(
             blog=blog, meta=meta, dest=dest, post_model=post_model, blog_name=self.blog_name, repo_url=repo_url
         )
-
         blogobj.create_blog()
         blogobj.create_posts()
         blogobj.create_pages()
@@ -199,6 +193,7 @@ class Package(j.baseclasses.threebot_package):
         server = self.openresty
         server.install()
         server.configure()
+
         website = server.websites.get("blog")
         website.ssl = False
         website.port = 8084
@@ -219,7 +214,6 @@ class Package(j.baseclasses.threebot_package):
         website_location_assets.path_location = fullpath
 
         ## START BOTTLE ACTORS ENDPOINT
-
         rack = j.servers.rack.get()
         app = j.servers.gedishttp.get_app()
         rack.bottle_server_add(name="gedishttp", port=9201, app=app)
