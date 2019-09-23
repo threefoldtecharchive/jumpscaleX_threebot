@@ -1,9 +1,9 @@
 <script>
-  export let tags;
+  export let tags = [];
 </script>
 
 <span>
   {#each tags as tag}
-    <a href="blog/tag/{tag.trim()}">{tag}</a>
+    <a href="blog/tags/{tag.trim()}">{tag}</a>
   {/each}
 </span>

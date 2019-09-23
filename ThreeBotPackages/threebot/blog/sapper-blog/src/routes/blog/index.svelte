@@ -17,4 +17,6 @@
   <title>Blog</title>
 </svelte:head>
 
-<PostList title="Recent posts" {posts} />
+{#await posts then value}
+  <PostList title="Recent posts" posts={value} />
+{/await}
