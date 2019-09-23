@@ -1,5 +1,7 @@
 import os
 
+from gevent import pywsgi
+from geventwebsocket.handler import WebSocketHandler
 from Jumpscale import j
 
 
@@ -20,7 +22,9 @@ class FruumFactory(j.baseclasses.object, j.baseclasses.testtools):
 
     def run(self):
         self.install()
-        from .app import app, sio_server
+        from .app import app, appws
+
+        sio_server = pywsgi.WSGIServer(('', 9999), appws, handler_class=WebSocketHandler)
 
         root = os.path.dirname(os.path.abspath(__file__))
         rack = j.servers.rack.get()

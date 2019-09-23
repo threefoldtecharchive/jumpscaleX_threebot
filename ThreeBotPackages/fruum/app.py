@@ -1,5 +1,3 @@
-import gevent
-from gevent.pywsgi import WSGIServer
 import socketio
 
 import os
@@ -11,11 +9,9 @@ root = os.path.dirname(os.path.abspath(__file__))
 app = Bottle()
 app.debug = True
 
-from gevent import pywsgi
-from geventwebsocket.handler import WebSocketHandler
+
 sio = socketio.Server(async_mode='gevent', cors_allowed_origins='*')
 appws = socketio.WSGIApp(sio)
-sio_server =pywsgi.WSGIServer(('', 9999), appws, handler_class=WebSocketHandler)
 
 
 @sio.event
