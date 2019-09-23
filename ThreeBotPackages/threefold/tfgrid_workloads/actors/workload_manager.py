@@ -28,12 +28,10 @@ class workload_manager(j.baseclasses.threebot_actor):
             if action == "set_post":
                 index = model.IndexTable.get_or_none(reservation_id=obj.id)
                 if not index:
-                    workload_id = 1
                     for _, workload in self._iterate_over_workloads(obj):
                         index = model.IndexTable.create(
-                            reservation_id=obj.id, workload_id=workload_id, node_id=workload.node_id
+                            reservation_id=obj.id, workload_id=workload.workload_id, node_id=workload.node_id
                         )
-                        workload_id += 1
 
         IndexTable._meta.database = self.reservation_model.bcdb.sqlite_index_client
         IndexTable.create_table(safe=True)
@@ -41,9 +39,9 @@ class workload_manager(j.baseclasses.threebot_actor):
         self.reservation_model.trigger_add(index_create)
 
     def _iterate_over_workloads(self, obj):
-        for _type in ["zdbs", "volumes", "containers"]:
+        for _type in ["zdbs", "volumes", "containers", "networks"]:
             for workload in getattr(obj.data_reservation, _type):
-                yield _type, workload
+                yield _type[:-1], workload
 
     def _validate_signature(self, payload, signature, key):
         """
@@ -96,9 +94,8 @@ class workload_manager(j.baseclasses.threebot_actor):
         Checks that all the farmers signed with a valid signature
         """
         farmers_tids = set()
-        for workload_type in ["zdbs", "networks", "volumes", "containers"]:
-            for workload in getattr(jsxobj.data_reservation, workload_type):
-                farmers_tids.add(workload.farmer_tid)
+        for _, workload in self._iterate_over_workloads(jsxobj):
+            farmers_tids.add(workload.farmer_tid)
 
         for signature in jsxobj.signatures_farmer:
             if signature.tid not in farmers_tids:
@@ -172,6 +169,26 @@ class workload_manager(j.baseclasses.threebot_actor):
         jsxobj.save()
         return jsxobj
 
+    def _filter_reservations(self, node_id, state, epoch):
+        query = None
+        if node_id != INT_NULL_VALUE:
+            query = self.reservation_model.IndexTable.node_id == node_id
+
+        result = self.reservation_model.IndexTable.select().where(query).execute()
+        reservations_ids = set([item.reservation_id for item in result])
+
+        reservations = []
+        for reservation_id in reservations_ids:
+            reservation = self._reservation_get(reservation_id)
+            if state and state.upper() != str(reservation.next_action):
+                continue
+
+            if epoch != INT_NULL_VALUE and epoch >= reservation.epoch:
+                continue
+
+            reservations.append(reservation)
+        return reservations
+
     def reservation_register(self, reservation, schema_out, user_session):
         """
         ```in
@@ -182,6 +199,25 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation = (O) !tfgrid.reservation.1
         ```
         """
+        workloads = [l for _, l in self._iterate_over_workloads(reservation)]
+        if not workloads:
+            raise j.exceptions.Value("At least one workload should be defined")
+
+        workloads_ids = [w.workload_id for w in workloads]
+        if sorted(workloads_ids) != list(range(1, len(workloads) + 1)):
+            raise j.exceptions.Value(
+                "Invalid workloads ids, workloads ids should be unique and between 1 and the number of worklaods"
+            )
+
+        if reservation.customer_tid == INT_NULL_VALUE:
+            raise j.exceptions.Value("customer_tid field is required")
+
+        if not reservation.data_reservation.expiration_provisioning:
+            raise j.exceptions.Value("expiration_provisioning field is required")
+
+        if not reservation.data_reservation.expiration_reservation:
+            raise j.exceptions.Value("expiration_reservation field is required")
+
         reservation.next_action = "create"
         reservation.epoch = j.data.time.epoch
         reservation = self.reservation_model.new(reservation)
@@ -209,37 +245,34 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
 
         ```out
+        reservations = (LO) !tfgrid.reservation.1
+        ```
+        """
+        return self._filter_reservations(node_id, state, epoch)
+
+    def workloads_list(self, node_id, epoch, schema_out, user_session):
+        """
+        ```in
+        node_id = (I)  # filter results by node id
+        epoch = (I)  # filter results which created after this epoch
+        ```
+
+        ```out
         workloads = (LO) !tfgrid.reservation.workload.1
         ```
         """
-        query = None
-        if node_id != INT_NULL_VALUE:
-            query = self.reservation_model.IndexTable.node_id == node_id
-
-        result = self.reservation_model.IndexTable.select().where(query).execute()
-        reservations_ids = set([item.reservation_id for item in result])
-
         workloads = []
-        for reservation_id in reservations_ids:
-            reservation = self._reservation_get(reservation_id)
-            if state and state.upper() != str(reservation.next_action):
-                continue
-
-            if epoch != INT_NULL_VALUE and epoch >= reservation.epoch:
-                continue
-
-            workload_id = 1
+        reservations = self._filter_reservations(node_id, "deploy", epoch)
+        for reservation in reservations:
             for _type, workload in self._iterate_over_workloads(reservation):
                 if node_id != INT_NULL_VALUE and workload.node_id != node_id:
                     continue
 
-                workload_data = workload._ddict
-                workload_data.update(workload_id=workload_id, reservation_id=reservation.id)
-                workload_obj = self.workload_schema.new()
-                workload_obj.type = _type[:-1]
-                workload_obj.content = workload_data
-                workloads.append(workload_obj)
-                workload_id += 1
+                workload.reservation_id = reservation.id
+                obj = self.workload_schema.new()
+                obj.type = _type
+                obj.content = workload._ddict
+                workloads.append(obj)
 
         return workloads
 
