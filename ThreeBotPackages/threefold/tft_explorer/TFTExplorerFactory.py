@@ -27,6 +27,7 @@ class TFTExplorerFactory(j.baseclasses.object, j.baseclasses.testtools):
         """
 
         self.client_get()
+
         cl = j.clients.redis.get(port=8901)
         assert cl.execute_command("PING")
         data = {"from_addr": "0xmkjxlhxzledhzkjhdzekhdze", "to_addr": "54d65dez46ez4de564d6z4de3dz", "amount": 3}
