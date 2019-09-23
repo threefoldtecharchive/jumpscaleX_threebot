@@ -1,6 +1,7 @@
 <script>
   export let segment;
   export let pages;
+  import SearchBar from "./SearchBar.svelte";
 </script>
 
 <style>
@@ -77,7 +78,15 @@
               </a>
             </li>
           {/each}
+          <li>
+            <a class={segment === 'tags' ? 'selected' : ''} href="blog/tags/">
+              Tags
+            </a>
 
+          </li>
+          <li>
+            <SearchBar />
+          </li>
         </ul>
       </nav>
 

@@ -15,7 +15,10 @@
 
 <script>
   export let page;
-  export let mdtext = converter.makeHtml(page.content);
+  import showdown from "showdown";
+  let converter = new showdown.Converter({ metadata: true });
+  converter.setFlavor("github");
+  let mdtext = converter.makeHtml(page.content);
 </script>
 
 <style>
@@ -57,8 +60,6 @@
 <svelte:head>
   <title>{page.title}</title>
 </svelte:head>
-
-<h1>{page.title}</h1>
 
 <div class="content">
   {@html mdtext}

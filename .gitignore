@@ -109,7 +109,7 @@ package-lock.json
 # editors
 .vscode
 .idea
-static 
+weblibs
 html/
 __sapper__
 

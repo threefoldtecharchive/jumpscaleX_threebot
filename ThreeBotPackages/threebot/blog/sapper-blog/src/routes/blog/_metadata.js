@@ -10,8 +10,8 @@ const metadata = {
     "posts_dir": "/sandbox/code/gitlab/xmonader/sample-blog-jsx/posts",
     "github_username": "xmonader",
     "github_repo_url": "git@gitlab.com:xmonader/sample-blog-jsx.git",
-    "nav_links": [
-        {
+    "posts_per_page": 20,
+    "nav_links": [{
             "title": "about",
             "link": "",
             "page": "pages/about.md"
@@ -27,8 +27,7 @@ const metadata = {
             "page": ""
         }
     ],
-    "sidebar_social_links": [
-        {
+    "sidebar_social_links": [{
             "title": "facebook",
             "link": "https://facebook.com/abc",
             "page": ""
@@ -39,8 +38,7 @@ const metadata = {
             "page": ""
         }
     ],
-    "sidebar_links": [
-        {
+    "sidebar_links": [{
             "title": "google",
             "link": "https://google.com",
             "page": ""

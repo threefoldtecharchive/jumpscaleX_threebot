@@ -15,7 +15,10 @@
 
 <script>
   export let post;
-  export let mdtext = converter.makeHtml(post.content);
+  import showdown from "showdown";
+  let converter = new showdown.Converter({ metadata: true });
+  converter.setFlavor("github");
+  let mdtext = converter.makeHtml(post.content);
 </script>
 
 <style>

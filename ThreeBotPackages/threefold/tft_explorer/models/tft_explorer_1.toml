@@ -1,31 +1,6 @@
-@url = tft.explorer.transaction.1
-hash = ""
-recipient** = ""
-senders** = "" (LS)
-amount = "" #we should use decimal
-lock = !tft.explorer.lock.1
-message = b""
-fee = false
-
-@url = !tft.explorer.lock.1
-value = 0
-type = "timestamp, block_height"
-
-@url = tft.explorer.wallet.1
-address** = ""
-last_activity_in = 1568820802
-last_activity_out = 1568820802
-balance_coins = !tft.explorer.balance.1
-balance_blockstakes = !tft.explorer.balance.1
-multisig_wallets = []
-
-@url = tft.explorer.balance.1
-liquid = 0
-locked = 0
-
 @url = tft.explorer.chain.1
 name** = ""
 balance_coins = !tft.explorer.balance.1
 balance_blockstakes = !tft.explorer.balance.1
-height = 0
-timestamp = 0
+height = 0 (I)
+timestamp = "" (D)

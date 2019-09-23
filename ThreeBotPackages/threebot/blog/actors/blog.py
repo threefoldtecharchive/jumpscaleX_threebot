@@ -42,6 +42,17 @@ class blog(j.baseclasses.threebot_actor):
         if found_blog:
             return found_blog.posts
 
+    def _list_pages(self, blog, page=0, user_session=None):
+        """
+        ```in
+            blog = (S)
+            page = 0 (I)
+        ```
+        """
+        found_blog = self.blog_model.find(name=blog)[0]
+        if found_blog:
+            return found_blog.pages
+
     def get_post_by_slug(self, blog, slug, user_session=None):
         """
         ```in
@@ -86,3 +97,29 @@ class blog(j.baseclasses.threebot_actor):
 
         tags = list(tags)
         return j.data.serializers.json.dumps(tags)
+
+    def search(self, blog, query, user_session=None):
+        """
+        ```in
+            blog = (S)
+            query = (S)
+        ```
+        """
+        # takes a slice of a content of a post / page and returns the post's / page's slug
+        posts = self._list_posts(blog)
+        pages = self._list_pages(blog)
+        results = []
+        for post in posts:
+            if query in post.content_with_meta:
+                temp = {"type": "post", "slug": post.slug}
+                if not temp in results:
+                    results.append(temp)
+
+        for page in pages:
+            if query in page.content_with_meta:
+                temp = {"type": "page", "slug": page.slug}
+                if not temp in results:
+                    results.append(temp)
+
+        if results:
+            return j.data.serializers.json.dumps(results)
