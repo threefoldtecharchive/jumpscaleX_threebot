@@ -86,3 +86,21 @@ class blog(j.baseclasses.threebot_actor):
 
         tags = list(tags)
         return j.data.serializers.json.dumps(tags)
+
+    def search(self, blog, query, user_session=None):
+        """
+        ```in
+            blog = (S)
+            query = (S)
+        ```
+        """
+
+        # takes a slice of a content of the post and returns the post's slug
+        posts = self._list_posts(blog)
+        results = []
+        for post in posts:
+            if query in post.content_with_meta:
+                results.append(post.slug)
+
+        if results:
+            return j.data.serializers.json.dumps(results)
