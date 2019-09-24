@@ -15,14 +15,17 @@
     }
 
     let allPosts = await resp.json();
+    console.log(allPosts.length)
+    // console.log("parsed blogs ", allPosts);
     let totalPostsLength = allPosts.length;
     const metaResp = await this.fetch(`blog/metadata.json`);
     const metadata = await metaResp.json();
 
-    let per_page = metadata.posts_per_page || 20; 
-    let begin = pageNum * per_page || 20;
+    let per_page = metadata.posts_per_page || 5; 
+    let begin = pageNum * per_page;
     let end = pageNum * per_page + per_page;
     let posts = allPosts.slice(begin, end);
+
 
     console.log(begin, end, posts.length);
     return { path, posts, totalPostsLength, metadata };
