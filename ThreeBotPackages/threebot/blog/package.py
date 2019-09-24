@@ -77,26 +77,30 @@ class BlogLoader(j.baseclasses.object):
             basename = splitext(basename)[0]
             content = j.sal.fs.readFile(post)
             parsed = j.data.markdown.document_get(content)
-            self.meta = parsed.meta
+            meta = parsed.meta
 
-            get_post = self.post_model.find(title=self.meta["title"][0])
+            post_title = self.remove_date(basename)
+
+            the_title = post_title
+            if "title" in meta:
+                the_title = meta["title"][0]
+            get_post = self.post_model.find(title=the_title)
 
             if get_post:
                 post_obj = get_post[0]
             else:
                 post_obj = self.post_model.new()
 
-            post_title = self.remove_date(basename)
-            post_obj.title = self.meta.get("title", [post_title])[0]
+            post_obj.title = the_title
             post_obj.slug = self.slugify(post_title)
             post_obj.content_with_meta = content
             post_obj.content = parsed.strip_meta(content)
 
-            tags = self.meta.get("tags", [""])[0]
+            tags = meta.get("tags", [""])[0]
             tags = [t.strip() for t in tags.split(",")]
             post_obj.tags = tags
             post_obj.save()
-            print("POST INFO: ", post_obj)
+            # print("POST INFO: ", post_obj)
 
             self.blog.posts.append(post_obj)
             self.blog.save()
@@ -109,20 +113,25 @@ class BlogLoader(j.baseclasses.object):
             basename = splitext(basename)[0]
             content = j.sal.fs.readFile(post)
             parsed = j.data.markdown.document_get(content)
-            self.meta = parsed.meta
+            meta = parsed.meta
 
-            get_post = self.post_model.find(title=self.meta["title"][0])
+            post_title = self.remove_date(basename)
+
+            the_title = post_title
+            if "title" in meta:
+                the_title = meta["title"][0]
+
+            get_post = self.post_model.find(title=the_title)
             if get_post:
                 post_obj = get_post[0]
             else:
                 post_obj = self.post_model.new()
 
-            post_title = self.remove_date(basename)
-            post_obj.title = self.meta.get("title", [post_title])[0]
+            post_obj.title = meta.get("title", [the_title])[0]
             post_obj.slug = self.slugify(post_title)
             post_obj.content_with_meta = content
             post_obj.content = parsed.strip_meta(content)
-            tags = self.meta.get("tags", [""])[0]
+            tags = meta.get("tags", [""])[0]
             tags = [t.strip() for t in tags.split(",")]
             post_obj.tags = tags
             post_obj.save()
@@ -140,6 +149,7 @@ class Package(j.baseclasses.threebot_package):
         self.bcdb = j.data.bcdb.system
         models_location = j.sal.fs.joinPaths(self.package_root, "models")
         self.bcdb.models_add(models_location)
+        self.blog_dest = ""
 
     def prepare(self, blog_name, repo_url):
         """
@@ -147,7 +157,7 @@ class Package(j.baseclasses.threebot_package):
         :return:
         """
         self.blog_name = blog_name
-        dest = j.clients.git.pullGitRepo(repo_url)
+        self.blog_dest = dest = j.clients.git.pullGitRepo(repo_url)
 
         # JSX> j.sal.fs.listDirsInDir(dest)
         # ['/sandbox/code/gitlab/xmonader/sample-blog-jsx/.git', '/sandbox/code/gitlab/xmonader/sample-blog-jsx/posts']
@@ -191,6 +201,8 @@ class Package(j.baseclasses.threebot_package):
         :return:
         """
         server = self.openresty
+        j.builders.runtimes.nodejs.install()
+
         server.install()
         server.configure()
 
@@ -199,18 +211,14 @@ class Package(j.baseclasses.threebot_package):
         website.port = 8084
         locations = website.locations.get("blog")
 
-        website_location = locations.locations_static.new()
-        website_location.name = f"{self.blog_name}"
-        website_location.path_url = f"/{self.blog_name}"
-        website_location.use_jumpscale_weblibs = False
-        fullpath = j.sal.fs.joinPaths(self._dirpath, "html/")
-        website_location.path_location = fullpath
+        # website_location = locations.locations_static.new()
+        # website_location.name = f"{self.blog_name}"
+        # website_location.path_url = f"/{self.blog_name}"
 
         website_location_assets = locations.locations_static.new()
-        website_location_assets.name = "assets"
-        website_location_assets.path_url = "/"
-        website_location_assets.use_jumpscale_weblibs = True
-        fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
+        website_location_assets.name = "images"
+        website_location_assets.path_url = "/images"
+        fullpath = j.sal.fs.joinPaths(self.blog_dest, "images/")
         website_location_assets.path_location = fullpath
 
         ## START BOTTLE ACTORS ENDPOINT
@@ -225,6 +233,25 @@ class Package(j.baseclasses.threebot_package):
         proxy_location.port_dest = 9201
         proxy_location.scheme = "http"
         ## END BOTTLE ACTORS ENDPOINT
+
+        proxy_location = locations.locations_proxy.new()
+        proxy_location.name = "nodeapp"
+        proxy_location.path_url = ""  # f"/{self.blog_name}/blog"
+        proxy_location.ipaddr_dest = "0.0.0.0"
+        proxy_location.port_dest = 3000
+        proxy_location.scheme = "http"
+
+        s = j.servers.startupcmd.new(name=f"blog_{self.blog_name}")
+        s.cmd_start = f"""
+        cd {self.package_root}/sapper-blog
+        npm run build
+        node __sapper__/build
+        """
+        s.executor = "tmux"
+        s.interpreter = "bash"
+        s.timeout = 10
+        s.ports = [3000]
+        s.start(reset=True)
 
         locations.configure()
         website.configure()
