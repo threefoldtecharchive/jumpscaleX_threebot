@@ -3,6 +3,7 @@
 title** = "" (S)
 link = "" (S)
 page = "" (S)
+faclass = "" (S)
 
 @url = jumpscale.blog.metadata
 blog_name** = "" (S)
