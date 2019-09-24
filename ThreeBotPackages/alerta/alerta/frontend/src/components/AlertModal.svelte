@@ -1,7 +1,15 @@
 <script>
+  import { formatDate, ansiUp } from "../common";
+
   export let myAlert;
   export let index;
 </script>
+
+<style>
+  .modal-body {
+    word-wrap: break-word;
+  }
+</style>
 
 <div
   class="modal fade"
@@ -38,8 +46,8 @@
             {myAlert.time}
           </li>
           <li class="list-group-item">
-            <b>Dupl. :</b>
-            {myAlert.dupl}
+            <b>Count :</b>
+            {myAlert.count}
           </li>
           <li class="list-group-item">
             <b>Environment :</b>
@@ -59,7 +67,12 @@
           </li>
           <li class="list-group-item">
             <b>Value :</b>
-            {myAlert.value}
+            <p>
+              {#each myAlert.value.split('\n') as line}
+                {@html ansiUp.ansi_to_html(line)}
+                <br />
+              {/each}
+            </p>
           </li>
           <li class="list-group-item">
             <b>message Type :</b>
@@ -67,8 +80,18 @@
           </li>
           <li class="list-group-item">
             <b>Text :</b>
-            {myAlert.text}
+            {@html ansiUp.ansi_to_html(myAlert.text)}
           </li>
+          {#if myAlert.occurrences.length}
+            <li class="list-group-item">
+              <b>Occurrences :</b>
+              <ul>
+                {#each myAlert.occurrences as item}
+                  <li>{formatDate(item)}</li>
+                {/each}
+              </ul>
+            </li>
+          {/if}
         </ul>
 
       </div>
