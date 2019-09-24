@@ -1,0 +1,3 @@
+@url = tfgrid.reservation.workload.1
+type = "zdb,container,volume,network" (E)
+content = (dict) 
