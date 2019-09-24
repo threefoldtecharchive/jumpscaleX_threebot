@@ -198,6 +198,7 @@ class FolderResource(DAVCollection):
         self.db.dir_create(fp)
 
     def delete(self):
+        print("**************************.provider.readonly:%s :%s" % (self.provider.readonly, self._file_path))
         if self.provider.readonly:
             raise DAVError(HTTP_FORBIDDEN)
         self.db.dir_remove(self._file_path)

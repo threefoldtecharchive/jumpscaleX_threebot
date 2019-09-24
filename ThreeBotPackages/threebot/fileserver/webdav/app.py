@@ -24,7 +24,7 @@ class App(object):
     @property
     def app(self):
         root = os.path.dirname(os.path.abspath(__file__))
-        from webdavserver import provider
+        from fileserver.webdav import provider
 
         config = {
             "provider_mapping": {"/": provider.BCDBFSProvider(self.path)},
