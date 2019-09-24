@@ -14,10 +14,14 @@ import time
 
 def main(self):
     # Create some files on folder on bcdbfs
-    client = j.clients.webdav.get("local", url="http://127.0.0.1")
+    if j.clients.webdav.exists("local"):
+        j.clients.webdav.delete("local")
+    client = j.clients.webdav.get("local", url="http://127.0.0.1:7501")
+
     # Make sure old files from previous test is deleted
     if client.exists("/test_upload"):
         client.delete("/test_upload")
+
     if j.sal.fs.exists("/tmp/upload"):
         j.sal.fs.remove("/tmp/upload")
     # create dir with file and upload it
@@ -48,7 +52,7 @@ def main(self):
     # Test copy
     client.copy("/test_upload_2", "test_upload")
     assert client.exists("/test_upload") == True
-    client.delete("/test_upload_2")
+    client.delete("/test_upload_2/")
     assert client.exists("/test_upload_2") == False
     client.download("/test_upload", "/tmp/dir2")
     # Make sure contents are copied correctly
@@ -58,3 +62,4 @@ def main(self):
     # TEAR DOWN
     client.delete("/test_upload")
     j.sal.fs.remove("/tmp/upload")
+    print("WEBDAV test OK")
