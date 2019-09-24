@@ -1,3 +1,3 @@
-const tags = ["lame", "markdown", "python", "java"];
+const tags = ["lame", "markdown", "python", "java", "nim"];
 
 export default tags;

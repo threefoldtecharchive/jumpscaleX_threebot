@@ -16,7 +16,24 @@
 <script>
   export let post;
   import showdown from "showdown";
-  let converter = new showdown.Converter({ metadata: true });
+
+  const classMap = {
+    h1: "ui large header",
+    h2: "ui medium header",
+    ul: "ui list",
+    li: "ui item"
+  };
+
+  const bindings = Object.keys(classMap).map(key => ({
+    type: "output",
+    regex: new RegExp(`<${key}(.*)>`, "g"),
+    replace: `<${key} class="${classMap[key]}" $1>`
+  }));
+
+  let converter = new showdown.Converter({
+    metadata: true
+    // extensions: [...bindings]
+  });
   converter.setFlavor("github");
   let mdtext = converter.makeHtml(post.content);
 </script>
@@ -59,6 +76,10 @@
 
 <svelte:head>
   <title>{post.title}</title>
+
+  <link
+    rel="stylesheet"
+    href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.8/build/styles/default.min.css" />
 </svelte:head>
 
 <h1>{post.title}</h1>

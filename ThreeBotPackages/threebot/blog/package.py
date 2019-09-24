@@ -236,7 +236,7 @@ class Package(j.baseclasses.threebot_package):
 
         proxy_location = locations.locations_proxy.new()
         proxy_location.name = "nodeapp"
-        proxy_location.path_url = ""  # f"/{self.blog_name}/blog"
+        proxy_location.path_url = "/"  # f"/{self.blog_name}/blog"
         proxy_location.ipaddr_dest = "0.0.0.0"
         proxy_location.port_dest = 3000
         proxy_location.scheme = "http"
