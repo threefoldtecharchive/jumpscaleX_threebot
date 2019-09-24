@@ -36,7 +36,7 @@
     // extensions: [...bindings]
   });
   converter.setFlavor("github");
-  let mdtext = converter.makeHtml(page.content);
+  $: mdtext = converter.makeHtml(page.content);
 </script>
 
 <style>
