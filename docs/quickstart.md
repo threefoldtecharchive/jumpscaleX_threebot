@@ -157,7 +157,18 @@ Driven using any modern web tech or even static files (totally up to the develop
 
 ### communicating with backend APIs
 
-Using axios or your http library of choice communicate with API endpoints
+Using axios or your http library of choice communicate with API endpoint (provided by bottle server)
+
+
+```
+    POST /actors/ACTOR_NAME/ACTOR_CMD 
+    json body:
+    {
+        args: {}
+        content_type:..
+        content_response:..
+    }
+```
 
 
 ```javascript
@@ -172,6 +183,7 @@ export function newPaste(code) {
 }
 ```
 
+[more examples](https://github.com/threefoldtech/jumpscaleX_core/blob/development/JumpscaleCore/servers/gedis_http/README.md) 
 
 # Complete examples
 
