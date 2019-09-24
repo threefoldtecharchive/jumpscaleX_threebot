@@ -16,17 +16,62 @@ class tft_explorer(j.baseclasses.threebot_actor):
         print("****************************** transaction_data:%s " % transaction_data)
         transaction_data = j.data.serializers.json.loads(transaction_data)
         t = self.tft_ex_t.new()
-        t.from_addr = transaction_data["from_addr"]
-        t.to_addr = transaction_data["to_addr"]
+        t.senders = [transaction_data["from_addr"]]
+        t.recipient = str(transaction_data["to_addr"])
         t.amount = transaction_data["amount"]
         print("******************************t:%s   " % t)
 
         r = self.tft_ex_t.set(t)
         return r
 
-    def get_transactions(self, schema_out=None, user_session=None):
-        ts = j.data.serializers.json.dumps({"transactions": [t for t in self.tft_ex_t.find()]})
-        return ts
+    def set_transactions(self, trans, schema_out=None, user_session=None):
+        """
+        ```in
+        trans = (LO) !tft.explorer.transaction.1
+        ```
+
+        ```out
+        success = (LO) !tft.explorer.transaction.1
+        ```
+        """
+        res = []
+        for t in trans:
+            tmp = self.tft_ex_t.new()
+            tmp.senders = t.senders
+            tmp.recipient = t.recipient
+            tmp.amount = t.amount
+            res.append(self.tft_ex_t.set(tmp))
+        return res
+
+    def get_transaction_by_recipient(self, recipient, schema_out=None, user_session=None):
+        """
+        ```in
+        recipient = (S) 
+        ```
+
+        ```out
+        trans =  (LO) !tft.explorer.transaction.1
+        ```
+        """
+        return self.tft_ex_t.find(recipient=recipient)
+
+    def get(self, transaction_id, schema_out=None, user_session=None):
+        """
+        ```in
+        transaction_id = (I)
+        ```
+
+        ```out
+        transaction = (O) !tft.explorer.transaction.1
+        ```
+        """
+        return self._get_trans(transaction_id)
+
+    def _get_trans(self, transaction_id):
+        try:
+            return self.tft_ex_t.get(transaction_id)
+        except j.exceptions.NotFound:
+            raise j.exceptions.NotFound("transaction %s not found" % transaction_id)
 
     def set_block(self, blockheight, transactions, balances):
         pass
