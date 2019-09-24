@@ -19,8 +19,9 @@
     const metaResp = await this.fetch(`blog/metadata.json`);
     const metadata = await metaResp.json();
 
-    let begin = pageNum * metadata.posts_per_page;
-    let end = pageNum * metadata.posts_per_page + metadata.posts_per_page;
+    let per_page = metadata.posts_per_page || 20; 
+    let begin = pageNum * per_page || 20;
+    let end = pageNum * per_page + per_page;
     let posts = allPosts.slice(begin, end);
 
     console.log(begin, end, posts.length);
