@@ -1,15 +1,16 @@
 <script>
   import { deleteAlert } from "../data";
   import AlertModal from "./AlertModal.svelte";
+  import { ansiUp } from "../common";
 
   export let alerts;
   $: alerts;
   const severity = {
     CRITICAL: "CRITICAL",
-    MAJOR: "MAJOR",
-    MINOR: "MINOR",
+    ERROR: "ERROR",
     WARNING: "WARNING",
-    INDETERMINATE: "INDETERMINATE"
+    STDOUT: "STDOUT",
+    DEBUG: "DEBUG"
   };
   function onDeleteAlert(alertId) {
     //Call gedis actor
@@ -44,13 +45,13 @@
             <th scope="col">Severity</th>
             <th scope="col">Status</th>
             <th scope="col">Time</th>
-            <th scope="col">Dupl.</th>
+            <th scope="col">Count</th>
             <th scope="col">Environment</th>
             <th scope="col">Service</th>
             <th scope="col">Resource</th>
             <th scope="col">Event</th>
-            <th scope="col">Value</th>
             <th scope="col">Message Type</th>
+            <th scope="col">Text</th>
             <!-- <th scope="col">Text</th> -->
             <th scope="col" class="text-center">Action</th>
           </tr>
@@ -66,7 +67,7 @@
                 <td>
                   <span class="badge badge-danger">{myAlert.severity}</span>
                 </td>
-              {:else if myAlert.severity == severity.MAJOR}
+              {:else if myAlert.severity == severity.ERROR}
                 <td>
                   <span class="badge badge-info">{myAlert.severity}</span>
                 </td>
@@ -74,7 +75,7 @@
                 <td>
                   <span class="badge badge-warning">{myAlert.severity}</span>
                 </td>
-              {:else if myAlert.severity == severity.MINOR}
+              {:else if myAlert.severity == severity.STDOUT}
                 <td>
                   <span class="badge badge-secondary">{myAlert.severity}</span>
                 </td>
@@ -85,13 +86,15 @@
               {/if}
               <td>{myAlert.status}</td>
               <td>{myAlert.time}</td>
-              <td>{myAlert.dupl}</td>
+              <td>{myAlert.count}</td>
               <td>{myAlert.environment}</td>
               <td>{myAlert.service}</td>
               <td>{myAlert.resource}</td>
               <td>{myAlert.event}</td>
-              <td>{myAlert.value}</td>
               <td>{myAlert.messageType}</td>
+              <td>
+                {@html ansiUp.ansi_to_html(myAlert.text)}
+              </td>
               <td>
                 <!--[Actions]-->
                 <div class="d-flex d-flex justify-content-center">
