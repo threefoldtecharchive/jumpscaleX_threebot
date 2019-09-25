@@ -44,7 +44,7 @@ export function getPosts() {
     if (process.env.DEV) {
 
         return JSON.stringify(posts);
-    } else {}
+    } else { }
 }
 
 export function getTags() {
@@ -54,7 +54,7 @@ export function getTags() {
 
 
         return JSON.stringify(tags);
-    } else {}
+    } else { }
 
 }
 
@@ -63,7 +63,7 @@ export function getPages() {
     if (process.env.DEV) {
 
         return JSON.stringify(pages);
-    } else {}
+    } else { }
 
 }
 

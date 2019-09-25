@@ -1,8 +1,9 @@
 <script context="module">
   export function preload({ params, query }) {
-    return this.fetch(`${params.username}/blog/pages.json`)
+    return this.fetch(`blog/${params.theuser}/pages.json`)
       .then(r => r.json())
       .then(pages => {
+        console.log(params);
         return { pages };
       });
   }
@@ -10,6 +11,9 @@
 
 <script>
   export let pages = [];
+  import { stores } from "@sapper/app";
+  const { preloading, page, session } = stores();
+  export let username = $page.params.theuser;
 </script>
 
 <style>
@@ -27,13 +31,15 @@
 
 {#await pages then value}
   <ul>
-    {#each value as page}
+    {#each value as thepage}
       <!-- we're using the non-standard `rel=prefetch` attribute to
 				tell Sapper to load the data for the page as soon as
 				the user hovers over the link or taps it, instead of
 				waiting for the 'click' event -->
       <li>
-        <a rel="prefetch" href="blog/pages/{page.slug}">{page.title}</a>
+        <a rel="prefetch" href="blog/{username}/pages/{thepage.slug}">
+          {thepage.title}
+        </a>
       </li>
     {/each}
   </ul>

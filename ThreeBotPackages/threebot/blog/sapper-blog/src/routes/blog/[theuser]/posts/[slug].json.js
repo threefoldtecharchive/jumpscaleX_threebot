@@ -1,10 +1,8 @@
 import {
     getPosts
-} from "./_api.js";
+} from "../_api.js";
 
-
-let posts = JSON.parse(getPosts());
-
+let posts = JSON.parse(getPosts())
 
 const lookup = new Map();
 posts.forEach(post => {

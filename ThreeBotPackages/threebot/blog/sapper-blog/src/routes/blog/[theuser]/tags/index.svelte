@@ -1,6 +1,6 @@
 <script context="module">
   export function preload({ params, query }) {
-    return this.fetch(`${params.username}/blog/tags.json`)
+    return this.fetch(`blog/${params.theuser}/tags.json`)
       .then(r => r.json())
       .then(tags => {
         return { tags };

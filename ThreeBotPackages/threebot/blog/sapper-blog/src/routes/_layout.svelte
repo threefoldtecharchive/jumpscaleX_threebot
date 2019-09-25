@@ -1,19 +1,15 @@
 <script context="module">
   export async function preload({ host, path, params, query }) {
-    console.log(host, path, params, query);
     try {
-      const pagesResp = await this.fetch(`blog/${params.username}/pages.json`);
+      const pagesResp = await this.fetch(`blog/${params.theuser}/pages.json`);
       const pages = await pagesResp.json();
 
-      const metaResp = await this.fetch(
-        `blog/${params.username}/metadata.json`
-      );
+      const metaResp = await this.fetch(`blog/${params.theuser}/metadata.json`);
       const metadata = await metaResp.json();
 
-      const tagsResp = await this.fetch(`blog/${params.username}/tags.json`);
+      const tagsResp = await this.fetch(`blog/${params.theuser}/tags.json`);
       const tags = await tagsResp.json();
-      const username = params.username;
-      return { pages, metadata, tags, username };
+      return { pages, metadata, tags };
     } catch (error) {
       console.log(error);
     }
@@ -21,6 +17,8 @@
 </script>
 
 <script>
+  import { stores } from "@sapper/app";
+  const { preloading, page, session } = stores();
   import Nav from "../components/Nav.svelte";
   import Sidebar from "../components/Sidebar.svelte";
   import Footer from "../components/Footer.svelte";
@@ -30,7 +28,6 @@
   export let pages = [];
   export let metadata = {};
   export let tags = [];
-  export let username;
 </script>
 
 <style>

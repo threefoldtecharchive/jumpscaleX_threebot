@@ -1,6 +1,6 @@
 import {
     getPosts
-} from "./_api"
+} from "../_api"
 
 
 export function get(req, res) {

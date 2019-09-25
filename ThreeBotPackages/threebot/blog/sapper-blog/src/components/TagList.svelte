@@ -1,6 +1,10 @@
 <script>
   export let tags = [];
   export let title = "";
+
+  import { stores } from "@sapper/app";
+  const { preloading, page, session } = stores();
+  export let username = $page.params.theuser;
 </script>
 
 <style>
@@ -19,7 +23,7 @@
 				the user hovers over the link or taps it, instead of
 				waiting for the 'click' event -->
     <li>
-      <a href="blog/tags/{tag}">{tag}</a>
+      <a href="blog/{username}/tags/{tag}">{tag}</a>
     </li>
   {/each}
 </ul>

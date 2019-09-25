@@ -1,16 +1,10 @@
-<script context="module">
-  export function preload({ host, path, params, query }) {
-    console.log(host, path, params, query);
-    const username = params.username;
-    console.log("username: ", username);
-    return { username };
-  }
-</script>
-
 <script>
+  import { stores } from "@sapper/app";
+  const { preloading, page, session } = stores();
+  export let username = $page.params.theuser;
+
   export let segment;
   export let pages;
-  let username;
   import SearchBar from "./SearchBar.svelte";
 </script>
 
@@ -64,6 +58,7 @@
   <div class="row-fluid">
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <nav>
+
         <ul>
           <!-- <li>
       <a class={segment === undefined ? 'selected' : ''} href=".">home</a>
@@ -74,7 +69,7 @@
             <a
               rel="prefetch"
               class={segment === undefined ? 'selected' : ''}
-              href="blog/{username}">
+              href="blog/{username}/posts">
               blog
             </a>
           </li>
