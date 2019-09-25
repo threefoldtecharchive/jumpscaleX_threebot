@@ -12,7 +12,6 @@ class user(j.baseclasses.threebot_actor):
         username = (S)
         ```
         """
-        import ipdb; ipdb.set_trace()
         user = self.model.new()
         user.username = username
         user.save()
