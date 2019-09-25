@@ -10555,8 +10555,7 @@ Main client app
 (function() {
   'use strict';
   // here we define the address of the server that is hosting fruum files
-  var remote_host = '{{remote_host}}';
-  var remote_host_ws = '{{remote_host_ws}}';
+  var remote_host = window.fruumSettings.fruum_host;
   // executes a function by string
   function executeFunctionByName(functionName, context /*, args */) {
     var args = [].slice.call(arguments).splice(2);
@@ -10703,9 +10702,7 @@ Main client app
         this.profile_topics = new Collections.ProfileTopics();
         this.profile_replies = new Collections.ProfileReplies();
         this.profile_users = new Collections.ProfileUsers();
-        var socket = io();
-
-        this.socket = io(remote_host_ws);
+        this.socket = io(remote_host);
 
 
         // initialize plugins

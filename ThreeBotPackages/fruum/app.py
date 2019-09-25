@@ -1,4 +1,5 @@
 import socketio
+from Jumpscale import j
 
 import os
 from bottle import request, response, Bottle, abort, static_file, template
@@ -165,14 +166,9 @@ def get_host():
     return '{}://{}'.format(parts.scheme, parts.netloc)
 
 
-def get_ws_host():
-    x = get_host().split(':')[:-1]
-    x.append('9999')
-    return ':'.join(x)
-
 @app.route("/go/<app_name>")
 def home(app_name):
-    res =  template("%s/templates/app.js" % root, {'app_id':app_name, 'fruum_host':get_host()})
+    res =  template("%s/templates/app.js" % root, {'app_id':app_name})
     response.headers['Accept-Ranges'] = 'bytes'
     response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
     response.headers['Access-Control-Allow-Origin'] = '*'
@@ -184,7 +180,7 @@ def home(app_name):
 
 @app.route("/_/get/js/<app_name>")
 def js(app_name):
-    res = template("%s/templates/script.js" % root, {'fruum_host':get_host(), 'remote_host_ws':get_ws_host(), 'remote_host':get_host()})
+    res = template("%s/templates/script.js" % root, {})
     response.headers['Accept-Ranges'] = 'bytes'
     response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
     response.headers['Access-Control-Allow-Origin'] = '*'
