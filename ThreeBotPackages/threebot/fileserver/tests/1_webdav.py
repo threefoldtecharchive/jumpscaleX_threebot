@@ -53,13 +53,16 @@ def main(self):
     client.copy("/test_upload_2", "test_upload")
     assert client.exists("/test_upload") == True
     client.delete("/test_upload_2/")
+
     assert client.exists("/test_upload_2") == False
     client.download("/test_upload", "/tmp/dir2")
     # Make sure contents are copied correctly
     assert j.sal.fs.readFile("/tmp/dir2/upload") == content
+    assert client.get_info("/test_upload")["name"] == "test_upload"
     j.sal.fs.remove("/tmp/dir2")
 
     # TEAR DOWN
+
     client.delete("/test_upload")
     j.sal.fs.remove("/tmp/upload")
     print("WEBDAV test OK")

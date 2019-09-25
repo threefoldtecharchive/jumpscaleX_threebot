@@ -140,7 +140,7 @@ class FolderResource(DAVCollection):
         return None
 
     def get_etag(self):
-        return None
+        return "{0}-{1}".format(self.obj.epoch, 0)
 
     def get_last_modified(self):
         return self.obj.epoch
@@ -198,7 +198,6 @@ class FolderResource(DAVCollection):
         self.db.dir_create(fp)
 
     def delete(self):
-        print("**************************.provider.readonly:%s :%s" % (self.provider.readonly, self._file_path))
         if self.provider.readonly:
             raise DAVError(HTTP_FORBIDDEN)
         self.db.dir_remove(self._file_path)
