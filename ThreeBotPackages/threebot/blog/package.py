@@ -237,11 +237,18 @@ class Package(j.baseclasses.threebot_package):
         proxy_location = locations.locations_proxy.new()
         proxy_location.name = "nodeapp"
         proxy_location.path_url = "/"  # f"/{self.blog_name}/blog"
+
+        8049/xmon 
+
+                "blog/posts"
+                "blog/pages..."
+                8049/xmon/blog
+
         proxy_location.ipaddr_dest = "0.0.0.0"
         proxy_location.port_dest = 3000
         proxy_location.scheme = "http"
 
-        s = j.servers.startupcmd.new(name=f"blog_{self.blog_name}")
+        s = j.servers.startupcmd.get(name=f"blog_{self.blog_name}")
         s.cmd_start = f"""
         cd {self.package_root}/sapper-blog
         npm run build

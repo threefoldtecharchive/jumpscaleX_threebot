@@ -1,7 +1,16 @@
+<script context="module">
+  export function preload({ host, path, params, query }) {
+    console.log(host, path, params, query);
+    const username = params.slug;
+    return { username };
+  }
+</script>
+
 <script>
   import showdown from "showdown";
   export let posts = [];
   export let title = "";
+  export let username;
   import PostCard from "./PostCard.svelte";
 </script>
 
@@ -17,7 +26,7 @@
 <ul>
   {#each posts as post}
     <li>
-      <PostCard {post} />
+      <PostCard {post} {username} />
     </li>
   {/each}
 </ul>

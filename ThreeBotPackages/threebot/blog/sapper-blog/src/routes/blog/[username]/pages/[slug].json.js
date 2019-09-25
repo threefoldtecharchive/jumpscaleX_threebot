@@ -1,4 +1,8 @@
-import pages from './_pages.js';
+import {
+    getPages
+} from "../_api.js";
+
+let pages = JSON.parse(getPages())
 
 const lookup = new Map();
 pages.forEach(page => {
@@ -8,7 +12,9 @@ pages.forEach(page => {
 export function get(req, res, next) {
     // the `slug` parameter is available because
     // this file is called [slug].json.js
-    const { slug } = req.params;
+    const {
+        slug
+    } = req.params;
 
     if (lookup.has(slug)) {
         res.writeHead(200, {

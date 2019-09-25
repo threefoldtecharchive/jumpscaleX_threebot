@@ -1,15 +1,19 @@
 <script context="module">
-  export async function preload({ params }) {
+  export async function preload({ host, path, params, query }) {
+    console.log(host, path, params, query);
     try {
-      const pagesResp = await this.fetch(`blog/pages.json`);
+      const pagesResp = await this.fetch(`blog/${params.username}/pages.json`);
       const pages = await pagesResp.json();
 
-      const metaResp = await this.fetch(`blog/metadata.json`);
+      const metaResp = await this.fetch(
+        `blog/${params.username}/metadata.json`
+      );
       const metadata = await metaResp.json();
 
-      const tagsResp = await this.fetch(`blog/tags.json`);
+      const tagsResp = await this.fetch(`blog/${params.username}/tags.json`);
       const tags = await tagsResp.json();
-      return { pages, metadata, tags };
+      const username = params.username;
+      return { pages, metadata, tags, username };
     } catch (error) {
       console.log(error);
     }
@@ -26,6 +30,7 @@
   export let pages = [];
   export let metadata = {};
   export let tags = [];
+  export let username;
 </script>
 
 <style>

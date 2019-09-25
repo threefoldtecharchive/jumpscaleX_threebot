@@ -1,6 +1,16 @@
+<script context="module">
+  export function preload({ host, path, params, query }) {
+    console.log(host, path, params, query);
+    const username = params.slug;
+    console.log("username: ", username);
+    return { username };
+  }
+</script>
+
 <script>
   export let segment;
   export let pages;
+  let username;
   import SearchBar from "./SearchBar.svelte";
 </script>
 
@@ -64,7 +74,7 @@
             <a
               rel="prefetch"
               class={segment === undefined ? 'selected' : ''}
-              href="blog">
+              href="{username}/blog">
               blog
             </a>
           </li>
@@ -73,13 +83,15 @@
               <a
                 rel="prefetch"
                 class={segment === page.slug ? 'selected' : ''}
-                href="blog/pages/{page.slug}">
+                href="{username}/blog/pages/{page.slug}">
                 {page.title}
               </a>
             </li>
           {/each}
           <li>
-            <a class={segment === 'tags' ? 'selected' : ''} href="blog/tags/">
+            <a
+              class={segment === 'tags' ? 'selected' : ''}
+              href="{username}/blog/tags/">
               Tags
             </a>
 

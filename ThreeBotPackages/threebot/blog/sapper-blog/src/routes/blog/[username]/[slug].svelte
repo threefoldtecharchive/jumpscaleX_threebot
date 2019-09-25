@@ -1,12 +1,13 @@
 <script context="module">
-  export async function preload({ params, query }) {
+  export async function preload({ host, path, params, query }) {
     // the `slug` parameter is available because
     // this file is called [slug].svelte
-    const res = await this.fetch(`blog/pages/${params.slug}.json`);
+    console.log(params);
+    const res = await this.fetch(`blog/${params.username}/${params.slug}.json`);
     const data = await res.json();
 
     if (res.status === 200) {
-      return { page: data };
+      return { post: data };
     } else {
       this.error(res.status, data.message);
     }
@@ -14,8 +15,7 @@
 </script>
 
 <script>
-  export let page;
-
+  export let post;
   import showdown from "showdown";
 
   const classMap = {
@@ -36,7 +36,7 @@
     // extensions: [...bindings]
   });
   converter.setFlavor("github");
-  $: mdtext = converter.makeHtml(page.content);
+  let mdtext = converter.makeHtml(post.content);
 </script>
 
 <style>
@@ -44,7 +44,7 @@
 		By default, CSS is locally scoped to the component,
 		and any unused styles are dead-code-eliminated.
 		In this page, Svelte can't know which elements are
-		going to appear inside the {{{page.html}}} block,
+		going to appear inside the {{{post.html}}} block,
 		so we have to use the :global(...) modifier to target
 		all elements inside .content
 	*/
@@ -76,12 +76,14 @@
 </style>
 
 <svelte:head>
-  <title>{page.title}</title>
+  <title>{post.title}</title>
 
   <link
     rel="stylesheet"
     href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.8/build/styles/default.min.css" />
 </svelte:head>
+
+<h1>{post.title}</h1>
 
 <div class="content">
   {@html mdtext}
