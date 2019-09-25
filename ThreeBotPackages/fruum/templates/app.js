@@ -190,7 +190,7 @@
           add_class(el_preview, 'fruum-clicked');
         }
         // this is replaced by server
-        window.fruumSettings.fruum_host = '{{fruum_host}}';
+        //window.fruumSettings.fruum_host = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port;
 
         // check for bot in fullpage mode
         if (window.fruumSettings.container &&
