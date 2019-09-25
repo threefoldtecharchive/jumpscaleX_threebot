@@ -1,7 +1,7 @@
 <script context="module">
   export function preload({ params }) {
     try {
-      return this.fetch(`blog/tags/${params.slug}.json`)
+      return this.fetch(`blog/${params.theuser}/tags/${params.slug}.json`)
         .then(request => request.json())
         .then(posts => {
           return { posts, tag: params.slug };
@@ -13,7 +13,7 @@
 </script>
 
 <script>
-  import PostList from "../../../components/PostList.svelte";
+  import PostList from "../../../../components/PostList.svelte";
   export let posts = [];
   export let tag = "";
 </script>

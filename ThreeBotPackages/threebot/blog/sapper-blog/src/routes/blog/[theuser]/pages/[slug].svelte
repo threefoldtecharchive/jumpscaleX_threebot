@@ -2,11 +2,13 @@
   export async function preload({ params, query }) {
     // the `slug` parameter is available because
     // this file is called [slug].svelte
-    const res = await this.fetch(`blog/pages/${params.slug}.json`);
+    const res = await this.fetch(
+      `blog/${params.username}/pages/${params.slug}.json`
+    );
     const data = await res.json();
 
     if (res.status === 200) {
-      return { page: data };
+      return { thepage: data };
     } else {
       this.error(res.status, data.message);
     }
@@ -14,8 +16,10 @@
 </script>
 
 <script>
-  export let page;
-
+  export let thepage = {};
+  import { stores } from "@sapper/app";
+  const { preloading, page, session } = stores();
+  export let username = $page.params.theuser;
   import showdown from "showdown";
 
   const classMap = {
@@ -36,7 +40,7 @@
     // extensions: [...bindings]
   });
   converter.setFlavor("github");
-  $: mdtext = converter.makeHtml(page.content);
+  $: mdtext = converter.makeHtml(thepage.content);
 </script>
 
 <style>
@@ -76,7 +80,7 @@
 </style>
 
 <svelte:head>
-  <title>{page.title}</title>
+  <title>{thepage.title}</title>
 
   <link
     rel="stylesheet"
@@ -84,5 +88,5 @@
 </svelte:head>
 
 <div class="content">
-  {@html mdtext}
+  {@html converter.makeHtml(thepage.content)}
 </div>

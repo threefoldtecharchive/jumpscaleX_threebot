@@ -1,11 +1,12 @@
-import pages from './_pages.js';
+import {
+    getPages
+} from '../_api.js';
 
-const contents = JSON.stringify(pages);
 
 export function get(req, res) {
     res.writeHead(200, {
         'Content-Type': 'application/json'
     });
 
-    res.end(contents);
+    res.end(getPages());
 }
