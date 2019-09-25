@@ -1,7 +1,7 @@
 <script context="module">
   export function preload({ host, path, params, query }) {
     console.log(host, path, params, query);
-    const username = params.slug;
+    const username = params.username;
     console.log("username: ", username);
     return { username };
   }
@@ -74,7 +74,7 @@
             <a
               rel="prefetch"
               class={segment === undefined ? 'selected' : ''}
-              href="{username}/blog">
+              href="blog/{username}">
               blog
             </a>
           </li>
@@ -83,7 +83,7 @@
               <a
                 rel="prefetch"
                 class={segment === page.slug ? 'selected' : ''}
-                href="{username}/blog/pages/{page.slug}">
+                href="blog/{username}/pages/{page.slug}">
                 {page.title}
               </a>
             </li>
@@ -91,7 +91,7 @@
           <li>
             <a
               class={segment === 'tags' ? 'selected' : ''}
-              href="{username}/blog/tags/">
+              href="blog/{username}/tags/">
               Tags
             </a>
 

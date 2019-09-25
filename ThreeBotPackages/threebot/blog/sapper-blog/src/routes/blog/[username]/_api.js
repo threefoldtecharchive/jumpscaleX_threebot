@@ -1,8 +1,8 @@
 import axios from "axios";
-import metadata from './_metadata.js';
-import posts from './_posts.js';
-import tags from './_tags.js';
-import pages from './_pages.js';
+import metadata from './_metadata';
+import posts from './_posts';
+import tags from './_tags';
+import pages from './_pages';
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 

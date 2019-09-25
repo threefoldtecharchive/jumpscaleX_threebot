@@ -9,6 +9,7 @@ export function get(req, res) {
         'Content-Type': 'application/json'
     });
     if (process.env.DEV) {
+        // console.log(JSON.stringify(req.params))
         res.end(getPosts());
     } else {
 

@@ -1,7 +1,7 @@
 <script context="module">
   export async function preload({ host, path, params, query }) {
     console.log("query", JSON.stringify(query));
-    let resp = await this.fetch(`${params.username}/blog.json`);
+    let resp = await this.fetch(`blog/${params.username}.json`);
     let pageNum = parseInt(query.page);
     // please notice it might be undefined
     // parseInt(undefined) > 0 -> false
