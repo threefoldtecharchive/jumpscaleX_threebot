@@ -1,14 +1,20 @@
-import posts from './_posts.js';
+import {
+    getPages
+} from "../_api.js";
+
+let pages = JSON.parse(getPages())
 
 const lookup = new Map();
-posts.forEach(post => {
-    lookup.set(post.slug, JSON.stringify(post));
+pages.forEach(page => {
+    lookup.set(page.slug, JSON.stringify(page));
 });
 
 export function get(req, res, next) {
     // the `slug` parameter is available because
     // this file is called [slug].json.js
-    const { slug } = req.params;
+    const {
+        slug
+    } = req.params;
 
     if (lookup.has(slug)) {
         res.writeHead(200, {

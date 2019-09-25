@@ -1,13 +1,13 @@
 <script context="module">
-  export async function preload({ params }) {
+  export async function preload({ host, path, params, query }) {
     try {
-      const pagesResp = await this.fetch(`blog/pages.json`);
+      const pagesResp = await this.fetch(`blog/${params.theuser}/pages.json`);
       const pages = await pagesResp.json();
 
-      const metaResp = await this.fetch(`blog/metadata.json`);
+      const metaResp = await this.fetch(`blog/${params.theuser}/metadata.json`);
       const metadata = await metaResp.json();
 
-      const tagsResp = await this.fetch(`blog/tags.json`);
+      const tagsResp = await this.fetch(`blog/${params.theuser}/tags.json`);
       const tags = await tagsResp.json();
       return { pages, metadata, tags };
     } catch (error) {
@@ -17,6 +17,8 @@
 </script>
 
 <script>
+  import { stores } from "@sapper/app";
+  const { preloading, page, session } = stores();
   import Nav from "../components/Nav.svelte";
   import Sidebar from "../components/Sidebar.svelte";
   import Footer from "../components/Footer.svelte";

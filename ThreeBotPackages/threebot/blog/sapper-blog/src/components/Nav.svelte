@@ -1,4 +1,8 @@
 <script>
+  import { stores } from "@sapper/app";
+  const { preloading, page, session } = stores();
+  export let username = $page.params.theuser;
+
   export let segment;
   export let pages;
   import SearchBar from "./SearchBar.svelte";
@@ -54,6 +58,7 @@
   <div class="row-fluid">
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <nav>
+
         <ul>
           <!-- <li>
       <a class={segment === undefined ? 'selected' : ''} href=".">home</a>
@@ -64,7 +69,7 @@
             <a
               rel="prefetch"
               class={segment === undefined ? 'selected' : ''}
-              href="blog">
+              href="blog/{username}/posts">
               blog
             </a>
           </li>
@@ -73,13 +78,15 @@
               <a
                 rel="prefetch"
                 class={segment === page.slug ? 'selected' : ''}
-                href="blog/pages/{page.slug}">
+                href="blog/{username}/pages/{page.slug}">
                 {page.title}
               </a>
             </li>
           {/each}
           <li>
-            <a class={segment === 'tags' ? 'selected' : ''} href="blog/tags/">
+            <a
+              class={segment === 'tags' ? 'selected' : ''}
+              href="blog/{username}/tags/">
               Tags
             </a>
 
