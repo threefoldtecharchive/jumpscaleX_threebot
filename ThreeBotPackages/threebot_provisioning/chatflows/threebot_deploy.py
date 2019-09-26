@@ -30,9 +30,9 @@ def chat(bot):
         threebot_machine.create_new_do_machine()
     threebot_machine.machine_init()
     threebot_machine.jsx_install()
-    # for package in packages:
-    #     package_name = package.split("/")[-1].strip().strip("/")
-    #     threebot_machine.threebot_package_add(package_name=package_name, giturl=package)
+    for package in packages:
+        package_name = package.split("/")[-1].strip().strip("/")
+        threebot_machine.threebot_package_add(package_name=package_name, giturl=package)
     threebot_machine.threebot_start()
 
     res = f"""
