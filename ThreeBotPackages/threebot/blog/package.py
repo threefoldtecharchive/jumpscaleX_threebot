@@ -211,11 +211,11 @@ class Package(j.baseclasses.threebot_package):
         website.port = 8084
         locations = website.locations.get("blog")
 
-        website_location_assets = locations.locations_static.new()
-        website_location_assets.name = f"blogs_static"
-        website_location_assets.path_url = f"/blog/static"
-        fullpath = j.sal.fs.joinPaths(self.package_root, "sapper-blog", "static")
-        website_location_assets.path_location = fullpath
+        # website_location_assets = locations.locations_static.new()
+        # website_location_assets.name = f"blogs_static"
+        # website_location_assets.path_url = f"/blog/static"
+        # fullpath = j.sal.fs.joinPaths(self.package_root, "sapper-blog", "static")
+        # website_location_assets.path_location = fullpath
 
         website_location_assets = locations.locations_static.new()
         website_location_assets.name = f"blog_{self.blog_name}_assets"
@@ -238,7 +238,7 @@ class Package(j.baseclasses.threebot_package):
 
         proxy_location = locations.locations_proxy.new()
         proxy_location.name = "nodeapp"
-        proxy_location.path_url = f"/blog/{self.blog_name}"
+        proxy_location.path_url = f"/"
 
         proxy_location.ipaddr_dest = "0.0.0.0"
         proxy_location.port_dest = 3000
