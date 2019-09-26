@@ -35,6 +35,15 @@ export default new Router({
         position: 'top',
         displayName: 'calendar'
       }
+    }, {
+      path: '/contacts',
+      name: 'contacts',
+      component: () => import(/* webpackChunkName: "token-page" */ './views/contacts'),
+      meta: {
+        icon: 'fas fa-address-book',
+        position: 'top',
+        displayName: 'contacts'
+      }
     }
   ]
 })
