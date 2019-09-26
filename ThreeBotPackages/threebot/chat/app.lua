@@ -5,13 +5,6 @@ do
   local _parent_0 = lapis.Application
   local _base_0 = {
     [{
-      root = "/chat"
-    }] = function(self)
-      return {
-        render = "chat.home"
-      }
-    end,
-    [{
       index = "/chat/session/:topic"
     }] = function(self)
       local req = self.req.parsed_url
