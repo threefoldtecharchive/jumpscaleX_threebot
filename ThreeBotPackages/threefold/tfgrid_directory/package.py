@@ -50,11 +50,13 @@ class Package(j.baseclasses.threebot_package):
         ## END BOTTLE ACTORS ENDPOINT
         locations.configure()
         website.configure()
-
+        print("server started")
+        
+        print("starting to spawn directory")
         # start one worker to sync farms
         j.servers.myjobs.workers_tmux_start(1)
         gevent.spawn(self.sync_directory)
-
+        print("spawnend sync diretory")
 
     def sync_directory(self):
         job = j.servers.myjobs.schedule(self._sync_dir)
