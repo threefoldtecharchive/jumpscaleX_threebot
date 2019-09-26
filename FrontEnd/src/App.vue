@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app>
     <v-navigation-drawer mini-variant app class="primary rounded" dark>
       <v-layout column fill-height justify-end>
         <div>
@@ -99,9 +99,6 @@ export default {
 </script>
 
 <style lang="scss">
-.content {
-  background: #fafafa !important;
-}
 .topround {
   border-radius: 10px 10px 0 0 !important;
 }
