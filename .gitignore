@@ -110,6 +110,5 @@ package-lock.json
 .vscode
 .idea
 weblibs
-html/
 __sapper__
 
