@@ -14,7 +14,7 @@ data_json = (S)
 #signature of the data (is e.g. json) by the zos node who deployed
 signature = (bytes)
 state = "error,ok" (E)
-message = ""
+message = "" (S)
 epoch = (T)
 
 

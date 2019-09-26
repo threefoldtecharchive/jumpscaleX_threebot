@@ -211,14 +211,16 @@ class Package(j.baseclasses.threebot_package):
         website.port = 8084
         locations = website.locations.get("blog")
 
-        # website_location = locations.locations_static.new()
-        # website_location.name = f"{self.blog_name}"
-        # website_location.path_url = f"/{self.blog_name}"
+        website_location_assets = locations.locations_static.new()
+        website_location_assets.name = f"blogs_static"
+        website_location_assets.path_url = f"/blog/static"
+        fullpath = j.sal.fs.joinPaths(self.package_root, "sapper-blog", "static")
+        website_location_assets.path_location = fullpath
 
         website_location_assets = locations.locations_static.new()
-        website_location_assets.name = "images"
-        website_location_assets.path_url = "/images"
-        fullpath = j.sal.fs.joinPaths(self.blog_dest, "images/")
+        website_location_assets.name = f"blog_{self.blog_name}_assets"
+        website_location_assets.path_url = f"/blog/{self.blog_name}/assets"
+        fullpath = j.sal.fs.joinPaths(self.blog_dest, "assets")
         website_location_assets.path_location = fullpath
 
         ## START BOTTLE ACTORS ENDPOINT
@@ -238,22 +240,9 @@ class Package(j.baseclasses.threebot_package):
         proxy_location.name = "nodeapp"
         proxy_location.path_url = f"/blog/{self.blog_name}"
 
-
         proxy_location.ipaddr_dest = "0.0.0.0"
         proxy_location.port_dest = 3000
         proxy_location.scheme = "http"
-
-        s = j.servers.startupcmd.get(name=f"blog_{self.blog_name}")
-        s.cmd_start = f"""
-        cd {self.package_root}/sapper-blog
-        npm run build
-        node __sapper__/build
-        """
-        s.executor = "tmux"
-        s.interpreter = "bash"
-        s.timeout = 10
-        s.ports = [3000]
-        s.start(reset=True)
 
         locations.configure()
         website.configure()
