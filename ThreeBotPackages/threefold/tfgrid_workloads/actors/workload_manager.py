@@ -169,7 +169,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         jsxobj.save()
         return jsxobj
 
-    def _filter_reservations(self, node_id, state, epoch):
+    def _filter_reservations(self, node_id, states, epoch):
         query = None
         if node_id != INT_NULL_VALUE:
             query = self.reservation_model.IndexTable.node_id == node_id
@@ -179,8 +179,11 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         reservations = []
         for reservation_id in reservations_ids:
-            reservation = self._reservation_get(reservation_id)
-            if state and state.upper() != str(reservation.next_action):
+            try:
+                reservation = self._reservation_get(reservation_id)
+            except j.exceptions.NotFound:
+                continue
+            if states and str(reservation.next_action) not in [s.upper() for s in states]:
                 continue
 
             if epoch != INT_NULL_VALUE and epoch >= reservation.epoch:
@@ -242,7 +245,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         ```in
         node_id = (I)  # filter results by node id
-        state = "" (S)  # filter results by next_action
+        state = (S)  # filter results by next_action
         epoch = (I)  # filter results which created after this epoch
         ```
 
@@ -250,6 +253,8 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservations = (LO) !tfgrid.reservation.1
         ```
         """
+        if state and not isinstance(state, list):
+            state = [state]
         return self._filter_reservations(node_id, state, epoch)
 
     def workloads_list(self, node_id, epoch, schema_out, user_session):
@@ -263,9 +268,10 @@ class workload_manager(j.baseclasses.threebot_actor):
         workloads = (LO) !tfgrid.reservation.workload.1
         ```
         """
-        workloads = []
-        reservations = self._filter_reservations(node_id, "deploy", epoch)
+        output = schema_out.new()
+        reservations = self._filter_reservations(node_id, ["deploy", "delete"], epoch)
         for reservation in reservations:
+
             for _type, workload in self._iterate_over_workloads(reservation):
                 if node_id != INT_NULL_VALUE and workload.node_id != node_id:
                     continue
@@ -273,10 +279,16 @@ class workload_manager(j.baseclasses.threebot_actor):
                 workload.reservation_id = reservation.id
                 obj = self.workload_schema.new()
                 obj.type = _type
+                obj.workload_id = f"{reservation.id}-{workload.workload_id}"
+                obj.user = str(reservation.customer_tid)
                 obj.content = workload._ddict
-                workloads.append(obj)
+                obj.created = reservation.epoch
+                obj.duration = reservation.data_reservation.expiration_reservation - reservation.epoch
+                obj.signature = ""
+                obj.to_delete = reservation.next_action == "delete"
+                output.workloads.append(obj)
 
-        return workloads
+        return output
 
     def sign_provision(self, reservation_id, tid, signature, user_session):
         """
