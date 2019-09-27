@@ -17,8 +17,9 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot starts
         :return:
         """
+        j.threebot.package.chat.install()
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
-        self.gedis_server.chatbot.chatflows_load(j.sal.fs.joinPaths(self.package_root, "actors"))
+        self.gedis_server.chatbot.chatflows_load(j.sal.fs.joinPaths(self.package_root, "chatflows"))
 
     def stop(self):
         """

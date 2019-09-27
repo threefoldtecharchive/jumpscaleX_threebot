@@ -5,6 +5,7 @@
 workload_id = (I)
 #links to unique node on the TFGrid
 node_id = (I)
+reservation_id** = (I)
 flist = (S)
 hub_url = (S)
 #env variables
