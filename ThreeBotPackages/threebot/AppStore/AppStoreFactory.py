@@ -15,7 +15,6 @@ class AppStoreFactory(j.baseclasses.object, j.baseclasses.testtools):
         return "OK"
 
     def start(self):
-        self.install()
         server = j.servers.threebot.default
         server.start(web=True, ssl=False)
 
