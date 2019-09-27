@@ -140,7 +140,7 @@ class FolderResource(DAVCollection):
         return None
 
     def get_etag(self):
-        return None
+        return "{0}-{1}".format(self.obj.epoch, 0)
 
     def get_last_modified(self):
         return self.obj.epoch

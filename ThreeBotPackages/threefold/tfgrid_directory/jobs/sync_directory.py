@@ -9,7 +9,10 @@ def sync_directory():
     node_model = bcdb.model_get(url="tfgrid.node.2")
 
     response = j.clients.threefold_directory.client.ListFarmers()[1]
-    response.raise_for_status()
+    if response.status_code != 200:
+        j.core.tools.log("Failed to list farmers: %s" % response.reason, level=40)
+        return
+
     farms = response.json()
 
     for farm in farms:
@@ -24,7 +27,10 @@ def sync_directory():
         response = j.clients.threefold_directory.client.ListCapacity(
             query_params={"farmer": farm["iyo_organization"], "proofs": True}
         )[1]
-        response.raise_for_status()
+        if response.status_code != 200:
+            j.core.tools.log("Failed to list capacity for farmer %s: %s" % (farm["iyo_organization"], response.reason), level=40)
+            continue
+
         nodes = response.json()
 
         for node in nodes:

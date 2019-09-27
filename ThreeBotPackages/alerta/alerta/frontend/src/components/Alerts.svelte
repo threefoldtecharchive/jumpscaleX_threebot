@@ -1,17 +1,16 @@
 <script>
   import { deleteAlert } from "../data";
-  import Model from "./Model.svelte"
-  // import jquery from 'jquery';
+  import AlertModal from "./AlertModal.svelte";
+  import { ansiUp } from "../common";
 
   export let alerts;
   $: alerts;
-  console.log("alerts in Alerts component", alerts);
   const severity = {
     CRITICAL: "CRITICAL",
-    MAJOR: "MAJOR",
-    MINOR: "MINOR",
+    ERROR: "ERROR",
     WARNING: "WARNING",
-    INDETERMINATE: "INDETERMINATE"
+    STDOUT: "STDOUT",
+    DEBUG: "DEBUG"
   };
   function onDeleteAlert(alertId) {
     //Call gedis actor
@@ -20,10 +19,8 @@
         let toBeDeletedArrayIndex = getIndexOfAlert(alertId);
         alerts.splice(toBeDeletedArrayIndex, 1);
         alerts = [...alerts];
-        console.log("Delete btn is pushed", alerts);
       })
       .catch(err => {
-        console.log("Delete btn is pushed BUt gedis didn't delete");
         console.log(err);
       });
   }
@@ -32,11 +29,6 @@
     for (let i = 0; i < alerts.length; i++) {
       if (alerts[i].id == alertId) return i;
     }
-  }
-  function showAlertDetailsModel(alertIndex) {
-    // jquery('#exampleModalLabel').modal('show')
-    var jq = jQuery.noConflict();
-    jq("#exampleModal").modal("show");
   }
 </script>
 
@@ -53,13 +45,13 @@
             <th scope="col">Severity</th>
             <th scope="col">Status</th>
             <th scope="col">Time</th>
-            <th scope="col">Dupl.</th>
+            <th scope="col">Count</th>
             <th scope="col">Environment</th>
             <th scope="col">Service</th>
             <th scope="col">Resource</th>
             <th scope="col">Event</th>
-            <th scope="col">Value</th>
             <th scope="col">Message Type</th>
+            <th scope="col">Text</th>
             <!-- <th scope="col">Text</th> -->
             <th scope="col" class="text-center">Action</th>
           </tr>
@@ -69,14 +61,13 @@
 
           <!-- content here -->
           {#each alerts as myAlert, i}
-            <!-- <tr on:click={() => showAlertDetailsModel(i)}> -->
             <tr>
               <th scope="row">{i + 1}</th>
               {#if myAlert.severity == severity.CRITICAL}
                 <td>
                   <span class="badge badge-danger">{myAlert.severity}</span>
                 </td>
-              {:else if myAlert.severity == severity.MAJOR}
+              {:else if myAlert.severity == severity.ERROR}
                 <td>
                   <span class="badge badge-info">{myAlert.severity}</span>
                 </td>
@@ -84,7 +75,7 @@
                 <td>
                   <span class="badge badge-warning">{myAlert.severity}</span>
                 </td>
-              {:else if myAlert.severity == severity.MINOR}
+              {:else if myAlert.severity == severity.STDOUT}
                 <td>
                   <span class="badge badge-secondary">{myAlert.severity}</span>
                 </td>
@@ -95,14 +86,15 @@
               {/if}
               <td>{myAlert.status}</td>
               <td>{myAlert.time}</td>
-              <td>{myAlert.dupl}</td>
+              <td>{myAlert.count}</td>
               <td>{myAlert.environment}</td>
               <td>{myAlert.service}</td>
               <td>{myAlert.resource}</td>
               <td>{myAlert.event}</td>
-              <td>{myAlert.value}</td>
               <td>{myAlert.messageType}</td>
-              <!-- <td>{myAlert.text}</td> -->
+              <td>
+                {@html ansiUp.ansi_to_html(myAlert.text)}
+              </td>
               <td>
                 <!--[Actions]-->
                 <div class="d-flex d-flex justify-content-center">
@@ -128,9 +120,9 @@
                 </div>
               </td>
               <!--[Modal]-->
-             <div>
-             <Model {myAlert} index={i}/>
-             </div>
+              <div>
+                <AlertModal {myAlert} index={i} />
+              </div>
             </tr>
           {/each}
         </tbody>

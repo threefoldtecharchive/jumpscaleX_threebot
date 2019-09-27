@@ -3,15 +3,14 @@ from Jumpscale import j
 
 class myjobs(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        self.job_model = j.servers.myjobs.model_job
-        self.action_model = j.servers.myjobs.model_action
+        self.job_model = j.data.bcdb.myjobs.model_get(url="jumpscale.myjobs.job")
+        self.action_model = j.data.bcdb.myjobs.model_get(url="jumpscale.myjobs.action")
         self.worker_model = j.data.bcdb.myjobs.model_get(url="jumpscale.myjobs.worker")
 
     def list_workers(self, schema_out=None, user_session=None):
         def transform_worker(worker_obj):
             states_dict = dict(zip(range(5), "NEW,ERROR,BUSY,WAITING,HALTED".split(",")))
             worker_types_dict = dict(zip(range(3), "tmux,subprocess,inprocess".split(",")))
-
             worker_dict = worker_obj._ddict
             try:
                 worker_dict["state"] = states_dict[worker_dict["state"]]
