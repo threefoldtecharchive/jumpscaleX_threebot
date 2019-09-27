@@ -14,27 +14,44 @@ class apps(j.baseclasses.threebot_actor):
         installed = (B)
         ```
         """
-        print("appname: " + appname)
         #import ipdb; ipdb.set_trace()
         app = self.model.new()
         app.appname = appname
         app.installed = installed
-        print(app)
         app.save()
         response = {"result": True, "error_code": "", "error_message": ""}
         return j.data.serializers.json.dumps(response)
 
     def get(self, schema_out=None, user_session=None):
-       
         apps =  self.model.find()
 
         res = []
 
         for app in apps:
-            #print("User: ", user)
-            print(app.installed)
-            res.append({app.appname : app.installed})
+            outApp = {
+                "name": app.appname,
+                "installed": app.installed,
+                "description": app.description,
+                "image": app.image
+            }
+
+            res.append(outApp)
 
         return j.data.serializers.json.dumps(res)
 
-    
+    def update(self, appname="", installed=True, schema_out=None, user_session=None):
+        """
+        ```in
+        appname = (S)
+        installed = (B)
+        ```
+        """
+        app = self.model.find()
+
+        for application in app:
+            if application.appname == appname:
+                application.installed = installed
+                application.save()
+
+        response = {"result": True, "error_code": "", "error_message": ""}
+        return j.data.serializers.json.dumps(response)
