@@ -234,4 +234,4 @@ class blog(j.baseclasses.threebot_actor):
 
 ## Frontend information
 
-[step by step](https://github.com/threefoldtech/jumpscaleX_threebot/blob/9b812738fa61729c31c3152996baa1ffc2cfd821/ThreeBotPackages/threebot/blog/sapper-blog/README.md) for frontend with sapper 
+[Frontend docs](https://github.com/threefoldtech/jumpscaleX_threebot/blob/9b812738fa61729c31c3152996baa1ffc2cfd821/ThreeBotPackages/threebot/blog/sapper-blog/README.md)
