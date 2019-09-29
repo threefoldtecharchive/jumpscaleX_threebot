@@ -64,5 +64,5 @@ Then any error raised will be recorded into alerts model, to test, just raise an
 JSX> raise j.exceptions.NotImplemented('this one is not implemented', level=10)
 ```
 
-Then refersh alerta page to see it!.
+Then refersh alerta page to see it!
 
