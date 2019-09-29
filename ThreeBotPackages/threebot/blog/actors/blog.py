@@ -42,7 +42,7 @@ class blog(j.baseclasses.threebot_actor):
         if found_blog:
             return found_blog.posts
 
-    def _list_pages(self, blog, page=0, user_session=None):
+    def get_pages(self, blog, page=0, user_session=None):
         """
         ```in
             blog = (S)
@@ -107,7 +107,7 @@ class blog(j.baseclasses.threebot_actor):
         """
         # takes a slice of a content of a post / page and returns the post's / page's slug
         posts = self._list_posts(blog)
-        pages = self._list_pages(blog)
+        pages = self.get_pages(blog)
         results = []
         for post in posts:
             if query in post.content_with_meta:
