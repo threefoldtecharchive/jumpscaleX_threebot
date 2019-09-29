@@ -1,6 +1,6 @@
 import {
-    getPosts
-} from "../../_api"
+    getBlogs
+} from "./_api"
 
 
 export function get(req, res) {
@@ -10,7 +10,7 @@ export function get(req, res) {
     });
     if (process.env.DEV) {
         // console.log(JSON.stringify(req.params))
-        res.end(getPosts(req.params.theuser));
+        res.end(getBlogs());
     } else {
 
     }

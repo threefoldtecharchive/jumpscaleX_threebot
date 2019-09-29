@@ -1,28 +1,27 @@
 import {
     getPosts
-} from "../_api.js"
+} from "../../_api"
 
 
-let posts = JSON.parse(getPosts());
-const lookup = new Map()
-posts.forEach(post => {
-    post.tags.forEach(tag => {
-        if (lookup.has(tag)) {
-            lookup.set(tag, [...lookup.get(tag), post])
-        } else {
-            lookup.set(tag, [post])
-        }
-    })
-});
-// console.log(lookup)
+
 
 export function get(req, res, next) {
     // the `slug` parameter is available because
     // this file is called [slug].json.js
     const {
-        slug
+        theuser, slug
     } = req.params;
-
+    let posts = JSON.parse(getPosts(theuser));
+    const lookup = new Map()
+    posts.forEach(post => {
+        post.tags.forEach(tag => {
+            if (lookup.has(tag)) {
+                lookup.set(tag, [...lookup.get(tag), post])
+            } else {
+                lookup.set(tag, [post])
+            }
+        })
+    });
     if (lookup.has(slug)) {
         res.writeHead(200, {
             'Content-Type': 'application/json'

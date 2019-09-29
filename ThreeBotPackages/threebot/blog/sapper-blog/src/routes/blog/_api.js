@@ -3,6 +3,8 @@ import metadata from './_metadata';
 import posts from './_posts';
 import tags from './_tags';
 import pages from './_pages';
+import blogs from './_blogs';
+
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 
@@ -19,51 +21,52 @@ function callActorWithArgs(actorCmd, actorArgs) {
 // function search(e) {
 //     // TBD
 // }
-export function getMetadata() {
+export function getMetadata(blogName) {
     if (process.env.DEV) {
 
         return JSON.stringify(metadata);
     } else {
         callActorWithArgs("get_metadata", {
-            blog_name: getBlogName()
+            blog_name: blogName,
         })
 
     }
 }
 
-export function getBlogName() {
+export function getBlogs() {
     if (process.env.DEV) {
-        return JSON.parse(getMetadata()).blog_name;
+
+        return JSON.stringify(blogs);
     } else {
+        callActorWithArgs("get_blogs", {
+        })
 
     }
+
 }
-export function getPosts() {
-    let blogName = getBlogName()
+export function getPosts(blogName) {
 
     if (process.env.DEV) {
 
         return JSON.stringify(posts);
-    } else {}
+    } else { }
 }
 
-export function getTags() {
-    let blogName = getBlogName()
-
+export function getTags(blogName) {
     if (process.env.DEV) {
 
 
         return JSON.stringify(tags);
-    } else {}
+    } else { }
 
 }
 
-export function getPages() {
+export function getPages(blogName) {
 
     if (process.env.DEV) {
 
         return JSON.stringify(pages);
-    } else {}
+    } else { }
 
 }
 

@@ -1,6 +1,6 @@
 import {
     getMetadata
-} from './_api.js';
+} from '../_api';
 
 
 export function get(req, res) {
@@ -8,5 +8,5 @@ export function get(req, res) {
         'Content-Type': 'application/json'
     });
 
-    res.end(getMetadata());
+    res.end(getMetadata(req.params.theuser));
 }

@@ -7,9 +7,13 @@
   let converter = new showdown.Converter({ metadata: true });
   converter.setFlavor("github");
   let mdtext = converter.makeHtml(post.content);
+  //   import { fly } from "svelte/transition";
 </script>
 
+<!-- <div in:fly={{ x: -60, duration: 100 }} class="post-card-title">
+ -->
 <div class="post-card-title">
+
   <a rel="prefetch" href="blog/{username}/posts/{post.slug}">{post.title}</a>
 </div>
 <!-- <div class="post-card-content">
