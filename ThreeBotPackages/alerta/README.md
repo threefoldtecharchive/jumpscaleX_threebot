@@ -27,7 +27,7 @@ See [actors](actors), for example we have alerta actor with the following method
 - `new_alert`: create new alert in system
 
 
-```python3
+```
 JSX> anew = j.clients.gedis(...., port=8901)
 JSX> anew.actors.alerta.list_alerts() 
 ... a very long list
@@ -49,7 +49,7 @@ res                 : True
 
 ## Factory
 
-A factory to start alerta package, see (AlertaFactory.py)[AlertaFactory.py].
+A factory to start alerta package, see [AlertaFactory.py](AlertaFactory.py].
 
 ## Alert handler integration
 
