@@ -101,12 +101,13 @@
               href="blog/{username}/tags/">
               Tags
             </a>
-
           </li>
           <li>
             <SearchBar />
+
           </li>
         </ul>
+
       </nav>
 
     </div>
