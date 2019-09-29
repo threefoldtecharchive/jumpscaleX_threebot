@@ -36,7 +36,7 @@ class BlogsFactory(j.baseclasses.object, j.baseclasses.testtools):
         s = j.servers.startupcmd.get("blogs")
         s.cmd_start = f"""
         cd {self._dirpath}/sapper-blog
-        export DEV=1
+        export DEV=0
         npm run build
         node __sapper__/build
         """
