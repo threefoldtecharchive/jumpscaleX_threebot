@@ -26,7 +26,7 @@ function callActorWithArgs(actorCmd, actorArgs) {
 }
 
 export function getMetadata(blogName) {
-    if (process.env.DEV === "1") {
+    if (process.env.DEV !== "1") {
         if (blogName !== "undefined") {
             return callActorWithArgs("get_metadata", {
                 blog_name: blogName,
@@ -48,7 +48,7 @@ export function getBlogs() {
 
 export function getPosts(blogName) {
 
-    if (process.env.DEV == ! "1") {
+    if (process.env.DEV !== "1") {
 
         if (blogName !== "undefined") {
             return callActorWithArgs("get_posts", {
