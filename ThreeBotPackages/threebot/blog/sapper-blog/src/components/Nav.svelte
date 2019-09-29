@@ -69,6 +69,14 @@
             <a
               rel="prefetch"
               class={segment === undefined ? 'selected' : ''}
+              href="blog">
+              /
+            </a>
+          </li>
+          <li>
+            <a
+              rel="prefetch"
+              class={segment === undefined ? 'selected' : ''}
               href="blog/{username}/posts">
               blog
             </a>
