@@ -8,7 +8,7 @@ class BlogFactorys(j.baseclasses.object, j.baseclasses.testtools):
     def install(self, blogs_info_list=None):
         self.server = j.servers.threebot.get("blog")
         self.server.save()
-        for blog_name, repo_url in blogs_info_list: # blog_name, url
+        for blog_name, repo_url in blogs_info_list:  # blog_name, url
             package = j.tools.threebot_packages.get("blog", path=self._dirpath, threebot_server_name=self.server.name)
             package.prepare(blog_name, repo_url)
             package.save()
@@ -21,10 +21,10 @@ class BlogFactorys(j.baseclasses.object, j.baseclasses.testtools):
 
             blogs_info_list List[tuple[str, str]]: list of blogs in format of blog_name, git url 
         """
-        if not blogs_info_list: 
+        if not blogs_info_list:
             repo_url = "git@gitlab.com:xmonader/sample-blog-jsx.git"
-            blogs_info_list = [ ('xmon', repo_url)]
-    
+            blogs_info_list = [("xmon", repo_url)]
+
         self.install(blogs_info_list)
         self._start_blog_app()
 
@@ -44,7 +44,7 @@ class BlogFactorys(j.baseclasses.object, j.baseclasses.testtools):
         s.interpreter = "bash"
         s.timeout = 10
         s.ports = [3000]
-        
+
         s.start(reset=reset)
 
     def test(self, name=""):

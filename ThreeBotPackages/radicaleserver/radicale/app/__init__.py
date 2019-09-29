@@ -177,6 +177,7 @@ class Application(
             )
             # Return response content
             return status, list(headers.items()), [answer] if answer else []
+
         remote_host = "unknown"
         if environ.get("REMOTE_HOST"):
             remote_host = repr(environ["REMOTE_HOST"])

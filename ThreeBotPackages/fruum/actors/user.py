@@ -12,7 +12,6 @@ class user(j.baseclasses.threebot_actor):
     def update(self, app_id=0, user=None, schema_out=None, user_session=None):
         pass
 
-
     def delete(self, app_id=0, user=None, schema_out=None, user_session=None):
         """
 
@@ -31,13 +30,11 @@ class user(j.baseclasses.threebot_actor):
         """
         pass
 
-
     def count_users(self, app_id=0, attributes=[], schema_out=None, user_session=None):
         """
 
         """
         pass
-
 
     def search(self, app_id=0, q=None, schema_out=None, user_session=None):
         """
@@ -45,15 +42,11 @@ class user(j.baseclasses.threebot_actor):
         """
         pass
 
-
-
     def archive(self, app_id=0, document=None, schema_out=None, user_session=None):
         """
 
         """
         pass
-
-
 
     def restore(self, app_id=0, document=None, schema_out=None, user_session=None):
         """
@@ -61,20 +54,11 @@ class user(j.baseclasses.threebot_actor):
         """
         pass
 
-
-
-
     def mget(self, app_id=0, document_ids=[], schema_out=None, user_session=None):
         """
 
         """
         pass
 
-
     def get_children(self, app_id=0, document=None, schema_out=None, user_session=None):
         pass
-
-
-
-
-
