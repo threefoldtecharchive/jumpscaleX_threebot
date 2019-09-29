@@ -49,7 +49,7 @@ res                 : True
 
 ## Factory
 
-A factory to start alerta package, see [AlertaFactory.py](AlertaFactory.py].
+A factory to start alerta package, see [AlertaFactory.py](AlertaFactory.py).
 
 ## Alert handler integration
 
