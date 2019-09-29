@@ -34,7 +34,6 @@ JSX> anew.actors.alerta.list_alerts()
 JSX> anew.actors.alerta.new_alert(
    severity=10, 
    status="new", 
-   time=None, 
    environment="ALL", 
    service="JSX", 
    resource="xmonader", 
