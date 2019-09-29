@@ -151,3 +151,18 @@ class nodes(j.baseclasses.threebot_actor):
         node.used_resources.sru = resource.sru
         node.save()
         return True
+
+    def publish_interfaces(self, node_id, ifaces, schema_out=None, user_session=None):
+        """
+        ```in
+        node_id = (S)
+        ifaces = (LO) !tfgrid.node.iface.1
+        ```
+        """
+
+        node = self._find(node_id)
+        if not node:
+            raise j.exceptions.NotFound("node %s not found" % id)
+        node.ifaces = ifaces
+        node.save()
+        return True
