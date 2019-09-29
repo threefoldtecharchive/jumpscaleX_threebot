@@ -83,25 +83,26 @@
                 {currentuser}
               </a>
             </li>
-          {/if}
 
-          {#each pages as page}
+            {#each pages as page}
+              <li>
+                <a
+                  rel="prefetch"
+                  class={segment === page.slug ? 'selected' : ''}
+                  href="blog/{currentuser}/pages/{page.slug}">
+                  {page.title}
+                </a>
+              </li>
+            {/each}
             <li>
               <a
-                rel="prefetch"
-                class={segment === page.slug ? 'selected' : ''}
-                href="blog/{username}/pages/{page.slug}">
-                {page.title}
+                class={segment === 'tags' ? 'selected' : ''}
+                href="blog/{currentuser}/tags/">
+                Tags
               </a>
             </li>
-          {/each}
-          <li>
-            <a
-              class={segment === 'tags' ? 'selected' : ''}
-              href="blog/{username}/tags/">
-              Tags
-            </a>
-          </li>
+          {/if}
+
           <li>
             <SearchBar />
 
