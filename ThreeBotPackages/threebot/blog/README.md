@@ -2,9 +2,8 @@
 
 
 ## Start
-`kosmos -p 'j.threebot.package.blog.start(BLOG_NAME, REPO_URL)'`
+`kosmos -p 'j.threebot.package.blogs.start([ (BLOG_NAME, REPO_URL) ])'`
 
-e.g `kosmos -p 'j.threebot.package.blog.start("xmon")'`
 
 
 ## Blog structure
@@ -34,7 +33,6 @@ title: My Hello World
 ---
 
 hiiiii what's up? ok
-
 
 
     ```
@@ -84,26 +82,156 @@ nav_links:
 
 ```
 
-
-## Svelte
-Svelte is used for frontend
-
-
 ### Components
 - in blog/src/components
 
-### Routes
-Done using `svelte-router-spa` in `blog/src/routers.js`
+
 
 ### API access
-Are accessed using gedishttp client check [BlogAPI access](https://github.com/threefoldtech/jumpscaleX_threebot/blob/55c6a0d1e24d469f0235c500775b6394c326432d/ThreeBotPackages/blog/blog/src/components/blogstore.js)
-
+Are accessed using gedishttp client check [BlogAPI access](https://github.com/threefoldtech/jumpscaleX_threebot/blob/594ed4c85e541aed1b2cf44305a2dc7d7760f9f7/ThreeBotPackages/threebot/blog/sapper-blog/src/routes/blog/_api.js)
 
 
 
 ### Workflow
 TBD
 
+## Models
+- blog
+- blog metadata
+- link
+- post
+
+```
+
+@url = jumpscale.blog.link
+title** = "" (S)
+link = "" (S)
+page = "" (S)
+faclass = "" (S)
+
+@url = jumpscale.blog.metadata
+blog_name** = "" (S)
+blog_title** = "JSX blog" (S)
+blog_description = "JSX blog description" (S)
+author_name = "" (S)
+author_email = "" (S)
+author_image_filename = ""
+base_url = "" (S)
+url = "" (S)
+posts_dir = "posts"
+github_username = "" (S)
+github_repo_url** = "" (S)
+nav_links = (LO)      !jumpscale.blog.link
+sidebar_social_links = (LO) !jumpscale.blog.link
+sidebar_links = (LO)  !jumpscale.blog.link
+
+
+@url = jumpscale.blog.post
+title** = "" (S)
+slug** = "" (S)
+content = "" (S)
+content_with_meta = "" (S)
+tags = (LS)
+published_at = "" (S)
+
+
+@url = jumpscale.blog
+name** = "" (S)
+git_repo_url** = "" (S)
+metadata = (O) !jumpscale.blog.metadata
+posts =  (LO) !jumpscale.blog.post
+pages = (LO) !jumpscale.blog.post
+```
+
 ## Actors
 
 check [actors](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/blog/actors/blog.py)
+
+
+blog actor is responsible for 
+- retrieving blog metadata
+- get posts
+- get pages
+- get post by slug
+- get page by slug
+- get tags
+- get posts by tag
+- search 
+
+```
+from Jumpscale import j
+
+class blog(j.baseclasses.threebot_actor):
+    def _init(self, **kwargs):
+        self.blog_model = j.data.bcdb.system.model_get(url="jumpscale.blog")
+
+    def get_metadata(self, blog, user_session=None):
+        """
+        ```in
+            blog = (S)
+        ```
+        """
+
+    def get_posts(self, blog, page=0, user_session=None):
+        """
+        ```in
+            blog = (S)
+            page = 0 (I)
+        ```
+        """
+
+
+    def _list_posts(self, blog, page=0, user_session=None):
+        """
+        ```in
+            blog = (S)
+            page = 0 (I)
+        ```
+        """
+
+    def _list_pages(self, blog, page=0, user_session=None):
+        """
+        ```in
+            blog = (S)
+            page = 0 (I)
+        ```
+        """
+
+    def get_post_by_slug(self, blog, slug, user_session=None):
+        """
+        ```in
+            blog = (S)
+            slug = (S)
+        ```
+        """
+
+
+    def get_posts_by_tag(self, blog, tag, page=0, user_session=None):
+        """
+        ```in
+            blog = (S)
+            tag  = (S)
+            page = 0 (I)
+        ```
+        """
+
+    def get_tags(self, blog, user_session=None):
+        """
+        ```in
+            blog = (S)
+        ```
+        """
+
+    def search(self, blog, query, user_session=None):
+        """
+        ```in
+            blog = (S)
+            query = (S)
+        ```
+        """
+
+```
+
+## Frontend information
+
+step by 
