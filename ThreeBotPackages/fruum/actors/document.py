@@ -15,13 +15,11 @@ class document(j.baseclasses.threebot_actor):
     def update_subtree(self, app_id=0, document=None, schema_out=None, user_session=None):
         pass
 
-
     def delete(self, app_id=0, document=None, schema_out=None, user_session=None):
         """
 
         """
         pass
-
 
     def archive(self, app_id=0, document=None, schema_out=None, user_session=None):
         """
@@ -29,14 +27,11 @@ class document(j.baseclasses.threebot_actor):
         """
         pass
 
-
-
     def restore(self, app_id=0, document=None, schema_out=None, user_session=None):
         """
 
         """
         pass
-
 
     def get(self, app_id=0, document_id=0, schema_out=None, user_session=None):
         """
@@ -50,16 +45,11 @@ class document(j.baseclasses.threebot_actor):
         """
         pass
 
-
     def get_children(self, app_id=0, document=None, schema_out=None, user_session=None):
         pass
-
 
     def watch(self, app_id, document, user, schema_out=None, user_session=None):
         pass
 
     def unwatch(self, app_id, document, user, schema_out=None, user_session=None):
         pass
-
-
-

@@ -12,13 +12,11 @@ class application(j.baseclasses.threebot_actor):
         """
         pass
 
-
     def update(self, application, schema_out=None, user_session=None):
         """
 
         """
         pass
-
 
     def get(self, app_id=0, schema_out=None, user_session=None):
         """
@@ -40,4 +38,3 @@ class application(j.baseclasses.threebot_actor):
 
     def list(self, schema_out=None, user_session=None):
         pass
-
