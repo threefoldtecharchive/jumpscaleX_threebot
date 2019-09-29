@@ -1,7 +1,7 @@
 from Jumpscale import j
 
 
-class BlogFactorys(j.baseclasses.object, j.baseclasses.testtools):
+class BlogsFactory(j.baseclasses.object, j.baseclasses.testtools):
 
     __jslocation__ = "j.threebot.package.blogs"
 
