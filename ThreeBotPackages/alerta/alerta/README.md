@@ -1,703 +1,88 @@
-This is a tool which is used to <b> visualize </b> all the logged alerts from different systems in one central place and <b>filter</b> these logs on specific criteria
+# sapper-template
 
-# Features
-* Visualize logs
-* Central pool for all logs
-* Filter all logs using different criteria   
-* Search logs
-
-# svelte app
-
-This is a project template for [Svelte](https://svelte.dev) apps. It lives at https://github.com/sveltejs/template.
-
-To create a new project based on this template using [degit](https://github.com/Rich-Harris/degit):
+The default [Sapper](https://github.com/sveltejs/sapper) template, with branches for Rollup and webpack. To clone it and get started:
 
 ```bash
-npx degit sveltejs/template svelte-app
-cd svelte-app
-```
-
-*Note that you will need to have [Node.js](https://nodejs.org) installed.*
-
-
-## Get started
-
-Install the dependencies...
-
-```bash
-cd svelte-app
-npm install
-```
-
-...then start [Rollup](https://rollupjs.org):
-
-```bash
+# for Rollup
+npx degit "sveltejs/sapper-template#rollup" my-app
+# for webpack
+npx degit "sveltejs/sapper-template#webpack" my-app
+cd my-app
+npm install # or yarn!
 npm run dev
 ```
 
-Navigate to [localhost:5000](http://localhost:5000). You should see your app running. Edit a component file in `src`, save it, and reload the page to see your changes.
+Open up [localhost:3000](http://localhost:3000) and start clicking around.
 
-## project structure 
-```
-.
-├── back-end
-│   ├── Api.py
-│   ├── data.json
-│   └── views
-│       └── 404.tpl
-├── front-end
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── public
-│   │   ├── favicon.png
-│   │   ├── global.css
-│   │   ├── img
-│   │   │   └── loader.gif
-│   │   └── index.html
-│   ├── rollup.config.js
-│   └── src
-│       ├── App.svelte
-│       ├── components
-│       │   └── Alerts.svelte
-│       ├── main.js
-│       └── Navigation.svelte
-├── package-lock.json
-├── README.md
-└── tree
+Consult [sapper.svelte.dev](https://sapper.svelte.dev) for help getting started.
 
-7 directories, 17 files
-```
-## Working on front-end
-* Add all the front-end libraries <b> example</b> ```Bootstrap and Font awesome``` in ```/public/index.html```
 
-* Create navigation component <b>example</b> ```front-end/src/Navigation.svelte``` and import this component in ```front-end/src/App.svelte``` <b>example</b> ```import Navigation from './Navigation.svelte';```to use this component ```<Navigation />```
+## Structure
 
-```html
-<div>
-	<nav class="navbar navbar-expand-lg navbar navbar-primary bg-primary">
-		<a class="navbar-brand" href="#">Sharable Highlited Code</a>
-		<button
-			class="navbar-toggler"
-			type="button"
-			data-toggle="collapse"
-			data-target="#navbarText"
-			aria-controls="navbarText"
-			aria-expanded="false"
-			aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon" />
-		</button>
-		<div class="collapse navbar-collapse" id="navbarText">
-			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active">
-					<a class="nav-link" href="/">
-						Home
-						<span class="sr-only">(current)</span>
-					</a>
-				</li>
-			</ul>
-			<span class="navbar-text">
-				We Share your code and keep the Highlights
-			</span>
-		</div>
-	</nav>
-</div>
+Sapper expects to find two directories in the root of your project —  `src` and `static`.
 
+
+### src
+
+The [src](src) directory contains the entry points for your app — `client.js`, `server.js` and (optionally) a `service-worker.js` — along with a `template.html` file and a `routes` directory.
+
+
+#### src/routes
+
+This is the heart of your Sapper app. There are two kinds of routes — *pages*, and *server routes*.
+
+**Pages** are Svelte components written in `.svelte` files. When a user first visits the application, they will be served a server-rendered version of the route in question, plus some JavaScript that 'hydrates' the page and initialises a client-side router. From that point forward, navigating to other pages is handled entirely on the client for a fast, app-like feel. (Sapper will preload and cache the code for these subsequent pages, so that navigation is instantaneous.)
+
+**Server routes** are modules written in `.js` files, that export functions corresponding to HTTP methods. Each function receives Express `request` and `response` objects as arguments, plus a `next` function. This is useful for creating a JSON API, for example.
+
+There are three simple rules for naming the files that define your routes:
+
+* A file called `src/routes/about.svelte` corresponds to the `/about` route. A file called `src/routes/blog/[slug].svelte` corresponds to the `/blog/:slug` route, in which case `params.slug` is available to the route
+* The file `src/routes/index.svelte` (or `src/routes/index.js`) corresponds to the root of your app. `src/routes/about/index.svelte` is treated the same as `src/routes/about.svelte`.
+* Files and directories with a leading underscore do *not* create routes. This allows you to colocate helper modules and components with the routes that depend on them — for example you could have a file called `src/routes/_helpers/datetime.js` and it would *not* create a `/_helpers/datetime` route
+
+
+### static
+
+The [static](static) directory contains any static assets that should be available. These are served using [sirv](https://github.com/lukeed/sirv).
+
+In your [service-worker.js](src/service-worker.js) file, you can import these as `files` from the generated manifest...
+
+```js
+import { files } from '@sapper/service-worker';
 ```
 
-* Create ```front-end/src/components/Alerts.svelte``` component which will contain all the required logic to render the Alerts 
-```html
-<script>
-  import { deleteAlert } from "../data";
-  import AlertModal from "./AlertModal.svelte";
+...so that you can cache them (though you can choose not to, for example if you don't want to cache very large files).
 
-  export let alerts;
-  $: alerts;
-  const severity = {
-    CRITICAL: "CRITICAL",
-    MAJOR: "MAJOR",
-    MINOR: "MINOR",
-    WARNING: "WARNING",
-    INDETERMINATE: "INDETERMINATE"
-  };
-  function onDeleteAlert(alertId) {
-    //Call gedis actor
-    deleteAlert(alertId)
-      .then(resp => {
-        let toBeDeletedArrayIndex = getIndexOfAlert(alertId);
-        alerts.splice(toBeDeletedArrayIndex, 1);
-        alerts = [...alerts];
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
 
-  function getIndexOfAlert(alertId) {
-    for (let i = 0; i < alerts.length; i++) {
-      if (alerts[i].id == alertId) return i;
-    }
-  }
-</script>
+## Bundler config
 
-<div>
-  <div class="row">
-    <!--[Tasks-Data]-->
-    <div class="col-sm-12 _m-4">
-      <!-- content here -->
-      <table class="table table-striped">
-        <!--[Tasks-Data-Headers]-->
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Severity</th>
-            <th scope="col">Status</th>
-            <th scope="col">Time</th>
-            <th scope="col">Dupl.</th>
-            <th scope="col">Environment</th>
-            <th scope="col">Service</th>
-            <th scope="col">Resource</th>
-            <th scope="col">Event</th>
-            <th scope="col">Value</th>
-            <th scope="col">Message Type</th>
-            <!-- <th scope="col">Text</th> -->
-            <th scope="col" class="text-center">Action</th>
-          </tr>
-        </thead>
-        <!--[Tasks-Data-Body]-->
-        <tbody>
+Sapper uses Rollup or webpack to provide code-splitting and dynamic imports, as well as compiling your Svelte components. With webpack, it also provides hot module reloading. As long as you don't do anything daft, you can edit the configuration files to add whatever plugins you'd like.
 
-          <!-- content here -->
-          {#each alerts as myAlert, i}
-            <tr>
-              <th scope="row">{i + 1}</th>
-              {#if myAlert.severity == severity.CRITICAL}
-                <td>
-                  <span class="badge badge-danger">{myAlert.severity}</span>
-                </td>
-              {:else if myAlert.severity == severity.MAJOR}
-                <td>
-                  <span class="badge badge-info">{myAlert.severity}</span>
-                </td>
-              {:else if myAlert.severity == severity.WARNING}
-                <td>
-                  <span class="badge badge-warning">{myAlert.severity}</span>
-                </td>
-              {:else if myAlert.severity == severity.MINOR}
-                <td>
-                  <span class="badge badge-secondary">{myAlert.severity}</span>
-                </td>
-              {:else}
-                <td>
-                  <span class="badge badge-primary">{myAlert.severity}</span>
-                </td>
-              {/if}
-              <td>{myAlert.status}</td>
-              <td>{myAlert.time}</td>
-              <td>{myAlert.dupl}</td>
-              <td>{myAlert.environment}</td>
-              <td>{myAlert.service}</td>
-              <td>{myAlert.resource}</td>
-              <td>{myAlert.event}</td>
-              <td>{myAlert.value}</td>
-              <td>{myAlert.messageType}</td>
-              <td>
-                <!--[Actions]-->
-                <div class="d-flex d-flex justify-content-center">
-                  <!--[Delete-Alert-BTN]-->
-                  <div class="mr-1">
-                    <button
-                      type="button"
-                      class="btn btn-primary pointer"
-                      on:click={() => onDeleteAlert(myAlert.id)}>
-                      Delete
-                    </button>
-                  </div>
-                  <!--[Details-Alert-BTN]-->
-                  <div>
-                    <button
-                      type="button"
-                      class="btn btn-warning pointer"
-                      data-toggle="modal"
-                      data-target="#modal{i}">
-                      Details
-                    </button>
-                  </div>
-                </div>
-              </td>
-              <!--[Modal]-->
-              <div>
-                <AlertModal {myAlert} index={i} />
-              </div>
-            </tr>
-          {/each}
-        </tbody>
-      </table>
 
-    </div>
-  </div>
-</div>
-```
+## Production mode and deployment
 
-* In  ```front-end/src/App.svelte``` will contain the logic to handle and get the alerts 
-```javascript 
-<script>
-  import Navigation from "./Navigation.svelte";
-  import Alerts from "./components/Alerts.svelte";
-  import { getAlerts, deleteAll } from "./data";
+To start a production version of your app, run `npm run build && npm start`. This will disable live reloading, and activate the appropriate bundler plugins.
 
-  let alerts;
-  let searchText = "";
-  let formatedAlerts = "";
-  let currentFilteredAlerts;
-  let isAlertsLoaded = false;
-  let servicesLoading = true;
-  let isAllAlertsDeleted = false;
-  const environments = {
-    ALL: "ALL",
-    PROD: "PRODUCTION",
-    DEV: "DEVELOPMENT",
-    INFRA: "INFRASTRUCTURE"
-  };
-
-  let services;
-  const severity = {
-    ALL: "ALL",
-    CRITICAL: "CRITICAL",
-    MAJOR: "MAJOR",
-    MINOR: "MINOR",
-    WARNING: "WARNING",
-    INDETERMINATE: "INDETERMINATE"
-  };
-  const messageTypes = {
-    ALL: "ALL",
-    ERROR: "ERROR",
-    INFORMATION: "INFORMATION",
-    WARNING: "WARNING"
-  };
-  const status = { ALL: "ALL", OPEN: "OPEN", CLOSED: "CLOSED", NEW: "NEW" };
-  let currentFilters = {
-    service: "ALL",
-    messageType: messageTypes.ALL,
-    status: status.ALL
-  };
-
-  document.addEventListener("DOMContentLoaded", function(event) {
-    // your page initialization code here
-    // the DOM will be available here
-    var tab = document.getElementById("pills-all-tab");
-    tab.click();
-  });
-  //Get Data from the API
-  function updateAlerts(environment) {
-    isAlertsLoaded = false;
-    isAllAlertsDeleted = false; //The alerts all available now and not deleted (reintialize the state)
-    alerts = [];
-
-    getAlerts(environment)
-      .then(response => {
-        // handle success
-        let parsedJson = response.data.result;
-        alerts = parsedJson.alerts;
-        formatedAlerts = convertDataToUpperCase(parsedJson.alerts);
-        filterAlerts(formatedAlerts);
-        getServices();
-        isAlertsLoaded = true;
-      })
-      .catch(err => {
-        console.log("error ", err);
-      });
-  }
-
-  function updateFilters(selectedService, selectedMessageType, selectedState) {
-    currentFilters = {
-      service: selectedService,
-      messageType: selectedMessageType,
-      status: selectedState
-    };
-    filterAlerts(formatedAlerts);
-  }
-
-  function convertDataToUpperCase(alerts) {
-    for (let i = 0; i < alerts.length; i++) {
-      alerts[i].severity = alerts[i].severity.toUpperCase();
-      alerts[i].service = alerts[i].service.toUpperCase();
-      alerts[i].status = alerts[i].status.toUpperCase();
-      alerts[i].messageType = alerts[i].messageType.toUpperCase();
-    }
-    return alerts;
-  }
-
-  function filterAlerts(filteredAlerts) {
-    if (currentFilters.service != "ALL")
-      filteredAlerts = filteredAlerts.filter(singelAlert => {
-        return singelAlert.service == currentFilters.service;
-      });
-    if (currentFilters.messageType != messageTypes.ALL)
-      filteredAlerts = filteredAlerts.filter(singelAlert => {
-        return singelAlert.messageType == currentFilters.messageType;
-      });
-    if (currentFilters.status != status.ALL)
-      filteredAlerts = filteredAlerts.filter(singelAlert => {
-        return singelAlert.status == currentFilters.status;
-      });
-    currentFilteredAlerts = filteredAlerts; //keeping the current filtered alerts
-    alerts = filteredAlerts; //update the alerts to update the Rendering
-  }
-
-  $: if (searchText) {
-    searchAlertsText();
-  }
-  function searchAlertsText() {
-    alerts = currentFilteredAlerts.filter(singleAlert => {
-      return singleAlert.text.includes(searchText);
-    });
-  }
-  function resetFilters() {
-    currentFilters = {
-      service: "ALL",
-      messageType: messageTypes.ALL,
-      status: status.ALL
-    };
-    document.getElementById("InputSearch").value = "";
-    filterAlerts(formatedAlerts);
-  }
-  function getServices() {
-    servicesLoading = true;
-    services = formatedAlerts.map(singleAlert => singleAlert.service);
-    services = Array.from([...new Set(services)]); //Making services unique and convert it from set to array
-    services.unshift("ALL"); //Add "All" in the begining of the array
-    servicesLoading = false;
-  }
-
-  function deleteAllAlerts() {
-    deleteAll()
-      .then(res => {
-        alerts = [];
-        isAllAlertsDeleted = true;
-      })
-      .catch(err => {
-        console.log("error while deleting all alerts", err);
-      });
-  }
-</script>
-
-<style>
-  .search-width {
-    width: 350px;
-  }
-</style>
-
-<div>
-  <Navigation />
-</div>
-
-<!--[Container]-->
-<div class="container-fluid">
-  <!--[Title]-->
-  <div class="m-3 text-center">
-    <h1>Central Alert System</h1>
-  </div>
-  <!--[Filters]-->
-  <div class="row m-5">
-    <div class="col-sm-12">
-      <div class="d-flex justify-content-start">
-        <!--[Search]-->
-        <div class="mx-4 search-width">
-          <input
-            type="search"
-            class="form-control"
-            id="InputSearch"
-            placeholder="Search text"
-            bind:value={searchText} />
-
-        </div>
-        <!--[Services]-->
-        <!-- content here -->
-        <div class="dropdown mx-2">
-          <button
-            class="btn btn-light dropdown-toggle pointer"
-            type="button"
-            id="dropdownMenuButton"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-            disabled={servicesLoading}>
-            Services
-          </button>
-          {#if services && services.length > 0}
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              {#each services as service}
-                <!-- content here -->
-                <a
-                  class="dropdown-item"
-                  href="#"
-                  on:click={() => updateFilters(service, currentFilters.messageType, currentFilters.status)}>
-                  {service}
-                </a>
-              {/each}
-            </div>
-          {/if}
-        </div>
-        <!--[Message-Type]-->
-        <div class="dropdown mx-2">
-          <button
-            class="btn btn-light dropdown-toggle pointer"
-            type="button"
-            id="dropdownMenuButton"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-            disabled={servicesLoading}>
-            Message type
-          </button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a
-              class="dropdown-item"
-              href="#"
-              on:click={() => updateFilters(currentFilters.service, messageTypes.ALL, currentFilters.status)}>
-              All
-            </a>
-            <a
-              class="dropdown-item"
-              href="#"
-              on:click={() => updateFilters(currentFilters.service, messageTypes.ERROR, currentFilters.status)}>
-              Error
-            </a>
-            <a
-              class="dropdown-item"
-              href="#"
-              on:click={() => updateFilters(currentFilters.service, messageTypes.INFORMATION, currentFilters.status)}>
-              Information
-            </a>
-            <a
-              class="dropdown-item"
-              href="#"
-              on:click={() => updateFilters(currentFilters.service, messageTypes.WARNING, currentFilters.status)}>
-              Warning
-            </a>
-
-          </div>
-        </div>
-        <!--[Status]-->
-        <div class="dropdown mx-2">
-          <button
-            class="btn btn-light dropdown-toggle pointer"
-            type="button"
-            id="dropdownMenuButton"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-            disabled={servicesLoading}>
-            Status
-          </button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a
-              class="dropdown-item"
-              href="#"
-              on:click={() => updateFilters(currentFilters.service, currentFilters.messageType, status.ALL)}>
-              All
-            </a>
-            <a
-              class="dropdown-item"
-              href="#"
-              on:click={() => updateFilters(currentFilters.service, currentFilters.messageType, status.NEW)}>
-              New
-            </a>
-            <a
-              class="dropdown-item"
-              href="#"
-              on:click={() => updateFilters(currentFilters.service, currentFilters.messageType, status.OPEN)}>
-              Open
-            </a>
-            <a
-              class="dropdown-item"
-              href="#"
-              on:click={() => updateFilters(currentFilters.service, currentFilters.messageType, status.CLOSED)}>
-              Closed
-            </a>
-
-          </div>
-        </div>
-
-        <!--[Reset-Filter]-->
-        <div class="mx-2">
-          <button
-            type="button"
-            class="btn btn-light pointer"
-            on:click={() => resetFilters()}
-            disabled={servicesLoading}>
-            Reset Filters
-          </button>
-        </div>
-        <!--[Delete-Alerts]-->
-        <div class="mx-2">
-          <button
-            type="button"
-            class="btn btn-light pointer"
-            on:click={() => deleteAllAlerts()}
-            disabled={servicesLoading}>
-            Delete Alerts
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!--[Tabs]-->
-  <div class="row mt-4">
-    <div class="col-sm-12 ml-4">
-      <div>
-        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-          <li class="nav-item">
-            <a
-              class="nav-link active"
-              id="pills-all-tab"
-              data-toggle="pill"
-              href="#pills-all"
-              role="tab"
-              aria-controls="pills-all"
-              aria-selected="true"
-              on:click={() => updateAlerts(environments.ALL)}>
-              All
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              id="infra-profile-tab"
-              data-toggle="pill"
-              href="#pills-infra"
-              role="tab"
-              aria-controls="pills-infra"
-              aria-selected="false"
-              on:click={() => updateAlerts(environments.INFRA)}>
-              Infrastructure
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              id="pills-prod-tab"
-              data-toggle="pill"
-              href="#pills-prod"
-              role="tab"
-              aria-controls="pills-prod"
-              aria-selected="false"
-              on:click={() => updateAlerts(environments.PROD)}>
-              Production
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              id="pills-development-tab"
-              data-toggle="pill"
-              href="#pills-development"
-              role="tab"
-              aria-controls="pills-development"
-              aria-selected="false"
-              on:click={() => updateAlerts(environments.DEV)}>
-              Development
-            </a>
-          </li>
-        </ul>
-        <div class="tab-content" id="pills-tabContent">
-          <div
-            class="tab-pane fade show active"
-            id="pills-all"
-            role="tabpanel"
-            aria-labelledby="pills-all-tab" />
-          <div
-            class="tab-pane fade"
-            id="pills-infra"
-            role="tabpanel"
-            aria-labelledby="pills-infra-tab" />
-          <div
-            class="tab-pane fade"
-            id="pills-prod"
-            role="tabpanel"
-            aria-labelledby="pills-prod-tab" />
-          <div
-            class="tab-pane fade"
-            id="pills-development"
-            role="tabpanel"
-            aria-labelledby="pills-development-tab" />
-        </div>
-      </div>
-
-    </div>
-  </div>
-  <!--[Alerts]-->
-  {#if alerts && alerts != '' && isAlertsLoaded && !isAllAlertsDeleted}
-    <!-- content here -->
-    <div class="row">
-      <div class="col-sm-12">
-        <Alerts {alerts} />
-      </div>
-    </div>
-  {:else if !isAlertsLoaded && !isAllAlertsDeleted}
-    <div class="text-center">
-      <img src={'/img/loader.gif'} class="img-fluid" alt="Responsive image" />
-    </div>
-  {:else if isAlertsLoaded && isAllAlertsDeleted}
-    <div class="mt-5 text-center">
-      <h2>All the alerts have been deleted.</h2>
-    </div>
-  {:else}
-    <div class="mt-5 text-center">
-      <h2>There is no alerts matching your criteria</h2>
-    </div>
-  {/if}
-</div>
-```
-
-* In requests handling to deal with APIs, I have used <b>axios library</b>
-, to install ```npm install axios```, import it ```	import axios from 'axios';``` and then you will be able to do requests to the APIs.</br>
-```javascript
-
-import axios from 'axios'
-
-export function getAlerts(envName = "all") {
-    return (axios.post("/actors/alerta/list_alerts_by_env", { "args": { "env_name": envName } }))
-}
-export function deleteAll() {
-    return (axios.post("/actors/alerta/delete_all_alerts"))
-
-}
-export function deleteAlert(alertId) {
-    return (axios.post("/actors/alerta/delete_alert", { "args": { "alert_id": alertId } }))
-}
-```
-
-## Deploying to the web
-
-### With [now](https://zeit.co/now)
-
-Install `now` if you haven't already:
+You can deploy your application to any environment that supports Node 8 or above. As an example, to deploy to [Now](https://zeit.co/now), run these commands:
 
 ```bash
 npm install -g now
-```
-
-Then, from within your project folder:
-
-```bash
-cd public
 now
 ```
 
-As an alternative, use the [Now desktop client](https://zeit.co/download) and simply drag the unzipped project folder to the taskbar icon.
 
-### With [surge](https://surge.sh/)
+## Using external components
 
-Install `surge` if you haven't already:
+When using Svelte components installed from npm, such as [@sveltejs/svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list), Svelte needs the original component source (rather than any precompiled JavaScript that ships with the component). This allows the component to be rendered server-side, and also keeps your client-side app smaller.
 
-```bash
-npm install -g surge
-```
-
-Then, from within your project folder:
+Because of that, it's essential that the bundler doesn't treat the package as an *external dependency*. You can either modify the `external` option under `server` in [rollup.config.js](rollup.config.js) or the `externals` option in [webpack.config.js](webpack.config.js), or simply install the package to `devDependencies` rather than `dependencies`, which will cause it to get bundled (and therefore compiled) with your app:
 
 ```bash
-npm run build
-surge public
+npm install -D @sveltejs/svelte-virtual-list
 ```
+
+
+## Bugs and feedback
+
+Sapper is in early development, and may have the odd rough edge here and there. Please be vocal over on the [Sapper issue tracker](https://github.com/sveltejs/sapper/issues).
