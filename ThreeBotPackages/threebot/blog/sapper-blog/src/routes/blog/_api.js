@@ -11,18 +11,17 @@ axios.defaults.baseURL = "http://127.0.0.1:9201";
 axios.defaults.port = 9201
 const BLOG_API = "http://127.0.0.1:9201/actors/blog";
 
-function callActorWithArgs(actorCmd, actorArgs) {
+async function callActorWithArgs(actorCmd, actorArgs) {
 
-    return new Promise((resolve, reject) => {
-        let p = axios.post(`${BLOG_API}/${actorCmd}`, {
-            args: actorArgs
-        })
-        p.json = () => p.data
-
-        resolve(p)
-
+    let p = () => axios.post(`${BLOG_API}/${actorCmd}`, {
+        args: actorArgs
     })
+
+    let resp = await p()
+    return new Promise((resolve, reject) => resolve(resp.data))
+
 }
+
 
 export function getMetadata(blogName) {
     if (process.env.DEV !== "1") {
@@ -33,7 +32,7 @@ export function getMetadata(blogName) {
         }
     } else {
         return new Promise(function (resolve, reject) {
-            resolve(JSON.stringify(metadata))
+            resolve(metadata)
         });
     }
 }
@@ -51,7 +50,7 @@ export function getBlogs() {
     }
     else {
         return new Promise(function (resolve, reject) {
-            resolve(JSON.stringify(blogs))
+            resolve(blogs)
         });
     }
 }
@@ -67,7 +66,7 @@ export function getPosts(blogName) {
         }
     } else {
         return new Promise(function (resolve, reject) {
-            resolve(JSON.stringify(posts))
+            resolve(posts)
         });
     }
 }
@@ -83,7 +82,7 @@ export function getTags(blogName) {
         }
     } else {
         return new Promise(function (resolve, reject) {
-            resolve(JSON.stringify(tags))
+            resolve(tags)
         });
     }
 }
@@ -97,7 +96,7 @@ export function getPages(blogName) {
         }
     } else {
         return new Promise(function (resolve, reject) {
-            resolve(JSON.stringify(pages))
+            resolve(pages)
         });
     }
 }

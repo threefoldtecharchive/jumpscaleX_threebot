@@ -10,7 +10,7 @@ export async function get(req, res, next) {
         theuser, slug
     } = req.params;
 
-    let pages = JSON.parse(await getPages(theuser))
+    let pages = await getPages(theuser)
 
     const lookup = new Map();
     pages.forEach(page => {

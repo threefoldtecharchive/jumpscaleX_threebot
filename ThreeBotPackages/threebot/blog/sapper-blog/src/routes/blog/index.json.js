@@ -9,6 +9,7 @@ export async function get(req, res) {
         'Content-Type': 'application/json'
     });
     // console.log(JSON.stringify(req.params))
-    res.end(await getBlogs())
+    let blogs = await getBlogs()
+    res.end(JSON.stringify(blogs))
 
 }
