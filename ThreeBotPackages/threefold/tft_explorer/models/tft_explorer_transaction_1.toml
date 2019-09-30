@@ -3,11 +3,8 @@ hash = "" (S)
 recipient** = "" (S)
 senders = "1,2,3" (LS)
 amount = "" (F) #we should use decimal
-lock = !tft.explorer.lock.1
-message = b""
-fee = false
-
-@url = !tft.explorer.lock.1
-value = 0 (F)
-type = "timestamp, block_height"
+lock = (O) !tft.explorer.lock.1
+message = (S)
+fee = false (B)
+include_in_block_height** = 0 (I)
 

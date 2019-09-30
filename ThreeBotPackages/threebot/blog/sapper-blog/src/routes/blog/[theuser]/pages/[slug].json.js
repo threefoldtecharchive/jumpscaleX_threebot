@@ -3,14 +3,14 @@ import {
 } from "../../_api";
 
 
-export function get(req, res, next) {
+export async function get(req, res, next) {
     // the `slug` parameter is available because
     // this file is called [slug].json.js
     const {
         theuser, slug
     } = req.params;
 
-    let pages = JSON.parse(getPages(theuser))
+    let pages = await getPages(theuser)
 
     const lookup = new Map();
     pages.forEach(page => {
