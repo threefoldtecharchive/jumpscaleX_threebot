@@ -30,9 +30,9 @@ gateway = (Lipaddr)
 #famer configures this information so we know how to configure the ipaddress
 @url = tfgrid.node.public_iface.1
 master = (S) #physical interface name on which the vlan lives
-type = "macvlan" (E)
-ipv4 = (ipaddr) #range
-ipv6 = (ipaddr)
+type = "macvlan,vlan" (E)
+ipv4 = (iprange)
+ipv6 = (iprange)
 gw4 = (ipaddr)
 gw6 = (ipaddr)
 version = (I)

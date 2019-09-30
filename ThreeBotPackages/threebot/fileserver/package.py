@@ -103,4 +103,3 @@ class Package(j.baseclasses.threebot_package):
         :return:
         """
         j.builders.runtimes.python3.pip_package_uninstall("filetype")
-

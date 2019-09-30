@@ -30,6 +30,18 @@ class alerta(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.alert_model = j.tools.alerthandler.model
 
+    def get_alert(self, alert_id, schema_out=None, user_session=None):
+        """
+        ```in
+        alert_id = (I)
+        ```
+
+        """
+        res = self.alert_model.find(id=alert_id)
+        if res:
+            return j.data.serializers.json.dumps(res[0]._ddict)
+        return "{}"
+
     def list_alerts(self, schema_out=None, user_session=None):
         alerts = j.data.serializers.json.dumps({"alerts": [alert._ddict for alert in self.alert_model.find()]})
         return alerts
@@ -60,7 +72,7 @@ class alerta(j.baseclasses.threebot_actor):
 
     def new_alert(
         self,
-        severity="major",
+        severity=10,
         status="new",
         time=None,
         environment="all",
@@ -75,15 +87,14 @@ class alerta(j.baseclasses.threebot_actor):
     ):
         """
         ```in
-        severity="" (S)
-        status="" (S)
-        time="" (S)
+        severity=0 (I)
+        status="closed,new,open" (E)
         environment = "" (S)
         service = "" (S)
         resource = "" (S)
         event = "" (S)
         value = "" (S)
-        messageType = "" (S)
+        messageType = "error,info,warn" (E)
         text = "" (S)
         ```
 
@@ -92,8 +103,6 @@ class alerta(j.baseclasses.threebot_actor):
         ```
 
         """
-
-        print(locals())
         alert = self.alert_model.new()
         alert.severity = severity
         alert.status = status
@@ -113,9 +122,7 @@ class alerta(j.baseclasses.threebot_actor):
         return res
 
     def delete_all_alerts(self, schema_out=None, user_session=None):
-        # TODO: implement
-        response = {"result": True, "error_code": "", "error_message": ""}
-        return j.data.serializers.json.dumps(response)
+        self.alert_model.destroy()
 
     def delete_alert(self, alert_id, schema_out=None, user_session=None):
         """
@@ -127,6 +134,3 @@ class alerta(j.baseclasses.threebot_actor):
             self.alert_model.delete(alert_id)
         except:
             pass
-
-        response = {"result": True, "error_code": "", "error_message": ""}
-        return j.data.serializers.json.dumps(response)

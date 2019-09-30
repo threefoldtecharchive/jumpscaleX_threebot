@@ -3,7 +3,7 @@ from Jumpscale import j
 
 class Package(j.baseclasses.threebot_package):
     def _init(self, *args, **kwargs):
-        self.bcdb = self._package.threebot_server.bcdb_get('helloworld')
+        self.bcdb = self._package.threebot_server.bcdb_get("helloworld")
 
     def prepare(self):
         """
@@ -12,8 +12,8 @@ class Package(j.baseclasses.threebot_package):
         j.builders.runtimes.python3.pip_package_install("filetype")
 
     def start(self):
-        self.bcdb.models_add(path=self.package_root + '/models')
-        self.gedis_server.actors_add(path=self.package_root + '/actors')
+        self.bcdb.models_add(path=self.package_root + "/models")
+        self.gedis_server.actors_add(path=self.package_root + "/actors")
 
         server = self.openresty
         server.install(reset=False)

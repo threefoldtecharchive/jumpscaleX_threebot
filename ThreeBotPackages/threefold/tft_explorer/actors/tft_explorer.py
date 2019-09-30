@@ -78,4 +78,3 @@ class tft_explorer(j.baseclasses.threebot_actor):
 
     def get_balance(self):
         pass
-
