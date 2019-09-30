@@ -1,48 +1,96 @@
 from Jumpscale import j
-import binascii
-from io import BytesIO
 
 
-class contact(j.baseclasses.threebot_actor):
+class contacts(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        bcdb = j.data.bcdb.get("contacts")
-        self.model = bcdb.model_get(url="contact.request.1")
+        bcdb = j.data.bcdb.get('contacts')
+        self.contact_model = bcdb.model_get(url='contact.1')
 
-    def add(self, contact, schema_out=None, user_session=None):
+    def _get_contact(self, contact_id):
+        try:
+            return self.contact_model.get(contact_id)
+        except j.exceptions.NotFound:
+            raise j.exceptions.NotFound("Contact %s not found" % contact_id)
+
+    def _validate_contact(self, contact):
+        for field in ["firstname","lastname"]:
+            if not getattr(contact, field):
+                raise j.exceptions.Value("%s is required" % field)
+
+    def register(self, contact, schema_out=None, user_session=None):
         """
         ```in
-        contact = (O) !calendar.people.1
+        contact = (O) !contact.1
         ```
 
+        ```out
+        contact_id = (I)
+        ```
         """
-        print(contact)
+
+        self._validate_contact(contact)
+        
+        # if self.contact_model.find(name=contact.firstname):
+        #     raise j.exceptions.Value("Contact with name %s already exist" % contact.name)
+
+        contact = self.contact_model.new(contact)
         contact.save()
+        contact.id
 
-        response = {"result": "saved"}
-        return j.data.serializers.json.dumps(response)
+        
+        res = schema_out.new()
+        res.contact_id = contact.id
+        return res
 
-    def get(self, schema_out=N):
-        contacts =  self.model.find()
+    def update(self, contact_id, contact, schema_out=None, user_session=None):
+        """
+        ```in
+        contact_id = (I)
+        contact = (O) !contact.1
+        ```
 
-        res = []
+        ```out
+        success = (B)
+        ``` 
+        """
+        self._get_contact(contact_id)
+        self._validate_contact(contact)
+        self.contact_model.set_dynamic(contact._ddict, obj_id=contact_id)
+        
+        res = schema_out.new()
+        res.success = True
+        return res
 
-        for c in contacts:
-            #print("User: ", user)
-            print(c)
-            res.append("test")
+    def get(self, contact_id, schema_out=None, user_session=None):
+        """
+        ```in
+        contact_id = (I)
+        ```
 
-        return j.data.serializers.json.dumps(res)
+        ```out
+        contact = (O) !contact.1
+        ```
+        """
+        return self._get_contact(contact_id)
 
-    def remove(self, contact, schema_out=None, user_session=None):
-        pass
-    def update(self, contact, schema_out=None, user_session=None):
-        pass
-    #share or send ?
-    def share(self, contact, schema_out=None, user_session=None):
-        pass
-    def list_by_name(self, name, schema_out=None, user_session=None): 
-        pass
-    def search_by_name(self, name, schema_out=None, user_session=None): 
-        pass
-    def search(self, text, schema_out=None, user_session=None): 
-        pass
+
+    def list(self, firstname, lastname, schema_out=None, user_session=None):
+        """
+        ```in
+        firstname = (S)
+        lastname = (S)
+        ```
+
+        ```out
+        contacts = (LO) !contact.1
+        ```
+        """
+
+        out = schema_out.new()
+        for contact in self.contact_model.iterate():
+            if firstname != "" and contact.firstname != firstname:
+                continue
+            if lastname != "" and contact.lastname != lastname:
+                continue
+            out.contacts.append(contact)
+        return out

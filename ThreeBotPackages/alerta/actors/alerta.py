@@ -2,24 +2,21 @@ from Jumpscale import j
 
 
 """
-
-JSX> anew.actors.alerta.list_alerts()
+JSX> anew = j.clients.gedis(...., port=8901)
+JSX> anew.actors.alerta.list_alerts() 
 ... a very long list
-JSX> anew.actors.alerta.new_alert(        severity="major",
-   2         status="new",
-   3         time=None,
-   4         environment="ALL",
-   5         service="JSX",
-   6         resource="xmonader",
-   7         event="event 1",
-   8         value="n/a",
-   9         messageType="error",
-  10         text="rafir text")
+JSX> anew.actors.alerta.new_alert(
+   severity=10, 
+   status="new", 
+   environment="ALL", 
+   service="JSX", 
+   resource="xmonader", 
+   event="event 1", 
+   value="n/a", 
+   messageType="error", 
+   text="rafir text") 
 ## actors.default.alerta.new_alert.16c54214bfcd2a5b61f789be085a1d14
 res                 : True
-
-
-
 """
 
 STATES = ["closed", "new", "open"]
