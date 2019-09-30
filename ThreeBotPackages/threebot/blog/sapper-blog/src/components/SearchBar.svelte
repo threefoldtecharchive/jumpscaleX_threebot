@@ -43,7 +43,7 @@
   <ul>
     {#each search_res as res}
       <li>
-        <a href="blog/{blogName}/{res.type}/{res.slug}">
+        <a href="blog/{res.blog}/{res.type}/{res.slug}">
           {res.slug} - Type: {res.type}
         </a>
       </li>
