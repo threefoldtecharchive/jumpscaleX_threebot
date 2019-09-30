@@ -17,16 +17,16 @@ class Package(j.baseclasses.threebot_package):
         server = self.openresty
         server.install(reset=False)
         server.configure()
-        website = server.websites.get("contacts")
+        website = server.websites.get("contacs")
         website.ssl = False
         website.port = 8081
-        locations = website.locations.get("contacts")
+        locations = website.locations.get("contacs")
 
         # import pdb; pdb.set_trace()
 
         #Serve static files
         website_location = locations.locations_static.new()
-        website_location.name = "pastebin"
+        website_location.name = "contacs"
         website_location.path_url = "/"
         website_location.use_jumpscale_weblibs = True
         fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
@@ -61,3 +61,4 @@ class Package(j.baseclasses.threebot_package):
         """
         Remove Dependencies
         """
+        #clear database

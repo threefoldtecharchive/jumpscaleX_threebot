@@ -1,7 +1,7 @@
 from Jumpscale import j
 
 
-class ContactsWorldFactory(j.baseclasses.object, j.baseclasses.testtools):
+class ContactsFactory(j.baseclasses.object, j.baseclasses.testtools):
 
     __jslocation__ = "j.threebot.package.contacts"
 
@@ -15,7 +15,6 @@ class ContactsWorldFactory(j.baseclasses.object, j.baseclasses.testtools):
         return "OK"
 
     def start(self):
-        self.install()
         server = j.servers.threebot.default
         server.start(web=True, ssl=False)
 
