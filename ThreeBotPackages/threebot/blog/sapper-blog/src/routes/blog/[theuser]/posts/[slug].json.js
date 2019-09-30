@@ -10,7 +10,7 @@ export async function get(req, res, next) {
     const {
         theuser, slug
     } = req.params;
-    let posts = JSON.parse(await getPosts(theuser))
+    let posts = await getPosts(theuser)
 
     const lookup = new Map();
     posts.forEach(post => {

@@ -8,5 +8,5 @@ export async function get(req, res) {
         'Content-Type': 'application/json'
     });
 
-    res.end(await getPages(req.params.theuser));
+    res.end(JSON.stringify(await getPages(req.params.theuser)));
 }

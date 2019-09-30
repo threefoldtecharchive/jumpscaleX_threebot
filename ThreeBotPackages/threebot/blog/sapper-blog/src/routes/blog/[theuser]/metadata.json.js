@@ -7,5 +7,5 @@ export async function get(req, res) {
     res.writeHead(200, {
         'Content-Type': 'application/json'
     });
-    res.end(await getMetadata(req.params.theuser))
+    res.end(JSON.stringify(await getMetadata(req.params.theuser)))
 }

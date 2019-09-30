@@ -11,7 +11,7 @@ export async function get(req, res, next) {
     const {
         theuser, slug
     } = req.params;
-    let posts = JSON.parse(await getPosts(theuser));
+    let posts = JSON.parse(JSON.stringify(await getPosts(theuser)));
     const lookup = new Map()
     posts.forEach(post => {
         post.tags.forEach(tag => {
@@ -27,7 +27,7 @@ export async function get(req, res, next) {
             'Content-Type': 'application/json'
         });
         console.log(`result: ${JSON.stringify(lookup.get(slug))}`)
-        res.end(JSON.stringify(lookup.get(slug)));
+        res.end(lookup.get(slug));
     } else {
         res.writeHead(404, {
             'Content-Type': 'application/json'
