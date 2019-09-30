@@ -10,11 +10,22 @@ from Jumpscale import j
 
 
 def main(self):
-    bcdb = j.data.bcdb.get("tf_workloads")
     customer_signing_key = signing.SigningKey.generate()
     farmer_signing_key = signing.SigningKey.generate()
     signer_signing_key = signing.SigningKey.generate()
-    ph_bcdb = j.data.bcdb.get("threebot_phonebook")
+
+    try:
+        bcdb = j.data.bcdb.new("tf_workloads")
+    except:
+        bcdb = j.data.bcdb.get("tf_workloads")
+    reservation_model = bcdb.model_get(url="tfgrid.reservation.1")
+    reservation_model.destroy()  # ensure it's empty
+
+    try:
+        ph_bcdb = j.data.bcdb.new("threebot_phonebook")
+    except:
+        ph_bcdb = j.data.bcdb.get("threebot_phonebook")
+
     model = ph_bcdb.model_get(url="threebot.phonebook.user.1")
     model.destroy()
 
