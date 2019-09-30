@@ -10,8 +10,7 @@ birthdate= ""
 website=""
 job_title=""
 salutation = "Mr,Miss,Mme"
-default_3bot = !threebot.phonebook.user.1
-3bots = (LO) !threebot.phonebook.user.1
+
 
 @url = contact.phone.1
 @acl = false
