@@ -2,10 +2,10 @@ import {
     getTags
 } from "../../_api"
 
-export function get(req, res) {
+export async function get(req, res) {
     res.writeHead(200, {
         'Content-Type': 'application/json'
     });
 
-    res.end(getTags(req.params.theuser));
+    res.end(await getTags(req.params.theuser));
 }

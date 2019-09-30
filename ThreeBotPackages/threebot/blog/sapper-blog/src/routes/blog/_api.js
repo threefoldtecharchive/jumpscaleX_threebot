@@ -7,22 +7,21 @@ import blogs from './_blogs';
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-axios.defaults.baseURL = "http://0.0.0.0:9201";
+axios.defaults.baseURL = "http://127.0.0.1:9201";
 axios.defaults.port = 9201
-const BLOG_API = "http://0.0.0.0:9201/actors/blog";
+const BLOG_API = "http://127.0.0.1:9201/actors/blog";
 
 function callActorWithArgs(actorCmd, actorArgs) {
-    var data = "";
-    axios.post(`${BLOG_API}/${actorCmd}`, {
-        args: actorArgs
-    }).then(resp => {
-        data = resp.data;
-        console.log(data, ">>")
-    }).catch(err => {
-        console.log(err);
-    })
-    return JSON.stringify(data);
 
+    return new Promise((resolve, reject) => {
+        let p = axios.post(`${BLOG_API}/${actorCmd}`, {
+            args: actorArgs
+        })
+        p.json = () => p.data
+
+        resolve(p)
+
+    })
 }
 
 export function getMetadata(blogName) {
@@ -33,17 +32,28 @@ export function getMetadata(blogName) {
             })
         }
     } else {
-        return JSON.stringify(metadata);
+        return new Promise(function (resolve, reject) {
+            resolve(JSON.stringify(metadata))
+        });
     }
 }
+
+// TODO::
+// getPageBySlug(blogName, page_slug)..
+
+// getPostsBySlug()...
+
 
 export function getBlogs() {
 
     if (process.env.DEV !== "1") {
-        let all_blogs = callActorWithArgs("get_blogs", {})
-        return all_blogs
+        return callActorWithArgs("get_blogs", {})
     }
-    return JSON.stringify(blogs);
+    else {
+        return new Promise(function (resolve, reject) {
+            resolve(JSON.stringify(blogs))
+        });
+    }
 }
 
 export function getPosts(blogName) {
@@ -56,7 +66,9 @@ export function getPosts(blogName) {
             })
         }
     } else {
-        return JSON.stringify(posts);
+        return new Promise(function (resolve, reject) {
+            resolve(JSON.stringify(posts))
+        });
     }
 }
 
@@ -70,7 +82,9 @@ export function getTags(blogName) {
             })
         }
     } else {
-        return JSON.stringify(tags);
+        return new Promise(function (resolve, reject) {
+            resolve(JSON.stringify(tags))
+        });
     }
 }
 
@@ -82,7 +96,9 @@ export function getPages(blogName) {
             })
         }
     } else {
-        return JSON.stringify(pages);
+        return new Promise(function (resolve, reject) {
+            resolve(JSON.stringify(pages))
+        });
     }
 }
 
