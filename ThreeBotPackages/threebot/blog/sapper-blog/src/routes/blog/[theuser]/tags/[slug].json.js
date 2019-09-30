@@ -5,13 +5,13 @@ import {
 
 
 
-export function get(req, res, next) {
+export async function get(req, res, next) {
     // the `slug` parameter is available because
     // this file is called [slug].json.js
     const {
         theuser, slug
     } = req.params;
-    let posts = JSON.parse(getPosts(theuser));
+    let posts = JSON.parse(await getPosts(theuser));
     const lookup = new Map()
     posts.forEach(post => {
         post.tags.forEach(tag => {
