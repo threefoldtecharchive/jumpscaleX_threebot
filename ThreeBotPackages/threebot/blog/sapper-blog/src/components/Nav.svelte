@@ -3,8 +3,9 @@
   const { preloading, page, session } = stores();
   export let username = $page.params.theuser;
 
+  $: currentuser = $page.params.theuser;
   export let segment;
-  export let pages;
+  export let pages = [];
   import SearchBar from "./SearchBar.svelte";
 </script>
 
@@ -69,32 +70,45 @@
             <a
               rel="prefetch"
               class={segment === undefined ? 'selected' : ''}
-              href="blog/{username}/posts">
-              blog
+              href="blog">
+              /
             </a>
           </li>
-          {#each pages as page}
+          {#if currentuser}
             <li>
               <a
                 rel="prefetch"
-                class={segment === page.slug ? 'selected' : ''}
-                href="blog/{username}/pages/{page.slug}">
-                {page.title}
+                class={segment === undefined ? 'selected' : ''}
+                href="blog/{currentuser}/posts">
+                {currentuser}
               </a>
             </li>
-          {/each}
-          <li>
-            <a
-              class={segment === 'tags' ? 'selected' : ''}
-              href="blog/{username}/tags/">
-              Tags
-            </a>
 
-          </li>
+            {#each pages as page}
+              <li>
+                <a
+                  rel="prefetch"
+                  class={segment === page.slug ? 'selected' : ''}
+                  href="blog/{currentuser}/pages/{page.slug}">
+                  {page.title}
+                </a>
+              </li>
+            {/each}
+            <li>
+              <a
+                class={segment === 'tags' ? 'selected' : ''}
+                href="blog/{currentuser}/tags/">
+                Tags
+              </a>
+            </li>
+          {/if}
+
           <li>
             <SearchBar />
+
           </li>
         </ul>
+
       </nav>
 
     </div>

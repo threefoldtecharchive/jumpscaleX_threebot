@@ -28,7 +28,9 @@ def sync_directory():
             query_params={"farmer": farm["iyo_organization"], "proofs": True}
         )[1]
         if response.status_code != 200:
-            j.core.tools.log("Failed to list capacity for farmer %s: %s" % (farm["iyo_organization"], response.reason), level=40)
+            j.core.tools.log(
+                "Failed to list capacity for farmer %s: %s" % (farm["iyo_organization"], response.reason), level=40
+            )
             continue
 
         nodes = response.json()

@@ -2,8 +2,8 @@
 address** = ""  (S)
 last_activity_in = "" (D)
 last_activity_out = "" (D)
-balance_coins = !tft.explorer.balance.1
-balance_blockstakes = !tft.explorer.balance.1
+balance_coins = (O) !tft.explorer.balance.1
+balance_blockstakes = (O) !tft.explorer.balance.1
 multisig_wallets = "1,2,3" (LS)
 
 @url = tft.explorer.balance.1

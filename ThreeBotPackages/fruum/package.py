@@ -10,14 +10,12 @@ class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
         self.bcdb = self._package.threebot_server.bcdb_get("fruum")
 
-
     def prepare(self):
         """
         is called at install time
         :return:
         """
         j.builders.runtimes.python3.pip_package_install("python-socketio")
-
 
     def start(self):
         """
@@ -53,16 +51,14 @@ class Package(j.baseclasses.threebot_package):
         proxy_location.scheme = "http"
         # END BOTTLE ACTORS ENDPOINT
 
-
-
-        spec = importlib.util.spec_from_file_location("app", os.path.abspath(os.path.dirname(__file__)) + '/app.py')
+        spec = importlib.util.spec_from_file_location("app", os.path.abspath(os.path.dirname(__file__)) + "/app.py")
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
 
         app = module.app
         appws = module.appws
 
-        sio_server = pywsgi.WSGIServer(('', 10002), appws, handler_class=WebSocketHandler)
+        sio_server = pywsgi.WSGIServer(("", 10002), appws, handler_class=WebSocketHandler)
         rack.bottle_server_add(name="fruum", port=10001, app=app)
         rack.add(name="fruum_socketio", server=sio_server)
 
@@ -79,7 +75,7 @@ class Package(j.baseclasses.threebot_package):
         proxy_location.ipaddr_dest = "0.0.0.0"
         proxy_location.port_dest = 10002
         proxy_location.scheme = "http"
-        proxy_location.type ='websocket'
+        proxy_location.type = "websocket"
 
         locations.configure()
         website.configure()

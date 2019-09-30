@@ -1,12 +1,11 @@
 import {
     getMetadata
-} from './_api.js';
+} from '../_api';
 
 
-export function get(req, res) {
+export async function get(req, res) {
     res.writeHead(200, {
         'Content-Type': 'application/json'
     });
-
-    res.end(getMetadata());
+    res.end(JSON.stringify(await getMetadata(req.params.theuser)))
 }

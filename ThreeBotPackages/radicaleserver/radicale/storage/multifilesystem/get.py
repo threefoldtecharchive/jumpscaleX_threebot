@@ -113,7 +113,7 @@ class CollectionGetMixin:
                 # List dir after hrefs returned one item, the iterator may be
                 # empty and the for-loop is never executed.
                 files = j.sal.bcdbfs.list_files_and_dirs(self._filesystem_path)
-                files = list(map(lambda x: os.path.basename(x), files) )
+                files = list(map(lambda x: os.path.basename(x), files))
             path = os.path.join(self._filesystem_path, href)
             if not pathutils.is_safe_filesystem_path_component(href) or href not in files and j.sal.bcdbfs.exists(path):
                 logger.debug("Can't translate name safely to filesystem: %r", href)

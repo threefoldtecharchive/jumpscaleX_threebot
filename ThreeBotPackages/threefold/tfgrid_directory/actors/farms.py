@@ -72,11 +72,8 @@ class farms(j.baseclasses.threebot_actor):
         farms = (LO) !tfgrid.farm.1
         ```
         """
-        print("country param: " + country)
-        print("city param: " + city)
         out = schema_out.new()
         for farm in self.farm_model.iterate():
-            print(country != "" and farm.location.country != country)
             if country != "" and farm.location.country != country:
                 continue
             if city != "" and farm.location.city != city:

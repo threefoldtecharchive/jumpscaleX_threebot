@@ -17,7 +17,7 @@ class TFPhonebookFactory(j.baseclasses.object, j.baseclasses.testtools):
             git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/threefold/phonebook",
         )
 
-        # self.client.reload(namespace="default")
+        self.client.reload()
 
         return self.client
 
@@ -27,8 +27,6 @@ class TFPhonebookFactory(j.baseclasses.object, j.baseclasses.testtools):
         """
 
         self.client = self.client_get()
-
-        # TODO: check the actor is already loaded if not do following:
 
         j.shell()
 
