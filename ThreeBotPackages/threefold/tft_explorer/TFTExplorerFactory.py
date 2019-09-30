@@ -32,6 +32,7 @@ class TFTExplorerFactory(j.baseclasses.object, j.baseclasses.testtools):
         else:
             m = j.data.bcdb.new("tft_explorer")
         m.models_add(path=self._dirpath + "/models")
+
         gedis_cli = self.client_get()
 
         cl = j.clients.redis.get(port=8901)
@@ -48,13 +49,23 @@ class TFTExplorerFactory(j.baseclasses.object, j.baseclasses.testtools):
         trans = []
         for x in range(10):
             self.tft_ex_t = m.model_get(url="tft.explorer.transaction.1")
+            # j.shell()
             t = self.tft_ex_t.new()
+            t.lock.value = random.uniform(0.1, 142.42)
+            t.lock.type = "block_height"
+
+            t.hash = str(uuid.uuid4().hex)
+            t.message = "x:%s" % x
+            t.fee = True
+
             t.senders = [str(uuid.uuid4().hex), str(uuid.uuid4().hex)]
             if x % 2 == 1:
                 t.recipient = str(uuid.uuid4().hex)
             else:
                 t.recipient = "54d65dez46ez4de564d6z4de3dz"
             t.amount = random.uniform(0.1, 142.42)
+            t.include_in_block_height = x
+            print("*****************************************:%s" % x)
             trans.append(t._ddict)
         data4 = gedis_cli.actors.tft_explorer.set_transactions(trans)
 
@@ -63,6 +74,17 @@ class TFTExplorerFactory(j.baseclasses.object, j.baseclasses.testtools):
         trans = gedis_cli.actors.tft_explorer.get_transaction_by_recipient("54d65dez46ez4de564d6z4de3dz")
         assert trans[0].recipient == "54d65dez46ez4de564d6z4de3dz"
         assert trans[len(trans) - 1].recipient == "54d65dez46ez4de564d6z4de3dz"
+        balance = 0
+        for t in trans:
+            balance += t.amount
+        res = gedis_cli.actors.tft_explorer.get_balance("54d65dez46ez4de564d6z4de3dz")
+
+        assert balance == res.balance
+
+        trans = gedis_cli.actors.tft_explorer.get_transactions_in_block(2)
+
+        assert len(trans) >= 1
+        assert trans[0].include_in_block_height == 2
 
         t = gedis_cli.actors.tft_explorer.get(trans[0].id)
         assert trans[0].recipient == t.recipient
