@@ -1,21 +1,21 @@
 import {
     getPosts
-} from "../_api.js";
+} from "../../_api.js";
 
-let posts = JSON.parse(getPosts())
 
-const lookup = new Map();
-posts.forEach(post => {
-    lookup.set(post.slug, JSON.stringify(post));
-});
 
-export function get(req, res, next) {
+export async function get(req, res, next) {
     // the `slug` parameter is available because
     // this file is called [slug].json.js
     const {
-        slug
+        theuser, slug
     } = req.params;
+    let posts = await getPosts(theuser)
 
+    const lookup = new Map();
+    posts.forEach(post => {
+        lookup.set(post.slug, JSON.stringify(post));
+    });
     if (lookup.has(slug)) {
         res.writeHead(200, {
             'Content-Type': 'application/json'

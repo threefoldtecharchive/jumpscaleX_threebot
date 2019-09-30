@@ -4,6 +4,17 @@ from Jumpscale import j
 INT_NULL_VALUE = 2147483647
 
 
+def gwid(reservation_id, workload_id):
+    return f"{reservation_id}-{workload_id}"
+
+
+def rid_from_gwid(workload_id):
+    ss = workload_id.split("-")
+    if len(ss) != 2:
+        raise j.exceptions.Input("global workload id %s has wrong format")
+    return int(ss[0]), int(ss[1])
+
+
 class workload_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         bcdb = j.data.bcdb.get("tf_workloads")
@@ -22,7 +33,7 @@ class workload_manager(j.baseclasses.threebot_actor):
             id = pw.PrimaryKeyField()
             reservation_id = pw.IntegerField(index=True, default=0)
             workload_id = pw.IntegerField(index=True, default=0)
-            node_id = pw.IntegerField(index=True, default=0)
+            node_id = pw.TextField(index=True, default="")
 
         def index_create(model, obj, action, **kwargs):
             if action == "set_post":
@@ -171,7 +182,7 @@ class workload_manager(j.baseclasses.threebot_actor):
 
     def _filter_reservations(self, node_id, states, epoch):
         query = None
-        if node_id != INT_NULL_VALUE:
+        if node_id:
             query = self.reservation_model.IndexTable.node_id == node_id
 
         result = self.reservation_model.IndexTable.select().where(query).execute()
@@ -244,7 +255,7 @@ class workload_manager(j.baseclasses.threebot_actor):
     def reservations_list(self, node_id, state, epoch, schema_out, user_session):
         """
         ```in
-        node_id = (I)  # filter results by node id
+        node_id = (S)  # filter results by node id
         state = (S)  # filter results by next_action
         epoch = (I)  # filter results which created after this epoch
         ```
@@ -260,7 +271,7 @@ class workload_manager(j.baseclasses.threebot_actor):
     def workloads_list(self, node_id, epoch, schema_out, user_session):
         """
         ```in
-        node_id = (I)  # filter results by node id
+        node_id = (S)  # filter results by node id
         epoch = (I)  # filter results which created after this epoch
         ```
 
@@ -273,13 +284,13 @@ class workload_manager(j.baseclasses.threebot_actor):
         for reservation in reservations:
 
             for _type, workload in self._iterate_over_workloads(reservation):
-                if node_id != INT_NULL_VALUE and workload.node_id != node_id:
+                if node_id and workload.node_id != node_id:
                     continue
 
                 workload.reservation_id = reservation.id
                 obj = self.workload_schema.new()
                 obj.type = _type
-                obj.workload_id = f"{reservation.id}-{workload.workload_id}"
+                obj.workload_id = gwid(reservation.id, workload.workload_id)
                 obj.user = str(reservation.customer_tid)
                 obj.content = workload._ddict
                 obj.created = reservation.epoch
@@ -289,6 +300,34 @@ class workload_manager(j.baseclasses.threebot_actor):
                 output.workloads.append(obj)
 
         return output
+
+    def workload_get(self, gwid, schema_out, user_session):
+        """
+        ```in
+        gwid = (S) 
+        ```
+
+        ```out
+        !tfgrid.reservation.workload.1
+        ```
+        """
+        rid, wid = rid_from_gwid(gwid)
+
+        out = schema_out.new()
+        reservation = self._reservation_get(rid)
+        for _type, workload in self._iterate_over_workloads(reservation):
+            if int(workload.workload_id) == int(wid):
+                obj = self.workload_schema.new()
+                obj.type = _type
+                obj.workload_id = gwid
+                obj.user = str(reservation.customer_tid)
+                obj.content = workload._ddict
+                obj.created = reservation.epoch
+                obj.duration = reservation.data_reservation.expiration_reservation - reservation.epoch
+                obj.signature = ""
+                obj.to_delete = reservation.next_action == "delete"
+                return obj
+        raise j.exceptions.NotFound(f"workload {gwid} not found")
 
     def sign_provision(self, reservation_id, tid, signature, user_session):
         """
@@ -372,18 +411,39 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation.save()
         return True
 
-    def set_workload_result(self, reservation_id, result, user_session):
+    def set_workload_result(self, global_workload_id, result, user_session):
         """
         Set the result of the deployment of the workload
-        :param reservation_id: is the id of the reservation, unique in BCDB
-        :param signature: The result of the deployment of the workloads
+        :param workload_id: is the global workload id, unique in BCDB
+        :param result: The result of the deployment of the workload
         
         ```in
-        reservation_id = (I)
+        global_workload_id = (S)
         result = (O) !tfgrid.reservation.result.1
         ```
         """
-        reservation = self._reservation_get(reservation_id)
+        rid, wid = rid_from_gwid(global_workload_id)
+
+        result.workload_id = wid
+
+        reservation = self._reservation_get(rid)
+        # if there is already a result for this workload,
+        # remove it and add the one we just received
+        for i, r in enumerate(reservation.results):
+            if int(r.workload_id) == wid:
+                reservation.results.pop(i)
+
         reservation.results.append(result)
         reservation.save()
         return True
+
+    def workload_deleted(self, workload_id):
+        """
+        Mark a workload as deleted
+        this is called by a node once a workloads as been decomissioned
+        
+        ```in
+        workload_id = (I)
+        ```
+        """
+        pass

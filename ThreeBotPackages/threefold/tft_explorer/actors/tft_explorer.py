@@ -37,9 +37,15 @@ class tft_explorer(j.baseclasses.threebot_actor):
         res = []
         for t in trans:
             tmp = self.tft_ex_t.new()
+            tmp.hash = t.hash
+            tmp.lock.value = t.lock.value
+            tmp.lock.type = t.lock.type
+            tmp.message = t.message
+            tmp.fee = t.fee
             tmp.senders = t.senders
             tmp.recipient = t.recipient
             tmp.amount = t.amount
+            tmp.include_in_block_height = t.include_in_block_height
             res.append(self.tft_ex_t.set(tmp))
         return res
 
@@ -54,6 +60,18 @@ class tft_explorer(j.baseclasses.threebot_actor):
         ```
         """
         return self.tft_ex_t.find(recipient=recipient)
+
+    def get_transactions_in_block(self, block_height, schema_out=None, user_session=None):
+        """
+        ```in
+        block_height = (I) 
+        ```
+
+        ```out
+        trans =  (LO) !tft.explorer.transaction.1
+        ```
+        """
+        return self.tft_ex_t.find(include_in_block_height=block_height)
 
     def get(self, transaction_id, schema_out=None, user_session=None):
         """
@@ -76,6 +94,17 @@ class tft_explorer(j.baseclasses.threebot_actor):
     def set_block(self, blockheight, transactions, balances):
         pass
 
-    def get_balance(self):
-        pass
+    def get_balance(self, recipient, schema_out=None, user_session=None):
+        """
+        ```in
+        recipient = (S) 
+        ```
 
+        ```out
+        balance =  (F) 
+        ```
+        """
+        out = schema_out.new()
+        for t in self.tft_ex_t.find(recipient=recipient):
+            out.balance += t.amount
+        return out

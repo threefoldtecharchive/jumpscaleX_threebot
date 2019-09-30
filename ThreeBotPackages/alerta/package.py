@@ -31,15 +31,22 @@ class Package(j.baseclasses.threebot_package):
         website.port = 8081
         locations = website.locations.get("alerta")
 
-        website_location = locations.locations_static.new()
-        website_location.name = "alerta"
-        website_location.path_url = "/"
-        website_location.use_jumpscale_weblibs = True
-        # import pdb; pdb.set_trace()
-        fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
-        print(fullpath)
-        print(fullpath)
-        website_location.path_location = fullpath
+        # website_location = locations.locations_static.new()
+        # website_location.name = "alerta"
+        # website_location.path_url = "/"
+        # website_location.use_jumpscale_weblibs = True
+        # # import pdb; pdb.set_trace()
+        # fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
+        # print(fullpath)
+        # print(fullpath)
+        # website_location.path_location = fullpath
+
+        sapper_proxy_location = locations.locations_proxy.new()
+        sapper_proxy_location.name = "alerta_sapper"
+        sapper_proxy_location.path_url = f"/"
+        sapper_proxy_location.ipaddr_dest = "0.0.0.0"
+        sapper_proxy_location.port_dest = 3000
+        sapper_proxy_location.scheme = "http"
         # import pdb; pdb.set_trace()
 
         ## START BOTTLE ACTORS ENDPOINT

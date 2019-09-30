@@ -1,21 +1,21 @@
 import {
     getPages
-} from "../_api.js";
+} from "../../_api";
 
-let pages = JSON.parse(getPages())
 
-const lookup = new Map();
-pages.forEach(page => {
-    lookup.set(page.slug, JSON.stringify(page));
-});
-
-export function get(req, res, next) {
+export async function get(req, res, next) {
     // the `slug` parameter is available because
     // this file is called [slug].json.js
     const {
-        slug
+        theuser, slug
     } = req.params;
 
+    let pages = await getPages(theuser)
+
+    const lookup = new Map();
+    pages.forEach(page => {
+        lookup.set(page.slug, JSON.stringify(page));
+    });
     if (lookup.has(slug)) {
         res.writeHead(200, {
             'Content-Type': 'application/json'

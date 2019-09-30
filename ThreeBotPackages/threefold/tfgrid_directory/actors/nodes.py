@@ -36,7 +36,8 @@ class nodes(j.baseclasses.threebot_actor):
         if not node.location:
             validation_errors.append("location")
         if validation_errors:
-            raise Exception("Can not create node without {}".format(" or ".join(validation_errors)))
+            raise Exception("Can not create node without {}".format(
+                " or ".join(validation_errors)))
         old_node = self._find(node.node_id)
         if old_node:
             return self.node_model.set_dynamic(node._ddict, obj_id=old_node.id)
@@ -149,5 +150,36 @@ class nodes(j.baseclasses.threebot_actor):
         node.used_resources.cru = resource.cru
         node.used_resources.hru = resource.hru
         node.used_resources.sru = resource.sru
+        node.save()
+        return True
+
+    def publish_interfaces(self, node_id, ifaces, schema_out=None, user_session=None):
+        """
+        ```in
+        node_id = (S)
+        ifaces = (LO) !tfgrid.node.iface.1
+        ```
+        """
+
+        node = self._find(node_id)
+        if not node:
+            raise j.exceptions.NotFound("node %s not found" % id)
+        node.ifaces = ifaces
+        node.save()
+        return True
+
+    def set_public_iface(self, node_id, public, schema_out=None, user_session=None):
+        """
+        ```in
+        node_id = (S)
+        public = (O) !tfgrid.node.public_iface.1
+        ```
+        """
+
+        node = self._find(node_id)
+        if not node:
+            raise j.exceptions.NotFound("node %s not found" % id)
+
+        node.public_config = public
         node.save()
         return True
