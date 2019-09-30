@@ -70,7 +70,7 @@ class blog(j.baseclasses.threebot_actor):
             page = 0 (I)
         ```
         """
-        found_blog = self.blog_model.find(name=blog)[0]
+        found_blog = self.blog_model.find(name=blog_name)[0]
         if found_blog:
             return found_blog.pages
 
@@ -129,7 +129,6 @@ class blog(j.baseclasses.threebot_actor):
             query = (S)
         ```
         """
-
         # takes a slice of a content of a post / page and returns the post's / page's slug
         posts = self._list_posts(blog_name)
         pages = self._list_pages(blog_name)
