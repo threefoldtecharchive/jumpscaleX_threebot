@@ -22,7 +22,6 @@ async function callActorWithArgs(actorCmd, actorArgs) {
 
 }
 
-
 export function getMetadata(blogName) {
     if (process.env.DEV !== "1") {
         if (blogName !== "undefined") {
@@ -102,5 +101,17 @@ export function getPages(blogName) {
 }
 
 export function search(blogName, query) {
-
+    if (process.env.DEV !== "1") {
+        if (blogName !== "undefined") {
+            return callActorWithArgs("search", {
+                blog_name: blogName,
+                query: query
+            })
+        }
+    } else {
+        return callActorWithArgs("search", {
+            blog_name: "",
+            query: query
+        })
+    }
 }
