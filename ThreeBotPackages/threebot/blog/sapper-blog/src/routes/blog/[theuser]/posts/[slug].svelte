@@ -23,22 +23,8 @@
 
   import showdown from "showdown";
 
-  const classMap = {
-    h1: "ui large header",
-    h2: "ui medium header",
-    ul: "ui list",
-    li: "ui item"
-  };
-
-  const bindings = Object.keys(classMap).map(key => ({
-    type: "output",
-    regex: new RegExp(`<${key}(.*)>`, "g"),
-    replace: `<${key} class="${classMap[key]}" $1>`
-  }));
-
   let converter = new showdown.Converter({
     metadata: true
-    // extensions: [...bindings]
   });
   converter.setFlavor("github");
   $: mdtext = converter.makeHtml(post.content);
@@ -88,6 +74,9 @@
     href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.8/build/styles/default.min.css" />
 </svelte:head>
 
+<div class="title">
+  <h1>{post.title}</h1>
+</div>
 <div class="content">
   {@html mdtext}
 </div>

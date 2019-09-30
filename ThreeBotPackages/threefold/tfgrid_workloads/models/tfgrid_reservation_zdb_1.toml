@@ -3,7 +3,7 @@
 @url = tfgrid.reservation.zdb.1
 #unique id inside the reservation is an autoincrement
 workload_id = (I)
-node_id = (I)
+node_id = (S)
 reservation_id** = (I)
 size = (I)
 mode = "seq,user" (E)

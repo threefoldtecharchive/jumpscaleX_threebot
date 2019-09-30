@@ -21,10 +21,18 @@
   }
 </script>
 
-<form on:submit={search}>
-  <input type="text" bind:value={query} />
-  <button>Search</button>
-</form>
+<div class="col-sm-3 col-md-3 pull-right">
+  <form class="navbar-form form-inline" role="search" on:submit={search}>
+    <!-- <i class="fas fa-search" aria-hidden="true" /> -->
+    <input
+      class="form-control"
+      type="text"
+      bind:value={query}
+      placeholder="Search"
+      aria-label="Search" />
+    <!-- <button>Search</button> -->
+  </form>
+</div>
 
 {#if search_res}
   <ul>

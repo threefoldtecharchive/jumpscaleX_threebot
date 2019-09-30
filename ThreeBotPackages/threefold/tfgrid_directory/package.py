@@ -55,7 +55,6 @@ class Package(j.baseclasses.threebot_package):
         j.servers.myjobs.workers_tmux_start(1)
         gevent.spawn(self.sync_directory)
 
-
     def sync_directory(self):
         job = j.servers.myjobs.schedule(self._sync_dir)
         try:
