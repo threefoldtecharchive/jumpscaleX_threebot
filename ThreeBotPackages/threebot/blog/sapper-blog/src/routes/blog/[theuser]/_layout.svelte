@@ -19,10 +19,10 @@
 <script>
   import { stores } from "@sapper/app";
   const { preloading, page, session } = stores();
-  import Nav from "../components/Nav.svelte";
-  import Sidebar from "../components/Sidebar.svelte";
-  import Footer from "../components/Footer.svelte";
-  import Header from "../components/Header.svelte";
+  import Nav from "../../../components/Nav.svelte";
+  import Sidebar from "../../../components/Sidebar.svelte";
+  import Footer from "../../../components/Footer.svelte";
+  import Header from "../../../components/Header.svelte";
 
   export let segment;
   export let pages = [];
