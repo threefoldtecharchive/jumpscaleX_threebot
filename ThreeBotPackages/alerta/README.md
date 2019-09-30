@@ -7,6 +7,7 @@ central monitoring system built using svelte and gedis actors
 ## Running 
 
 - install bottle module `pip3 install bottle`
+- install frontend dependencies `cd alerta && npm install`
 - execute `kosmos -p 'j.threebot.package.alerta.start()'`
 - server will start at `172.17.0.2:8081`
 

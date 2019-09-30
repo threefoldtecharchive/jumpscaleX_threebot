@@ -12,8 +12,14 @@
 </script>
 
 <script>
-  import BlogList from "../../components/BlogsList.svelte";
+  import BlogsList from "../../components/BlogsList.svelte";
   export let blogs = [];
+  import Nav from "../../components/Nav.svelte";
+  import Sidebar from "../../components/Sidebar.svelte";
+  import Footer from "../../components/Footer.svelte";
+  import Header from "../../components/Header.svelte";
+
+  export let segment;
 </script>
 
 <style>
@@ -55,5 +61,12 @@
 <svelte:head>
   <title>Blogs</title>
 </svelte:head>
+<Nav {segment} />
 
-<BlogList {blogs} />
+<div class="container">
+
+  <div class="col-md-12">
+    <BlogsList {blogs} />
+  </div>
+</div>
+<Footer />

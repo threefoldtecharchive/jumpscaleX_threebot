@@ -5,7 +5,7 @@
 
   $: currentuser = $page.params.theuser;
   export let segment;
-  export let pages;
+  export let pages = [];
   import SearchBar from "./SearchBar.svelte";
 </script>
 
