@@ -42,10 +42,9 @@ class contacts(j.baseclasses.threebot_actor):
         res.contact_id = contact.id
         return res
 
-    def update(self, contact_id, contact, schema_out=None, user_session=None):
+    def update(self, contact, schema_out=None, user_session=None):
         """
         ```in
-        contact_id = (I)
         contact = (O) !contact.1
         ```
 
@@ -53,9 +52,9 @@ class contacts(j.baseclasses.threebot_actor):
         success = (B)
         ``` 
         """
-        self._get_contact(contact_id)
+        self._get_contact(contact.id)
         self._validate_contact(contact)
-        self.contact_model.set_dynamic(contact._ddict, obj_id=contact_id)
+        self.contact_model.set_dynamic(contact._ddict, obj_id=contact.id)
         
         res = schema_out.new()
         res.success = True
