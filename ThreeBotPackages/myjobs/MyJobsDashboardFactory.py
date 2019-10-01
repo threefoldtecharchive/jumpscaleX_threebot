@@ -18,9 +18,24 @@ class MyJobsDashboardFactory(j.baseclasses.object, j.baseclasses.testtools):
 
         return "OK"
 
+    def _start_sapper_server(self, reset=True):
+        s = j.servers.startupcmd.get("myjobs_sapper")
+        s.cmd_start = f"""
+        cd {self._dirpath}/jobvis
+        export DEV=1
+        npm run dev
+        """
+        s.executor = "tmux"
+        s.interpreter = "bash"
+        s.timeout = 10
+        s.ports = [3000]
+
+        s.start(reset=reset)
+
     def start(self):
         self.install()
         server = j.servers.threebot.default
+        self._start_sapper_server()
         server.start(web=True, ssl=False)
 
     def test(self, name=""):
