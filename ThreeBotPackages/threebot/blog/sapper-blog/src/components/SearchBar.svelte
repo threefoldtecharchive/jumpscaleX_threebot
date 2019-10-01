@@ -48,7 +48,7 @@
   </form>
 </div>
 
-{#if search_res}
+{#if search_res.length>0}
   <p>Search Result</p>
   <ul>
     {#each search_res as res}
