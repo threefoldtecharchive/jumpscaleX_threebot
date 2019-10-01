@@ -12,7 +12,9 @@
     margin: 0 0 1em 0;
     line-height: 1.5;
   }
-
+  li {
+    text-align: -webkit-match-parent;
+  }
   .list-inline {
     padding-left: 0;
     list-style: none;
