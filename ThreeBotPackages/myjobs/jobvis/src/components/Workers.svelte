@@ -1,14 +1,7 @@
 <script>
   import { getWorkers } from "../data";
+  import { formatDate } from "../common";
   import { onMount } from "svelte";
-  import {
-    link,
-    push,
-    pop,
-    replace,
-    location,
-    querystring
-  } from "svelte-spa-router";
 
   const state = {
     RESULT: "OK",
@@ -45,6 +38,12 @@
         workers = data.data.workers;
         workers.forEach(worker => {
           worker.state = worker.state.toUpperCase();
+          if (worker.error) {
+            worker.error = JSON.stringify(worker.error);
+          }
+
+          worker.time_start = formatDate(worker.time_start);
+          worker.last_update = formatDate(worker.last_update);
         });
 
         //Calculating the statstics relatedt to the workers

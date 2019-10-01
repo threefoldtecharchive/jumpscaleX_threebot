@@ -1,6 +1,7 @@
 <script>
   import TasksRendering from "./TasksRendering.svelte";
   import { getJobs } from "../data";
+  import { formatDate } from "../common";
   import { onMount } from "svelte";
 
   let allTasks = [];
@@ -19,10 +20,15 @@
         if (!data) {
           return;
         }
-        allTasks = data.data;
+        allTasks = data.data.jobs;
         //Make all the states UpperCase
         allTasks.forEach(task => {
           task.state = task.state.toUpperCase();
+          task.kwargs = JSON.stringify(task.kwargs);
+          task.result = JSON.stringify(task.result);
+          task.error = JSON.stringify(task.error);
+          task.time_start = formatDate(task.time_start);
+          task.time_stop = formatDate(task.time_stop);
         });
       })
       .catch(err => {
