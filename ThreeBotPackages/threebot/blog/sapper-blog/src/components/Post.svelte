@@ -28,7 +28,7 @@
         </a>
     </div>
     <div class="post-info">
-        <img class="author-img" src="me.jpg" alt="author image"><span class="published-at">Published at {post.published_at}</span>
+        <img class="author-img" src="/blog/blog_{username}/assets/me.jpg" onerror="this.src='me.jpg'"><span class="published-at">Published at {post.published_at}</span>
     </div>
 
 </div>
