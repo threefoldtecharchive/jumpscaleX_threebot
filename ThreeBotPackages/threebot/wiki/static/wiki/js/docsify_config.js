@@ -51,6 +51,9 @@ function docsifyConfig(name, repo) {
                         var data = JSON.parse(code);
                         return TeamWidget.render(data.dataset, data.order);
                     }
+                    if (lang === "markdown") {
+                        return (`<div class="reveal"><div class="slides" style="position: initial;">${code}</div></div>`);
+                    }
                     return this.origin.code.apply(this, arguments);
                 }
             }
