@@ -1,18 +1,19 @@
 
-import htmlToText from 'html-to-text';
-const sanitize = function (post) {
-    const content = htmlToText.fromString(
-        post,
-        {
-            ignoreImage: true,
-            ignoreHref: true,
-            wordwrap: false,
-            uppercaseHeadings: false
-        }
-    );
-    return content;
-}
+// // import htmlToText from 'html-to-text';
+// const sanitize = function (post) {
+//     const content = htmlToText.fromString(
+//         post,
+//         {
+//             ignoreImage: true,
+//             ignoreHref: true,
+//             wordwrap: false,
+//             uppercaseHeadings: false
+//         }
+//     );
+//     return content;
+// }
 
+const sanitize = (content) => content
 export const excerptOf = (content, opts) => {
     opts = opts || { excerptLength: 1000, pruneString: '...' };
     opts.excerptLength = opts.excerptLength || 1000;
