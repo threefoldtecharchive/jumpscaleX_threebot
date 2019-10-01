@@ -3,18 +3,18 @@ from Jumpscale import j
 
 class apps(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        bcdb = j.data.bcdb.get('appstore')
-        self.model = bcdb.model_get(url='appstore.app')
+        bcdb = j.data.bcdb.get("appstore")
+        self.model = bcdb.model_get(url="appstore.app")
 
     def add(self, appname="", installed=True, schema_out=None, user_session=None):
-        #default doesn't work
+        # default doesn't work
         """
         ```in
         appname = (S)
         installed = (B)
         ```
         """
-        #import ipdb; ipdb.set_trace()
+        # import ipdb; ipdb.set_trace()
         app = self.model.new()
         app.appname = appname
         app.installed = installed
@@ -23,7 +23,7 @@ class apps(j.baseclasses.threebot_actor):
         return j.data.serializers.json.dumps(response)
 
     def get(self, schema_out=None, user_session=None):
-        apps =  self.model.find()
+        apps = self.model.find()
 
         res = []
 
@@ -32,7 +32,7 @@ class apps(j.baseclasses.threebot_actor):
                 "name": app.appname,
                 "installed": app.installed,
                 "description": app.description,
-                "image": app.image
+                "image": app.image,
             }
 
             res.append(outApp)
