@@ -7,6 +7,7 @@ Job visualizer for myjobs
 
 ## Running
 
+- build frontend `./build_frontend.sh`
 - execute `kosmos -p 'j.threebot.package.myjobs_dashboard.start()'`
 - server will start at `172.17.0.2:8080`
 
@@ -20,7 +21,7 @@ See [package.py](package.py).
 
 ## Actors
 
-See [actors](actors), for example, myjobs actors have the following methods:
+See [actors](actors), for example, myjobs actor have the following methods:
 
 - `list_workers`: list all the workers
 - `list_tasks`: list all tasks
