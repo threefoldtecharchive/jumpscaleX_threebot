@@ -95,11 +95,22 @@ class contacts(j.baseclasses.threebot_actor):
             out.contacts.append(contact)
         return out
         
-    def remove(self, contact, schema_out=None, user_session=None):
-        pass
+    def remove(self, contact_id, schema_out=None, user_session=None):
+        """
+        ```in
+        contact_id = (I)
+        ```
 
-    def update(self, contact, schema_out=None, user_session=None):
-        pass
+        ```out
+        success = (B)
+        ``` 
+        """
+        contact = self._get_contact(contact_id)
+        
+
+        out = schema_out.new()
+        out.success = True
+        return out
 
     # share or send ?
     def share(self, contact, schema_out=None, user_session=None):

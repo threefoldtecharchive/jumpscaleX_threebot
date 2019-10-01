@@ -25,13 +25,14 @@ class apps(j.baseclasses.threebot_actor):
     def get(self, schema_out=None, user_session=None):
         """
         ```out 
-        apps = !appstore.app
+        apps = (LO) !appstore.app
         ```
         """
-        apps = self.model.find()
-        res = schema_out.new()
-        res.apps = apps
-        return res
+        out = schema_out.new()
+        
+        for app in self.model.iterate():
+            out.apps.append(app)
+        return out
 
     def update(self, appname="", installed=True, schema_out=None, user_session=None):
         """
