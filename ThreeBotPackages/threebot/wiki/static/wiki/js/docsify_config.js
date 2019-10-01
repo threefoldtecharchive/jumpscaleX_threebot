@@ -25,8 +25,20 @@ function docsifyConfig(name, repo) {
                         return (`<div class="reveal"><div class="slides" style="position: initial;">${code}</div></div>`);
                     }
                     if (lang === "slideshow") {
+
+                        String.prototype.replaceAll = function (stringToFind, stringToReplace) {
+                            if (stringToFind === stringToReplace) return this;
+                            var temp = this;
+                            var index = temp.indexOf(stringToFind);
+                            while (index != -1) {
+                                temp = temp.replace(stringToFind, stringToReplace);
+                                index = temp.indexOf(stringToFind);
+                            }
+                            return temp;
+                        };
+
                         let rendered_code = function (code) {
-                            code = code.replace("$path", imagesPath);
+                            code = code.replaceAll("$path", imagesPath);
                             return code;
                         }
 
