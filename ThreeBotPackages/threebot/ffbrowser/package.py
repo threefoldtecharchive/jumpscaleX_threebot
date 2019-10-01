@@ -15,9 +15,9 @@ class Package(j.baseclasses.threebot_package):
         server = self.openresty
         server.install(reset=False)
         server.configure()
-
-        website = server.websites.get("theapp")
-        locations = website.locations.get("theapp")
+        
+        website = server.get_from_port(80)
+        locations = website.locations.get("locations")
 
         # import pdb; pdb.set_trace()
 
