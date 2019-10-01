@@ -23,10 +23,20 @@
     });
     search_res = search_res.data;
   }
+
+  export function clear_results(e) {
+    if (e.key === "Escape" || e.type === "click") {
+      search_res = "";
+    }
+  }
 </script>
 
 <div class="col-sm-3 col-md-3 pull-right">
-  <form class="navbar-form form-inline" role="search" on:submit={search_method}>
+  <form
+    class="navbar-form form-inline"
+    role="search"
+    on:submit={search_method}
+    on:keyup={clear_results}>
     <!-- <i class="fas fa-search" aria-hidden="true" /> -->
     <input
       class="form-control"
@@ -43,7 +53,9 @@
   <ul>
     {#each search_res as res}
       <li>
-        <a href="blog/{res.blog_name}/{res.type}/{res.slug}">
+        <a
+          href="blog/{res.blog_name}/{res.type}/{res.slug}"
+          on:click={clear_results}>
           {res.slug} - Type: {res.type}
         </a>
       </li>
