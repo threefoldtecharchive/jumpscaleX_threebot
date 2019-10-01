@@ -20,17 +20,24 @@ class Package(j.baseclasses.threebot_package):
         server = self.openresty
         server.install(reset=False)
         server.configure()
-        website = server.websites.get("myjobs")
-        website.ssl = False
-        website.port = 8080
-        locations = website.locations.get("myjobs")
 
-        website_location = locations.locations_static.new()
-        website_location.name = "myjobs"
-        website_location.path_url = "/"
-        website_location.use_jumpscale_weblibs = True
-        fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
-        website_location.path_location = fullpath
+        website = server.get_from_port(80)
+        website.ssl = False
+        locations = website.locations.get("locations")
+
+        # website_location = locations.locations_static.new()
+        # website_location.name = "myjobs"
+        # website_location.path_url = "/"
+        # website_location.use_jumpscale_weblibs = True
+        # fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
+        # website_location.path_location = fullpath
+
+        sapper_proxy_location = locations.locations_proxy.new()
+        sapper_proxy_location.name = "myjobs_sapper"
+        sapper_proxy_location.path_url = f"/"
+        sapper_proxy_location.ipaddr_dest = "0.0.0.0"
+        sapper_proxy_location.port_dest = 3000
+        sapper_proxy_location.scheme = "http"
 
         ## START BOTTLE ACTORS ENDPOINT
 
