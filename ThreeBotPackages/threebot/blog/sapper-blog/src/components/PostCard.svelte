@@ -21,11 +21,22 @@
 
 <!-- <div in:fly={{ x: -60, duration: 100 }} class="post-card-title">
  -->
-<div class="post-card-title">
 
-  <a rel="prefetch" href="blog/{username}/posts/{post.slug}">
-    <h2>{post.title}</h2>
-  </a>
+<style>
+.author-img {
+  border-radius: 50%;
+  width:50px;
+  height:50px
+}
+</style>
+
+<div class="post-card-header">
+    <div class="post-card-title">
+        <a rel="prefetch" href="blog/{username}/posts/{post.slug}">
+            <span><h2>{post.title}</h2> by {post.author_name}</span>
+        </a>
+    </div>
+
 </div>
 {#if showExcerpt}
   <div class="post-card-content">
