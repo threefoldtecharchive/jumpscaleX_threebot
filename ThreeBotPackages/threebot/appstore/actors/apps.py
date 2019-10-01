@@ -23,21 +23,15 @@ class apps(j.baseclasses.threebot_actor):
         return j.data.serializers.json.dumps(response)
 
     def get(self, schema_out=None, user_session=None):
+        """
+        ```out 
+        apps = !appstore.app
+        ```
+        """
         apps = self.model.find()
-
-        res = []
-
-        for app in apps:
-            outApp = {
-                "name": app.appname,
-                "installed": app.installed,
-                "description": app.description,
-                "image": app.image,
-            }
-
-            res.append(outApp)
-
-        return j.data.serializers.json.dumps(res)
+        res = schema_out.new()
+        res.apps = apps
+        return res
 
     def update(self, appname="", installed=True, schema_out=None, user_session=None):
         """
