@@ -22,12 +22,12 @@ class contact(j.baseclasses.threebot_actor):
         return j.data.serializers.json.dumps(response)
 
     def get(self, schema_out=N):
-        contacts =  self.model.find()
+        contacts = self.model.find()
 
         res = []
 
         for c in contacts:
-            #print("User: ", user)
+            # print("User: ", user)
             print(c)
             res.append("test")
 
@@ -35,14 +35,19 @@ class contact(j.baseclasses.threebot_actor):
 
     def remove(self, contact, schema_out=None, user_session=None):
         pass
+
     def update(self, contact, schema_out=None, user_session=None):
         pass
-    #share or send ?
+
+    # share or send ?
     def share(self, contact, schema_out=None, user_session=None):
         pass
-    def list_by_name(self, name, schema_out=None, user_session=None): 
+
+    def list_by_name(self, name, schema_out=None, user_session=None):
         pass
-    def search_by_name(self, name, schema_out=None, user_session=None): 
+
+    def search_by_name(self, name, schema_out=None, user_session=None):
         pass
-    def search(self, text, schema_out=None, user_session=None): 
+
+    def search(self, text, schema_out=None, user_session=None):
         pass
