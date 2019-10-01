@@ -3,6 +3,7 @@ mermaid.initialize({ startOnLoad: false });
 
 function docsifyConfig(name, repo) {
     basePath = location.protocol + "//" + location.hostname + ":4442/docsites/" + name;
+    imagesPath = location.protocol + "//" + location.hostname + ":4442/";
     TeamWidget.avatarPrefix = basePath;
 
     window.$docsify = {
@@ -24,7 +25,12 @@ function docsifyConfig(name, repo) {
                         return (`<div class="reveal"><div class="slides" style="position: initial;">${code}</div></div>`);
                     }
                     if (lang === "slideshow") {
-                        return (`<div class="reveal"><div class="slides" style="position: initial;">${code}</div></div>`);
+                        let rendered_code = function (code) {
+                            code = code.replace("$path", imagesPath);
+                            return code;
+                        }
+
+                        return (`<div class="reveal"><div class="slides" style="position: initial;">${rendered_code(code)}</div></div>`);
                     }
                     if (lang === "gallery") {
                         return (`<div class="gallery" style="position: initial;">${code}</div>`);
