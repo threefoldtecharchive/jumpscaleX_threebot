@@ -23,7 +23,7 @@ class Package(j.baseclasses.threebot_package):
 
         website = server.get_from_port(80)
         website.ssl = False
-        locations = website.locations.get("locations")
+        locations = website.locations.get("myjobs_locations")
 
         website_location = locations.locations_static.new()
         website_location.name = "myjobs"
