@@ -1,6 +1,6 @@
 <script>
   import showdown from "showdown";
-  //   import excerptHtml from "excerpt-html";
+  import { excerptOf } from "../_helper.js";
   export let post;
   import { stores } from "@sapper/app";
   const { preloading, page, session } = stores();
@@ -8,14 +8,14 @@
   let converter = new showdown.Converter({ metadata: true });
   converter.setFlavor("github");
   let mdtext = converter.makeHtml(post.content);
-  export let excerpt = true;
-  let summary = mdtext
-    .split("\n")
-    .splice(1)
-    .join("\n")
-    .slice(0, 300);
+  export let showExcerpt = true;
+  //   let summary = mdtext
+  //     .split("\n")
+  //     .splice(1)
+  //     .join("\n")
+  //     .slice(0, 300);
 
-  //   let summary = excerptHtml(mdtext, { pruneLength: 500, pruneString: "..." });
+  let summary = excerptOf(mdtext);
   //   import { fly } from "svelte/transition";
 </script>
 
@@ -27,7 +27,7 @@
     <h1>{post.title}</h1>
   </a>
 </div>
-{#if excerpt}
+{#if showExcerpt}
   <div class="post-card-content">
     {@html summary}
 
