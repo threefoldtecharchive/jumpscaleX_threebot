@@ -17,7 +17,7 @@ class contacts(j.baseclasses.threebot_actor):
             if not getattr(contact, field):
                 raise j.exceptions.Value("%s is required" % field)
 
-    def register(self, contact, schema_out=None, user_session=None):
+    def put(self, contact, schema_out=None, user_session=None):
         """
         ```in
         contact = (O) !contact.1
@@ -27,37 +27,18 @@ class contacts(j.baseclasses.threebot_actor):
         contact_id = (I)
         ```
         """
-
         self._validate_contact(contact)
-        
-        # if self.contact_model.find(name=contact.firstname):
-        #     raise j.exceptions.Value("Contact with name %s already exist" % contact.name)
 
-        contact = self.contact_model.new(contact)
-        contact.save()
-        contact.id
-
+        if getattr(contact,"id"):
+            self._get_contact(contact.id)
+            self.contact_model.set_dynamic(contact._ddict, obj_id=contact.id)
+        else:
+            contact = self.contact_model.new(contact)
+            contact.save()
         
+
         res = schema_out.new()
         res.contact_id = contact.id
-        return res
-
-    def update(self, contact, schema_out=None, user_session=None):
-        """
-        ```in
-        contact = (O) !contact.1
-        ```
-
-        ```out
-        success = (B)
-        ``` 
-        """
-        self._get_contact(contact.id)
-        self._validate_contact(contact)
-        self.contact_model.set_dynamic(contact._ddict, obj_id=contact.id)
-        
-        res = schema_out.new()
-        res.success = True
         return res
 
     def get(self, contact_id, schema_out=None, user_session=None):
@@ -105,7 +86,7 @@ class contacts(j.baseclasses.threebot_actor):
         ``` 
         """
         contact = self._get_contact(contact_id)
-        
+        # contact.
 
         out = schema_out.new()
         out.success = True
