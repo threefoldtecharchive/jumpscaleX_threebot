@@ -24,7 +24,7 @@
 <div class="post-card-title">
 
   <a rel="prefetch" href="blog/{username}/posts/{post.slug}">
-    <h1>{post.title}</h1>
+    <h2>{post.title}</h2>
   </a>
 </div>
 {#if showExcerpt}

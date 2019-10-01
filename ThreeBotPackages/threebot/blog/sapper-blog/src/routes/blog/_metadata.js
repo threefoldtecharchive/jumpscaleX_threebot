@@ -33,22 +33,22 @@ export default metadata = {
         "title": "facebook",
         "link": "https://facebook.com/abc",
         "page": "",
-        "faclass": ""
+        "faclass": "fab fa-facebook"
     }, {
         "title": "github",
         "link": "https://github.com/abc",
         "page": "",
-        "faclass": "fa fa-github"
+        "faclass": "fab fa-github"
     }, {
         "title": "instagram",
         "link": "https://instagram.com",
         "page": "",
-        "faclass": "fa fa-instagram"
+        "faclass": "fab fa-instagram"
     }, {
         "title": "twitter",
         "link": "https://instagram.com",
         "page": "",
-        "faclass": "fa fa-twitter"
+        "faclass": "fab fa-twitter"
     }],
     "sidebar_links": [{
         "title": "google",
