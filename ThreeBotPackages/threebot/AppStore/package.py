@@ -3,14 +3,14 @@ from Jumpscale import j
 
 class Package(j.baseclasses.threebot_package):
     def _init(self, *args, **kwargs):
-        self.bcdb = self._package.threebot_server.bcdb_get('appstore')
+       # self.bcdb = self._package.threebot_server.bcdb_get('appstore')
 
     def prepare(self):
         """
         Dependencies
         """
         #write 4 apps to database
-        bcdb = j.data.bcdb.get('appstore')
+       """  bcdb = j.data.bcdb.get('appstore')
         appModel = bcdb.model_get(url='appstore.app')
 
         appsList = [{"appname" : "Mail", "installed" : False, "description" : "3bot-to-3bot mail service. Convenience of e-mail meets privacy, no man in the middle.", "image" : "upcoming"},
@@ -26,10 +26,10 @@ class Package(j.baseclasses.threebot_package):
             app.installed = application["installed"]
             app.description = application["description"]
             app.image = application["image"]
-            app.save()
+            app.save() """
 
     def start(self):
-        self.bcdb.models_add(path=self.package_root + '/models')
+    """     self.bcdb.models_add(path=self.package_root + '/models')
         self.gedis_server.actors_add(path=self.package_root + '/actors')
 
         server = self.openresty
@@ -71,7 +71,7 @@ class Package(j.baseclasses.threebot_package):
 
         locations.configure()
         website.configure()
-
+ """
     def stop(self):
         pass
 
