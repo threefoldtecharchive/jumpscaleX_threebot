@@ -2,7 +2,7 @@
   import showdown from "showdown";
   export let posts = [];
   export let title = "";
-  export let excerpt = true;
+  export let showExcerpt = true;
   import { stores } from "@sapper/app";
   const { preloading, page, session } = stores();
   export let username = $page.params.theuser;
@@ -23,7 +23,7 @@
 <ul>
   {#each posts as post}
     <li>
-      <PostCard {post} {username} {excerpt} />
+      <PostCard {post} {username} {showExcerpt} />
     </li>
   {/each}
 </ul>

@@ -25,5 +25,5 @@
 {#await posts}
   Loading
 {:then value}
-  <PostList excerpt="false" title="Posts with tag {tag}" posts={value} />
+  <PostList showExcerpt={false} title="Posts with tag {tag}" posts={value} />
 {/await}

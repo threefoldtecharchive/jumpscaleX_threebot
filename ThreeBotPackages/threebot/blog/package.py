@@ -106,9 +106,6 @@ class BlogLoader(j.baseclasses.object):
             post_obj.author_email = the_author_email
             post_obj.author_image = the_author_image
 
-            # TODO: excerpts from post meta or generate excerpt
-            # post_obj.excerpt = excerpt(post_obj.content)
-
             post_obj.save()
             # print("POST INFO: ", post_obj)
 
