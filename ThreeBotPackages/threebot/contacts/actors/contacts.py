@@ -95,12 +95,15 @@ class contacts(j.baseclasses.threebot_actor):
     # share or send ?
     def share(self, contact, schema_out=None, user_session=None):
         pass
-
+    
+    #done by list?
     def list_by_name(self, name, schema_out=None, user_session=None):
         pass
-
+    
+    #done by list?
     def search_by_name(self, name, schema_out=None, user_session=None):
         pass
-
+    
+    #todo implement global search
     def search(self, text, schema_out=None, user_session=None):
         pass
