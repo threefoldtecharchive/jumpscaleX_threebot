@@ -94,3 +94,22 @@ class contacts(j.baseclasses.threebot_actor):
                 continue
             out.contacts.append(contact)
         return out
+        
+    def remove(self, contact, schema_out=None, user_session=None):
+        pass
+
+    def update(self, contact, schema_out=None, user_session=None):
+        pass
+
+    # share or send ?
+    def share(self, contact, schema_out=None, user_session=None):
+        pass
+
+    def list_by_name(self, name, schema_out=None, user_session=None):
+        pass
+
+    def search_by_name(self, name, schema_out=None, user_session=None):
+        pass
+
+    def search(self, text, schema_out=None, user_session=None):
+        pass
