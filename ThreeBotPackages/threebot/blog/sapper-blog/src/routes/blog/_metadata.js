@@ -5,6 +5,7 @@ export default metadata = {
     "blog_name": "xmon",
     "blog_title": "xmonader weblog",
     "blog_description": "let there be posts",
+    "logo_logo": "logo.svg",
     "author_name": "ahmed",
     "author_email": "ahmed@there.com",
     "author_image_filename": "",
