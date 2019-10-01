@@ -1,13 +1,5 @@
 <script>
-  import active from "svelte-spa-router/active";
-  import {
-    link,
-    push,
-    pop,
-    replace,
-    location,
-    querystring
-  } from "svelte-spa-router";
+  export let segment;
 </script>
 
 <style>
@@ -32,14 +24,14 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link text-white" href="/workers" use:link>
+        <li class="nav-item {segment === 'workers' ? 'active' : ''}">
+          <a class="nav-link text-white" href="workers">
             Workers
             <span class="sr-only">(current)</span>
           </a>
         </li>
-        <li class="nav-item active">
-          <a class="nav-link text-white" href="/tasks" use:link>
+        <li class="nav-item {segment === 'tasks' ? 'active' : ''}">
+          <a class="nav-link text-white" href="tasks">
             Jobs
             <span class="sr-only">(current)</span>
           </a>
