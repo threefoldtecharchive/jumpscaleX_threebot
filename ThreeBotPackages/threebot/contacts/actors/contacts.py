@@ -24,7 +24,7 @@ class contacts(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        contact_id = (I)
+        contact  = (O) !contact.1
         ```
         """
         self._validate_contact(contact)
@@ -38,7 +38,7 @@ class contacts(j.baseclasses.threebot_actor):
         
 
         res = schema_out.new()
-        res.contact_id = contact.id
+        res.contact = contact
         return res
 
     def get(self, contact_id, schema_out=None, user_session=None):
