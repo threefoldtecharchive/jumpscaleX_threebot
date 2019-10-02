@@ -3,8 +3,8 @@ from Jumpscale import j
 
 class contacts(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        bcdb = j.data.bcdb.get('contacts')
-        self.contact_model = bcdb.model_get(url='contact.1')
+        bcdb = j.data.bcdb.get("contacts")
+        self.contact_model = bcdb.model_get(url="contact.1")
 
     def _get_contact(self, contact_id):
         try:
@@ -13,7 +13,7 @@ class contacts(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound("Contact %s not found" % contact_id)
 
     def _validate_contact(self, contact):
-        for field in ["firstname","lastname"]:
+        for field in ["firstname", "lastname"]:
             if not getattr(contact, field):
                 raise j.exceptions.Value("%s is required" % field)
 
@@ -29,13 +29,12 @@ class contacts(j.baseclasses.threebot_actor):
         """
         self._validate_contact(contact)
 
-        if getattr(contact,"id"):
+        if getattr(contact, "id"):
             self._get_contact(contact.id)
             self.contact_model.set_dynamic(contact._ddict, obj_id=contact.id)
         else:
             contact = self.contact_model.new(contact)
             contact.save()
-        
 
         res = schema_out.new()
         res.contact = contact
@@ -52,7 +51,6 @@ class contacts(j.baseclasses.threebot_actor):
         ```
         """
         return self._get_contact(contact_id)
-
 
     def list(self, firstname, lastname, schema_out=None, user_session=None):
         """
@@ -74,7 +72,7 @@ class contacts(j.baseclasses.threebot_actor):
                 continue
             out.contacts.append(contact)
         return out
-        
+
     def remove(self, contact_id, schema_out=None, user_session=None):
         """
         ```in
@@ -95,15 +93,15 @@ class contacts(j.baseclasses.threebot_actor):
     # share or send ?
     def share(self, contact, schema_out=None, user_session=None):
         pass
-    
-    #done by list?
+
+    # done by list?
     def list_by_name(self, name, schema_out=None, user_session=None):
         pass
-    
-    #done by list?
+
+    # done by list?
     def search_by_name(self, name, schema_out=None, user_session=None):
         pass
-    
-    #todo implement global search
+
+    # todo implement global search
     def search(self, text, schema_out=None, user_session=None):
         pass
