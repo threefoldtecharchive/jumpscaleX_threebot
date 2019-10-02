@@ -12,13 +12,15 @@ class Package(j.baseclasses.threebot_package):
         """
         j.builders.runtimes.python3.pip_package_install("filetype")
 
-        website = self.openresty.websites.get("helloworld")
-        website.ssl = False
-        website.port = 8081
+        website = self.openresty.websites.get("threebot_webinterface")
+        website.ssl = True
+        website.port = 80
         locations = website.locations.get("helloworld")
 
         ## START BOTTLE ACTORS ENDPOINT
 
+        # get gedis http server
+        app = j.servers.gedishttp.get_app()
         # add gedis http server to the rack
         self.rack_server.bottle_server_add(name="gedishttp", port=9201, app=app)
 
