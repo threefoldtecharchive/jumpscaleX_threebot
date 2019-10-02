@@ -20,15 +20,15 @@ class Package(j.baseclasses.threebot_package):
         server = self.openresty
         server.install(reset=False)
         server.configure()
-        website = server.websites.get("myjobs")
+
+        website = server.get_from_port(80)
         website.ssl = False
-        website.port = 8080
-        locations = website.locations.get("myjobs")
+        locations = website.locations.get("myjobs_locations")
 
         website_location = locations.locations_static.new()
         website_location.name = "myjobs"
         website_location.path_url = "/"
-        website_location.use_jumpscale_weblibs = True
+        website_location.use_jumpscale_weblibs = False
         fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
         website_location.path_location = fullpath
 
