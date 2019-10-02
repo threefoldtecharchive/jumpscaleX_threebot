@@ -7,7 +7,7 @@ class apps(j.baseclasses.threebot_actor):
         self.model = bcdb.model_get(url="appstore.app")
 
     def _validate_app(self, app):
-        for field in ["appname","description", "image"]:
+        for field in ["appname", "description", "image"]:
             if not getattr(app, field):
                 raise j.exceptions.Value("%s is required" % field)
 
@@ -22,7 +22,7 @@ class apps(j.baseclasses.threebot_actor):
         ```in
         app = (O) !appstore.app
         ```
-        """ 
+        """
 
         self._validate_app(app)
 
@@ -40,7 +40,7 @@ class apps(j.baseclasses.threebot_actor):
         ```
         """
         out = schema_out.new()
-        
+
         for app in self.model.iterate():
             out.apps.append(app)
         return out
