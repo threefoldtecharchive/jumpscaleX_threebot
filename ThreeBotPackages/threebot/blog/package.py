@@ -23,12 +23,12 @@ class BlogLoader(j.baseclasses.object):
         return re.sub(r"(\d+\-)+", "", filename)
 
     def published_date(self, filename):
-        found = re.findall("^(\d+\-\d+\-\d+)", filename)[
+        found = re.findall(r"^(\d+\-\d+\-\d+)", filename)
         if found:
             return found[0]
         else:
-            today = j.data.time.epoch                                                                                              
-            return j.data.time.epoch2pythonDate(today).replace("/", "-")      
+            today = j.data.time.epoch
+            return j.data.time.epoch2pythonDate(today).replace("/", "-")
 
     def slugify(self, string):
         """
@@ -86,7 +86,7 @@ class BlogLoader(j.baseclasses.object):
             meta = parsed.meta
 
             post_title = self.remove_date(basename)
-    
+
             the_title = post_title
             if "title" in meta:
                 the_title = meta["title"][0]
