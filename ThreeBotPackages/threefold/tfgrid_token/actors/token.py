@@ -3,8 +3,10 @@ from Jumpscale import j
 
 class token(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-
-        bcdb = j.data.bcdb.get("tf_grid_token")
+        try:
+            bcdb = j.data.bcdb.get("tf_grid_token")
+        except:
+            bcdb = j.data.bcdb.new("tf_grid_token")
         self.market = bcdb.model_get(url="tfgrid.market.1")
         self.capacity = bcdb.model_get(url="tfgrid.capacity.1")
         self.tokens = bcdb.model_get(url="tfgrid.token.price.1")
