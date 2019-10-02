@@ -10,10 +10,10 @@ time = "2019/10/01 22:00" (D)
 
 @url = tfgrid.market.1
 total_capitalization = "56341965 USD" (N)
-max_supply = 100000000000(I)
+max_supply = 100000000000 (F)
 potential_revenue_per_token = "0.48 USD" (N)
-total_supply = 750850914(I)
-circulating_supply = 186046470(I)
+total_supply = 750850914 (F)
+circulating_supply = 186046470 (F)
 average_compute_unit_price = "15 USD" (N)
 average_storage_unit_price = "12 USD" (N)
 five_years_network_revenue = "89915106 USD" (N)
