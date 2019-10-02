@@ -14,6 +14,10 @@ class Package(j.baseclasses.threebot_package):
         is called at install time
         :return:
         """
+                try:
+            bcdb = j.data.bcdb.get("tf_directory")
+        except:
+        bcdb = j.data.bcdb.new("tf_directory")
 
     def _fill_dummy_data(self):
         self.token_model = self.bcdb.model_get(url="tfgrid.token.1")
