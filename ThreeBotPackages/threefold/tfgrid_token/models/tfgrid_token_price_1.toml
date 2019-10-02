@@ -1,11 +1,11 @@
 
 @url = tfgrid.token.price.1
-timeframe** = "hour,half_day,day,week,month,year" (E)
+timeframe** = "hour,day,week,month,year" (E)
 opening = "0.06008764 USD" (N)
 closing = "0.06008764 USD"(N)
 low = "0.06008764 USD"(N)
 high = "0.06008764 USD" (N)
-time = "2019/10/01 22:00" (D) 
+time** = "2019/10/01 22:00" (T) 
 
 
 @url = tfgrid.market.1

@@ -1,5 +1,4 @@
 from Jumpscale import j
-import random
 
 
 class TFTokenFactory(j.baseclasses.threebot_factory):
@@ -25,8 +24,20 @@ class TFTokenFactory(j.baseclasses.threebot_factory):
 
         return self.client
 
-    def _generate_dummy_data(self, bcdb, timeframe, count, year=14, price_last=0.06):
+    """ def _generate_dummy_data(self, bcdb, timeframe, price_from=0.06):
         res = []
+        tframe = timeframe.lower()
+        if tframe == "year":
+            count = 5
+        elif tframe == "month":
+            count = 12
+        elif tframe == "day":
+            count = 31
+        elif tframe == "hour":
+            count = 24
+        else:
+            count = 0
+
         for x in range(count):
             price = bcdb.model_get(url="tfgrid.token.price.1")
             t = price.new()
@@ -37,19 +48,27 @@ class TFTokenFactory(j.baseclasses.threebot_factory):
                 percent = random.uniform(0.000001, 99.99999)
                 percent_less = random.uniform(0.000001, 99.99999)
             sign = random.uniform(-99, 99)
-            t.low = str((price_last - (price_last / 100) * percent)) + " USD"
-            t.high = str((price_last + (price_last / 100) * percent)) + " USD"
+            t.low = str((price_from - (price_from / 100) * percent)) + " USD"
+            t.high = str((price_from + (price_from / 100) * percent)) + " USD"
             if sign > 0:
                 # bull opening < closing
-                t.opening = str((price_last - (price_last / 100) * percent_less)) + " USD"
-                t.closing = str((price_last + (price_last / 100) * percent_less)) + " USD"
+                t.opening = str((price_from - (price_from / 100) * percent_less)) + " USD"
+                t.closing = str((price_from + (price_from / 100) * percent_less)) + " USD"
             else:
                 # bear opening > closing
-                t.closing = str((price_last - (price_last / 100) * percent_less)) + " USD"
-                t.opening = str((price_last + (price_last / 100) * percent_less)) + " USD"
-            t.time = str(year + x) + "/01/01"
+                t.closing = str((price_from - (price_from / 100) * percent_less)) + " USD"
+                t.opening = str((price_from + (price_from / 100) * percent_less)) + " USD"
+
+            if tframe == "year":
+                t.time = str(2014 + x) + "/01/01"
+            elif tframe == "month":
+                t.time = "2019/" + str(x + 1) + "/01"
+            elif tframe == "day":
+                t.time = "2019/10/" + str(x + 1)
+            elif tframe == "hour":
+                t.time = 1569888000 + x * 3600
             res.append(t)
-        return res
+        return res """
 
     def test(self, name=""):
         """
@@ -67,25 +86,41 @@ class TFTokenFactory(j.baseclasses.threebot_factory):
         cl = j.clients.redis.get(port=8901)
         assert cl.execute_command("PING")
         assert gedis_cli.actors.token.delete_all()
-        trans = self._generate_dummy_data(m, "year", 5)
-        for t in trans:
-            res = gedis_cli.actors.token.add(t)
-            print("*************************************res****:%s" % res)
 
-        assert len(trans) == 5
+        gedis_cli.actors.token.feed_dummy_data_prices("year", 2019, 10, 1, 0.06)
+
         res = gedis_cli.actors.token.list()
         assert len(res.prices) == 5
 
         res = gedis_cli.actors.token.get_market()
         print("****************************get_market*********res****:%s" % res)
         assert res.max_supply == 100000000000
-        j.shell()
-        assert res.potential_revenue_per_token > 0
+        assert res.potential_revenue_per_token_usd > 0
 
         res = gedis_cli.actors.token.get_capacity()
         print("****************************get_capacity*********res****:%s" % res)
-        assert res.max_supply == 100000000000
-        assert res.potential_revenue_per_token > 0
+        assert res.compute_units > 19000
+        assert res.cores > 0
 
+        res = gedis_cli.actors.token.find_prices("year")
+        assert len(res) == 5
+
+        res = gedis_cli.actors.token.find_prices("year", from_date="2018/02/02")
+        assert len(res) == 0
+        res = gedis_cli.actors.token.find_prices("year", from_date="2018/01/01")
+        assert len(res) == 1
+        res = gedis_cli.actors.token.find_prices("year", from_date="2016/02/02", to_date="2018/05/05")
+        assert len(res) == 2
+
+        print("****************************find*********res****:%s" % res)
+        gedis_cli.actors.token.feed_dummy_data_prices("month", 2019, 10, 1, 0.06)
+        assert len(gedis_cli.actors.token.find_prices("month")) == 12
+        gedis_cli.actors.token.feed_dummy_data_prices("day", 2019, 10, 1, 0.06)
+        assert len(gedis_cli.actors.token.find_prices("day")) == 31
+        gedis_cli.actors.token.feed_dummy_data_prices("hour", 2019, 10, 1, 0.06)
+        assert len(gedis_cli.actors.token.find_prices("hour")) == 24
+
+        res = gedis_cli.actors.token.find_prices("hour", from_date="2019/10/01 01:55", to_date="2019/10/01 05:42")
+        assert len(res) == 4
         self._log_info("All TESTS DONE")
         return "OK"
