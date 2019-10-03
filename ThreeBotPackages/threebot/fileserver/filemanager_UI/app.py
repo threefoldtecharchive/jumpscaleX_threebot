@@ -403,7 +403,7 @@ class App(object):
             obj = self.db._file_model.get_by_name(name=path)
 
             response.set_header("X-Renew-Token", "true")
-            response.set_header("Content-Type", 'application/octet-stream')
+            response.set_header("Content-Type", "application/octet-stream")
 
             if inline:
                 response.set_header("Content-Disposition", "inline")
@@ -502,10 +502,11 @@ class App(object):
         @self.app.route("/opendocs/file/<path:re:.*>", method="get")
         def onlyoffice(path):
             title = j.sal.fs.getBaseName(path)
-            key = hashlib.md5(path.encode('utf-8')).hexdigest()
+            key = hashlib.md5(path.encode("utf-8")).hexdigest()
             extension = j.sal.fs.getFileExtension(path)
-            return template("%s/static/onlyoffice.html" % self.root,
-                            {'title': title, 'key': key, 'extension': extension})
+            return template(
+                "%s/static/onlyoffice.html" % self.root, {"title": title, "key": key, "extension": extension}
+            )
 
     def __call__(self):
         return self.app
