@@ -13,6 +13,10 @@ class Package(j.baseclasses.threebot_package):
         else:
             self.branch = "master"
 
+    @property
+    def bcdb(self):
+        return j.data.bcdb.system
+
     def load(self):
 
         j.servers.myjobs.schedule(
@@ -73,18 +77,16 @@ class Package(j.baseclasses.threebot_package):
         """
         j.servers.myjobs.workers_tmux_start()
         self.load()
-
         server = self.openresty
 
-        website = server.websites.get("wiki")
-        website.ssl = False
+        website = server.get_from_port(443)
         locations = website.locations.get("main_wiki")
 
-        # website_location = locations.locations_static.new()
-        # website_location.name = "static"
-        # website_location.path_url = "/static"
-        # website_location.path_location = f"{self._dirpath}/static"
-        # website_location.use_jumpscale_weblibs = True
+        website_location = locations.locations_static.new()
+        website_location.name = "static"
+        website_location.path_url = "/static"
+        website_location.path_location = f"{self._dirpath}/static"
+        website_location.use_jumpscale_weblibs = True
 
         lapis_location = locations.locations_lapis.new()
         lapis_location.name = "wikis"
