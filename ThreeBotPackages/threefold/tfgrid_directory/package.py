@@ -15,29 +15,7 @@ class Package(j.baseclasses.threebot_package):
         is called at install time
         :return:
         """
-        website = self.openresty.websites.get("directory")
-        website.ssl = False
-        website.port = 8081
-        locations = website.locations.get("directory")
-
-        ## START BOTTLE ACTORS ENDPOINT
-
-        # add gedis http server to the rack
-        app = j.servers.gedishttp.get_app()
-        self.rack_server.bottle_server_add(name="gedishttp", port=9201, app=app)
-
-        # create location `/actors` to on your website `8081` to forward
-        # requests to `9201` where the bottle server is running
-        proxy_location = locations.locations_proxy.new()
-        proxy_location.name = "gedishttp"
-        proxy_location.path_url = "/actors"
-        proxy_location.ipaddr_dest = "0.0.0.0"
-        proxy_location.port_dest = 9201
-        proxy_location.scheme = "http"
-        ## END BOTTLE ACTORS ENDPOINT
-
-        locations.configure()
-        website.configure()
+        pass
 
     def start(self):
         """
@@ -49,7 +27,8 @@ class Package(j.baseclasses.threebot_package):
         # gevent.spawn(self.sync_directory)
 
     def sync_directory(self):
-        job = j.servers.myjobs.schedule(self._sync_dir)
+        sync_dir = j.tools.codeloader.load(path=os.path.join(self.package_root, "jobs", "sync_directory.py"))
+        job = j.servers.myjobs.schedule(sync_dir)
         try:
             job.wait()
         except Exception as e:
