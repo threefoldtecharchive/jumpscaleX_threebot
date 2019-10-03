@@ -2,9 +2,10 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-    def _init(self, **kwargs):
-        self.bcdb = j.data.bcdb.system
-
+    @property
+    def bcdb(self):
+        return j.data.bcdb.system
+    
     def prepare(self):
         """
         is called at install time
