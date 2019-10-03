@@ -4,6 +4,10 @@ from Jumpscale import j
 class Package(j.baseclasses.threebot_package):
     def _init(self, *args, **kwargs):
         pass
+    
+    @property
+    def bcdb(self):
+        pass
 
     def prepare(self):
         """
