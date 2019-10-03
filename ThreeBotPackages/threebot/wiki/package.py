@@ -75,16 +75,16 @@ class Package(j.baseclasses.threebot_package):
         self.load()
 
         server = self.openresty
-        server.configure()
+
         website = server.websites.get("wiki")
         website.ssl = False
         locations = website.locations.get("main_wiki")
 
-        website_location = locations.locations_static.new()
-        website_location.name = "static"
-        website_location.path_url = "/static"
-        website_location.path_location = f"{self._dirpath}/static"
-        website_location.use_jumpscale_weblibs = True
+        # website_location = locations.locations_static.new()
+        # website_location.name = "static"
+        # website_location.path_url = "/static"
+        # website_location.path_location = f"{self._dirpath}/static"
+        # website_location.use_jumpscale_weblibs = True
 
         lapis_location = locations.locations_lapis.new()
         lapis_location.name = "wikis"

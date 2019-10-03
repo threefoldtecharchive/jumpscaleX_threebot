@@ -15,12 +15,10 @@ class Package(j.baseclasses.threebot_package):
         website = self.openresty.websites.get("helloworld")
         website.ssl = False
         website.port = 8081
+
         locations = website.locations.get("helloworld")
 
-        ## START BOTTLE ACTORS ENDPOINT
-
-        # add gedis http server to the rack
-        self.rack_server.bottle_server_add(name="gedishttp", port=9201, app=app)
+        # TODO, needs to load the bottle app & connect it to the right port at back = 9201
 
         # create location `/actors` to on your website `8084` to forward
         # requests to `9201` where the bottle server is running
@@ -30,7 +28,6 @@ class Package(j.baseclasses.threebot_package):
         proxy_location.ipaddr_dest = "0.0.0.0"
         proxy_location.port_dest = 9201
         proxy_location.scheme = "http"
-        ## END BOTTLE ACTORS ENDPOINT
 
         website_location = locations.locations_static.new()
         website_location.name = "static"
