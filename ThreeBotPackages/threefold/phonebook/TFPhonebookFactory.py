@@ -1,7 +1,7 @@
 from Jumpscale import j
 
 
-class TFPhonebookFactory(j.baseclasses.object, j.baseclasses.testtools):
+class TFPhonebookFactory(j.baseclasses.threebot_factory):
 
     __jslocation__ = "j.threebot.package.phonebook"
 
@@ -12,25 +12,15 @@ class TFPhonebookFactory(j.baseclasses.object, j.baseclasses.testtools):
         """
         self.client = j.servers.threebot.local_start_default(web=True)
 
-        self.client.actors.package_manager.package_add(
-            "threebot_phonebook",
-            git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/threefold/phonebook",
-        )
-
-        self.client.reload()
-
         return self.client
-
-    def start(self):
-        self.client = self.client_get()
-
     def test(self, name=""):
         """
         kosmos -p 'j.threebot.package.phonebook.test()'
         """
-
-        self.start()
-
+        cmd = "kosmos -p 'j.threebot.package.phonebook.test()"
+        test_start = j.servers.startupcmd.get("phonebook_test", cmd_start=cmd)
+        test_start.start()
+        cl = self.client_get()
         j.shell()
 
         print(name)

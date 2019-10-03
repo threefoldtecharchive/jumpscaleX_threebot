@@ -8,8 +8,8 @@ NONE = 2147483647
 
 class phonebook(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        bcdb = j.data.bcdb.get("threebot_phonebook")
-        self.phonebook_model = bcdb.model_get(url="threebot.phonebook.user.1")
+        self.bcdb = self._bcdb_get("threebot_phonebook")
+        self.phonebook_model = self.bcdb.model_get(url="threebot.phonebook.user.1")
 
     def wallet_create(self, name, schema_out=None, user_session=None):
         """
