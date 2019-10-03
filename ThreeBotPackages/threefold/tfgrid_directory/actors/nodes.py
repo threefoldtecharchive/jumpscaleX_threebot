@@ -94,6 +94,8 @@ class nodes(j.baseclasses.threebot_actor):
         ```
         """
         node = self._find(node_id)
+        if not node:
+            raise j.exceptions.NotFound("node %s not found" % id)
         if not proofs:
             node.proofs = []
         return node
