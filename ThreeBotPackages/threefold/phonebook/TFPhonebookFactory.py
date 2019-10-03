@@ -10,7 +10,7 @@ class TFPhonebookFactory(j.baseclasses.object, j.baseclasses.testtools):
         j.threebot.package.phonebook.client_get()
         :return:
         """
-        self.client = j.servers.threebot.local_start_default()
+        self.client = j.servers.threebot.local_start_default(web=True)
 
         self.client.actors.package_manager.package_add(
             "threebot_phonebook",
