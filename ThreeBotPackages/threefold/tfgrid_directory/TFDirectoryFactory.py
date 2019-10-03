@@ -2,22 +2,12 @@ from Jumpscale import j
 
 
 class TFDirectoryFactory(j.baseclasses.threebot_factory):
+
     __jslocation__ = "j.threebot.package.directory"
-    _web = False
-
-    def install(self):
-        server = j.servers.threebot.default
-        server.save()
-
-        package = j.tools.threebot_packages.get("directory", path=self._dirpath, threebot_server_name=server.name)
-        package.prepare()
-        package.save()
-        return "OK"
 
     def start(self):
-        self.install()
-        server = j.servers.threebot.default
-        server.start(web=True, ssl=False)
+        gedis_client = j.servers.threebot.local_start_default(web=True)
+        gedis_client.actors.package_manager.package_add(path=self._dirpath)
 
     def test(self, name=""):
         """
