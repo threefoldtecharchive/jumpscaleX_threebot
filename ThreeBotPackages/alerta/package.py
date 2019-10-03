@@ -41,7 +41,7 @@ class Package(j.baseclasses.threebot_package):
         ## START BOTTLE ACTORS ENDPOINT
         # get gedis http server
         app = j.servers.gedishttp.get_app()
-        
+
         # add gedis http server to the rack
         self.rack_server.bottle_server_add(name="gedishttp", port=9201, app=app)
 

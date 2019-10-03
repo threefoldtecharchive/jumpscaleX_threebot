@@ -11,7 +11,6 @@ class Package(j.baseclasses.threebot_package):
         j.servers.myjobs.workers_tmux_start()
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
 
-
     def start(self):
         server = self.openresty
         server.install(reset=False)
@@ -50,7 +49,6 @@ class Package(j.baseclasses.threebot_package):
         locations.configure()
         website.configure()
 
-    
     def stop(self):
         """
         called when the 3bot stops
