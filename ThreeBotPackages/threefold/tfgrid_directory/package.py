@@ -27,7 +27,8 @@ class Package(j.baseclasses.threebot_package):
         # gevent.spawn(self.sync_directory)
 
     def sync_directory(self):
-        job = j.servers.myjobs.schedule(self._sync_dir)
+        sync_dir = j.tools.codeloader.load(path=os.path.join(self.package_root, "jobs", "sync_directory.py"))
+        job = j.servers.myjobs.schedule(sync_dir)
         try:
             job.wait()
         except Exception as e:
