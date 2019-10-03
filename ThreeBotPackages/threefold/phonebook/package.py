@@ -18,8 +18,8 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot starts
         :return:
         """
-        # std will load the actors & models & the wiki's, no need to specify
-        pass
+        self.bcdb.models_add(path=self.package_root + "/models")
+        self.gedis_server.actors_add(self.package_root + "/actors")
 
     def stop(self):
         """
