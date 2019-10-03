@@ -130,7 +130,9 @@ print("Start local 3bot")
 client = j.servers.threebot.local_start_default()
 client.actors.package_manager.package_add('namemanager', path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/namemanager')
 client.actors.package_manager.package_add('gridnetwork', path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/gridnetwork')
+client.actors.package_manager.package_add('phonebook', path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/phonebook')
 client.reload()
+
 
 networks = client.actors.gridnetwork.network_find()
 for network in networks.res:
@@ -142,6 +144,13 @@ else:
 existingendpoints = []
 for endpoint in client.actors.gridnetwork.network_endpoint_find('3botnetwork').res:
     existingendpoints.append(endpoint.network_public.split("/")[0])
+
+print("Register dns entries")
+managerip = j.sal.nettools.getDefaultIPConfig()[1]
+j.tools.tf_gateway.domain_register_a('@', '3bot.grid.tf', managerip)
+j.tools.tf_gateway.domain_register_cname('phonebook', '3bot.grid.tf', '3bot.grid.tf.')
+j.tools.tf_gateway.domain_register_cname('gridmanager', '3bot.grid.tf', '3bot.grid.tf.')
+j.tools.tf_gateway.domain_register_cname('namemanager', '3bot.grid.tf', '3bot.grid.tf.')
 
 def configure_wg(ssh_name, privateip):
     wgr = j.tools.wireguard.get(ssh_name, autosave=False)
@@ -223,6 +232,7 @@ for x, region in enumerate(regions):
     configure_coredns(executor)
     if executor.sshclient.addr not in existingendpoints:
         client.actors.gridnetwork.network_endpoint_add("3botnetwork", sshname)
+    j.tools.tf_gateway.domain_register_a('gateway', '3bot.grid.tf', executor.sshclient.adddr)
 
 wg.save()
 wg.configure()
