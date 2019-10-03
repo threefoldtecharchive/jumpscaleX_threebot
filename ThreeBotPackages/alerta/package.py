@@ -33,18 +33,17 @@ class Package(j.baseclasses.threebot_package):
 
         website_location = locations.locations_static.new()
         website_location.name = "alerta"
-        website_location.path_url = "/alerta"
+        website_location.path_url = "/"
         website_location.use_jumpscale_weblibs = False
         fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
         website_location.path_location = fullpath
 
         ## START BOTTLE ACTORS ENDPOINT
-        rack = self.rack_server
         # get gedis http server
         app = j.servers.gedishttp.get_app()
         
         # add gedis http server to the rack
-        rack.bottle_server_add(name="gedishttp", port=9201, app=app)
+        self.rack_server.bottle_server_add(name="gedishttp", port=9201, app=app)
 
         # create location `/actors` to on your website `8084` to forward
         # requests to `9201` where the bottle server is running
