@@ -3,13 +3,13 @@ from Jumpscale import j
 
 class NameServiceFactory(j.baseclasses.object, j.baseclasses.testtools):
 
-    __jslocation__ = "j.threebot.package.nameservice"
+    __jslocation__ = "j.threebot.package.namemanager"
 
     def install(self):
         server = j.servers.threebot.default
         server.save()
 
-        package = j.tools.threebot_packages.get("nameservice", path=self._dirpath, threebot_server_name=server.name)
+        package = j.tools.threebot_packages.get("namemanager", path=self._dirpath, threebot_server_name=server.name)
         package.prepare()
         package.save()
         return "OK"

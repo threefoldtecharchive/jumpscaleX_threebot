@@ -3,12 +3,6 @@ from os.path import dirname, abspath, join
 
 
 class Package(j.baseclasses.threebot_package):
-    def _init(self, **kwargs):
-        if "branch" in kwargs.keys():
-            self.branch = kwargs["branch"]
-        else:
-            self.branch = "*"
-
     def prepare(self):
         """
         is called at install time
@@ -17,6 +11,8 @@ class Package(j.baseclasses.threebot_package):
         j.servers.myjobs.workers_tmux_start()
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
 
+
+    def start(self):
         server = self.openresty
         server.install(reset=False)
         server.configure()
@@ -34,7 +30,7 @@ class Package(j.baseclasses.threebot_package):
 
         ## START BOTTLE ACTORS ENDPOINT
 
-        rack = j.servers.rack.get()
+        rack = self.rack_server
         # get gedis http server
         app = j.servers.gedishttp.get_app()
 
@@ -54,13 +50,7 @@ class Package(j.baseclasses.threebot_package):
         locations.configure()
         website.configure()
 
-    def start(self):
-        """
-        called when the 3bot starts
-        :return:
-        """
-        pass
-
+    
     def stop(self):
         """
         called when the 3bot stops

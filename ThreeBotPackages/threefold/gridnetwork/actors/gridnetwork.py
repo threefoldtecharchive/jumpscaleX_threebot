@@ -75,7 +75,34 @@ class gridnetwork(j.baseclasses.threebot_actor):
         out.res = True
         return out
 
-    def networks_find(self, name, schema_out=None, user_session=None):
+    def network_endpoint_find(self, networkname, schema_out=None, user_session=None):
+        """"
+        ```in
+        networkname = (S)
+        ```
+        ```out
+        res = (LO) !tfgrid.network.endpoint.1
+        ```
+        """
+        out = schema_out.new()
+        network = self._network_get(networkname)
+
+        endpoints = []
+        for memberid in network.members:
+            member = j.tools.wireguard.get_by_id(memberid)
+            if member.network_public:
+                endpoints.append(member)
+
+        for endpoint in endpoints:
+            returnpoint = out.res.new()
+            returnpoint.network_public = endpoint.network_public
+            returnpoint.network_private = endpoint.network_private
+            returnpoint.key_public = endpoint.key_public
+            returnpoint.port = endpoint.port
+
+        return out
+
+    def network_find(self, name, schema_out=None, user_session=None):
         """"
         ```in
         name = (S)
