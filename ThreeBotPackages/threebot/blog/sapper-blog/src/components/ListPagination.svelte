@@ -4,6 +4,7 @@
   export let articlesPerPage;
   export let objectPath;
 
+  export let posts = [];
   let range;
   $: {
     range = [];
@@ -15,12 +16,14 @@
 </script>
 
 {#if articlesCount >= articlesPerPage}
-  <nav>
-    <ul class="pagination">
-
+  <nav aria-label="Page navigation example">
+    <ul class="pagination pagination-template d-flex justify-content-center">
       {#each range as v}
         <li class="page-item {v === page ? 'active' : ''}">
-          <a class="page-link" href="{objectPath}?page={v + 1}">{v + 1}</a>
+          <a href="{objectPath}?page={v + 1}" class="page-link">
+            <i class="fa fa-angle-left" />
+            {v + 1}
+          </a>
         </li>
       {/each}
     </ul>

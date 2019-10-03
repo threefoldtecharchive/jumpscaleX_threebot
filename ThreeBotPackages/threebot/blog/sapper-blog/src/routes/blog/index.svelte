@@ -63,10 +63,6 @@
 </svelte:head>
 <Nav {segment} />
 
-<div class="container">
+<BlogsList {blogs} />
 
-  <div class="col-md-12">
-    <BlogsList {blogs} />
-  </div>
-</div>
 <Footer />
