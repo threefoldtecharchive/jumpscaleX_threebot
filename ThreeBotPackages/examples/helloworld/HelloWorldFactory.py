@@ -18,5 +18,6 @@ class HelloWorldFactory(j.baseclasses.object, j.baseclasses.testtools):
         kosmos 'j.threebot.package.helloworld.test()'
         :return:
         """
+        self.start()
         # TODO: create a test e.g. call the bottle server app with /hello
         pass
