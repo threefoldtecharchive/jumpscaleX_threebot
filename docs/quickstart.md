@@ -136,10 +136,10 @@ export function newPaste(code) {
 # Locations
 As you already figured out we use `openresty` for running applications and proxying requests based on their locations. There're multiple types
 
-1- location_static: used to serve static assets directly (should use that for your css, js, images)
-2- location_proxy: to `proxy` to requests on certain location to a running server
-3- location_spa: special location to serve SPA (sapper exported) directories mainly
-4- location_custom: you can add there whatever configurations you want.
+- location_static: used to serve static assets directly (should use that for your css, js, images)
+- location_proxy: to `proxy` to requests on certain location to a running server
+- location_spa: special location to serve SPA (sapper exported) directories mainly
+- location_custom: you can add there whatever configurations you want.
 
 # Webinterface package
 
