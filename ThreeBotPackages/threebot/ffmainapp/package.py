@@ -2,22 +2,9 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-    def _init(self, *args, **kwargs):
-        pass
-
-    def prepare(self):
-        """
-        Dependencies
-        """
-        pass
-
     def start(self):
-        pass
-
-    def stop(self):
-        pass
-
-    def uninstall(self):
-        """
-        Remove Dependencies
-        """
+        for pkg in ["interface", "ffbrowser", "contacts", "appstore"]:
+            package = j.tools.threebot_packages.get(
+                pkg,
+                path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/{}/".format(pkg),
+            )
