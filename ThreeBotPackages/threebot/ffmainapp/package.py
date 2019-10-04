@@ -8,6 +8,9 @@ class Package(j.baseclasses.threebot_package):
                 pkg,
                 path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/{}/".format(pkg),
             )
+            package.prepare()
+            package.save()
+            package.start()
 
     def _init(self, **kwargs):
         if "branch" in kwargs.keys():
