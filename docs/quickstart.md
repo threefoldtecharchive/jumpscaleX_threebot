@@ -4,17 +4,21 @@
 
 application is driven using `package.py` file which controls the life cycle of the application, configurations (prepare) , start, stop .. etc
 
-## Registering package (using package manager)
-NOT WORKING YET
-
 ## Starting threebot with registered packages
-- the recommended way is `j.servers.threebot.local_start_default()`, for example:
-    * `kosmos -p`
-    * `cl = j.servers.threebot.local_start_default(web=True)`
-    * `cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta') `
+- the recommended way is `j.servers.threebot.local_start_default()`.
 
 - to simplify the development workflow you can start packages directly using their factories, for example:
     * `kosmos -p "j.threebot.package.alerta.start()"`
+
+## Registering package (using package manager)
+After starting the server with recommended way, you can use the returned client to access package manager actor and add your package, for an example starting alerta package:
+
+
+```
+kosmos -p
+JSX> cl = j.servers.threebot.local_start_default(web=True)
+JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta')
+```
 
 ## Package structure
 - models directory registers the model on the package loading. no need to manually add the models
