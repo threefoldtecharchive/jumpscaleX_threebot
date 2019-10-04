@@ -2,8 +2,9 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-    def _init(self, *args, **kwargs):
-        self.bcdb = self._package.threebot_server.bcdb_get("contacts")
+    @property
+    def bcdb(self):
+        return self.threebot_server.bcdb_get("contacts")
 
     def prepare(self):
         """
