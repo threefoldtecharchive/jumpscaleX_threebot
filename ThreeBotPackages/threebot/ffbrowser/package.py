@@ -5,6 +5,10 @@ class Package(j.baseclasses.threebot_package):
     def _init(self, *args, **kwargs):
         pass
 
+    @property
+    def bcdb(self):
+        return self.threebot_server.bcdb_get("ffbrowser")
+
     def prepare(self):
         """
         Dependencies

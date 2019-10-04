@@ -161,7 +161,6 @@ class Package(j.baseclasses.threebot_package):
         self.branch = kwargs["package"].branch or "master"
 
         # load models
-        self.bcdb = j.data.bcdb.system
         models_location = j.sal.fs.joinPaths(self.package_root, "models")
         self.bcdb.models_add(models_location)
         self.blog_dest = ""
