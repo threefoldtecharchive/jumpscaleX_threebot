@@ -23,7 +23,7 @@ NOT WORKING YET
 - package.py  where you define your package logic
 - PACKAGE_NAME_Factory the entry point for your package so it can be referenced within jumpscaleX ecosystem
 
-- for packages that need its own bcdb, you need to override bcdb property like this
+- for packages that need their own bcdb, you need to override bcdb property like this
 
 ```python
 class Package(j.baseclasses.threebot_package):
