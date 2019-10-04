@@ -19,7 +19,8 @@ NOT WORKING YET
 - PACKAGE_NAME_Factory the entry point for your package so it can be referenced within jumpscaleX ecosystem
 
 ## Example factory
-```
+
+```python
 from Jumpscale import j
 
 
@@ -66,7 +67,7 @@ class Package(j.baseclasses.threebot_package):
 
 ## APIs (actors)
 
-```
+```python
 from Jumpscale import j
 
 
