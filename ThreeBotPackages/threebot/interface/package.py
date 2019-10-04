@@ -2,21 +2,12 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-    def _init(self, *args, **kwargs):
-        pass
-
-    def prepare(self):
-        """
-        Dependencies
-        """
-        pass
-
     def start(self):
         server = self.openresty
         server.install(reset=False)
         server.configure()
         website = server.get_from_port(443)
-        locations = website.locations.get("locations")
+        locations = website.locations.get()
 
         website_location = locations.locations_spa.new()
         website_location.name = "interface"
@@ -26,11 +17,4 @@ class Package(j.baseclasses.threebot_package):
 
         locations.configure()
         website.configure()
-
-    def stop(self):
-        pass
-
-    def uninstall(self):
-        """
-        Remove Dependencies
-        """
+        website.save()
