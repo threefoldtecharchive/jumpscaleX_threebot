@@ -7,9 +7,14 @@ application is driven using `package.py` file which controls the life cycle of t
 ## Registering package (using package manager)
 NOT WORKING YET
 
-## Starting threebot with registered packages 
-- the recommended way is `j.servers.threebot.local_default_start()`
-- to simplify the development workflow you can start packages directly using their factories
+## Starting threebot with registered packages
+- the recommended way is `j.servers.threebot.local_start_default()`, for example:
+    * `kosmos -p`
+    * `cl = j.servers.threebot.local_start_default(web=True)`
+    * `cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta') `
+
+- to simplify the development workflow you can start packages directly using their factories, for example:
+    * `kosmos -p "j.threebot.package.alerta.start()"`
 
 ## Package structure
 - models directory registers the model on the package loading. no need to manually add the models
@@ -126,7 +131,7 @@ As you already figured out we use `openresty` for running applications and proxy
 
 # Webinterface package
 
-[Webinterface](https://github.com/threefoldtech/jumpscaleX_threebot/blob/c58b3db99095a8a9635c75ac7f82647947a9d110/ThreeBotPackages/threebot/webinterface) package is always registered when starting your threebot responsible for 
+[Webinterface](https://github.com/threefoldtech/jumpscaleX_threebot/blob/c58b3db99095a8a9635c75ac7f82647947a9d110/ThreeBotPackages/threebot/webinterface) package is always registered when starting your threebot responsible for
 - exposing http endpoints for actors
 - exposing websocket endpoints for actors
 - exposing bcdbfs endpoints
