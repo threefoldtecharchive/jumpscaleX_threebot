@@ -8,7 +8,7 @@ DIR_SYNC_TIME = 3600 * 4
 class Package(j.baseclasses.threebot_package):
     @property
     def bcdb(self):
-        return self._package.threebot_server.bcdb_get("tf_workloads")
+        return self._package.threebot_server.bcdb_get("tf_directory")
 
     def prepare(self):
         """
