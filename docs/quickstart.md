@@ -98,7 +98,7 @@ class pastebin(j.baseclasses.threebot_actor):
         return res
 
 ```
-- the actors of your registered packagesare exposed on http endpoint `/api/actors` more [here](https://github.com/threefoldtech/jumpscaleX_core/blob/be2496d7ca03ad1cbf43caa2b9ec132ae471598a/JumpscaleCore/servers/gedis_http)
+- the actors of your registered packages are exposed on http endpoint `/api/actors` more [here](https://github.com/threefoldtech/jumpscaleX_core/blob/be2496d7ca03ad1cbf43caa2b9ec132ae471598a/JumpscaleCore/servers/gedis_http)
 
 - if you want to communicate over websocket (unrecommended) use `/api/actors_websocket
 - http/websocket clients available [here](https://github.com/threefoldtech/jumpscaleX_weblibs/tree/master/static/gedis) as well
@@ -123,6 +123,13 @@ As you already figured out we use `openresty` for running applications and proxy
 2- location_proxy: to `proxy` to requests on certain location to a running server
 3- location_spa: special location to serve SPA (sapper exported) directories mainly
 4- location_custom: you can add there whatever configurations you want.
+
+# Webinterface package
+
+[Webinterface](https://github.com/threefoldtech/jumpscaleX_threebot/blob/c58b3db99095a8a9635c75ac7f82647947a9d110/ThreeBotPackages/threebot/webinterface) package is always registered when starting your threebot responsible for 
+- exposing http endpoints for actors
+- exposing websocket endpoints for actors
+- exposing bcdbfs endpoints
 
 
 
