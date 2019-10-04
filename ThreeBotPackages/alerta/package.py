@@ -39,17 +39,6 @@ class Package(j.baseclasses.threebot_package):
         website_location.path_location = fullpath
 
         # if you start with a different port please enable gedis http part down.
-        website = server.get_from_port(443)
-
-        locations = website.locations.get("alerta_locations")
-
-        website_location = locations.locations_spa.new()
-        website_location.name = "alerta"
-        website_location.path_url = "/"
-        website_location.use_jumpscale_weblibs = False
-        fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
-        website_location.path_location = fullpath
-
         ## IF U WANT PER APP (specific endpoints or relative urls u can proxy the calls on ur website to :8903)
         # PROXY for gedis HTTP
         # proxy_location = website.locations.get().locations_proxy.new()
