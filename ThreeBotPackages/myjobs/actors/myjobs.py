@@ -3,9 +3,9 @@ from Jumpscale import j
 
 class myjobs(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        self.job_model = j.data.bcdb.myjobs.model_get(url="jumpscale.myjobs.job")
-        self.action_model = j.data.bcdb.myjobs.model_get(url="jumpscale.myjobs.action")
-        self.worker_model = j.data.bcdb.myjobs.model_get(url="jumpscale.myjobs.worker")
+        self.job_model = j.servers.myjobs.jobs._model
+        self.action_model = j.servers.myjobs.model_action
+        self.worker_model = j.servers.myjobs.workers._model
 
     def list_workers(self, schema_out=None, user_session=None):
         def transform_worker(worker_obj):
