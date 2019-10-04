@@ -1,5 +1,4 @@
 from Jumpscale import j
-from os.path import dirname, abspath, join
 
 
 class Package(j.baseclasses.threebot_package):
