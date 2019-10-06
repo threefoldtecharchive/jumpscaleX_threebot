@@ -55,8 +55,9 @@ class Package(j.baseclasses.threebot_package):
 
         for application in appsList:
             # rework needed
-            app = appModel.new(application)
-            app.save()
+            if appModel.count(appname=application['appname']) == 0:
+                app = appModel.new(application)
+                app.save()
 
     def start(self):
         self.bcdb.models_add(path=self.package_root + "/models")
