@@ -40,8 +40,8 @@ class Package(j.baseclasses.threebot_package):
         website_location = locations.locations_spa.new()
         website_location.name = "interface"
         website_location.path_url = "/"
-        fullpath = j.sal.fs.joinPaths(self.package_root, "html")
-        website_location.path_location = fullpath
+      
+        website_location.path_location =  j.clients.git.getContentPathFromURLorPath("https://github.com/jimbertools/3botui_builds.git")
 
         locations.configure()
         website.configure()
