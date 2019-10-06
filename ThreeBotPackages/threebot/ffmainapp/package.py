@@ -6,14 +6,13 @@ class Package(j.baseclasses.threebot_package):
         for pkg in ["interface", "ffbrowser", "contacts", "appstore"]:
             package = j.tools.threebot_packages.get(
                 pkg,
-                path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/{}/".format(
-                    pkg),
+                path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/{}/".format(pkg),
             )
             package.prepare()
             package.save()
             package.start()
 
-        #this is some temporary stuff for jimber demo; holy promise to @xmonader to delete after
+        # this is some temporary stuff for jimber demo; holy promise to @xmonader to delete after
         server = self.openresty
         website = server.get_from_port(80)
         locations = website.locations.get("interface_location")
