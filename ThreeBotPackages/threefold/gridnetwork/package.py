@@ -5,7 +5,7 @@ class Package(j.baseclasses.threebot_package):
     @property
     def bcdb(self):
         return j.data.bcdb.system
-    
+
     def prepare(self):
         """
         is called at install time

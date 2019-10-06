@@ -52,4 +52,3 @@ class Package(j.baseclasses.threebot_package):
 
         locations.configure()
         website.configure()
-

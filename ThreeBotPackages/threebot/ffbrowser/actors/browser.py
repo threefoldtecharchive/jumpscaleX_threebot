@@ -15,4 +15,3 @@ class browser(j.baseclasses.threebot_actor):
         pass
 
     # put here the needed functions to interface with ffbrowser
-
