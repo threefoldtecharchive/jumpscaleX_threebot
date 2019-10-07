@@ -54,6 +54,7 @@ class BlogLoader(j.baseclasses.object):
         self.blog.metadata.author_email = self.meta["author_email"]
         self.blog.metadata.author_image = self.meta["author_image_filename"]
         self.blog.metadata.posts_dir = self.posts_dir_path
+        self.blog.metadata.allow_disqus = self.meta.get("allow_disqus", True)
 
         sidebar_links = self.blog.metadata.sidebar_links
         sidebar_social_links = self.blog.metadata.sidebar_social_links
