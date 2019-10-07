@@ -14,6 +14,7 @@ export default metadata = {
     "posts_dir": "/sandbox/code/gitlab/xmonader/sample-blog-jsx/posts",
     "github_username": "xmonader",
     "github_repo_url": "git@gitlab.com:xmonader/sample-blog-jsx.git",
+    "allow_disqus": true,
     "nav_links": [{
         "title": "about",
         "link": "",

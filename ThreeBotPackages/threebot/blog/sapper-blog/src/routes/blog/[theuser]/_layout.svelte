@@ -10,15 +10,13 @@
       const tagsResp = await this.fetch(`blog/${params.theuser}/tags.json`);
       const tags = await tagsResp.json();
 
-
       const postsResp = await this.fetch(`blog/${params.theuser}/posts.json`);
-      const allPosts = await postsResp.json()
+      const allPosts = await postsResp.json();
 
       // please notice it might be undefined
       // parseInt(undefined) > 0 -> false
       // parseInt(undefined) < 0 -> false
       // because.. javascript `\-()-/`
-
 
       let posts = allPosts.slice(0, 3);
       return { pages, posts, metadata, tags };
@@ -29,8 +27,6 @@
 </script>
 
 <script>
-  import { stores } from "@sapper/app";
-  const { preloading, page, session } = stores();
   import Nav from "../../../components/Nav.svelte";
   import Sidebar from "../../../components/Sidebar.svelte";
   import Footer from "../../../components/Footer.svelte";
@@ -43,6 +39,7 @@
   export let posts = [];
   export let metadata = {};
   export let tags = [];
+  import { stores } from "@sapper/app";
 </script>
 
 <style>

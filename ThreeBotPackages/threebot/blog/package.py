@@ -114,6 +114,7 @@ class BlogLoader(j.baseclasses.object):
             post_obj.author_name = the_author_name
             post_obj.author_email = the_author_email
             post_obj.author_image = the_author_image
+            post_obj.post_image = meta.get("post_image", [""])[0]
 
             post_obj.save()
             # print("POST INFO: ", post_obj)

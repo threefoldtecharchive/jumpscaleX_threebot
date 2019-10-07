@@ -5,10 +5,13 @@
   import { stores } from "@sapper/app";
   const { preloading, page, session } = stores();
   export let username = $page.params.theuser;
+  export let metadata = {};
   let converter = new showdown.Converter({ metadata: true });
   converter.setFlavor("github");
   let mdtext = converter.makeHtml(post.content);
 </script>
+
+{#await metadata then nothing}{/await}
 
 <!-- Latest Posts -->
 <main class="post blog-post col-lg-12">
@@ -94,30 +97,34 @@
       </div>
     </div>
   </div>
-  <div id="disqus_thread" />
+  {#if metadata.allow_disqus}
+    <!-- content here -->
+    <div id="disqus_thread" />
 
-  <script>
-    // configure discuss
-    var disqus_config = function() {
-      this.page.url = location.href;
-      this.page.identifier = location.pathname; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-    };
+    <script>
+      // configure discuss
+      var disqus_config = function() {
+        this.page.url = location.href;
+        this.page.identifier = location.pathname; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
 
-    (function() {
-      // DON'T EDIT BELOW THIS LINE
-      var d = document,
-        s = d.createElement("script");
-      s.src = "https://threefoldblog.disqus.com/embed.js";
-      s.setAttribute("data-timestamp", +new Date());
-      (d.head || d.body).appendChild(s);
-    })();
-  </script>
-  <noscript>
-    Please enable JavaScript to view the
-    <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
-  </noscript>
+      (function() {
+        // DON'T EDIT BELOW THIS LINE
+        var d = document,
+          s = d.createElement("script");
+        s.src = "https://threefoldblog.disqus.com/embed.js";
+        s.setAttribute("data-timestamp", +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>
+      Please enable JavaScript to view the
+      <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
 
-  <script id="dsq-count-scr" src="//threefoldblog.disqus.com/count.js" async>
+    <script id="dsq-count-scr" src="//threefoldblog.disqus.com/count.js" async>
 
-  </script>
+    </script>
+  {/if}
+
 </main>
