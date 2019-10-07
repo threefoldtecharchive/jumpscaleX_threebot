@@ -114,6 +114,7 @@ random.shuffle(regions)
 regions = regions[:3]
 if len(regions) < 3:
     raise j.exceptions.Runtime("Not enough regions")
+
 clients = []
 
 print("Install wg on manager")
@@ -126,31 +127,6 @@ wg.network_private = f"{masterip}/24"
 wg.install()
 wg.save()
 
-print("Start local 3bot")
-client = j.servers.threebot.local_start_default()
-client.actors.package_manager.package_add('namemanager', path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/namemanager')
-client.actors.package_manager.package_add('gridnetwork', path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/gridnetwork')
-client.actors.package_manager.package_add('phonebook', path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/phonebook')
-client.reload()
-
-
-networks = client.actors.gridnetwork.network_find()
-for network in networks.res:
-    if network.name == "3botnetwork":
-        break
-else:
-    client.actors.gridnetwork.network_add("3botnetwork", "10.2.0.0/16")
-
-existingendpoints = []
-for endpoint in client.actors.gridnetwork.network_endpoint_find('3botnetwork').res:
-    existingendpoints.append(endpoint.network_public.split("/")[0])
-
-print("Register dns entries")
-managerip = j.sal.nettools.getDefaultIPConfig()[1]
-j.tools.tf_gateway.domain_register_a('@', '3bot.grid.tf', managerip)
-j.tools.tf_gateway.domain_register_cname('phonebook', '3bot.grid.tf', '3bot.grid.tf.')
-j.tools.tf_gateway.domain_register_cname('gridmanager', '3bot.grid.tf', '3bot.grid.tf.')
-j.tools.tf_gateway.domain_register_cname('namemanager', '3bot.grid.tf', '3bot.grid.tf.')
 
 def configure_wg(ssh_name, privateip):
     wgr = j.tools.wireguard.get(ssh_name, autosave=False)
@@ -168,21 +144,22 @@ def configure_wg(ssh_name, privateip):
     # add peer to "manager"
     wg.peer_add(wgr)
 
+
 def configure_systemd_unit(executor, name, path):
-    systemdconfig = unittemplate.format(
-        name=name, path=path
-    )
+    systemdconfig = unittemplate.format(name=name, path=path)
     executor.file_write(f"/etc/systemd/system/{name}.service", systemdconfig)
     executor.execute("systemctl daemon-reload")
     executor.execute(f"systemctl enable {name}")
     executor.execute(f"systemctl restart {name}")
+
 
 def configure_coredns(executor):
     print("  Configuring coredns")
     configpath = "/sandbox/cfg/coredns.conf"
     executor.file_write(configpath, corednsconfig)
     executor.execute("systemctl stop systemd-resolved && systemctl disable systemd-resolved")
-    configure_systemd_unit(executor, "coredns",  path=f"{corednspath} -conf {configpath}")
+    configure_systemd_unit(executor, "coredns", path=f"{corednspath} -conf {configpath}")
+
 
 def configure_redis(executor, privateip):
     print("  Configuring redis")
@@ -196,14 +173,14 @@ def configure_redis(executor, privateip):
     if privateip != masterip:
         config += f"\nslaveof {masterip} 6379\n"
     executor.file_write(configpath, config)
-    configure_systemd_unit(executor, "redis-jsx",  path=f"{redisserverpath} {configpath}")
+    configure_systemd_unit(executor, "redis-jsx", path=f"{redisserverpath} {configpath}")
 
 
 def configure_tcprouter(executor):
     print("  Configuring tcprouter")
     configpath = "/sandbox/cfg/router.toml"
     executor.file_write(configpath, routerconfig)
-    configure_systemd_unit(executor, "tcprouter",  path=f"{tcprouterpath} {configpath}")
+    configure_systemd_unit(executor, "tcprouter", path=f"{tcprouterpath} {configpath}")
 
 
 configure_redis(j.tools.executorLocal, masterip)
@@ -217,7 +194,9 @@ for x, region in enumerate(regions):
         droplet, _ = do.droplet_create(name, "Jo", region=region, size_slug=size)
     else:
         print(f"Droplet get {name}")
-        droplet = do.droplet_get(name)
+        droplet = do._droplet_get(name)
+
+    j.clients.ssh.get(name=sshname, addr=droplet.ip_address, login="root", sshkey_name="default")
     executor = j.tools.executor.ssh_get(sshname)
     clients.append(executor)
     for binary in (tcprouterpath, redisserverpath, corednspath):
@@ -230,9 +209,34 @@ for x, region in enumerate(regions):
     configure_redis(executor, privateip)
     configure_tcprouter(executor)
     configure_coredns(executor)
-    if executor.sshclient.addr not in existingendpoints:
-        client.actors.gridnetwork.network_endpoint_add("3botnetwork", sshname)
-    j.tools.tf_gateway.domain_register_a('gateway', '3bot.grid.tf', executor.sshclient.adddr)
 
 wg.save()
 wg.configure()
+
+print("Start local 3bot")
+client = j.servers.threebot.local_start_default()
+client.actors.package_manager.package_add(
+    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/namemanager"
+)
+client.actors.package_manager.package_add(
+    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/gridnetwork"
+)
+client.actors.package_manager.package_add(
+    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/phonebook"
+)
+client.reload()
+
+networks = client.actors.gridnetwork.network_find()
+for network in networks.res:
+    if network.name == "3botnetwork":
+        break
+else:
+    client.actors.gridnetwork.network_add("3botnetwork", "10.2.0.0/16")
+
+existingendpoints = []
+for endpoint in client.actors.gridnetwork.network_endpoint_find("3botnetwork").res:
+    existingendpoints.append(endpoint.network_public.split("/")[0])
+
+for executor in clients:
+    if executor.sshclient.addr not in existingendpoints:
+        client.actors.gridnetwork.network_endpoint_add("3botnetwork", executor.sshclient.name)
