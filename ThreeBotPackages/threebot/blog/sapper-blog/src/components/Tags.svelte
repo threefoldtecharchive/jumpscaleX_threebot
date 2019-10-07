@@ -7,6 +7,6 @@
 
 <span>
   {#each tags as tag}
-    <a href="blog/{username}/tags/{tag.trim()}">{tag}</a>
+    <a href="blog/{username}/tags/{tag.trim()}">#{tag}</a>
   {/each}
 </span>

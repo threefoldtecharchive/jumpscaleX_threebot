@@ -47,7 +47,7 @@ export default metadata = {
         "faclass": "fab fa-instagram"
     }, {
         "title": "twitter",
-        "link": "https://instagram.com",
+        "link": "https://twitter.com",
         "page": "",
         "faclass": "fab fa-twitter"
     }],
