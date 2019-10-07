@@ -9,7 +9,7 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 
 axios.defaults.baseURL = "http://127.0.0.1:9201";
 axios.defaults.port = 9201
-const BLOG_API = "http://127.0.0.1:9201/actors/blog";
+const BLOG_API = "http://127.0.0.1:9201/blog";
 
 async function callActorWithArgs(actorCmd, actorArgs) {
 
