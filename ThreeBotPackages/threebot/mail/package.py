@@ -2,6 +2,7 @@ import sys
 import os
 
 from Jumpscale import j
+from JumpscaleLibs.servers.mail.smtp import app
 
 
 class Package(j.baseclasses.threebot_package):
@@ -19,12 +20,9 @@ class Package(j.baseclasses.threebot_package):
         """
         # TODO: ADD REVERSE PROXY
 
-        # Couldn't import file app.py directly!
-        from smtp.app import MailServer
-
-        rack = j.servers.rack.get()
-        server = MailServer(("0.0.0.0", 7002))
-        rack.add(name="smtp", server=server)
+        server = j.servers.imap.get_instance("0.0.0.0", 7002)
+        self.rack_server.add(name="smtp", server=server)
+        self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
 
     def stop(self):
         """

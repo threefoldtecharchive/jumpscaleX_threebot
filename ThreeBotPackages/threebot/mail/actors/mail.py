@@ -1,7 +1,108 @@
 from Jumpscale import j
 import binascii
 from io import BytesIO
+import json
+
+from JumpscaleLibs.servers.mail.smtp import app
+from JumpscaleLibs.servers.mail.imap.bcdbmailbox import BCDBMailboxdir
 
 
 class mail(j.baseclasses.threebot_actor):
-    pass
+    def _init(self, **kwargs):
+        models = j.servers.imap.get_models()
+        self.bcdb_mailbox = BCDBMailboxdir(models)
+
+    def send(self, mail, schema_out=None, user_session=None):
+        """
+        ```in
+        mail = (S)
+        ```
+        ```out
+        success = (B)
+        ```
+        """
+        if isinstance(mail, str):
+            mail = json.loads(mail)
+        server = app.MailServer()
+        server.store_mail(mail)
+        out = schema_out.new()
+        out.success = True
+        return out
+
+    def list(self, date_from, date_to, user_session=None):
+        """
+        ```in
+        date_from =  (D)
+        date_to =  (D)
+        ```
+        """
+
+        query = "WHERE date BETWEEN {} and {}".format(date_from, date_to)
+        mails = self.bcdb_mailbox.get_messages(query)
+        return json.dumps([o._ddict for o in mails])
+
+    def update_folder_name(self, old_name, new_name, schema_out=None, user_session=None):
+        """
+        ```in
+        old_name = (S)
+        new_name = (S)
+        ```
+        ```out
+        success = (B)
+        ```
+        """
+
+        self.bcdb_mailbox.rename_folder(old_name, new_name)
+        out = schema_out.new()
+        out.success = True
+        return out
+
+    def delete(self, mail_id, schema_out=None, user_session=None):
+        """
+        ```in
+        mail_id =  (I)
+        ```
+        ```out
+        success = (B)
+        ```
+        """
+
+        self.bcdb_mailbox.remove(mail_id)
+        out = schema_out.new()
+        out.success = True
+        return out
+
+    def update_priority(self, mail_id, priority, schema_out=None, user_session=None):
+        """
+        ```in
+        mail_id =  (I)
+        priority = (B)
+        ```
+        ```out
+        success = (B)
+        ```
+        """
+        model = self.bcdb_mailbox.get_object(mail_id)
+        model.priority = priority
+        model.save()
+        out = schema_out.new()
+        out.success = True
+        return out
+
+    def receive(self, mail, schema_out=None, user_session=None):
+        """
+        ```in
+        mail = (S)
+        ```
+        ```out
+        success = (B)
+        ```
+        """
+        if isinstance(mail, str):
+            mail = json.loads(mail)
+        server = app.MailServer()
+        server.store_mail(mail)
+        out = schema_out.new()
+        out.success = True
+        return out
+
