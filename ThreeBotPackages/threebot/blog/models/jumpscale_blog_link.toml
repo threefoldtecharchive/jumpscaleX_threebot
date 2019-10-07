@@ -20,6 +20,7 @@ github_repo_url** = "" (S)
 nav_links = (LO)      !jumpscale.blog.link
 sidebar_social_links = (LO) !jumpscale.blog.link
 sidebar_links = (LO)  !jumpscale.blog.link
+allow_disqus = true (B) 
 
 
 @url = jumpscale.blog.post
@@ -32,6 +33,7 @@ published_at = "" (S)
 author_name = "" (S)
 author_email = "" (S)
 author_image = "" (S)
+post_image = "" (S)
 
 
 
