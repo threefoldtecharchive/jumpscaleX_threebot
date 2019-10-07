@@ -2,13 +2,14 @@
   export async function preload({ params, query }) {
     // the `slug` parameter is available because
     // this file is called [slug].svelte
-
+    const metaResp = await this.fetch(`blog/${params.theuser}/metadata.json`);
+    const metadata = await metaResp.json();
     const res = await this.fetch(
       `blog/${params.theuser}/posts/${params.slug}.json`
     );
     const data = await res.json();
     if (res.status === 200) {
-      return { post: data };
+      return { post: data, metadata };
     } else {
       this.error(res.status, data.message);
     }
@@ -17,11 +18,11 @@
 
 <script>
   export let post;
+  export let metadata;
   import { stores } from "@sapper/app";
-  import Post from "../../../../components/Post.svelte"
+  import Post from "../../../../components/Post.svelte";
   const { preloading, page, session } = stores();
   export let username = $page.params.theuser;
-
 </script>
 
 <style>
@@ -68,4 +69,4 @@
     href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.8/build/styles/default.min.css" />
 </svelte:head>
 
-<Post {post}/>
+<Post {post} {metadata} />
