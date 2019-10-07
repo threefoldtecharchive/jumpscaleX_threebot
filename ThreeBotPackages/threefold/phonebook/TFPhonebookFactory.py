@@ -22,7 +22,7 @@ class TFPhonebookFactory(j.baseclasses.threebot_factory):
         test_start = j.servers.startupcmd.get("phonebook_test", cmd_start=cmd)
         test_start.start()
         cl = self.client_get()
-        j.shell()
+        # j.shell()
 
         print(name)
 
