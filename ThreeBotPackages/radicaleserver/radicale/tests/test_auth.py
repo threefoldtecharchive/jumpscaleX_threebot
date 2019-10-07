@@ -38,6 +38,7 @@ class TestBaseAuthRequests(BaseTest):
     We should setup auth for each type before creating the Application object.
 
     """
+
     def setup(self):
         self.configuration = config.load()
         self.colpath = tempfile.mkdtemp()
@@ -52,8 +53,7 @@ class TestBaseAuthRequests(BaseTest):
     def teardown(self):
         shutil.rmtree(self.colpath)
 
-    def _test_htpasswd(self, htpasswd_encryption, htpasswd_content,
-                       test_matrix=None):
+    def _test_htpasswd(self, htpasswd_encryption, htpasswd_content, test_matrix=None):
         """Test htpasswd authentication with user "tmp" and password "bepo"."""
         htpasswd_file_path = os.path.join(self.colpath, ".htpasswd")
         with open(htpasswd_file_path, "w") as f:
@@ -64,21 +64,26 @@ class TestBaseAuthRequests(BaseTest):
         self.application = Application(self.configuration, self.logger)
         if test_matrix is None:
             test_matrix = (
-                ("tmp", "bepo", 207), ("tmp", "tmp", 401), ("tmp", "", 401),
-                ("unk", "unk", 401), ("unk", "", 401), ("", "", 401))
+                ("tmp", "bepo", 207),
+                ("tmp", "tmp", 401),
+                ("tmp", "", 401),
+                ("unk", "unk", 401),
+                ("unk", "", 401),
+                ("", "", 401),
+            )
         for user, password, expected_status in test_matrix:
             status, _, answer = self.request(
-                "PROPFIND", "/",
-                HTTP_AUTHORIZATION="Basic %s" % base64.b64encode(
-                    ("%s:%s" % (user, password)).encode()).decode())
+                "PROPFIND",
+                "/",
+                HTTP_AUTHORIZATION="Basic %s" % base64.b64encode(("%s:%s" % (user, password)).encode()).decode(),
+            )
             assert status == expected_status
 
     def test_htpasswd_plain(self):
         self._test_htpasswd("plain", "tmp:bepo")
 
     def test_htpasswd_plain_password_split(self):
-        self._test_htpasswd("plain", "tmp:be:po", (
-            ("tmp", "be:po", 207), ("tmp", "bepo", 401)))
+        self._test_htpasswd("plain", "tmp:be:po", (("tmp", "be:po", 207), ("tmp", "bepo", 401)))
 
     def test_htpasswd_sha1(self):
         self._test_htpasswd("sha1", "tmp:{SHA}UWRS3uSJJq2itZQEUyIH8rRajCM=")
@@ -110,18 +115,14 @@ class TestBaseAuthRequests(BaseTest):
             bcrypt.encrypt("test-bcrypt-backend")
         except MissingBackendError:
             pytest.skip("bcrypt backend for passlib is not installed")
-        self._test_htpasswd(
-            "bcrypt",
-            "tmp:$2y$05$oD7hbiQFQlvCM7zoalo/T.MssV3VNTRI3w5KDnj8NTUKJNWfVpvRq")
+        self._test_htpasswd("bcrypt", "tmp:$2y$05$oD7hbiQFQlvCM7zoalo/T.MssV3VNTRI3w5KDnj8NTUKJNWfVpvRq")
 
     def test_htpasswd_multi(self):
         self._test_htpasswd("plain", "ign:ign\ntmp:bepo")
 
-    @pytest.mark.skipif(os.name == "nt", reason="leading and trailing "
-                        "whitespaces not allowed in file names")
+    @pytest.mark.skipif(os.name == "nt", reason="leading and trailing " "whitespaces not allowed in file names")
     def test_htpasswd_whitespace_preserved(self):
-        self._test_htpasswd("plain", " tmp : bepo ",
-                            ((" tmp ", " bepo ", 207),))
+        self._test_htpasswd("plain", " tmp : bepo ", ((" tmp ", " bepo ", 207),))
 
     def test_htpasswd_whitespace_not_trimmed(self):
         self._test_htpasswd("plain", " tmp : bepo ", (("tmp", "bepo", 401),))
@@ -133,13 +134,16 @@ class TestBaseAuthRequests(BaseTest):
         self.configuration["auth"]["type"] = "remote_user"
         self.application = Application(self.configuration, self.logger)
         status, _, answer = self.request(
-            "PROPFIND", "/",
+            "PROPFIND",
+            "/",
             """<?xml version="1.0" encoding="utf-8"?>
                <propfind xmlns="DAV:">
                  <prop>
                    <current-user-principal />
                  </prop>
-               </propfind>""", REMOTE_USER="test")
+               </propfind>""",
+            REMOTE_USER="test",
+        )
         assert status == 207
         assert ">/test/<" in answer
 
@@ -147,13 +151,16 @@ class TestBaseAuthRequests(BaseTest):
         self.configuration["auth"]["type"] = "http_x_remote_user"
         self.application = Application(self.configuration, self.logger)
         status, _, answer = self.request(
-            "PROPFIND", "/",
+            "PROPFIND",
+            "/",
             """<?xml version="1.0" encoding="utf-8"?>
                <propfind xmlns="DAV:">
                  <prop>
                    <current-user-principal />
                  </prop>
-               </propfind>""", HTTP_X_REMOTE_USER="test")
+               </propfind>""",
+            HTTP_X_REMOTE_USER="test",
+        )
         assert status == 207
         assert ">/test/<" in answer
 
@@ -162,6 +169,6 @@ class TestBaseAuthRequests(BaseTest):
         self.configuration["auth"]["type"] = "tests.custom.auth"
         self.application = Application(self.configuration, self.logger)
         status, _, answer = self.request(
-            "PROPFIND", "/tmp", HTTP_AUTHORIZATION="Basic %s" %
-            base64.b64encode(("tmp:").encode()).decode())
+            "PROPFIND", "/tmp", HTTP_AUTHORIZATION="Basic %s" % base64.b64encode(("tmp:").encode()).decode()
+        )
         assert status == 207

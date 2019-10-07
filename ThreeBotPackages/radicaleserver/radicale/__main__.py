@@ -32,8 +32,7 @@ import ssl
 import sys
 from wsgiref.simple_server import make_server
 
-from radicale import (VERSION, Application, RequestHandler, ThreadedHTTPServer,
-                      ThreadedHTTPSServer, config, log, storage)
+from radicale import VERSION, Application, RequestHandler, ThreadedHTTPServer, ThreadedHTTPSServer, config, log, storage
 
 
 def run():
@@ -42,10 +41,8 @@ def run():
     parser = argparse.ArgumentParser(usage="radicale [OPTIONS]")
 
     parser.add_argument("--version", action="version", version=VERSION)
-    parser.add_argument("--verify-storage", action="store_true",
-                        help="check the storage for errors and exit")
-    parser.add_argument(
-        "-C", "--config", help="use a specific configuration file")
+    parser.add_argument("--verify-storage", action="store_true", help="check the storage for errors and exit")
+    parser.add_argument("-C", "--config", help="use a specific configuration file")
 
     groups = {}
     for section, values in config.INITIAL_CONFIG.items():
@@ -53,8 +50,7 @@ def run():
         groups[group] = []
         for option, data in values.items():
             kwargs = data.copy()
-            long_name = "--{0}-{1}".format(
-                section, option.replace("_", "-"))
+            long_name = "--{0}-{1}".format(section, option.replace("_", "-"))
             args = kwargs.pop("aliases", [])
             args.append(long_name)
             kwargs["dest"] = "{0}_{1}".format(section, option)
@@ -72,8 +68,7 @@ def run():
                 group.add_argument(*args, **kwargs)
 
                 kwargs["const"] = "False"
-                kwargs["help"] = "do not {0} (opposite of {1})".format(
-                    kwargs["help"], long_name)
+                kwargs["help"] = "do not {0} (opposite of {1})".format(kwargs["help"], long_name)
                 group.add_argument(*opposite_args, **kwargs)
             else:
                 group.add_argument(*args, **kwargs)
@@ -83,14 +78,12 @@ def run():
         config_paths = [args.config] if args.config else []
         ignore_missing_paths = False
     else:
-        config_paths = ["/etc/radicale/config",
-                        os.path.expanduser("~/.config/radicale/config")]
+        config_paths = ["/etc/radicale/config", os.path.expanduser("~/.config/radicale/config")]
         if "RADICALE_CONFIG" in os.environ:
             config_paths.append(os.environ["RADICALE_CONFIG"])
         ignore_missing_paths = True
     try:
-        configuration = config.load(config_paths,
-                                    ignore_missing_paths=ignore_missing_paths)
+        configuration = config.load(config_paths, ignore_missing_paths=ignore_missing_paths)
     except Exception as e:
         print("ERROR: Invalid configuration: %s" % e, file=sys.stderr)
         if args.logging_debug:
@@ -103,7 +96,7 @@ def run():
         for action in actions:
             value = getattr(args, action)
             if value is not None:
-                configuration.set(section, action.split('_', 1)[1], value)
+                configuration.set(section, action.split("_", 1)[1], value)
 
     if args.verify_storage:
         # Write to stderr when storage verification is requested
@@ -128,16 +121,14 @@ def run():
                 logger.error("Storage verifcation failed")
                 exit(1)
         except Exception as e:
-            logger.error("An exception occurred during storage verification: "
-                         "%s", e, exc_info=True)
+            logger.error("An exception occurred during storage verification: " "%s", e, exc_info=True)
             exit(1)
         return
 
     try:
         serve(configuration, logger)
     except Exception as e:
-        logger.error("An exception occurred during server startup: %s", e,
-                     exc_info=True)
+        logger.error("An exception occurred during server startup: %s", e, exc_info=True)
         exit(1)
 
 
@@ -146,13 +137,10 @@ def daemonize(configuration, logger):
     # Check and create PID file in a race-free manner
     if configuration.get("server", "pid"):
         try:
-            pid_path = os.path.abspath(os.path.expanduser(
-                configuration.get("server", "pid")))
-            pid_fd = os.open(
-                pid_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            pid_path = os.path.abspath(os.path.expanduser(configuration.get("server", "pid")))
+            pid_fd = os.open(pid_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
         except OSError as e:
-            raise OSError("PID file exists: %r" %
-                          configuration.get("server", "pid")) from e
+            raise OSError("PID file exists: %r" % configuration.get("server", "pid")) from e
     pid = os.fork()
     if pid:
         # Write PID
@@ -169,6 +157,7 @@ def daemonize(configuration, logger):
             logger.debug("Cleaning up")
             # Remove PID file
             os.unlink(pid_path)
+
         atexit.register(cleanup)
     # Decouple environment
     os.chdir("/")
@@ -190,26 +179,20 @@ def serve(configuration, logger):
         server_class = ThreadedHTTPSServer
         server_class.certificate = configuration.get("server", "certificate")
         server_class.key = configuration.get("server", "key")
-        server_class.certificate_authority = configuration.get(
-            "server", "certificate_authority")
+        server_class.certificate_authority = configuration.get("server", "certificate_authority")
         server_class.ciphers = configuration.get("server", "ciphers")
-        server_class.protocol = getattr(
-            ssl, configuration.get("server", "protocol"), ssl.PROTOCOL_SSLv23)
+        server_class.protocol = getattr(ssl, configuration.get("server", "protocol"), ssl.PROTOCOL_SSLv23)
         # Test if the SSL files can be read
-        for name in ["certificate", "key"] + (
-                ["certificate_authority"]
-                if server_class.certificate_authority else []):
+        for name in ["certificate", "key"] + (["certificate_authority"] if server_class.certificate_authority else []):
             filename = getattr(server_class, name)
             try:
                 open(filename, "r").close()
             except OSError as e:
-                raise RuntimeError("Failed to read SSL %s %r: %s" %
-                                   (name, filename, e)) from e
+                raise RuntimeError("Failed to read SSL %s %r: %s" % (name, filename, e)) from e
     else:
         server_class = ThreadedHTTPServer
     server_class.client_timeout = configuration.getint("server", "timeout")
-    server_class.max_connections = configuration.getint(
-        "server", "max_connections")
+    server_class.max_connections = configuration.getint("server", "max_connections")
     server_class.logger = logger
 
     RequestHandler.logger = logger
@@ -223,25 +206,24 @@ def serve(configuration, logger):
             address, port = host.strip().rsplit(":", 1)
             address, port = address.strip("[] "), int(port)
         except ValueError as e:
-            raise RuntimeError(
-                "Failed to parse address %r: %s" % (host, e)) from e
+            raise RuntimeError("Failed to parse address %r: %s" % (host, e)) from e
         application = Application(configuration, logger)
         try:
-            server = make_server(
-                address, port, application, server_class, RequestHandler)
+            server = make_server(address, port, application, server_class, RequestHandler)
         except OSError as e:
-            raise RuntimeError(
-                "Failed to start server %r: %s" % (host, e)) from e
+            raise RuntimeError("Failed to start server %r: %s" % (host, e)) from e
         servers[server.socket] = server
-        logger.info("Listening to %r on port %d%s",
-                    server.server_name, server.server_port, " using SSL"
-                    if configuration.getboolean("server", "ssl") else "")
+        logger.info(
+            "Listening to %r on port %d%s",
+            server.server_name,
+            server.server_port,
+            " using SSL" if configuration.getboolean("server", "ssl") else "",
+        )
 
     # Create a socket pair to notify the select syscall of program shutdown
     # This is not available in python < 3.5 on Windows
     if hasattr(socket, "socketpair"):
-        shutdown_program_socket_in, shutdown_program_socket_out = (
-            socket.socketpair())
+        shutdown_program_socket_in, shutdown_program_socket_out = socket.socketpair()
     else:
         shutdown_program_socket_in, shutdown_program_socket_out = None, None
 
@@ -256,6 +238,7 @@ def serve(configuration, logger):
         shutdown_program = True
         if shutdown_program_socket_in:
             shutdown_program_socket_in.sendall(b"goodbye")
+
     signal.signal(signal.SIGTERM, shutdown)
     signal.signal(signal.SIGINT, shutdown)
 
@@ -273,8 +256,7 @@ def serve(configuration, logger):
     logger.info("Radicale server ready")
     while not shutdown_program:
         try:
-            rlist, _, xlist = select.select(
-                sockets, [], sockets, select_timeout)
+            rlist, _, xlist = select.select(sockets, [], sockets, select_timeout)
         except (KeyboardInterrupt, select.error):
             # SIGINT is handled by signal handler above
             rlist, xlist = [], []

@@ -39,14 +39,9 @@ from urllib.parse import quote, unquote, urlparse
 
 from radicale import storage
 
-MIMETYPES = {
-    "VADDRESSBOOK": "text/vcard",
-    "VCALENDAR": "text/calendar"}
+MIMETYPES = {"VADDRESSBOOK": "text/vcard", "VCALENDAR": "text/calendar"}
 
-OBJECT_MIMETYPES = {
-    "VCARD": "text/vcard",
-    "VLIST": "text/x-vlist",
-    "VCALENDAR": "text/calendar"}
+OBJECT_MIMETYPES = {"VCARD": "text/vcard", "VLIST": "text/x-vlist", "VCALENDAR": "text/calendar"}
 
 NAMESPACES = {
     "C": "urn:ietf:params:xml:ns:caldav",
@@ -55,7 +50,8 @@ NAMESPACES = {
     "CS": "http://calendarserver.org/ns/",
     "ICAL": "http://apple.com/ns/ical/",
     "ME": "http://me.com/_namespace/",
-    "RADICALE": "http://radicale.org/ns/"}
+    "RADICALE": "http://radicale.org/ns/",
+}
 
 NAMESPACES_REV = {}
 for short, url in NAMESPACES.items():
@@ -109,9 +105,7 @@ def _tag_from_clark(name):
     """
     match = CLARK_TAG_REGEX.match(name)
     if match and match.group("namespace") in NAMESPACES_REV:
-        args = {
-            "ns": NAMESPACES_REV[match.group("namespace")],
-            "tag": match.group("tag")}
+        args = {"ns": NAMESPACES_REV[match.group("namespace")], "tag": match.group("tag")}
         return "%(ns)s:%(tag)s" % args
     return name
 
@@ -173,8 +167,7 @@ def _comp_match(item, filter_, level=0):
     elif level == 1:
         tag = item.component_name
     else:
-        item.collection.logger.warning(
-            "Filters with three levels of comp-filter are not supported")
+        item.collection.logger.warning("Filters with three levels of comp-filter are not supported")
         return True
     if not tag:
         return False
@@ -188,17 +181,14 @@ def _comp_match(item, filter_, level=0):
             return name != tag
     if name != tag:
         return False
-    if (level == 0 and name != "VCALENDAR" or
-            level == 1 and name not in ("VTODO", "VEVENT", "VJOURNAL")):
+    if level == 0 and name != "VCALENDAR" or level == 1 and name not in ("VTODO", "VEVENT", "VJOURNAL"):
         item.collection.logger.warning("Filtering %s is not supported" % name)
         return True
     # Point #3 and #4 of rfc4791-9.7.1
-    components = ([item.item] if level == 0
-                  else list(getattr(item, "%s_list" % tag.lower())))
+    components = [item.item] if level == 0 else list(getattr(item, "%s_list" % tag.lower()))
     for child in filter_:
         if child.tag == _tag("C", "prop-filter"):
-            if not any(_prop_match(comp, child, "C")
-                       for comp in components):
+            if not any(_prop_match(comp, child, "C") for comp in components):
                 return False
         elif child.tag == _tag("C", "time-range"):
             if not _time_range_match(item.item, filter_[0], tag):
@@ -302,17 +292,18 @@ def _visit_time_ranges(vobject_item, child_name, range_fn, infinity_fn):
     # either.
 
     def getrruleset(child, ignore=()):
-        if (hasattr(child, "rrule") and
-                ";UNTIL=" not in child.rrule.value.upper() and
-                ";COUNT=" not in child.rrule.value.upper()):
+        if (
+            hasattr(child, "rrule")
+            and ";UNTIL=" not in child.rrule.value.upper()
+            and ";COUNT=" not in child.rrule.value.upper()
+        ):
             for dtstart in child.getrruleset(addRDate=True):
                 if dtstart in ignore:
                     continue
                 if infinity_fn(_date_to_datetime(dtstart)):
                     return (), True
                 break
-        return filter(lambda dtstart: dtstart not in ignore,
-                      child.getrruleset(addRDate=True)), False
+        return filter(lambda dtstart: dtstart not in ignore, child.getrruleset(addRDate=True)), False
 
     def get_children(components):
         main = None
@@ -334,8 +325,7 @@ def _visit_time_ranges(vobject_item, child_name, range_fn, infinity_fn):
 
     # Comments give the lines in the tables of the specification
     if child_name == "VEVENT":
-        for child, is_recurrence, recurrences in get_children(
-                vobject_item.vevent_list):
+        for child, is_recurrence, recurrences in get_children(vobject_item.vevent_list):
             # TODO: check if there's a timezone
             dtstart = child.dtstart.value
 
@@ -370,8 +360,7 @@ def _visit_time_ranges(vobject_item, child_name, range_fn, infinity_fn):
                         original_duration = duration.seconds
                     if duration.seconds > 0:
                         # Line 2
-                        if range_fn(dtstart, dtstart + duration,
-                                    is_recurrence):
+                        if range_fn(dtstart, dtstart + duration, is_recurrence):
                             return
                     else:
                         # Line 3
@@ -387,8 +376,7 @@ def _visit_time_ranges(vobject_item, child_name, range_fn, infinity_fn):
                         return
 
     elif child_name == "VTODO":
-        for child, is_recurrence, recurrences in get_children(
-                vobject_item.vtodo_list):
+        for child, is_recurrence, recurrences in get_children(vobject_item.vtodo_list):
             dtstart = getattr(child, "dtstart", None)
             duration = getattr(child, "duration", None)
             due = getattr(child, "due", None)
@@ -435,60 +423,48 @@ def _visit_time_ranges(vobject_item, child_name, range_fn, infinity_fn):
 
                 if dtstart is not None and duration is not None:
                     # Line 1
-                    if range_fn(reference_date,
-                                reference_date + duration + SECOND,
-                                is_recurrence):
+                    if range_fn(reference_date, reference_date + duration + SECOND, is_recurrence):
                         return
-                    if range_fn(reference_date + duration - SECOND,
-                                reference_date + duration + SECOND,
-                                is_recurrence):
+                    if range_fn(reference_date + duration - SECOND, reference_date + duration + SECOND, is_recurrence):
                         return
                 elif dtstart is not None and due is not None:
                     # Line 2
                     due = reference_date + timedelta(seconds=original_duration)
-                    if (range_fn(reference_date, due, is_recurrence) or
-                            range_fn(reference_date,
-                                     reference_date + SECOND, is_recurrence) or
-                            range_fn(due - SECOND, due, is_recurrence) or
-                            range_fn(due - SECOND, reference_date + SECOND,
-                                     is_recurrence)):
+                    if (
+                        range_fn(reference_date, due, is_recurrence)
+                        or range_fn(reference_date, reference_date + SECOND, is_recurrence)
+                        or range_fn(due - SECOND, due, is_recurrence)
+                        or range_fn(due - SECOND, reference_date + SECOND, is_recurrence)
+                    ):
                         return
                 elif dtstart is not None:
-                    if range_fn(reference_date, reference_date + SECOND,
-                                is_recurrence):
+                    if range_fn(reference_date, reference_date + SECOND, is_recurrence):
                         return
                 elif due is not None:
                     # Line 4
-                    if range_fn(reference_date - SECOND, reference_date,
-                                is_recurrence):
+                    if range_fn(reference_date - SECOND, reference_date, is_recurrence):
                         return
                 elif completed is not None and created is not None:
                     # Line 5
-                    completed = reference_date + timedelta(
-                        seconds=original_duration)
-                    if (range_fn(reference_date - SECOND,
-                                 reference_date + SECOND,
-                                 is_recurrence) or
-                            range_fn(completed - SECOND, completed + SECOND,
-                                     is_recurrence) or
-                            range_fn(reference_date - SECOND,
-                                     reference_date + SECOND, is_recurrence) or
-                            range_fn(completed - SECOND, completed + SECOND,
-                                     is_recurrence)):
+                    completed = reference_date + timedelta(seconds=original_duration)
+                    if (
+                        range_fn(reference_date - SECOND, reference_date + SECOND, is_recurrence)
+                        or range_fn(completed - SECOND, completed + SECOND, is_recurrence)
+                        or range_fn(reference_date - SECOND, reference_date + SECOND, is_recurrence)
+                        or range_fn(completed - SECOND, completed + SECOND, is_recurrence)
+                    ):
                         return
                 elif completed is not None:
                     # Line 6
-                    if range_fn(reference_date - SECOND,
-                                reference_date + SECOND, is_recurrence):
-                                return
+                    if range_fn(reference_date - SECOND, reference_date + SECOND, is_recurrence):
+                        return
                 elif created is not None:
                     # Line 7
                     if range_fn(reference_date, DATETIME_MAX, is_recurrence):
                         return
 
     elif child_name == "VJOURNAL":
-        for child, is_recurrence, recurrences in get_children(
-                vobject_item.vjournal_list):
+        for child, is_recurrence, recurrences in get_children(vobject_item.vjournal_list):
             dtstart = getattr(child, "dtstart", None)
 
             if dtstart is not None:
@@ -550,9 +526,7 @@ def _text_match(vobject_item, filter_, child_name, ns, attrib_name=None):
 
     children = getattr(vobject_item, "%s_list" % child_name, [])
     if attrib_name:
-        condition = any(
-            match(attrib) for child in children
-            for attrib in child.params.get(attrib_name, []))
+        condition = any(match(attrib) for child in children for attrib in child.params.get(attrib_name, []))
     else:
         condition = any(match(child.value) for child in children)
     if filter_.get("negate-condition") == "yes":
@@ -572,8 +546,7 @@ def _param_filter_match(vobject_item, filter_, parent_name, ns):
     condition = any(name in child.params for child in children)
     if len(filter_):
         if filter_[0].tag == _tag(ns, "text-match"):
-            return condition and _text_match(
-                vobject_item, filter_[0], parent_name, ns, name)
+            return condition and _text_match(vobject_item, filter_[0], parent_name, ns, name)
         elif filter_[0].tag == _tag(ns, "is-not-defined"):
             return not condition
     else:
@@ -595,8 +568,7 @@ def simplify_prefilters(filters, collection_tag="VCALENDAR"):
         if collection_tag != "VCALENDAR":
             simple = False
             break
-        if (col_filter.tag != _tag("C", "comp-filter") or
-                col_filter.get("name").upper() != "VCALENDAR"):
+        if col_filter.tag != _tag("C", "comp-filter") or col_filter.get("name").upper() != "VCALENDAR":
             simple = False
             continue
         simple &= len(col_filter) <= 1
@@ -619,15 +591,13 @@ def simplify_prefilters(filters, collection_tag="VCALENDAR"):
                 start = time_filter.get("start")
                 end = time_filter.get("end")
                 if start:
-                    start = math.floor(datetime.strptime(
-                        start, "%Y%m%dT%H%M%SZ").replace(
-                            tzinfo=timezone.utc).timestamp())
+                    start = math.floor(
+                        datetime.strptime(start, "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc).timestamp()
+                    )
                 else:
                     start = TIMESTAMP_MIN
                 if end:
-                    end = math.ceil(datetime.strptime(
-                        end, "%Y%m%dT%H%M%SZ").replace(
-                            tzinfo=timezone.utc).timestamp())
+                    end = math.ceil(datetime.strptime(end, "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc).timestamp())
                 else:
                     end = TIMESTAMP_MAX
                 return tag, start, end, simple
@@ -693,8 +663,10 @@ def find_tag_and_time_range(vobject_item):
     try:
         return tag, math.floor(start.timestamp()), math.ceil(end.timestamp())
     except ValueError as e:
-        if str(e) == ("offset must be a timedelta representing a whole "
-                      "number of minutes") and sys.version_info < (3, 6):
+        if str(e) == ("offset must be a timedelta representing a whole " "number of minutes") and sys.version_info < (
+            3,
+            6,
+        ):
             raise RuntimeError("Unsupported in Python < 3.6: %s" % e) from e
         raise
 
@@ -705,10 +677,9 @@ def name_from_path(path, collection):
     start = collection.path + "/"
     if not path.startswith(start):
         raise ValueError("%r doesn't start with %r" % (path, start))
-    name = path[len(start):][:-1]
+    name = path[len(start) :][:-1]
     if name and not storage.is_safe_path_component(name):
-        raise ValueError("%r is not a component in collection %r" %
-                         (name, collection.path))
+        raise ValueError("%r is not a component in collection %r" % (name, collection.path))
     return name
 
 
@@ -738,9 +709,8 @@ def props_from_request(xml_request, actions=("set", "remove")):
                         break
             elif prop.tag == _tag("C", "supported-calendar-component-set"):
                 result[_tag_from_clark(prop.tag)] = ",".join(
-                    supported_comp.attrib["name"]
-                    for supported_comp in prop
-                    if supported_comp.tag == _tag("C", "comp"))
+                    supported_comp.attrib["name"] for supported_comp in prop if supported_comp.tag == _tag("C", "comp")
+                )
             else:
                 result[_tag_from_clark(prop.tag)] = prop.text
 
@@ -770,8 +740,7 @@ def delete(base_prefix, path, collection, href=None):
     return multistatus
 
 
-def propfind(base_prefix, path, xml_request, read_collections,
-             write_collections, user):
+def propfind(base_prefix, path, xml_request, read_collections, write_collections, user):
     """Read and answer PROPFIND requests.
 
     Read rfc4918-9.1 for info.
@@ -782,8 +751,7 @@ def propfind(base_prefix, path, xml_request, read_collections,
     """
     # A client may choose not to submit a request body.  An empty PROPFIND
     # request body MUST be treated as if it were an 'allprop' request.
-    top_tag = (xml_request[0] if xml_request is not None else
-               ET.Element(_tag("D", "allprop")))
+    top_tag = xml_request[0] if xml_request is not None else ET.Element(_tag("D", "allprop"))
 
     props = ()
     allprop = False
@@ -808,24 +776,23 @@ def propfind(base_prefix, path, xml_request, read_collections,
     for collection in write_collections:
         collections.append(collection)
         response = _propfind_response(
-            base_prefix, path, collection, props, user, write=True,
-            allprop=allprop, propname=propname)
+            base_prefix, path, collection, props, user, write=True, allprop=allprop, propname=propname
+        )
         if response:
             multistatus.append(response)
     for collection in read_collections:
         if collection in collections:
             continue
         response = _propfind_response(
-            base_prefix, path, collection, props, user, write=False,
-            allprop=allprop, propname=propname)
+            base_prefix, path, collection, props, user, write=False, allprop=allprop, propname=propname
+        )
         if response:
             multistatus.append(response)
 
     return client.MULTI_STATUS, multistatus
 
 
-def _propfind_response(base_prefix, path, item, props, user, write=False,
-                       propname=False, allprop=False):
+def _propfind_response(base_prefix, path, item, props, user, write=False, propname=False, allprop=False):
     """Build and return a PROPFIND response."""
     if propname and allprop or (props and (propname or allprop)):
         raise ValueError("Only use one of props, propname and allprops")
@@ -918,11 +885,17 @@ def _propfind_response(base_prefix, path, item, props, user, write=False,
             tag = ET.Element(_tag("D", "href"))
             tag.text = _href(base_prefix, "/")
             element.append(tag)
-        elif (tag in (_tag("C", "calendar-user-address-set"),
-                      _tag("D", "principal-URL"),
-                      _tag("CR", "addressbook-home-set"),
-                      _tag("C", "calendar-home-set")) and
-                collection.is_principal and is_collection):
+        elif (
+            tag
+            in (
+                _tag("C", "calendar-user-address-set"),
+                _tag("D", "principal-URL"),
+                _tag("CR", "addressbook-home-set"),
+                _tag("C", "calendar-home-set"),
+            )
+            and collection.is_principal
+            and is_collection
+        ):
             tag = ET.Element(_tag("D", "href"))
             tag.text = _href(base_prefix, path)
             element.append(tag)
@@ -963,7 +936,8 @@ def _propfind_response(base_prefix, path, item, props, user, write=False,
             reports = [
                 ("D", "expand-property"),
                 ("D", "principal-search-property-set"),
-                ("D", "principal-property-search")]
+                ("D", "principal-property-search"),
+            ]
             if is_collection and is_leaf:
                 reports.append(("D", "sync-collection"))
                 if item.get_meta("tag") == "VADDRESSBOOK":
@@ -1137,44 +1111,38 @@ def report(base_prefix, path, xml_request, collection):
         return client.MULTI_STATUS, multistatus
     root = xml_request
     if root.tag in (
-            _tag("D", "principal-search-property-set"),
-            _tag("D", "principal-property-search"),
-            _tag("D", "expand-property")):
+        _tag("D", "principal-search-property-set"),
+        _tag("D", "principal-property-search"),
+        _tag("D", "expand-property"),
+    ):
         # We don't support searching for principals or indirect retrieving of
         # properties, just return an empty result.
         # InfCloud asks for expand-property reports (even if we don't announce
         # support for them) and stops working if an error code is returned.
-        logger.warning("Unsupported REPORT method %r on %r requested",
-                       _tag_from_clark(root.tag), path)
+        logger.warning("Unsupported REPORT method %r on %r requested", _tag_from_clark(root.tag), path)
         return client.MULTI_STATUS, multistatus
-    if (root.tag == _tag("C", "calendar-multiget") and
-            collection.get_meta("tag") != "VCALENDAR" or
-            root.tag == _tag("CR", "addressbook-multiget") and
-            collection.get_meta("tag") != "VADDRESSBOOK" or
-            root.tag == _tag("D", "sync-collection") and
-            collection.get_meta("tag") not in ("VADDRESSBOOK", "VCALENDAR")):
-        logger.warning("Invalid REPORT method %r on %r requested",
-                       _tag_from_clark(root.tag), path)
-        return (client.CONFLICT,
-                webdav_error("D", "supported-report"))
+    if (
+        root.tag == _tag("C", "calendar-multiget")
+        and collection.get_meta("tag") != "VCALENDAR"
+        or root.tag == _tag("CR", "addressbook-multiget")
+        and collection.get_meta("tag") != "VADDRESSBOOK"
+        or root.tag == _tag("D", "sync-collection")
+        and collection.get_meta("tag") not in ("VADDRESSBOOK", "VCALENDAR")
+    ):
+        logger.warning("Invalid REPORT method %r on %r requested", _tag_from_clark(root.tag), path)
+        return (client.CONFLICT, webdav_error("D", "supported-report"))
     prop_element = root.find(_tag("D", "prop"))
-    props = (
-        [prop.tag for prop in prop_element]
-        if prop_element is not None else [])
+    props = [prop.tag for prop in prop_element] if prop_element is not None else []
 
-    if root.tag in (
-            _tag("C", "calendar-multiget"),
-            _tag("CR", "addressbook-multiget")):
+    if root.tag in (_tag("C", "calendar-multiget"), _tag("CR", "addressbook-multiget")):
         # Read rfc4791-7.9 for info
         hreferences = set()
         for href_element in root.findall(_tag("D", "href")):
-            href_path = storage.sanitize_path(
-                unquote(urlparse(href_element.text).path))
+            href_path = storage.sanitize_path(unquote(urlparse(href_element.text).path))
             if (href_path + "/").startswith(base_prefix + "/"):
-                hreferences.add(href_path[len(base_prefix):])
+                hreferences.add(href_path[len(base_prefix) :])
             else:
-                logger.warning("Skipping invalid path %r in REPORT request on "
-                               "%r", href_path, path)
+                logger.warning("Skipping invalid path %r in REPORT request on " "%r", href_path, path)
     elif root.tag == _tag("D", "sync-collection"):
         old_sync_token_element = root.find(_tag("D", "sync-token"))
         old_sync_token = ""
@@ -1185,10 +1153,8 @@ def report(base_prefix, path, xml_request, collection):
             sync_token, names = collection.sync(old_sync_token)
         except ValueError as e:
             # Invalid sync token
-            logger.warning("Client provided invalid sync token %r: %s",
-                           old_sync_token, e, exc_info=True)
-            return (client.CONFLICT,
-                    webdav_error("D", "valid-sync-token"))
+            logger.warning("Client provided invalid sync token %r: %s", old_sync_token, e, exc_info=True)
+            return (client.CONFLICT, webdav_error("D", "valid-sync-token"))
         hreferences = ("/" + posixpath.join(collection.path, n) for n in names)
         # Append current sync token to response
         sync_token_element = ET.Element(_tag("D", "sync-token"))
@@ -1196,9 +1162,7 @@ def report(base_prefix, path, xml_request, collection):
         multistatus.append(sync_token_element)
     else:
         hreferences = (path,)
-    filters = (
-        root.findall("./%s" % _tag("C", "filter")) +
-        root.findall("./%s" % _tag("CR", "filter")))
+    filters = root.findall("./%s" % _tag("C", "filter")) + root.findall("./%s" % _tag("CR", "filter"))
 
     def retrieve_items(collection, hreferences, multistatus):
         """Retrieves all items that are referenced in ``hreferences`` from
@@ -1216,10 +1180,8 @@ def report(base_prefix, path, xml_request, collection):
                 try:
                     name = name_from_path(hreference, collection)
                 except ValueError as e:
-                    logger.warning("Skipping invalid path %r in REPORT request"
-                                   " on %r: %s", hreference, path, e)
-                    response = _item_response(base_prefix, hreference,
-                                              found_item=False)
+                    logger.warning("Skipping invalid path %r in REPORT request" " on %r: %s", hreference, path, e)
+                    response = _item_response(base_prefix, hreference, found_item=False)
                     multistatus.append(response)
                     continue
                 if name:
@@ -1228,12 +1190,12 @@ def report(base_prefix, path, xml_request, collection):
                 else:
                     # Reference is a collection
                     collection_requested = True
+
         names = get_names()
         for name, item in collection.get_multi2(names):
             if not item:
                 uri = "/" + posixpath.join(collection.path, name)
-                response = _item_response(base_prefix, uri,
-                                          found_item=False)
+                response = _item_response(base_prefix, uri, found_item=False)
                 multistatus.append(response)
             else:
                 yield item, False
@@ -1242,7 +1204,7 @@ def report(base_prefix, path, xml_request, collection):
 
     def match(item, filter_):
         tag = collection.get_meta("tag")
-        if (tag == "VCALENDAR" and filter_.tag != _tag("C", filter_)):
+        if tag == "VCALENDAR" and filter_.tag != _tag("C", filter_):
             if len(filter_) == 0:
                 return True
             if len(filter_) > 1:
@@ -1262,18 +1224,16 @@ def report(base_prefix, path, xml_request, collection):
             raise ValueError("Unsupported filter test: %r" % test)
             return all(_prop_match(item.item, f, "CR") for f in filter_)
         raise ValueError("unsupported filter %r for %r" % (filter_.tag, tag))
-    for item, filters_matched in retrieve_items(collection, hreferences,
-                                                multistatus):
+
+    for item, filters_matched in retrieve_items(collection, hreferences, multistatus):
         if filters and not filters_matched:
             try:
                 if not all(match(item, filter_) for filter_ in filters):
                     continue
             except ValueError as e:
-                raise ValueError("Failed to filter item %r from %r: %s" %
-                                 (item.href, collection.path, e)) from e
+                raise ValueError("Failed to filter item %r from %r: %s" % (item.href, collection.path, e)) from e
             except Exception as e:
-                raise RuntimeError("Failed to filter item %r from %r: %s" %
-                                   (item.href, collection.path, e)) from e
+                raise RuntimeError("Failed to filter item %r from %r: %s" % (item.href, collection.path, e)) from e
 
         found_props = []
         not_found_props = []
@@ -1286,24 +1246,21 @@ def report(base_prefix, path, xml_request, collection):
             elif tag == _tag("D", "getcontenttype"):
                 element.text = get_content_type(item)
                 found_props.append(element)
-            elif tag in (
-                    _tag("C", "calendar-data"),
-                    _tag("CR", "address-data")):
+            elif tag in (_tag("C", "calendar-data"), _tag("CR", "address-data")):
                 element.text = item.serialize()
                 found_props.append(element)
             else:
                 not_found_props.append(element)
 
         uri = "/" + posixpath.join(collection.path, item.href)
-        multistatus.append(_item_response(
-            base_prefix, uri, found_props=found_props,
-            not_found_props=not_found_props, found_item=True))
+        multistatus.append(
+            _item_response(base_prefix, uri, found_props=found_props, not_found_props=not_found_props, found_item=True)
+        )
 
     return client.MULTI_STATUS, multistatus
 
 
-def _item_response(base_prefix, href, found_props=(), not_found_props=(),
-                   found_item=True):
+def _item_response(base_prefix, href, found_props=(), not_found_props=(), found_item=True):
     response = ET.Element(_tag("D", "response"))
 
     href_tag = ET.Element(_tag("D", "href"))

@@ -13,6 +13,12 @@ class Package(j.baseclasses.threebot_package):
         j.builders.runtimes.python3.pip_package_install("filetype")
         j.builders.runtimes.python3.pip_package_install("vobject")
         j.builders.runtimes.python3.pip_package_install("caldav")
+        self.bcdb.models_add(path=self.package_root + "/models")
+        self.gedis_server.actors_add(self.package_root + "/actors")
+
+    @property
+    def bcdb(self):
+        return self._package.threebot_server.bcdb_get("caldav")
 
     def start(self):
         """

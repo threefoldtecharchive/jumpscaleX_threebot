@@ -60,8 +60,7 @@ import hmac
 import os
 from importlib import import_module
 
-INTERNAL_TYPES = ("None", "none", "remote_user", "http_x_remote_user",
-                  "htpasswd")
+INTERNAL_TYPES = ("None", "none", "remote_user", "http_x_remote_user", "htpasswd")
 
 
 def load(configuration, logger):
@@ -79,8 +78,7 @@ def load(configuration, logger):
         try:
             class_ = import_module(auth_type).Auth
         except Exception as e:
-            raise RuntimeError("Failed to load authentication module %r: %s" %
-                               (auth_type, e)) from e
+            raise RuntimeError("Failed to load authentication module %r: %s" % (auth_type, e)) from e
     logger.info("Authentication type is %r", auth_type)
     return class_(configuration, logger)
 
@@ -143,8 +141,7 @@ class NoneAuth(BaseAuth):
 class Auth(BaseAuth):
     def __init__(self, configuration, logger):
         super().__init__(configuration, logger)
-        self.filename = os.path.expanduser(
-            configuration.get("auth", "htpasswd_filename"))
+        self.filename = os.path.expanduser(configuration.get("auth", "htpasswd_filename"))
         self.encryption = configuration.get("auth", "htpasswd_encryption")
 
         if self.encryption == "ssha":
@@ -157,17 +154,15 @@ class Auth(BaseAuth):
             try:
                 from passlib.hash import apr_md5_crypt
             except ImportError as e:
-                raise RuntimeError(
-                    "The htpasswd encryption method 'md5' requires "
-                    "the passlib module.") from e
+                raise RuntimeError("The htpasswd encryption method 'md5' requires " "the passlib module.") from e
             self.verify = functools.partial(self._md5apr1, apr_md5_crypt)
         elif self.encryption == "bcrypt":
             try:
                 from passlib.hash import bcrypt
             except ImportError as e:
                 raise RuntimeError(
-                    "The htpasswd encryption method 'bcrypt' requires "
-                    "the passlib module with bcrypt support.") from e
+                    "The htpasswd encryption method 'bcrypt' requires " "the passlib module with bcrypt support."
+                ) from e
             # A call to `encrypt` raises passlib.exc.MissingBackendError with a
             # good error message if bcrypt backend is not available. Trigger
             # this here.
@@ -178,13 +173,11 @@ class Auth(BaseAuth):
                 import crypt
             except ImportError as e:
                 raise RuntimeError(
-                    "The htpasswd encryption method 'crypt' requires "
-                    "the crypt() system support.") from e
+                    "The htpasswd encryption method 'crypt' requires " "the crypt() system support."
+                ) from e
             self.verify = functools.partial(self._crypt, crypt)
         else:
-            raise RuntimeError(
-                "The htpasswd encryption method %r is not "
-                "supported." % self.encryption)
+            raise RuntimeError("The htpasswd encryption method %r is not " "supported." % self.encryption)
 
     def _plain(self, hash_value, password):
         """Check if ``hash_value`` and ``password`` match, plain method."""
@@ -193,13 +186,11 @@ class Auth(BaseAuth):
     def _crypt(self, crypt, hash_value, password):
         """Check if ``hash_value`` and ``password`` match, crypt method."""
         hash_value = hash_value.strip()
-        return hmac.compare_digest(crypt.crypt(password, hash_value),
-                                   hash_value)
+        return hmac.compare_digest(crypt.crypt(password, hash_value), hash_value)
 
     def _sha1(self, hash_value, password):
         """Check if ``hash_value`` and ``password`` match, sha1 method."""
-        hash_value = base64.b64decode(hash_value.strip().replace(
-            "{SHA}", "").encode("ascii"))
+        hash_value = base64.b64decode(hash_value.strip().replace("{SHA}", "").encode("ascii"))
         password = password.encode(self.configuration.get("encoding", "stock"))
         sha1 = hashlib.sha1()
         sha1.update(password)
@@ -212,8 +203,7 @@ class Auth(BaseAuth):
         written with e.g. openssl, and nginx can parse it.
 
         """
-        hash_value = base64.b64decode(hash_value.strip().replace(
-            "{SSHA}", "").encode("ascii"))
+        hash_value = base64.b64decode(hash_value.strip().replace("{SSHA}", "").encode("ascii"))
         password = password.encode(self.configuration.get("encoding", "stock"))
         salt_value = hash_value[20:]
         hash_value = hash_value[:20]
@@ -256,11 +246,9 @@ class Auth(BaseAuth):
                             if login_ok and password_ok:
                                 return True
                         except ValueError as e:
-                            raise RuntimeError("Invalid htpasswd file %r: %s" %
-                                               (self.filename, e)) from e
+                            raise RuntimeError("Invalid htpasswd file %r: %s" % (self.filename, e)) from e
         except OSError as e:
-            raise RuntimeError("Failed to load htpasswd file %r: %s" %
-                               (self.filename, e)) from e
+            raise RuntimeError("Failed to load htpasswd file %r: %s" % (self.filename, e)) from e
         return False
 
 

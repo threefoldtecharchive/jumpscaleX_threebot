@@ -59,13 +59,13 @@ def load(configuration, logger):
 
     class CollectionCopy(collection_class):
         """Collection copy, avoids overriding the original class attributes."""
+
     CollectionCopy.configuration = configuration
     CollectionCopy.logger = logger
     return CollectionCopy
 
 
-def check_and_sanitize_item(vobject_item, is_collection=False, uid=None,
-                            tag=None):
+def check_and_sanitize_item(vobject_item, is_collection=False, uid=None, tag=None):
     """Check vobject items for common errors and add missing UIDs.
 
     ``is_collection`` indicates that vobject_item contains unrelated
@@ -89,8 +89,7 @@ def check_and_sanitize_item(vobject_item, is_collection=False, uid=None,
             if component_name is None or is_collection:
                 component_name = component.name
             elif component_name != component.name:
-                raise ValueError("Multiple component types in object: %r, %r" %
-                                 (component_name, component.name))
+                raise ValueError("Multiple component types in object: %r, %r" % (component_name, component.name))
             if component_name not in ("VTODO", "VEVENT", "VJOURNAL"):
                 continue
             component_uid = get_uid(component)
@@ -102,18 +101,17 @@ def check_and_sanitize_item(vobject_item, is_collection=False, uid=None,
                 elif not component_uid:
                     component.uid.value = uid or random_uuid4()
             elif not object_uid or not component_uid:
-                raise ValueError("Multiple %s components without UID in "
-                                 "object" % component_name)
+                raise ValueError("Multiple %s components without UID in " "object" % component_name)
             elif object_uid != component_uid:
                 raise ValueError(
                     "Multiple %s components with different UIDs in object: "
-                    "%r, %r" % (component_name, object_uid, component_uid))
+                    "%r, %r" % (component_name, object_uid, component_uid)
+                )
             # vobject interprets recurrence rules on demand
             try:
                 component.rruleset
             except Exception as e:
-                raise ValueError("invalid recurrence rules in %s" %
-                                 component.name) from e
+                raise ValueError("invalid recurrence rules in %s" % component.name) from e
     elif vobject_item.name == "VCARD" and tag == "VADDRESSBOOK":
         # https://tools.ietf.org/html/rfc6352#section-5.1
         object_uid = get_uid(vobject_item)
@@ -125,8 +123,9 @@ def check_and_sanitize_item(vobject_item, is_collection=False, uid=None,
         # Custom format used by SOGo Connector to store lists of contacts
         pass
     else:
-        raise ValueError("Item type %r not supported in %s collection" %
-                         (vobject_item.name, repr(tag) if tag else "generic"))
+        raise ValueError(
+            "Item type %r not supported in %s collection" % (vobject_item.name, repr(tag) if tag else "generic")
+        )
 
 
 def check_and_sanitize_props(props):
@@ -152,14 +151,12 @@ def scandir(path, only_dirs=False, only_files=False):
     """
     if sys.version_info >= (3, 5):
         for entry in os.scandir(path):
-            if ((not only_files or entry.is_file()) and
-                    (not only_dirs or entry.is_dir())):
+            if (not only_files or entry.is_file()) and (not only_dirs or entry.is_dir()):
                 yield entry.name
     else:
         for name in os.listdir(path):
             p = os.path.join(path, name)
-            if ((not only_files or os.path.isfile(p)) and
-                    (not only_dirs or os.path.isdir(p))):
+            if (not only_files or os.path.isfile(p)) and (not only_dirs or os.path.isdir(p)):
                 yield name
 
 
@@ -176,8 +173,7 @@ def get_etag(text):
 
 def get_uid(vobject_component):
     """UID value of an item if defined."""
-    return (vobject_component.uid.value
-            if hasattr(vobject_component, "uid") else None)
+    return vobject_component.uid.value if hasattr(vobject_component, "uid") else None
 
 
 def get_uid_from_object(vobject_item):
@@ -228,10 +224,14 @@ def is_safe_filesystem_path_component(path):
 
     """
     return (
-        path and not os.path.splitdrive(path)[0] and
-        not os.path.split(path)[0] and path not in (os.curdir, os.pardir) and
-        not path.startswith(".") and not path.endswith("~") and
-        is_safe_path_component(path))
+        path
+        and not os.path.splitdrive(path)[0]
+        and not os.path.split(path)[0]
+        and path not in (os.curdir, os.pardir)
+        and not path.startswith(".")
+        and not path.endswith("~")
+        and is_safe_path_component(path)
+    )
 
 
 def path_to_filesystem(root, *paths):
@@ -254,15 +254,14 @@ def path_to_filesystem(root, *paths):
             safe_path = os.path.join(safe_path, part)
             # Check for conflicting files (e.g. case-insensitive file systems
             # or short names on Windows file systems)
-            if (os.path.lexists(safe_path) and
-                    part not in scandir(safe_path_parent)):
+            if os.path.lexists(safe_path) and part not in scandir(safe_path_parent):
                 raise CollidingPathError(part)
     return safe_path
 
 
 def left_encode_int(v):
     length = int(log(v, 256)) + 1 if v != 0 else 1
-    return bytes((length,)) + v.to_bytes(length, 'little')
+    return bytes((length,)) + v.to_bytes(length, "little")
 
 
 class UnsafePathError(ValueError):
@@ -290,9 +289,18 @@ class ComponentNotFoundError(ValueError):
 
 
 class Item:
-    def __init__(self, collection, item=None, href=None, last_modified=None,
-                 text=None, etag=None, uid=None, name=None,
-                 component_name=None):
+    def __init__(
+        self,
+        collection,
+        item=None,
+        href=None,
+        last_modified=None,
+        text=None,
+        etag=None,
+        uid=None,
+        name=None,
+        component_name=None,
+    ):
         """Initialize an item.
 
         ``collection`` the parent collection.
@@ -331,8 +339,9 @@ class Item:
             try:
                 self._text = self.item.serialize()
             except Exception as e:
-                raise RuntimeError("Failed to serialize item %r from %r: %s" %
-                                   (self.href, self.collection.path, e)) from e
+                raise RuntimeError(
+                    "Failed to serialize item %r from %r: %s" % (self.href, self.collection.path, e)
+                ) from e
         return self._text
 
     @property
@@ -341,8 +350,7 @@ class Item:
             try:
                 self._item = vobject.readOne(self._text)
             except Exception as e:
-                raise RuntimeError("Failed to parse item %r from %r: %s" %
-                                   (self.href, self.collection.path, e)) from e
+                raise RuntimeError("Failed to parse item %r from %r: %s" % (self.href, self.collection.path, e)) from e
         return self._item
 
     @property
@@ -484,7 +492,7 @@ class BaseCollection:
                  more sophisticated implementation.
 
         """
-        token = "http://radicale.org/ns/sync/%s" % self.etag.strip("\"")
+        token = "http://radicale.org/ns/sync/%s" % self.etag.strip('"')
         if old_token:
             raise ValueError("Sync token are not supported")
         return token, self.list()
@@ -637,7 +645,7 @@ class BaseCollection:
                         elif vtimezone:
                             vtimezone.append(line + "\r\n")
                             if depth == 2 and line.startswith("TZID:"):
-                                tzid = line[len("TZID:"):]
+                                tzid = line[len("TZID:") :]
                             elif depth == 2 and line.startswith("END:"):
                                 if tzid is None or tzid not in included_tzids:
                                     vtimezones += "".join(vtimezone)
@@ -662,13 +670,10 @@ class BaseCollection:
             template = template.serialize()
             template_insert_pos = template.find("\r\nEND:VCALENDAR\r\n") + 2
             assert template_insert_pos != -1
-            return (template[:template_insert_pos] +
-                    vtimezones + components +
-                    template[template_insert_pos:])
+            return template[:template_insert_pos] + vtimezones + components + template[template_insert_pos:]
         elif self.get_meta("tag") == "VADDRESSBOOK":
             return "".join((item.serialize() for item in self.get_all()))
         return ""
-
 
     @classmethod
     def verify(cls):
@@ -678,12 +683,9 @@ class BaseCollection:
 
 ITEM_CACHE_VERSION = 1
 
+
 class Database:
-    try:
-        bcdb = j.data.bcdb.get("caldav")
-    except:
-        bcdb = j.data.bcdb.new("caldav")
-    bcdb.models_add("/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/radicaleserver/models") 
+    bcdb = j.data.bcdb.get("caldav")
     user_model = bcdb.model_get(url="tf.caldav.user.1")
     collection_model = bcdb.model_get(url="tf.caldav.collection.1")
     item_model = bcdb.model_get(url="tf.caldav.collection.item.1")
@@ -701,41 +703,41 @@ class Database:
         if users:
             return True
         return False
-    
+
     @classmethod
     def create_user(cls, user_id):
         user = cls.user_model.new()
         user.user_id = user_id
         user.save()
 
-
     @classmethod
     def find_item(cls, item_id, collection_id=None, user_id=None):
-        items = cls.item_model.find(item_id=item_id, collection_id = collection_id, user_id=user_id)
+        items = cls.item_model.find(item_id=item_id, collection_id=collection_id, user_id=user_id)
         return items
-        
+
     @classmethod
     def get_item(cls, item_id, collection_id=None, user_id=None):
-        items = cls.find_item(item_id=item_id, collection_id = collection_id, user_id=user_id)
-        if len(items) <=0:
+        items = cls.find_item(item_id=item_id, collection_id=collection_id, user_id=user_id)
+        if len(items) <= 0:
             raise j.exceptions.NotFound(f"Can not find item:{item_id} in collection:{collection_id} for user:{user_id}")
         return items[0]
+
     @classmethod
     def get_collection(cls, collection_id, user_id):
         collections = cls.find_collection(collection_id=collection_id, user_id=user_id)
-    
+
         if len(collections) <= 0:
             raise j.exceptions.NotFound(f"Can not find collection:{collection_id} for user:{user_id}")
         return collections[0]
 
+
 class Collection(BaseCollection):
     """Collection stored in several files per calendar."""
 
-    def __init__(self, path, principal=None, folder=None,
-                 filesystem_path=None):
+    def __init__(self, path, principal=None, folder=None, filesystem_path=None):
         # Path should already be sanitized
         path_list = path.strip("/").split("/")
-        if len(path_list) >=1 :
+        if len(path_list) >= 1:
             self.user_id = path_list[0]
         else:
             self.user_id = None
@@ -751,8 +753,6 @@ class Collection(BaseCollection):
         self._meta_cache = None
         self._etag_cache = None
         self._item_cache_cleaned = False
-        
-
 
     @staticmethod
     def _find_available_file_name(exists_fn, suffix=""):
@@ -763,9 +763,9 @@ class Collection(BaseCollection):
                 return file_name
         # something is wrong with the PRNG
         raise RuntimeError("No unique random sequence found")
+
     @classmethod
-    def discover(cls, path, depth="0", child_context_manager=(
-                 lambda path, href=None: contextlib.ExitStack())):
+    def discover(cls, path, depth="0", child_context_manager=(lambda path, href=None: contextlib.ExitStack())):
         # Path should already be sanitized
         sane_path = sanitize_path(path).strip("/")
         attributes = sane_path.split("/") if sane_path else []
@@ -788,7 +788,6 @@ class Collection(BaseCollection):
                 return
         else:
             href = None
-
 
         sane_path = "/".join(attributes)
         collection = cls(sane_path)
@@ -845,12 +844,11 @@ class Collection(BaseCollection):
                     if isinstance(item, BaseCollection):
                         remaining_paths.append(item.path)
                     else:
-                        cls.logger.debug("Verified item %r in %r",
-                                         item.href, path)
+                        cls.logger.debug("Verified item %r in %r", item.href, path)
                 if item_errors == saved_item_errors:
                     collection.sync()
         return item_errors == 0 and collection_errors == 0
-    
+
     @classmethod
     def create_collection(cls, href, collection=None, props=None):
         """
@@ -862,7 +860,7 @@ class Collection(BaseCollection):
         col.user_id = self.user_id
         col.collection_id = self.collection_id
         col.save()
-            # return cls(href)
+        # return cls(href)
         self.set_meta_all(props)
 
         if collection:
@@ -870,23 +868,20 @@ class Collection(BaseCollection):
                 collection, = collection
                 items = []
                 for content in ("vevent", "vtodo", "vjournal"):
-                    items.extend(
-                        getattr(collection, "%s_list" % content, []))
+                    items.extend(getattr(collection, "%s_list" % content, []))
                 items_by_uid = groupby(sorted(items, key=get_uid), get_uid)
                 vobject_items = {}
                 for uid, items in items_by_uid:
                     new_collection = vobject.iCalendar()
                     for item in items:
                         new_collection.add(item)
-                    href = self._find_available_file_name(
-                        vobject_items.get, suffix=".ics")
+                    href = self._find_available_file_name(vobject_items.get, suffix=".ics")
                     vobject_items[href] = new_collection
                 self._upload_all_nonatomic(vobject_items)
             elif props.get("tag") == "VADDRESSBOOK":
                 vobject_items = {}
                 for card in collection:
-                    href = self._find_available_file_name(
-                        vobject_items.get, suffix=".vcf")
+                    href = self._find_available_file_name(vobject_items.get, suffix=".vcf")
                     vobject_items[href] = card
                 self._upload_all_nonatomic(vobject_items)
 
@@ -903,9 +898,8 @@ class Collection(BaseCollection):
         uploads them nonatomic and without existence checks.
 
         """
-       
-        collection = Database.get_collection(collection_id=self.collection_id, user_id=self.user_id )
-        
+
+        collection = Database.get_collection(collection_id=self.collection_id, user_id=self.user_id)
 
         for href, vobject_item in vobject_items.items():
             text = vobject_item.serialize()
@@ -920,9 +914,8 @@ class Collection(BaseCollection):
     def move(cls, item, to_collection, to_href):
         os.replace(
             path_to_filesystem(item.collection._filesystem_path, item.href),
-            path_to_filesystem(to_collection._filesystem_path, to_href))
-
-   
+            path_to_filesystem(to_collection._filesystem_path, to_href),
+        )
 
     def list(self):
         if not self.collection_id:
@@ -960,28 +953,36 @@ class Collection(BaseCollection):
         else:
             return None, None
 
-        vobject_items = tuple(vobject.readComponents(
-            raw_text))
+        vobject_items = tuple(vobject.readComponents(raw_text))
         if len(vobject_items) != 1:
-            raise RuntimeError("Content contains %d components"
-                                % len(vobject_items))
+            raise RuntimeError("Content contains %d components" % len(vobject_items))
         vobject_item = vobject_items[0]
         uid, etag, text, name, tag, start, end = self._item_cache_content(vobject_item)
-        check_and_sanitize_item(vobject_item, uid=uid,
-                                tag=self.get_meta("tag"))
-        
-        last_modified = time.strftime("%a, %d %b %Y %H:%M:%S GMT",time.gmtime(time.time()))
-        return Item(
-            self, href=href, last_modified=last_modified, etag=etag,
-            text=text, item=vobject_item, uid=uid, name=name,
-            component_name=tag), (tag, start, end)
+        check_and_sanitize_item(vobject_item, uid=uid, tag=self.get_meta("tag"))
+
+        last_modified = time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.gmtime(time.time()))
+        return (
+            Item(
+                self,
+                href=href,
+                last_modified=last_modified,
+                etag=etag,
+                text=text,
+                item=vobject_item,
+                uid=uid,
+                name=name,
+                component_name=tag,
+            ),
+            (tag, start, end),
+        )
+
     def get_multi2(self, hrefs):
 
-        collection = Database.get_collection(collection_id=self.collection_id, user_id=self.user_id) 
+        collection = Database.get_collection(collection_id=self.collection_id, user_id=self.user_id)
         items = collection.items
-        items_refs = list(map(lambda  item: item.item_id, items))
+        items_refs = list(map(lambda item: item.item_id, items))
         for href in hrefs:
-            
+
             if href not in items_refs:
                 yield (href, None)
             else:
@@ -991,22 +992,18 @@ class Collection(BaseCollection):
         return (self.get(href, verify_href=False) for href in self.list())
 
     def get_all_filtered(self, filters):
-        tag, start, end, simple = xmlutils.simplify_prefilters(
-            filters, collection_tag=self.get_meta("tag"))
+        tag, start, end, simple = xmlutils.simplify_prefilters(filters, collection_tag=self.get_meta("tag"))
         if not tag:
             # no filter
             yield from ((item, simple) for item in self.get_all())
             return
-        for item, (itag, istart, iend) in (
-                self._get_with_metadata(href, verify_href=False)
-                for href in self.list()):
+        for item, (itag, istart, iend) in (self._get_with_metadata(href, verify_href=False) for href in self.list()):
             if tag == itag and istart < end and iend > start:
                 yield item, simple and (start <= istart or iend <= end)
 
     def upload(self, href, vobject_item):
-        uid, etag, text, name, tag, _, _ = \
-            self._item_cache_content(vobject_item)
-        collection =Database.get_collection(collection_id=self.collection_id, user_id=self.user_id)
+        uid, etag, text, name, tag, _, _ = self._item_cache_content(vobject_item)
+        collection = Database.get_collection(collection_id=self.collection_id, user_id=self.user_id)
         item = Database.item_model.new()
         item.item_id = href
         item.collection_id = self.collection_id
@@ -1016,14 +1013,13 @@ class Collection(BaseCollection):
         item.save()
         collection.items.append(item)
         collection.save()
-        item = Item(self, href=href, etag=etag, text=text, item=vobject_item,
-                    uid=uid, name=name, component_name=tag)
+        item = Item(self, href=href, etag=etag, text=text, item=vobject_item, uid=uid, name=name, component_name=tag)
         return item
 
     def delete(self, href=None):
         if href is None:
             collection = Database.get_collection(self.collection_id, self.user_id)
-            collection.remove()
+            collection.delete()
         else:
             items = Database.find_item(item_id=href, collection_id=self.collection_id, user_id=self.user_id)
             if items:
@@ -1039,8 +1035,7 @@ class Collection(BaseCollection):
                 self._meta_cache = {}
             check_and_sanitize_props(self._meta_cache)
         except ValueError as e:
-            raise RuntimeError("Failed to load properties of collection "
-                                "%r: %s" % (self.path, e)) from e
+            raise RuntimeError("Failed to load properties of collection " "%r: %s" % (self.path, e)) from e
         return self._meta_cache.get(key) if key else self._meta_cache
 
     def set_meta_all(self, props):

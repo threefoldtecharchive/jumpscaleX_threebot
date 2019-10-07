@@ -56,13 +56,16 @@ class TestBaseAuthRequests(BaseTest):
         self.application = Application(self.configuration, self.logger)
         for u in ("tmp", "other"):
             status, _, _ = self.request(
-                "PROPFIND", "/%s" % u, HTTP_AUTHORIZATION="Basic %s" %
-                base64.b64encode(("%s:bepo" % u).encode()).decode())
+                "PROPFIND",
+                "/%s" % u,
+                HTTP_AUTHORIZATION="Basic %s" % base64.b64encode(("%s:bepo" % u).encode()).decode(),
+            )
             assert status == 207
         status, _, _ = self.request(
-            "PROPFIND" if mode == "r" else "PROPPATCH", path,
-            HTTP_AUTHORIZATION="Basic %s" % base64.b64encode(
-                ("tmp:bepo").encode()).decode() if user else "")
+            "PROPFIND" if mode == "r" else "PROPPATCH",
+            path,
+            HTTP_AUTHORIZATION="Basic %s" % base64.b64encode(("tmp:bepo").encode()).decode() if user else "",
+        )
         assert status == expected_status
 
     def test_owner_only(self):
@@ -116,7 +119,8 @@ class TestBaseAuthRequests(BaseTest):
     def test_from_file(self):
         rights_file_path = os.path.join(self.colpath, "rights")
         with open(rights_file_path, "w") as f:
-            f.write("""\
+            f.write(
+                """\
 [owner]
 user: .+
 collection: %(login)s(/.*)?
@@ -124,7 +128,8 @@ permission: rw
 [custom]
 user: .*
 collection: custom(/.*)?
-permission: r""")
+permission: r"""
+            )
         self.configuration["rights"]["file"] = rights_file_path
         self._test_rights("from_file", "", "/other", "r", 401)
         self._test_rights("from_file", "tmp", "/other", "r", 403)

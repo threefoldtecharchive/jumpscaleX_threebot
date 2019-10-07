@@ -1,8 +1,0 @@
-
-
-@url = tf.caldav.collection.item.1
-item_id** = (S)
-user_id = (S)
-collection_id = (S)
-content = (S) 
-epcoh = (T)

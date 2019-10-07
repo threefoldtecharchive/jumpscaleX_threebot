@@ -36,6 +36,7 @@ logger.setLevel(logging.DEBUG)
 
 class BaseTest:
     """Base class for tests."""
+
     logger = logger
 
     def request(self, method, path, data=None, **args):
@@ -57,8 +58,8 @@ class BaseTest:
         return (
             int(self.application._status.split()[0]),
             dict(self.application._headers),
-            self.application._answer[0].decode("utf-8")
-            if self.application._answer else None)
+            self.application._answer[0].decode("utf-8") if self.application._answer else None,
+        )
 
     def start_response(self, status, headers):
         """Put the response values into the current application."""

@@ -24,9 +24,7 @@ import pkg_resources
 
 from radicale import storage
 
-NOT_FOUND = (
-    client.NOT_FOUND, (("Content-Type", "text/plain"),),
-    "The requested resource could not be found.")
+NOT_FOUND = (client.NOT_FOUND, (("Content-Type", "text/plain"),), "The requested resource could not be found.")
 
 MIMETYPES = {
     ".css": "text/css",
@@ -41,7 +39,8 @@ MIMETYPES = {
     ".txt": "text/plain",
     ".woff": "application/font-woff",
     ".woff2": "font/woff2",
-    ".xml": "text/xml"}
+    ".xml": "text/xml",
+}
 FALLBACK_MIMETYPE = "application/octet-stream"
 
 INTERNAL_TYPES = ("None", "none", "internal")
@@ -58,8 +57,7 @@ def load(configuration, logger):
         try:
             web_class = import_module(web_type).Web
         except Exception as e:
-            raise RuntimeError("Failed to load web module %r: %s" %
-                               (web_type, e)) from e
+            raise RuntimeError("Failed to load web module %r: %s" % (web_type, e)) from e
     logger.info("Web type is %r", web_type)
     return web_class(configuration, logger)
 
@@ -96,29 +94,20 @@ class Web(BaseWeb):
 
     def get(self, environ, base_prefix, path, user):
         try:
-            filesystem_path = storage.path_to_filesystem(
-                self.folder, path[len("/.web"):])
+            filesystem_path = storage.path_to_filesystem(self.folder, path[len("/.web") :])
         except ValueError as e:
-            self.logger.debug("Web content with unsafe path %r requested: %s",
-                              path, e, exc_info=True)
+            self.logger.debug("Web content with unsafe path %r requested: %s", path, e, exc_info=True)
             return NOT_FOUND
         if os.path.isdir(filesystem_path) and not path.endswith("/"):
             location = posixpath.basename(path) + "/"
-            return (client.FOUND,
-                    {"Location": location, "Content-Type": "text/plain"},
-                    "Redirected to %s" % location)
+            return (client.FOUND, {"Location": location, "Content-Type": "text/plain"}, "Redirected to %s" % location)
         if os.path.isdir(filesystem_path):
             filesystem_path = os.path.join(filesystem_path, "index.html")
         if not os.path.isfile(filesystem_path):
             return NOT_FOUND
-        content_type = MIMETYPES.get(
-            os.path.splitext(filesystem_path)[1].lower(), FALLBACK_MIMETYPE)
+        content_type = MIMETYPES.get(os.path.splitext(filesystem_path)[1].lower(), FALLBACK_MIMETYPE)
         with open(filesystem_path, "rb") as f:
             answer = f.read()
-            last_modified = time.strftime(
-                "%a, %d %b %Y %H:%M:%S GMT",
-                time.gmtime(os.fstat(f.fileno()).st_mtime))
-        headers = {
-            "Content-Type": content_type,
-            "Last-Modified": last_modified}
+            last_modified = time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.gmtime(os.fstat(f.fileno()).st_mtime))
+        headers = {"Content-Type": content_type, "Last-Modified": last_modified}
         return client.OK, headers, answer
