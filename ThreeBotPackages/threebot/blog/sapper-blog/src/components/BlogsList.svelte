@@ -3,19 +3,25 @@
   export let blogs = [];
 </script>
 
-<style>
-  ul {
-    margin: 0 0 1em 0;
-    line-height: 1.5;
-  }
-</style>
+<!-- Hero Section-->
+<section
+  style="background-image: url(img/3bot3_banner.jpg); background-size: cover;
+  background-position: 50% 30%"
+  class="hero" />
 
-<h1>Blogs</h1>
+<section class="latest-posts">
+  <div class="container">
 
-<ul>
-  {#each blogs as blogName}
-    <li>
-      <BlogCard {blogName} />
-    </li>
-  {/each}
-</ul>
+    <header>
+      <h2>Blogs</h2>
+      <p class="text-big">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+      </p>
+    </header>
+    <div class="row">
+      {#each blogs as blogName}
+        <BlogCard {blogName} />
+      {/each}
+    </div>
+  </div>
+</section>

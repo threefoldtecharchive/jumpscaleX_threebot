@@ -13,6 +13,8 @@ class namemanager(j.baseclasses.threebot_actor):
         """
         domain = "3bot.grid.tf"
         gateway_domain = "gateway.3bot.grid.tf"
-        j.tools.tf_gateway.tcpservice_register(doublename, domain, privateip)
-        j.tools.tf_gateway.domain_register_cname(doublename, domain, gateway_domain)
+        first, last = doublename.split(".")
+        fqdn = f"{doublename}.{domain}"
+        j.tools.tf_gateway.tcpservice_register(fqdn, fqdn, privateip)
+        j.tools.tf_gateway.domain_register_cname(first, f"{last}.{domain}", gateway_domain)
         return True
