@@ -5,10 +5,6 @@ class TFDirectoryFactory(j.baseclasses.threebot_factory):
 
     __jslocation__ = "j.threebot.package.directory"
 
-    def start(self):
-        gedis_client = j.servers.threebot.local_start_default(web=True)
-        gedis_client.actors.package_manager.package_add(path=self._dirpath)
-
     def test(self, name=""):
         """
         test the directory
