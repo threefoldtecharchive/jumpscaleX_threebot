@@ -102,10 +102,10 @@ class BlogLoader(j.baseclasses.object):
             post_obj.slug = self.slugify(post_title)
             post_obj.content_with_meta = content
             post_obj.content = parsed.strip_meta(content)
-
-            tags = meta.get("tags", [])[0]
-            tags = [t.strip() for t in tags.split(",")]
-            post_obj.tags = tags
+            if len(meta.get("tags", [])) > 0:
+                tags = meta.get("tags", [])[0]
+                tags = [t.strip() for t in tags.split(",")]
+                post_obj.tags = tags
 
             the_author_name = meta.get("author_name", [self.blog.metadata.author_name])[0]
             the_author_email = meta.get("author_email", [self.blog.metadata.author_email])[0]
