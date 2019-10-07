@@ -9,108 +9,63 @@
   import SearchBar from "./SearchBar.svelte";
 </script>
 
-<style>
-  nav {
-    border-bottom: 1px solid rgba(255, 62, 0, 0.1);
-    font-weight: 300;
-    padding: 0 1em;
-  }
+<header class="header">
+  <!-- Main Navbar-->
+  <nav class="navbar navbar-expand-lg">
 
-  ul {
-    margin: 0;
-    padding: 0;
-  }
-
-  /* clearfix */
-  ul::after {
-    content: "";
-    display: block;
-    clear: both;
-  }
-
-  li {
-    display: block;
-    float: left;
-  }
-
-  .selected {
-    position: relative;
-    display: inline-block;
-  }
-
-  .selected::after {
-    position: absolute;
-    content: "";
-    width: calc(100% - 1em);
-    height: 2px;
-    background-color: rgb(255, 62, 0);
-    display: block;
-    bottom: -1px;
-  }
-
-  a {
-    text-decoration: none;
-    padding: 1em 0.5em;
-    display: block;
-  }
-</style>
-
-<div class="container-fluid">
-  <div class="row-fluid">
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <nav>
-
-        <ul>
-          <!-- <li>
-      <a class={segment === undefined ? 'selected' : ''} href=".">home</a>
-    </li> -->
-          <!-- for the blog link, we're using rel=prefetch so that Sapper prefetches
-		     the blog data when we hover over the link or tap it on a touchscreen -->
-          <li>
-            <a
-              rel="prefetch"
-              class={segment === undefined ? 'selected' : ''}
-              href="blog/">
-              /
-            </a>
-          </li>
+    <div class="container">
+      <!-- Navbar Brand -->
+      <div
+        class="navbar-header d-flex align-items-center justify-content-between">
+        <!-- Navbar Brand -->
+        <a href="blog/" rel="prefetch" class="navbar-brand">Blog</a>
+        <!-- Toggle Button-->
+        <button
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarcollapse"
+          aria-controls="navbarcollapse"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          class="navbar-toggler">
+          <span />
+          <span />
+          <span />
+        </button>
+      </div>
+      <!-- Navbar Menu -->
+      <div id="navbarcollapse" class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto">
           {#if currentuser}
-            <li>
+            <li class="nav-item">
               <a
+                href="blog/{currentuser}/posts"
                 rel="prefetch"
-                class={segment === undefined ? 'selected' : ''}
-                href="blog/{currentuser}/posts">
+                class={segment === undefined ? 'nav-link active' : 'nav-link'}>
                 {currentuser}
               </a>
             </li>
-
             {#each pages as page}
-              <li>
+              <li class="nav-item">
                 <a
                   rel="prefetch"
-                  class={segment === page.slug ? 'selected' : ''}
-                  href="blog/{currentuser}/pages/{page.slug}">
+                  href="blog/{currentuser}/pages/{page.slug}"
+                  class={segment === undefined ? 'nav-link active' : 'nav-link'}>
                   {page.title}
                 </a>
               </li>
             {/each}
-            <li>
+            <li class="nav-item">
               <a
-                class={segment === 'tags' ? 'selected' : ''}
-                href="blog/{currentuser}/tags/">
+                href="blog/{currentuser}/tags/"
+                class={segment === undefined ? 'nav-link active' : 'nav-link'}>
                 Tags
               </a>
             </li>
           {/if}
-
-          <li>
-            <SearchBar />
-
-          </li>
         </ul>
-
-      </nav>
-
+        <SearchBar />
+      </div>
     </div>
-  </div>
-</div>
+  </nav>
+</header>

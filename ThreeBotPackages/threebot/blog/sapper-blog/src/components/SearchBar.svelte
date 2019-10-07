@@ -11,9 +11,9 @@
   const BLOG_API = `blog/search.json`;
 
   export async function search_method(e) {
-    if (!query) {
-      alert("empty search !");
-    }
+    // if (!query) {
+    //   alert("empty search !");
+    // }
     e.preventDefault();
     search_res = await axios.get(BLOG_API, {
       params: {
@@ -27,38 +27,55 @@
   export function clear_results(e) {
     if (e.key === "Escape" || e.type === "click") {
       search_res = "";
+      document.querySelector(".search-area").style.display = "none";
+      document.getElementById("search").value = "";
     }
   }
 </script>
 
-<div class="col-sm-3 col-md-3 pull-right">
-  <form
-    class="navbar-form form-inline"
-    role="search"
-    on:submit={search_method}
-    on:keyup={clear_results}>
-    <!-- <i class="fas fa-search" aria-hidden="true" /> -->
-    <input
-      class="form-control"
-      type="text"
-      bind:value={query}
-      placeholder="Search"
-      aria-label="Search" />
-    <!-- <button>Search</button> -->
-  </form>
+<div class="search-area">
+  <div
+    class="search-area-inner d-flex align-items-center justify-content-center">
+    <div class="close-btn">
+      <i class="icon-close" />
+    </div>
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-8">
+        <form on:submit={search_method} on:keyup={clear_results}>
+          <div class="form-group">
+            <input
+              type="search"
+              bind:value={query}
+              name="search"
+              id="search"
+              placeholder="What are you looking for?"
+              aria-label="What are you looking for?" />
+            <button type="submit" class="submit">
+              <i class="icon-search-1" />
+            </button>
+          </div>
+        </form>
+        {#if search_res}
+          <p>Search Result</p>
+          <ul>
+            {#each search_res as res}
+              <li>
+                <a
+                  href="blog/{res.blog_name}/{res.type}/{res.slug}"
+                  on:click={clear_results}>
+                  {res.slug} - Type: {res.type}
+                </a>
+              </li>
+            {/each}
+          </ul>
+        {/if}
+      </div>
+    </div>
+  </div>
 </div>
 
-{#if search_res.length>0}
-  <p>Search Result</p>
-  <ul>
-    {#each search_res as res}
-      <li>
-        <a
-          href="blog/{res.blog_name}/{res.type}/{res.slug}"
-          on:click={clear_results}>
-          {res.slug} - Type: {res.type}
-        </a>
-      </li>
-    {/each}
-  </ul>
-{/if}
+<div class="navbar-text">
+  <a href=" " class="search-btn">
+    <i class="icon-search-1" />
+  </a>
+</div>
