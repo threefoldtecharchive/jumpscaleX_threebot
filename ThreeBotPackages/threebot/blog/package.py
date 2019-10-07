@@ -102,7 +102,7 @@ class BlogLoader(j.baseclasses.object):
             post_obj.content_with_meta = content
             post_obj.content = parsed.strip_meta(content)
 
-            tags = meta.get("tags", [""])[0]
+            tags = meta.get("tags", [])[0]
             tags = [t.strip() for t in tags.split(",")]
             post_obj.tags = tags
 
@@ -146,7 +146,7 @@ class BlogLoader(j.baseclasses.object):
             post_obj.slug = self.slugify(post_title)
             post_obj.content_with_meta = content
             post_obj.content = parsed.strip_meta(content)
-            tags = meta.get("tags", [""])[0]
+            tags = meta.get("tags", [])[0]
             tags = [t.strip() for t in tags.split(",")]
             post_obj.tags = tags
             post_obj.save()
