@@ -11,7 +11,6 @@
   let mdtext = converter.makeHtml(post.content);
 </script>
 
-{#await metadata then nothing}{/await}
 
 <!-- Latest Posts -->
 <main class="post blog-post col-lg-12">

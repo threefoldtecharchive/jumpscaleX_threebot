@@ -10,6 +10,16 @@
   converter.setFlavor("github");
   let mdtext = converter.makeHtml(post.content);
   export let showExcerpt = true;
+  let post_image = post.post_image
+  let post_image_link = ""
+
+    if  (!post_image){
+        post_image_link = "img/blog-post-1.jpeg";
+    }else if (!post_image.startsWith("http")) {
+      post_image_link = `/blog/blog_${username}/assets/images/${post.post_image}`;
+    }else{
+      post_image_link = post_image;
+    }
   //   let summary = mdtext
   //     .split("\n")
   //     .splice(1)
@@ -23,7 +33,12 @@
 <div class="post col-xl-6">
   <div class="post-thumbnail">
     <a rel="prefetch" href="blog/{username}/posts/{post.slug}">
-      <img src="img/blog-post-1.jpeg" alt="..." class="img-fluid" />
+
+    <img
+            src="{post_image_link}"
+            onerror="this.src = 'img/blog-post-1.jpeg"
+            alt="..."
+            class="img-fluid" />
     </a>
   </div>
   <div class="post-details">
