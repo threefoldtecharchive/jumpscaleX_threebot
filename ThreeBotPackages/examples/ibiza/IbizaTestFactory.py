@@ -28,7 +28,7 @@ class IbizaTestFactory(j.baseclasses.object, j.baseclasses.testtools):
 
         self.client_get()
 
-        j.shell()
+        # j.shell()
 
         # print(name)
         # self._test_run(name=name)
