@@ -42,7 +42,7 @@
                 href="blog/{currentuser}/posts"
                 rel="prefetch"
                 class={segment === undefined ? 'nav-link active' : 'nav-link'}>
-                {currentuser}
+                {currentuser.toUpperCase()}
               </a>
             </li>
             {#each pages as page}
@@ -51,7 +51,7 @@
                   rel="prefetch"
                   href="blog/{currentuser}/pages/{page.slug}"
                   class={segment === undefined ? 'nav-link active' : 'nav-link'}>
-                  {page.title}
+                  {page.title.toUpperCase()}
                 </a>
               </li>
             {/each}
@@ -59,7 +59,7 @@
               <a
                 href="blog/{currentuser}/tags/"
                 class={segment === undefined ? 'nav-link active' : 'nav-link'}>
-                Tags
+                TAGS
               </a>
             </li>
           {/if}
