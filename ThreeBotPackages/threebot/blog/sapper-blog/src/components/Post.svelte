@@ -94,4 +94,30 @@
       </div>
     </div>
   </div>
+  <div id="disqus_thread" />
+
+  <script>
+    // configure discuss
+    var disqus_config = function() {
+      this.page.url = location.href;
+      this.page.identifier = location.pathname; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+
+    (function() {
+      // DON'T EDIT BELOW THIS LINE
+      var d = document,
+        s = d.createElement("script");
+      s.src = "https://threefoldblog.disqus.com/embed.js";
+      s.setAttribute("data-timestamp", +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>
+    Please enable JavaScript to view the
+    <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+  </noscript>
+
+  <script id="dsq-count-scr" src="//threefoldblog.disqus.com/count.js" async>
+
+  </script>
 </main>
