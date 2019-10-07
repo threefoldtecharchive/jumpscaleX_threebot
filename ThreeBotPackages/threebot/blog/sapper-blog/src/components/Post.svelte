@@ -51,10 +51,13 @@
           </p>
 
         </div>
-        <div class="post-tags">
-          <Tags tags={post.tags} />
+        {#if post.tags}
+          <div class="post-tags">
+            <Tags tags={post.tags} />
 
-        </div>
+          </div>
+        {/if}
+
         <div
           class="posts-nav d-flex justify-content-between align-items-stretch
           flex-column flex-md-row">
