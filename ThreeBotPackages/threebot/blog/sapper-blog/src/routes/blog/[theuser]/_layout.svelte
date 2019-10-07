@@ -9,7 +9,19 @@
 
       const tagsResp = await this.fetch(`blog/${params.theuser}/tags.json`);
       const tags = await tagsResp.json();
-      return { pages, metadata, tags };
+
+
+      const postsResp = await this.fetch(`blog/${params.theuser}/posts.json`);
+      const allPosts = await postsResp.json()
+
+      // please notice it might be undefined
+      // parseInt(undefined) > 0 -> false
+      // parseInt(undefined) < 0 -> false
+      // because.. javascript `\-()-/`
+
+
+      let posts = allPosts.slice(0, 3);
+      return { pages, posts, metadata, tags };
     } catch (error) {
       console.log(error);
     }
@@ -22,11 +34,13 @@
   import Nav from "../../../components/Nav.svelte";
   import Sidebar from "../../../components/Sidebar.svelte";
   import Footer from "../../../components/Footer.svelte";
-  import Header from "../../../components/Header.svelte";
+  // import Header from "../../../components/Header.svelte";
   import TagCloud from "../../../components/TagCloud.svelte";
+  import Pagination from "../../../components/ListPagination.svelte";
 
   export let segment;
   export let pages = [];
+  export let posts = [];
   export let metadata = {};
   export let tags = [];
 </script>
@@ -42,34 +56,38 @@
   }
 </style>
 
-{#await metadata then value}
+<!-- {#await metadata then value}
   <Header
     blogName={value.blog_name}
     blogDescription={value.blog_description}
     blogLogo={value.blog_logo}
     authorName={value.authorName} />
-{/await}
+{/await} -->
 
 {#await pages}
   loading
 {:then value}
   <Nav {segment} pages={value} />
 {/await}
-
-<div class="container container-left">
-
-  <div class="row">
-    <div class="col-md-3 hidden-xs">
-      <Sidebar {metadata} {tags}/>
-
-
-    </div>
-
-    <div class="col-md-9">
-      <main>
-        <slot />
+<div>
+  <div class="container">
+    <div class="row">
+      <main class="posts-listing col-lg-8">
+        <div class="container">
+          <div class="row">
+            <!-- post -->
+            <slot />
+          </div>
+          <!-- Pagination -->
+          <Pagination />
+        </div>
       </main>
+
+      <aside class="col-lg-4">
+        <Sidebar {metadata} {tags} {posts} />
+      </aside>
     </div>
   </div>
   <Footer />
+
 </div>
