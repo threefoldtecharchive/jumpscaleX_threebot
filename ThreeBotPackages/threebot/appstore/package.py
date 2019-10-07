@@ -55,7 +55,7 @@ class Package(j.baseclasses.threebot_package):
 
         for application in appsList:
             # rework needed
-            if appModel.count(appname=application['appname']) == 0:
+            if appModel.count(appname=application["appname"]) == 0:
                 app = appModel.new(application)
                 app.save()
 
