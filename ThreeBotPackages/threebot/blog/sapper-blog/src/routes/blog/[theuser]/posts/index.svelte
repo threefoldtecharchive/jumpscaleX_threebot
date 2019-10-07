@@ -25,9 +25,8 @@
     let per_page = metadata.posts_per_page || 5;
     let begin = pageNum * per_page;
     let end = pageNum * per_page + per_page;
-    let posts = allPosts.slice(begin, end);
+    let posts = allPosts.slice(0, 4);
 
-    console.log(begin, end, posts.length);
     return { path, posts, totalPostsLength, metadata };
   }
 </script>

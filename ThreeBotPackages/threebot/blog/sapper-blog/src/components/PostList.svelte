@@ -9,21 +9,10 @@
   import PostCard from "./PostCard.svelte";
 </script>
 
-<style>
-  ul {
-    margin: 0 0 1em 0;
-    line-height: 1.5;
-  }
-</style>
-
 {#if title !== ''}
   <h1>{title}</h1>
 {/if}
 
-<ul>
-  {#each posts as post}
-    <li>
-      <PostCard {post} {username} {showExcerpt} />
-    </li>
-  {/each}
-</ul>
+{#each posts as post}
+  <PostCard {post} {username} {showExcerpt} />
+{/each}
