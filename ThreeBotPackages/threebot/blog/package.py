@@ -163,8 +163,8 @@ class Package(j.baseclasses.threebot_package):
         self.branch = kwargs["package"].branch or "master"
 
         # load models
-        models_location = j.sal.fs.joinPaths(self.package_root, "models")
-        self.bcdb.models_add(models_location)
+        # models_location = j.sal.fs.joinPaths(self.package_root, "models")
+        # self.bcdb.models_add(models_location)
         self.blog_dest = ""
 
     def prepare(self, blog_name, repo_url):
@@ -209,23 +209,30 @@ class Package(j.baseclasses.threebot_package):
         blogobj.create_posts()
         blogobj.create_pages()
 
-        self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
+        # self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
 
     def start(self):
         """
         called when the 3bot starts
         :return:
         """
-        server = self.openresty
         j.builders.runtimes.nodejs.install()
 
-        server.install()
+        server = self.openresty
+        server.install(reset=False)
         server.configure()
 
-        website = server.websites.get("blog")
-        website.ssl = False
-        website.port = 8084
-        locations = website.locations.get("blog")
+        website = server.get_from_port(443)
+
+        locations = website.locations.get("blogs_locations")
+
+        website_location = locations.locations_static.new()
+        website_location.name = "blogs"
+        website_location.name = f"blog_{self.blog_name}_assets"
+        website_location.path_url = f"/blog/{self.blog_name}/assets"
+
+        fullpath = j.sal.fs.joinPaths(self.blog_dest, "assets")
+        website_location.path_location = fullpath
 
         # website_location_assets = locations.locations_static.new()
         # website_location_assets.name = f"blogs_static"
@@ -233,11 +240,11 @@ class Package(j.baseclasses.threebot_package):
         # fullpath = j.sal.fs.joinPaths(self.package_root, "sapper-blog", "static")
         # website_location_assets.path_location = fullpath
 
-        website_location_assets = locations.locations_static.new()
-        website_location_assets.name = f"blog_{self.blog_name}_assets"
-        website_location_assets.path_url = f"/blog/{self.blog_name}/assets"
-        fullpath = j.sal.fs.joinPaths(self.blog_dest, "assets")
-        website_location_assets.path_location = fullpath
+        # website_location_assets = locations.locations_static.new()
+        # website_location_assets.name = f"blog_{self.blog_name}_assets"
+        # website_location_assets.path_url = f"/blog/{self.blog_name}/assets"
+        # fullpath = j.sal.fs.joinPaths(self.blog_dest, "assets")
+        # website_location_assets.path_location = fullpath
 
         ## START BOTTLE ACTORS ENDPOINT
         rack = j.servers.rack.get()
@@ -262,20 +269,3 @@ class Package(j.baseclasses.threebot_package):
 
         locations.configure()
         website.configure()
-
-        server.start()
-
-    def stop(self):
-        """
-        called when the 3bot stops
-        :return:
-        """
-        pass
-
-    def uninstall(self):
-        """
-        called when the package is no longer needed and will be removed from the threebot
-        :return:
-        """
-        # TODO: clean up bcdb ?
-        pass

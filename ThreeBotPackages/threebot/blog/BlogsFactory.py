@@ -1,7 +1,7 @@
 from Jumpscale import j
 
 
-class BlogsFactory(j.baseclasses.object, j.baseclasses.testtools):
+class BlogsFactory(j.baseclasses.threebot_factory):
 
     __jslocation__ = "j.threebot.package.blogs"
 
@@ -46,6 +46,3 @@ class BlogsFactory(j.baseclasses.object, j.baseclasses.testtools):
         s.ports = [3000]
 
         s.start(reset=reset)
-
-    def test(self, name=""):
-        pass
