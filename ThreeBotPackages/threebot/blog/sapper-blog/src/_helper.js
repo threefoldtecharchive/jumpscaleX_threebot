@@ -15,8 +15,8 @@
 
 const sanitize = (content) => content
 export const excerptOf = (content, opts) => {
-    opts = opts || { excerptLength: 1000, pruneString: '...' };
-    opts.excerptLength = opts.excerptLength || 1000;
+    opts = opts || { excerptLength: 300, pruneString: '...' };
+    opts.excerptLength = opts.excerptLength || 300;
     opts.pruneString = opts.pruneString || '...'
     const post = sanitize(content);
     return post.substr(0, opts.excerptLength) + opts.pruneString;
