@@ -30,7 +30,7 @@
     <div class="post-meta d-flex justify-content-between">
       <!-- Change date format -->
       <div class="date meta-last">{post.published_at}</div>
-      {#if post.tags}
+      {#if post.tags.length}
         <div class="category">
           <Tags tags={post.tags} />
         </div>
