@@ -48,7 +48,9 @@ class Package(j.baseclasses.threebot_package):
             url="https://github.com/freeflownation/info_freeflowevents/tree/%s/docs" % self.branch,
         )
         j.servers.myjobs.schedule(
-            load_wiki, repo="testwikis", url="https://github.com/waleedhammam/test_custom_md/tree/master/docs"
+            load_wiki,
+            repo="test",
+            url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/development/examples/docs",
         )
 
     def prepare(self):

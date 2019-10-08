@@ -5,10 +5,10 @@ from io import BytesIO
 
 class humanitypoll(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        self.bcdb = self._bcdb_get("system")
-        self.phonebook_model = self.bcdb.model_get(url="threebot.humanity.poll.1")
+        self.bcdb = self._bcdb_get("humanitypoll")
+        self.model = self.bcdb.model_get(url="threebot.humanitypoll.1")
 
-    def get(self, name, secret, schema_out=None, user_session=None):
+    def get(self, email, secret, schema_out=None, user_session=None):
         """
 
         ```in
