@@ -59,7 +59,7 @@
           <p>Search Result</p>
           <ul>
             {#each search_res as res}
-              <li>
+              <li class="list-results">
                 <a
                   href="{res.blog_name}/{res.type}/{res.slug}"
                   on:click={clear_results}>
@@ -68,6 +68,7 @@
               </li>
             {/each}
           </ul>
+          <p>Total: {Object.keys(search_res).length} Results</p>
         {/if}
       </div>
     </div>
