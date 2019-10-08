@@ -3,7 +3,7 @@
     console.log("params in posts index", JSON.stringify(params));
 
     let pageNum = parseInt(query.page);
-    if (pageNum == 0) {
+    if (!pageNum) {
       this.redirect(302, `blog/${params.theuser}/posts?page=1`);
     }
 
