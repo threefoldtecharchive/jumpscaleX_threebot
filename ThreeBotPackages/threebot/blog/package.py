@@ -1,9 +1,21 @@
 from Jumpscale import j
+from JumpscaleLibs.data.markdown.mistune import markdown
 from os.path import dirname, abspath, join, splitext
 import re
 import unicodedata
 
 __version__ = "0.0.1"
+
+j.builders.runtimes.python3.pip_package_install("beautifulsoup4")
+
+
+def get_excerpt(content, maxlen=400):
+
+    html = markdown(content)
+    from bs4 import BeautifulSoup
+
+    text = "".join(BeautifulSoup(html).findAll(text=True))
+    return text[:maxlen]
 
 
 class BlogLoader(j.baseclasses.object):
@@ -121,6 +133,8 @@ class BlogLoader(j.baseclasses.object):
             post_obj.author_image = the_author_image
             post_obj.post_image = meta.get("post_image", [""])[0]
             post_obj.published_at = the_author_published_at
+            post_obj.excerpt = meta.get("excerpt", [get_excerpt(post_obj.content)])[0]
+
             post_obj.save()
             # print("POST INFO: ", post_obj)
             self.blog.posts.append(post_obj)
