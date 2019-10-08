@@ -99,6 +99,10 @@ class token(j.baseclasses.threebot_actor):
             timeframe=str(price_timeframe), year=year, month=month, day=day, price_from=price_from
         )
 
+    def feed_dummy_data_prices_total(self):
+        # TODO: generate the year you need
+        pass
+
     def _generate_dummy_data(self, timeframe, year=2019, month=10, day=1, price_from=0.06):
         res = []
         tframe = timeframe.lower()
