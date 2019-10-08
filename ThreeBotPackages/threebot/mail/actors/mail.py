@@ -105,4 +105,3 @@ class mail(j.baseclasses.threebot_actor):
         out = schema_out.new()
         out.success = True
         return out
-
