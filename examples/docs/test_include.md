@@ -7,7 +7,7 @@
 - [link](threefoldtech:home(master):schemas/readme.md)
 - [link](threefoldtech:home:projects/readme.md)
 - [link](https://github.com/threefoldfoundation:projects/readme.md)
-- [link](https://github.com/threefoldfoundation:readme.md) 
+- [link](https://github.com/threefoldfoundation:readme.md)
   - when more than 1 file which matches use the shortest path so in this case will be in home folder
 - [link](https://gitlab.com/threefoldforks/Threefold-Circles-back:CODE_OF_CONDUCT.md)
 
@@ -36,7 +36,7 @@ if json or yaml or toml, py, js, ...
 then put in codeblock
 ```
 
-!!!include("threefoldtech:jumpscaleX_libs(development):markdowndocs/dot.py")
+!!!include("threefoldtech:jumpscaleX_libs(development):macros/dot.py")
 
 ## includes 4
 
@@ -54,7 +54,7 @@ when no extension checks for .md
 when no account or repo then is current repo
 ```
 
-!!!include("home:small.md")
+!!!include("home:networks")
 
 ## include long
 
