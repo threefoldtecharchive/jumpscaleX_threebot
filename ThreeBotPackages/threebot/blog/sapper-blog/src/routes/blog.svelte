@@ -12,12 +12,12 @@
 </script>
 
 <script>
-  import BlogsList from "../../components/BlogsList.svelte";
+  import BlogsList from "../components/BlogsList.svelte";
   export let blogs = [];
-  import Nav from "../../components/Nav.svelte";
-  import Sidebar from "../../components/Sidebar.svelte";
-  import Footer from "../../components/Footer.svelte";
-  import Header from "../../components/Header.svelte";
+  import Nav from "../components/Nav.svelte";
+  import Sidebar from "../components/Sidebar.svelte";
+  import Footer from "../components/Footer.svelte";
+  import Header from "../components/Header.svelte";
 
   export let segment;
 </script>

@@ -13,7 +13,7 @@
 <ul class="list-inline">
   {#each tags as tag}
     <li class="list-inline-item">
-      <a href="blog/{username}/tags/{tag}" class="tag">#{tag}</a>
+      <a href="{username}/tags/{tag}" class="tag">#{tag}</a>
     </li>
   {/each}
 </ul>

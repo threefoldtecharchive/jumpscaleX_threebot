@@ -2,13 +2,12 @@
   export async function preload({ params, query }) {
     // the `slug` parameter is available because
     // this file is called [slug].svelte
-    const res = await this.fetch(
-      `blog/${params.theuser}/pages/${params.slug}.json`
-    );
+    const metaResp = await this.fetch(`${params.theuser}/metadata.json`);
+    const metadata = await metaResp.json();
+    const res = await this.fetch(`${params.theuser}/posts/${params.slug}.json`);
     const data = await res.json();
-
     if (res.status === 200) {
-      return { thepage: data };
+      return { post: data, metadata };
     } else {
       this.error(res.status, data.message);
     }
@@ -16,31 +15,12 @@
 </script>
 
 <script>
-  export let thepage = {};
+  export let post;
+  export let metadata;
   import { stores } from "@sapper/app";
+  import Post from "../../../components/Post.svelte";
   const { preloading, page, session } = stores();
   export let username = $page.params.theuser;
-  import showdown from "showdown";
-
-  const classMap = {
-    h1: "ui large header",
-    h2: "ui medium header",
-    ul: "ui list",
-    li: "ui item"
-  };
-
-  const bindings = Object.keys(classMap).map(key => ({
-    type: "output",
-    regex: new RegExp(`<${key}(.*)>`, "g"),
-    replace: `<${key} class="${classMap[key]}" $1>`
-  }));
-
-  let converter = new showdown.Converter({
-    metadata: true
-    // extensions: [...bindings]
-  });
-  converter.setFlavor("github");
-  $: mdtext = converter.makeHtml(thepage.content);
 </script>
 
 <style>
@@ -80,13 +60,11 @@
 </style>
 
 <svelte:head>
-  <title>{thepage.title}</title>
+  <title>{post.title}</title>
 
   <link
     rel="stylesheet"
     href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.8/build/styles/default.min.css" />
 </svelte:head>
 
-<div class="content">
-  {@html converter.makeHtml(thepage.content)}
-</div>
+<Post {post} {metadata} />

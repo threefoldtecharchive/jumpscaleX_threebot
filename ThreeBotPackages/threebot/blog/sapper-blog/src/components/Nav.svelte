@@ -18,7 +18,7 @@
       <div
         class="navbar-header d-flex align-items-center justify-content-between">
         <!-- Navbar Brand -->
-        <a href="blog/" rel="prefetch" class="navbar-brand">Blog</a>
+        <a href="" rel="prefetch" class="navbar-brand">Blog</a>
         <!-- Toggle Button-->
         <button
           type="button"
@@ -39,7 +39,7 @@
           {#if currentuser}
             <li class="nav-item">
               <a
-                href="blog/{currentuser}/posts"
+                href="{currentuser}/posts"
                 rel="prefetch"
                 class={segment === undefined ? 'nav-link active' : 'nav-link'}>
                 {currentuser.toUpperCase()}
@@ -49,7 +49,7 @@
               <li class="nav-item">
                 <a
                   rel="prefetch"
-                  href="blog/{currentuser}/pages/{page.slug}"
+                  href="{currentuser}/pages/{page.slug}"
                   class={segment === undefined ? 'nav-link active' : 'nav-link'}>
                   {page.title.toUpperCase()}
                 </a>
@@ -57,7 +57,7 @@
             {/each}
             <li class="nav-item">
               <a
-                href="blog/{currentuser}/tags/"
+                href="{currentuser}/tags/"
                 class={segment === undefined ? 'nav-link active' : 'nav-link'}>
                 TAGS
               </a>
