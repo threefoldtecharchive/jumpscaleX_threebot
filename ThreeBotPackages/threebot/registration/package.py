@@ -58,7 +58,9 @@ class Package(j.baseclasses.threebot_package):
         gridmanager_client = j.clients.gridnetwork.get("gridmanager")
         wireguard = gridmanager_client.network_connect("3botnetwork", doublename)
         # Request a record from the name manager
-        namemanager.actors.namemanager.domain_register(doublename, wireguard.network_private.split("/")[0])
+        privateip = wireguard.network_private.split("/")[0]
+        signature = j.data.nacl.payload_sign(f"{doublename}{privateip}", nacl=nacl)
+        namemanager.actors.namemanager.domain_register(doublename, privateip, signature)
         print(f"Done, your url is: {doublename}.{THREEBOT_DOMAIN}")
 
     def stop(self):
