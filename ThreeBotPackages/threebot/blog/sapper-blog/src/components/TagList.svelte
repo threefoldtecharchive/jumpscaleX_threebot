@@ -23,7 +23,7 @@
 				the user hovers over the link or taps it, instead of
 				waiting for the 'click' event -->
     <li>
-      <a href="blog/{username}/tags/{tag}">{tag}</a>
+      <a href="{username}/tags/{tag}">{tag}</a>
     </li>
   {/each}
 </ul>

@@ -8,7 +8,7 @@
   let query = "";
   let search_res = "";
 
-  const BLOG_API = `blog/search.json`;
+  const BLOG_API = `search.json`;
 
   export async function search_method(e) {
     // if (!query) {
@@ -59,15 +59,16 @@
           <p>Search Result</p>
           <ul>
             {#each search_res as res}
-              <li>
+              <li class="list-results">
                 <a
-                  href="blog/{res.blog_name}/{res.type}/{res.slug}"
+                  href="{res.blog_name}/{res.type}/{res.slug}"
                   on:click={clear_results}>
                   {res.slug} - Type: {res.type}
                 </a>
               </li>
             {/each}
           </ul>
+          <p>Total: {Object.keys(search_res).length} Results</p>
         {/if}
       </div>
     </div>

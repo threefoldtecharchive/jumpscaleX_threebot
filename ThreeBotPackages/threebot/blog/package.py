@@ -110,20 +110,27 @@ class BlogLoader(j.baseclasses.object):
             the_author_name = meta.get("author_name", [self.blog.metadata.author_name])[0]
             the_author_email = meta.get("author_email", [self.blog.metadata.author_email])[0]
             the_author_image = meta.get("author_image", [self.blog.metadata.author_image])[0]
+            the_author_published_at = ""
+            if meta.get("published_at"):
+                the_author_published_at = meta.get("published_at", [self.blog.metadata.published_at])[0]
+            else:
+                the_author_published_at = self.published_date(basename)
 
             post_obj.author_name = the_author_name
             post_obj.author_email = the_author_email
             post_obj.author_image = the_author_image
             post_obj.post_image = meta.get("post_image", [""])[0]
-
+            post_obj.published_at = the_author_published_at
             post_obj.save()
             # print("POST INFO: ", post_obj)
-
             self.blog.posts.append(post_obj)
             self.blog.save()
 
     def create_pages(self):
+
         pages_dir_path = j.sal.fs.joinPaths(self.dest, self.meta.get("pages_dir", "pages"))
+        if not j.sal.fs.exists(pages_dir_path):
+            return
         pages = j.sal.fs.listFilesInDir(pages_dir_path)
         for post in pages:
             basename = j.sal.fs.getBaseName(post)
@@ -229,7 +236,7 @@ class Package(j.baseclasses.threebot_package):
         website_location = locations.locations_static.new()
         website_location.name = "blogs"
         website_location.name = f"blog_{self.blog_name}_assets"
-        website_location.path_url = f"/blog/{self.blog_name}/assets"
+        website_location.path_url = f"/blog_{self.blog_name}/assets"
 
         fullpath = j.sal.fs.joinPaths(self.blog_dest, "assets")
         website_location.path_location = fullpath
@@ -261,7 +268,8 @@ class Package(j.baseclasses.threebot_package):
 
         proxy_location = locations.locations_proxy.new()
         proxy_location.name = "nodeapp"
-        proxy_location.path_url = f"/"
+        proxy_location.path_url = f"/blog"
+        proxy_location.path_dest = f"/blog"
 
         proxy_location.ipaddr_dest = "0.0.0.0"
         proxy_location.port_dest = 3000

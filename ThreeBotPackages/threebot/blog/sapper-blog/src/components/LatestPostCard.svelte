@@ -10,7 +10,7 @@
 </header>
 {#each posts as post}
   <div class="blog-posts">
-    <a rel="prefetch" href="blog/{username}/posts/{post.slug}">
+    <a rel="prefetch" href="{username}/posts/{post.slug}">
       <div class="item d-flex align-items-center">
         <div class="image">
           <img src="img/small-thumbnail-1.jpg" alt="..." class="img-fluid" />

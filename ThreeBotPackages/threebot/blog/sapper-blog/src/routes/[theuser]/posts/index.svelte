@@ -4,10 +4,10 @@
 
     let pageNum = parseInt(query.page);
     if (!pageNum) {
-      this.redirect(302, `blog/${params.theuser}/posts?page=1`);
+      this.redirect(302, `${params.theuser}/posts?page=1`);
     }
 
-    let resp = await this.fetch(`blog/${params.theuser}/posts.json`);
+    let resp = await this.fetch(`${params.theuser}/posts.json`);
 
     // please notice it might be undefined
     // parseInt(undefined) > 0 -> false
@@ -22,7 +22,7 @@
     console.log(allPosts.length);
     // console.log("parsed blogs ", allPosts);
     let totalPostsLength = allPosts.length;
-    const metaResp = await this.fetch(`blog/${params.theuser}/metadata.json`);
+    const metaResp = await this.fetch(`${params.theuser}/metadata.json`);
     const metadata = await metaResp.json();
 
     let per_page = metadata.posts_per_page || 5;
@@ -35,8 +35,8 @@
 </script>
 
 <script>
-  import PostList from "../../../../components/PostList.svelte";
-  import ListPagination from "../../../../components/ListPagination.svelte";
+  import PostList from "../../../components/PostList.svelte";
+  import ListPagination from "../../../components/ListPagination.svelte";
 
   export let posts = [];
   export let metadata;
@@ -58,7 +58,7 @@
   <ListPagination
     articlesCount={totalPostsLength}
     articlesPerPage={metadata.posts_per_page}
-    objectPath="/blog/{username}/posts"
+    objectPath="/{username}/posts"
     page={pageNum} />
 
 {/await}
