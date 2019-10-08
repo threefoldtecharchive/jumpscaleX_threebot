@@ -87,6 +87,7 @@ routerconfig = """\
 [server]
 addr = "0.0.0.0"
 port = 443
+redirectToHttps = true
 [server.dbbackend]
 type 	 = "redis"
 addr     = "127.0.0.1"
