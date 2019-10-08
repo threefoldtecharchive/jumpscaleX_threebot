@@ -36,7 +36,7 @@
   //     .join("\n")
   //     .slice(0, 300);
 
-  let summary = excerptOf(mdtext);
+  let summary = post.excerpt || excerptOf(mdtext);
   //   import { fly } from "svelte/transition";
 </script>
 
@@ -65,9 +65,7 @@
       <h3 class="h4">{post.title}</h3>
     </a>
     {#if showExcerpt}
-      <p class="text-muted">
-        {@html summary}
-      </p>
+      <p class="text-muted">{summary}..</p>
     {/if}
 
     <footer class="post-footer d-flex align-items-center">
