@@ -95,10 +95,14 @@ port     = 6379
 refresh  = 10
 """
 
-
 tcprouterpath = "/sandbox/bin/tcprouter"
 redisserverpath = "/sandbox/bin/redis-server"
 corednspath = "/sandbox/bin/coredns"
+
+THREEBOT_DOMAIN = "3bot.grid.tf"
+MASTERIP = "192.168.99.254"
+MASTERPUBLIC = j.sal.nettools.getReachableIpAddress("8.8.8.8", 53)
+
 if not j.sal.fs.exists(redisserverpath) or not j.sal.fs.exists(tcprouterpath):
     print("Installing tcprouter")
     j.builders.network.tcprouter.install()
@@ -119,12 +123,11 @@ if len(regions) < 3:
 clients = []
 
 print("Install wg on manager")
-masterip = "192.168.99.254"
 wg = j.tools.wireguard.get("manager", autosave=False)
 wg.interface_name = "wgman"
 wg.port = 7778
-wg.network_public = j.sal.nettools.getReachableIpAddress("8.8.8.8", 53)
-wg.network_private = f"{masterip}/24"
+wg.network_public = MASTERPUBLIC
+wg.network_private = f"{MASTERIP}/24"
 wg.install()
 wg.save()
 
@@ -166,13 +169,13 @@ def configure_redis(executor, privateip):
     print("  Configuring redis")
     dbpath = "/sandbox/var/redis/"
     configpath = "/sandbox/cfg/redis.conf"
-    if privateip != masterip:
+    if privateip != MASTERIP:
         bindip = f"127.0.0.1 {privateip}"
     else:
         bindip = privateip
     config = redisconfig.format(bindip=bindip, dbpath=dbpath)
-    if privateip != masterip:
-        config += f"\nslaveof {masterip} 6379\n"
+    if privateip != MASTERIP:
+        config += f"\nslaveof {MASTERIP} 6379\n"
     executor.file_write(configpath, config)
     configure_systemd_unit(executor, "redis-jsx", path=f"{redisserverpath} {configpath}")
 
@@ -184,7 +187,15 @@ def configure_tcprouter(executor):
     configure_systemd_unit(executor, "tcprouter", path=f"{tcprouterpath} {configpath}")
 
 
-configure_redis(j.tools.executorLocal, masterip)
+configure_redis(j.tools.executorLocal, MASTERIP)
+j.sal.nettools.waitConnectionTest(MASTERIP, 6379)
+
+rediscli = j.clients.redis.get(MASTERIP)
+tfgateway = j.tools.tf_gateway.get(rediscli)
+tfgateway.domain_register_a("@", THREEBOT_DOMAIN, MASTERPUBLIC)
+tfgateway.domain_register_cname("phonebook", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
+tfgateway.domain_register_cname("namemanager", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
+tfgateway.domain_register_cname("gridmanager", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
 
 
 for x, region in enumerate(regions):
@@ -210,6 +221,7 @@ for x, region in enumerate(regions):
     configure_redis(executor, privateip)
     configure_tcprouter(executor)
     configure_coredns(executor)
+    tfgateway.domain_register_a("gateway", THREEBOT_DOMAIN, executor.sshclient.addr)
 
 wg.save()
 wg.configure()
@@ -241,3 +253,4 @@ for endpoint in client.actors.gridnetwork.network_endpoint_find("3botnetwork").r
 for executor in clients:
     if executor.sshclient.addr not in existingendpoints:
         client.actors.gridnetwork.network_endpoint_add("3botnetwork", executor.sshclient.name)
+
