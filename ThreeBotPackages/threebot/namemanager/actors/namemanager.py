@@ -20,7 +20,11 @@ class namemanager(j.baseclasses.threebot_actor):
         ```
         """
         payload = f"{doublename}{privateip}"
-        self.phonebook.actors.phonebook.validate_signature(name=doublename, payload=payload, signature=signature)
+        result = self.phonebook.actors.phonebook.validate_signature(
+            name=doublename, payload=payload, signature=signature
+        )
+        if not result.is_valid:
+            raise j.exceptions.Value("Invalid signature")
 
         first, last = doublename.split(".")
         fqdn = f"{doublename}.{THREEBOT_DOMAIN}"
