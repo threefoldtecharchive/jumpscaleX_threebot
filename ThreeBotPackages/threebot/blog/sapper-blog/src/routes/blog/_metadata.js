@@ -1,6 +1,6 @@
 let metadata;
 export default metadata = {
-    "posts_per_page": 20,
+    "posts_per_page": 2,
     "base_url": "xmon",
     "blog_name": "xmon",
     "blog_title": "xmonader weblog",

@@ -2,8 +2,13 @@
   export async function preload({ host, path, params, query }) {
     console.log("params in posts index", JSON.stringify(params));
 
-    let resp = await this.fetch(`blog/${params.theuser}/posts.json`);
     let pageNum = parseInt(query.page);
+    if (pageNum == 0) {
+      this.redirect(302, `blog/${params.theuser}/posts?page=1`);
+    }
+
+    let resp = await this.fetch(`blog/${params.theuser}/posts.json`);
+
     // please notice it might be undefined
     // parseInt(undefined) > 0 -> false
     // parseInt(undefined) < 0 -> false
@@ -11,8 +16,6 @@
 
     if (pageNum > 0) {
       pageNum--;
-    } else {
-      pageNum = 0;
     }
 
     let allPosts = await resp.json();
@@ -25,7 +28,7 @@
     let per_page = metadata.posts_per_page || 5;
     let begin = pageNum * per_page;
     let end = pageNum * per_page + per_page;
-    let posts = allPosts.slice(0, 4);
+    let posts = allPosts.slice(begin, end);
 
     return { path, posts, totalPostsLength, metadata };
   }
@@ -43,6 +46,7 @@
   const { preloading, page, session } = stores();
   console.log("in posts index", $page.params);
   export let username = $page.params.theuser;
+  export let pageNum = $page.query.page;
 </script>
 
 <svelte:head>
@@ -54,6 +58,7 @@
   <ListPagination
     articlesCount={totalPostsLength}
     articlesPerPage={metadata.posts_per_page}
-    objectPath="/blog/{username}/posts" />
+    objectPath="/blog/{username}/posts"
+    page={pageNum} />
 
 {/await}
