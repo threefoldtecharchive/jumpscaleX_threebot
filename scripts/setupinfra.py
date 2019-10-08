@@ -241,3 +241,12 @@ for endpoint in client.actors.gridnetwork.network_endpoint_find("3botnetwork").r
 for executor in clients:
     if executor.sshclient.addr not in existingendpoints:
         client.actors.gridnetwork.network_endpoint_add("3botnetwork", executor.sshclient.name)
+
+print("Create A records and register tcp services")
+j.tools.tf_gateway.domain_register_a("@", "3bot.grid.tf", "167.71.64.204")
+j.tools.tf_gateway.domain_register_a("gateway", "3bot.grid.tf", "167.71.213.38")
+j.tools.tf_gateway.domain_register_a("gateway", "3bot.grid.tf", "157.245.141.175")
+j.tools.tf_gateway.domain_register_a("gateway", "3bot.grid.tf", "104.248.140.208")
+j.tools.tf_gateway.domain_register_cname("gridmanager", "3bot.grid.tf", "3bot.grid.tf.")
+j.tools.tf_gateway.domain_register_cname("namemanager", "3bot.grid.tf", "3bot.grid.tf.")
+j.tools.tf_gateway.domain_register_cname("phonebook", "3bot.grid.tf", "3bot.grid.tf.")
