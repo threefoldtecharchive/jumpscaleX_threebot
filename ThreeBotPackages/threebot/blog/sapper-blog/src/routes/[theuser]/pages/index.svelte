@@ -1,6 +1,6 @@
 <script context="module">
   export function preload({ params, query }) {
-    return this.fetch(`blog/${params.theuser}/pages.json`)
+    return this.fetch(`${params.theuser}/pages.json`)
       .then(r => r.json())
       .then(pages => {
         console.log(params);
@@ -37,7 +37,7 @@
 				the user hovers over the link or taps it, instead of
 				waiting for the 'click' event -->
       <li>
-        <a rel="prefetch" href="blog/{username}/pages/{thepage.slug}">
+        <a rel="prefetch" href="{username}/pages/{thepage.slug}">
           {thepage.title}
         </a>
       </li>
