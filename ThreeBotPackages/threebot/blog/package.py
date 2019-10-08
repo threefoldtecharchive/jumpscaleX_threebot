@@ -110,7 +110,7 @@ class BlogLoader(j.baseclasses.object):
             the_author_name = meta.get("author_name", [self.blog.metadata.author_name])[0]
             the_author_email = meta.get("author_email", [self.blog.metadata.author_email])[0]
             the_author_image = meta.get("author_image", [self.blog.metadata.author_image])[0]
-
+            # TODO : published at if meta or now or file
             post_obj.author_name = the_author_name
             post_obj.author_email = the_author_email
             post_obj.author_image = the_author_image
@@ -232,7 +232,7 @@ class Package(j.baseclasses.threebot_package):
         website_location = locations.locations_static.new()
         website_location.name = "blogs"
         website_location.name = f"blog_{self.blog_name}_assets"
-        website_location.path_url = f"/blog/{self.blog_name}/assets"
+        website_location.path_url = f"/blog_{self.blog_name}/assets"
 
         fullpath = j.sal.fs.joinPaths(self.blog_dest, "assets")
         website_location.path_location = fullpath
