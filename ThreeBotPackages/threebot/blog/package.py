@@ -3,6 +3,7 @@ from JumpscaleLibs.data.markdown.mistune import markdown
 from os.path import dirname, abspath, join, splitext
 import re
 import unicodedata
+from datetime import datetime
 
 __version__ = "0.0.1"
 
@@ -40,7 +41,7 @@ class BlogLoader(j.baseclasses.object):
             return found[0]
         else:
             today = j.data.time.epoch
-            return j.data.time.epoch2pythonDate(today).replace("/", "-")
+            return j.data.time.epoch2pythonDate(today).isoformat().replace("/", "-")
 
     def slugify(self, string):
         """
@@ -124,7 +125,7 @@ class BlogLoader(j.baseclasses.object):
             the_author_image = meta.get("author_image", [self.blog.metadata.author_image])[0]
             the_author_published_at = ""
             if meta.get("published_at"):
-                the_author_published_at = meta.get("published_at", [self.blog.metadata.published_at])[0]
+                the_author_published_at = meta.get("published_at")[0]
             else:
                 the_author_published_at = self.published_date(basename)
 
