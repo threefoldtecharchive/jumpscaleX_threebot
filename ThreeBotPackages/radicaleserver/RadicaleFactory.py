@@ -1,7 +1,7 @@
 from Jumpscale import j
 
 
-class RadicaleFactory(j.baseclasses.object, j.baseclasses.testtools):
+class RadicaleFactory(j.baseclasses.threebot_factory):
 
     __jslocation__ = "j.threebot.package.radicale"
 
@@ -15,13 +15,6 @@ class RadicaleFactory(j.baseclasses.object, j.baseclasses.testtools):
         self._log_info("Radicale loaded")
 
         return "OK"
-
-    def start(self, background=True, web=True, ssl=False):
-        self.install()
-        server = j.servers.threebot.default
-        server.web = web
-        server.ssl = ssl
-        server.start(background=background)
 
     def test(self, name=""):
         self.client = j.servers.threebot.local_start_default()

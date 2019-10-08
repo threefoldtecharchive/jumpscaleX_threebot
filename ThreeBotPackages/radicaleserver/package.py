@@ -12,6 +12,13 @@ class Package(j.baseclasses.threebot_package):
         """
         j.builders.runtimes.python3.pip_package_install("filetype")
         j.builders.runtimes.python3.pip_package_install("vobject")
+        j.builders.runtimes.python3.pip_package_install("caldav")
+        self.bcdb.models_add(path=self.package_root + "/models")
+        self.gedis_server.actors_add(self.package_root + "/actors")
+
+    @property
+    def bcdb(self):
+        return self._package.threebot_server.bcdb_get("caldav")
 
     def start(self):
         """
@@ -23,7 +30,7 @@ class Package(j.baseclasses.threebot_package):
         import radicale
         import logging
 
-        radicale.log.logger.setLevel(logging.DEBUG)
+        # radicale.log.logger.setLevel(logging.DEBUG)
         from radicale import application
 
         rack = j.servers.rack.get()
@@ -31,7 +38,7 @@ class Package(j.baseclasses.threebot_package):
         rack.bottle_server_add(name="radicale", port=8851, app=application)
         website = self.openresty.websites.get("radicale")
         website.ssl = False
-        website.port = 8850
+        website.port = 8001
 
         locations = website.locations.get("radicale")
         proxy_location = locations.locations_proxy.new()
