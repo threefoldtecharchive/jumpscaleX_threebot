@@ -1,6 +1,6 @@
 /**
  * This file is part of Radicale Server - Calendar Server
- * Copyright © 2017-2018 Unrud <unrud@outlook.com>
+ * Copyright (C) 2017 Unrud <unrud@outlook.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,13 @@ var SERVER = (location.protocol + '//' + location.hostname +
  * @type {string}
  */
 var ROOT_PATH = location.pathname.replace(new RegExp("/+[^/]+/*(/index\\.html?)?$"), "") + '/';
+
+/**
+ * time between updates of collections (milliseconds)
+ * @const
+  * @type {?int}
+ */
+var UPDATE_INTERVAL = null;
 
 /**
  * Regex to match and normalize color
@@ -259,32 +266,6 @@ function get_collections(user, password, collection, callback) {
 /**
  * @param {string} user
  * @param {string} password
- * @param {string} collection_href Must always start and end with /.
- * @param {File} file
- * @param {function(?string)} callback Returns error or null
- * @return {XMLHttpRequest}
- */
-function upload_collection(user, password, collection_href, file, callback) {
-    var request = new XMLHttpRequest();
-    request.open("PUT", SERVER + collection_href, true, user, password);
-    request.onreadystatechange = function() {
-        if (request.readyState !== 4) {
-            return;
-        }
-        if (200 <= request.status && request.status < 300) {
-            callback(null);
-        } else {
-            callback(request.status + " " + request.statusText);
-        }
-    };
-    request.setRequestHeader("If-None-Match", "*");
-    request.send(file);
-    return request;
-}
-
-/**
- * @param {string} user
- * @param {string} password
  * @param {Collection} collection
  * @param {function(?string)} callback Returns error or null
  * @return {XMLHttpRequest}
@@ -403,13 +384,6 @@ function edit_collection(user, password, collection, callback) {
 }
 
 /**
- * @return {string}
-*/
-function random_uuid() {
-    return randHex(8) + "-" + randHex(4) + "-" + randHex(4) + "-" + randHex(4) + "-" + randHex(12);
-}
-
-/**
  * @interface
  */
 function Scene() {}
@@ -485,6 +459,7 @@ function LoginScene() {
     var logout_view = document.getElementById("logoutview");
     var logout_user_form = logout_view.querySelector("[name=user]");
     var logout_btn = logout_view.querySelector("[name=link]");
+    var first_show = true;
 
     /** @type {?number} */ var scene_index = null;
     var user = "";
@@ -561,34 +536,24 @@ function LoginScene() {
         return false;
     }
 
-    function remove_logout() {
-        logout_view.style.display = "none";
-        logout_btn.onclick = null;
-        logout_user_form.textContent = "";
-    }
-
     this.show = function() {
-        remove_logout();
+        var saved_first_show = first_show;
+        first_show = false;
+        this.release();
         fill_form();
         form.onsubmit = onlogin;
         html_scene.style.display = "block";
-        var direct_login = false;
+        user_form.focus();
+        scene_index = scene_stack.length - 1;
         if (typeof(sessionStorage) !== "undefined") {
-            // Try direct login when scene is shown for the first time and credentials are stored
-            if (scene_index === null && sessionStorage.getItem("radicale_user")) {
+            if (saved_first_show && sessionStorage.getItem("radicale_user")) {
                 user_form.value = sessionStorage.getItem("radicale_user");
                 password_form.value = sessionStorage.getItem("radicale_password");
-                direct_login = true;
+                onlogin();
             } else {
                 sessionStorage.setItem("radicale_user", "");
                 sessionStorage.setItem("radicale_password", "");
             }
-        }
-        scene_index = scene_stack.length - 1;
-        if (direct_login) {
-            onlogin();
-        } else {
-            user_form.focus();
         }
     };
     this.hide = function() {
@@ -603,7 +568,10 @@ function LoginScene() {
             principal_req.abort();
             principal_req = null;
         }
-        remove_logout();
+        // remove logout
+        logout_view.style.display = "none";
+        logout_btn.onclick = null;
+        logout_user_form.textContent = "";
     };
 }
 
@@ -635,42 +603,19 @@ function CollectionsScene(user, password, collection, onerror) {
     var html_scene = document.getElementById("collectionsscene");
     var template = html_scene.querySelector("[name=collectiontemplate]");
     var new_btn = html_scene.querySelector("[name=new]");
-    var upload_btn = html_scene.querySelector("[name=upload]");
 
     /** @type {?number} */ var scene_index = null;
     var saved_template_display = null;
     /** @type {?XMLHttpRequest} */ var collections_req = null;
+    var timer = null;
+    var from_update = false;
     /** @type {?Array<Collection>} */ var collections = null;
     /** @type {Array<Node>} */ var nodes = [];
-    var filesInput = document.createElement("input");
-    filesInput.setAttribute("type", "file");
-    filesInput.setAttribute("accept", ".ics, .vcf");
-    filesInput.setAttribute("multiple", "");
-    var filesInputForm = document.createElement("form");
-    filesInputForm.appendChild(filesInput);
 
     function onnew() {
         try {
             var create_collection_scene = new CreateEditCollectionScene(user, password, collection);
             push_scene(create_collection_scene, false);
-        } catch(err) {
-            console.error(err);
-        }
-        return false;
-    }
-
-    function onupload() {
-        filesInput.click();
-        return false;
-    }
-
-    function onfileschange(e) {
-        try {
-            var files = filesInput.files;
-            if (files.length > 0) {
-                var upload_scene = new UploadCollectionScene(user, password, collection, files);
-                push_scene(upload_scene);
-            }
         } catch(err) {
             console.error(err);
         }
@@ -698,6 +643,10 @@ function CollectionsScene(user, password, collection, onerror) {
     }
 
     function show_collections(collections) {
+        nodes.forEach(function(node) {
+            template.parentNode.removeChild(node);
+        });
+        nodes = [];
         collections.forEach(function (collection) {
             var node = template.cloneNode(true);
             var title_form = node.querySelector("[name=title]");
@@ -740,8 +689,10 @@ function CollectionsScene(user, password, collection, onerror) {
     }
 
     function update() {
-        var loading_scene = new LoadingScene();
-        push_scene(loading_scene, false);
+        if (collections === null) {
+            var loading_scene = new LoadingScene();
+            push_scene(loading_scene, false);
+        }
         collections_req = get_collections(user, password, collection, function(collections1, error) {
             if (scene_index === null) {
                 return;
@@ -751,8 +702,17 @@ function CollectionsScene(user, password, collection, onerror) {
                 onerror(error);
                 pop_scene(scene_index - 1);
             } else {
+                var old_collections = collections;
                 collections = collections1;
-                pop_scene(scene_index);
+                if (UPDATE_INTERVAL !== null) {
+                    timer = window.setTimeout(update, UPDATE_INTERVAL);
+                }
+                from_update = true;
+                if (old_collections === null) {
+                    pop_scene(scene_index);
+                } else {
+                    show_collections(collections);
+                }
             }
         });
     }
@@ -762,165 +722,44 @@ function CollectionsScene(user, password, collection, onerror) {
         template.style.display = "none";
         html_scene.style.display = "block";
         new_btn.onclick = onnew;
-        upload_btn.onclick = onupload;
-        filesInputForm.reset();
-        filesInput.onchange = onfileschange;
-        if (collections === null) {
+        if (scene_index === null) {
+            scene_index = scene_stack.length - 1;
+            if (collections === null && collections_req !== null) {
+                pop_scene(scene_index - 1);
+                return;
+            }
             update();
+        } else if (collections === null) {
+            pop_scene(scene_index - 1);
         } else {
-            // from update loading scene
-            show_collections(collections);
+            if (from_update) {
+                show_collections(collections);
+            } else {
+                collections = null;
+                update();
+            }
         }
     };
     this.hide = function() {
         html_scene.style.display = "none";
         template.style.display = saved_template_display;
-        scene_index = scene_stack.length - 1;
         new_btn.onclick = null;
-        upload_btn.onclick = null;
-        filesInput.onchange = null;
-        collections = null;
-        // remove collection
-        nodes.forEach(function(node) {
-            template.parentNode.removeChild(node);
-        });
-        nodes = [];
+        if (timer !== null) {
+            window.clearTimeout(timer);
+            timer = null;
+        }
+        from_update = false;
+        if (collections !== null && collections_req !== null) {
+            collections_req.abort();
+            collections_req = null;
+        }
+        show_collections([]);
     };
     this.release = function() {
         scene_index = null;
         if (collections_req !== null) {
             collections_req.abort();
             collections_req = null;
-        }
-        collections = null;
-        filesInputForm.reset();
-    };
-}
-
-/**
- * @constructor
- * @implements {Scene}
- * @param {string} user
- * @param {string} password
- * @param {Collection} collection parent collection
- * @param {Array<File>} files
- */
-function UploadCollectionScene(user, password, collection, files) {
-    var html_scene = document.getElementById("uploadcollectionscene");
-    var template = html_scene.querySelector("[name=filetemplate]");
-    var template_pending_form = template.querySelector("[name=pending]");
-    var template_success_form = template.querySelector("[name=success]");
-    var template_error_form = template.querySelector("[name=error]");
-    var saved_template_display = null;
-    var close_btn = html_scene.querySelector("[name=close]");
-    var saved_close_btn_display = null;
-
-    /** @type {?number} */ var scene_index = null;
-    /** @type {?XMLHttpRequest} */ var upload_req = null;
-    /** @type {Array<string>} */ var errors = [];
-    /** @type {?Array<Node>} */ var nodes = null;
-
-    function upload_next() {
-        try {
-            if (files.length === errors.length) {
-                if (errors.every(error => error === null)) {
-                    pop_scene(scene_index - 1);
-                } else {
-                    close_btn.style.display = saved_close_btn_display;
-                }
-            } else {
-                var file = files[errors.length];
-                var upload_href = collection.href + random_uuid() + "/";
-                upload_req = upload_collection(user, password, upload_href, file, function(error) {
-                    if (scene_index === null) {
-                        return;
-                    }
-                    upload_req = null;
-                    errors.push(error);
-                    updateFileStatus(errors.length - 1);
-                    upload_next();
-                });
-            }
-        } catch(err) {
-            console.error(err);
-        }
-        return false;
-    }
-
-    function onclose() {
-        try {
-            pop_scene(scene_index - 1);
-        } catch(err) {
-            console.error(err);
-        }
-        return false;
-    }
-
-    function updateFileStatus(i) {
-        if (nodes === null) {
-            return;
-        }
-        var pending_form = nodes[i].querySelector("[name=pending]");
-        var success_form = nodes[i].querySelector("[name=success]");
-        var error_form = nodes[i].querySelector("[name=error]");
-        if (errors.length > i) {
-            pending_form.style.display = "none";
-            if (errors[i]) {
-                success_form.style.display = "none";
-                error_form.textContent = "Error: " + errors[i];
-                error_form.style.display = template_error_form.style.display;
-            } else {
-              success_form.style.display = template_success_form.style.display;
-              error_form.style.display = "none";
-            }
-        } else {
-            pending_form.style.display = template_pending_form.style.display;
-            success_form.style.display = "none";
-            error_form.style.display = "none";
-        }
-    }
-
-    this.show = function() {
-        saved_template_display = template.style.display;
-        template.style.display = "none";
-        html_scene.style.display = "block";
-        saved_close_btn_display = close_btn.style.display;
-        if (errors.length < files.length) {
-            close_btn.style.display = "none";
-        }
-        close_btn.onclick = onclose;
-        nodes = [];
-        for (var i = 0; i < files.length; i++) {
-            var file = files[i];
-            var node = template.cloneNode(true);
-            var name_form = node.querySelector("[name=name]");
-            name_form.textContent = file.name;
-            node.style.display = saved_template_display;
-            nodes.push(node);
-            updateFileStatus(i);
-            template.parentNode.insertBefore(node,template);
-        }
-        if (scene_index === null) {
-            scene_index = scene_stack.length - 1;
-            upload_next();
-        }
-    };
-
-    this.hide = function() {
-        html_scene.style.display = "none";
-        template.style.display = saved_template_display;
-        close_btn.style.display = saved_close_btn_display;
-        close_btn.onclick = null;
-        nodes.forEach(function(node) {
-            template.parentNode.removeChild(node);
-        });
-        nodes = null;
-    };
-    this.release = function() {
-        scene_index = null;
-        if (upload_req !== null) {
-            upload_req.abort();
-            upload_req = null;
         }
     };
 }
@@ -1037,7 +876,9 @@ function CreateEditCollectionScene(user, password, collection) {
     var error = "";
     /** @type {?Element} */ var saved_type_form = null;
 
-    var href = edit ? collection.href : collection.href + random_uuid() + "/";
+    var href = edit ? collection.href : (
+        collection.href + randHex(8) + "-" + randHex(4) + "-" + randHex(4) +
+        "-" + randHex(4) + "-" + randHex(12) + "/");
     var displayname = edit ? collection.displayname : "";
     var description = edit ? collection.description : "";
     var type = edit ? collection.type : CollectionType.CALENDAR_JOURNAL_TASKS;
