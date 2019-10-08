@@ -123,7 +123,10 @@ class BlogLoader(j.baseclasses.object):
             self.blog.save()
 
     def create_pages(self):
+
         pages_dir_path = j.sal.fs.joinPaths(self.dest, self.meta.get("pages_dir", "pages"))
+        if not j.sal.fs.exists(pages_dir_path):
+            return
         pages = j.sal.fs.listFilesInDir(pages_dir_path)
         for post in pages:
             basename = j.sal.fs.getBaseName(post)
