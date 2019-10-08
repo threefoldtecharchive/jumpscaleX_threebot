@@ -29,16 +29,23 @@ class mail(j.baseclasses.threebot_actor):
         out.success = True
         return out
 
-    def list(self, date_from, date_to, user_session=None):
+    def list(self, date_from=None, date_to=None, user_session=None):
         """
         ```in
         date_from =  (D)
         date_to =  (D)
         ```
         """
+        if date_from and date_to:
+            date_from = j.data.types.date.clean(date_from)
+            date_to = j.data.types.date.clean(date_to)
+            query = "WHERE date BETWEEN {} and {}".format(date_from, date_to)
 
-        query = "WHERE date BETWEEN {} and {}".format(date_from, date_to)
-        mails = self.bcdb_mailbox.get_messages(query)
+            mails = self.bcdb_mailbox.get_messages(query).fetchall()
+
+            return json.dumps([self.bcdb_mailbox.get_object(o[0])._ddict for o in mails])
+
+        mails = self.bcdb_mailbox.get_messages()
         return json.dumps([o._ddict for o in mails])
 
     def update_folder_name(self, old_name, new_name, schema_out=None, user_session=None):

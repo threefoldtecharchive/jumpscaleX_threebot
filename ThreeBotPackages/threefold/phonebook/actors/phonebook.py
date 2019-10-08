@@ -192,3 +192,18 @@ class phonebook(j.baseclasses.threebot_actor):
         jsxobject = users[0]
 
         return jsxobject
+
+    def validate_signature(self, tid=None, name=None, email=None, payload=None, signature=None, user_session=None):
+        """
+        ```in
+        tid = (I)
+        name = (S)
+        email = (S)
+        payload = (S)
+        signature = (S)
+        ```
+        """
+        u = self.get(tid=tid, name=name, email=email)
+        ok = j.data.nacl.payload_verify(payload, verifykey=u.pubkey, signature=signature, die=False)
+        if not ok:
+            raise j.exceptions.Input("Invalid signature")
