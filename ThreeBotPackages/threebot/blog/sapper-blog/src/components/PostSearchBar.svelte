@@ -8,7 +8,7 @@
   let query = "";
   let search_res = "";
 
-  const BLOG_API = `blog/search.json`;
+  const BLOG_API = `search.json`;
 
   export async function search_method(e) {
     // if (!query) {
@@ -35,7 +35,11 @@
 
 <form on:submit={search_method} on:keyup={clear_results} class="search-form">
   <div class="form-group">
-    <input type="search" placeholder="What are you looking for?" id="search" />
+    <input
+      type="search"
+      bind:value={query}
+      placeholder="What are you looking for?"
+      id="search" />
     <button type="submit" class="submit search-btn">
       <i class="icon-search" />
     </button>

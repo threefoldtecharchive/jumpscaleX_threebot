@@ -1,16 +1,16 @@
 <script context="module">
   export async function preload({ host, path, params, query }) {
     try {
-      const pagesResp = await this.fetch(`blog/${params.theuser}/pages.json`);
+      const pagesResp = await this.fetch(`${params.theuser}/pages.json`);
       const pages = await pagesResp.json();
 
-      const metaResp = await this.fetch(`blog/${params.theuser}/metadata.json`);
+      const metaResp = await this.fetch(`${params.theuser}/metadata.json`);
       const metadata = await metaResp.json();
 
-      const tagsResp = await this.fetch(`blog/${params.theuser}/tags.json`);
+      const tagsResp = await this.fetch(`${params.theuser}/tags.json`);
       const tags = await tagsResp.json();
 
-      const postsResp = await this.fetch(`blog/${params.theuser}/posts.json`);
+      const postsResp = await this.fetch(`${params.theuser}/posts.json`);
       const allPosts = await postsResp.json();
 
       // please notice it might be undefined
@@ -27,12 +27,12 @@
 </script>
 
 <script>
-  import Nav from "../../../components/Nav.svelte";
-  import Sidebar from "../../../components/Sidebar.svelte";
-  import Footer from "../../../components/Footer.svelte";
-  // import Header from "../../../components/Header.svelte";
-  import TagCloud from "../../../components/TagCloud.svelte";
-  import Pagination from "../../../components/ListPagination.svelte";
+  import Nav from "../../components/Nav.svelte";
+  import Sidebar from "../../components/Sidebar.svelte";
+  import Footer from "../../components/Footer.svelte";
+  // import Header from "../../components/Header.svelte";
+  import TagCloud from "../../components/TagCloud.svelte";
+  import Pagination from "../../components/ListPagination.svelte";
 
   export let segment;
   export let pages = [];

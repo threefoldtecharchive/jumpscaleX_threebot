@@ -10,29 +10,27 @@
   converter.setFlavor("github");
   let mdtext = converter.makeHtml(post.content);
 
+  let post_image = post.post_image;
+  let post_image_link = "";
 
-    let post_image = post.post_image
-  let post_image_link = ""
+  if (!post_image) {
+    post_image_link = "img/blog-post-1.jpeg";
+  } else if (!post_image.startsWith("http")) {
+    post_image_link = `/blog_${username}/assets/images/${post_image}`;
+  } else {
+    post_image_link = post_image;
+  }
 
-    if  (!post_image){
-        post_image_link = "img/blog-post-1.jpeg";
-    }else if (!post_image.startsWith("http")) {
-      post_image_link = `/blog/blog_${username}/assets/images/${post_image}`;
-    }else{
-      post_image_link = post_image;
-    }
-
-    let post_author_image = post.author_image;
-    let post_author_image_link = ""
-    if (!post_author_image) {
-        post_author_image_link = "me.jpg"
-    } else if ( !post_author_image.startsWith("http")){
-        post_author_image_link = `/blog/blog_${username}/assets/images/${post_author_image}`;
-    } else{
-        post_author_image_link = post_author_image
-    }
+  let post_author_image = post.author_image;
+  let post_author_image_link = "";
+  if (!post_author_image) {
+    post_author_image_link = "me.jpg";
+  } else if (!post_author_image.startsWith("http")) {
+    post_author_image_link = `/blog_${username}/assets/images/${post_author_image}`;
+  } else {
+    post_author_image_link = post_author_image;
+  }
 </script>
-
 
 <!-- Latest Posts -->
 <main class="post blog-post col-lg-12">
@@ -50,20 +48,20 @@
         <h1>{post.title}</h1>
         <div
           class="post-footer d-flex align-items-center flex-column flex-sm-row">
-            <a
-                href="blog/{username}/posts/{post.slug}"
-                class="author d-flex align-items-center flex-wrap">
-                <div class="avatar">
-                <img
-                    src="{post_author_image_link}"
-                    onerror="this.src='me.jpg'"
-                    alt="..."
-                    class="img-fluid" />
-                </div>
-                <div class="title">
-                <span>{post.author_name}</span>
-                </div>
-            </a>
+          <a
+            href="{username}/posts/{post.slug}"
+            class="author d-flex align-items-center flex-wrap">
+            <div class="avatar">
+              <img
+                src={post_author_image_link}
+                onerror="this.src='me.jpg'"
+                alt="..."
+                class="img-fluid" />
+            </div>
+            <div class="title">
+              <span>{post.author_name}</span>
+            </div>
+          </a>
           <div class="d-flex align-items-center flex-wrap">
             <div class="date">
               <i class="icon-clock" />
@@ -89,7 +87,7 @@
           flex-column flex-md-row">
           {#if post.prev.slug !== undefined}
             <a
-              href="blog/{username}/posts/{post.prev.slug}"
+              href="{username}/posts/{post.prev.slug}"
               class="prev-post text-left d-flex align-items-center">
               <div class="icon prev">
                 <i class="fa fa-angle-left" />
@@ -103,7 +101,7 @@
 
           {#if post.next.slug !== undefined}
             <a
-              href="blog/{username}/posts/{post.next.slug}"
+              href="{username}/posts/{post.next.slug}"
               class="next-post text-right d-flex align-items-center
               justify-content-end">
               <div class="text">
