@@ -24,56 +24,12 @@ class TFTokenFactory(j.baseclasses.threebot_factory):
 
         return self.client
 
-    """ def _generate_dummy_data(self, bcdb, timeframe, price_from=0.06):
-        res = []
-        tframe = timeframe.lower()
-        if tframe == "year":
-            count = 5
-        elif tframe == "month":
-            count = 12
-        elif tframe == "day":
-            count = 31
-        elif tframe == "hour":
-            count = 24
-        else:
-            count = 0
-
-        for x in range(count):
-            price = bcdb.model_get(url="tfgrid.token.price.1")
-            t = price.new()
-            t.timeframe = timeframe
-            percent = random.uniform(0.000001, 99.99999)
-            percent_less = random.uniform(0.000001, 99.99999)
-            while percent_less > percent:
-                percent = random.uniform(0.000001, 99.99999)
-                percent_less = random.uniform(0.000001, 99.99999)
-            sign = random.uniform(-99, 99)
-            t.low = str((price_from - (price_from / 100) * percent)) + " USD"
-            t.high = str((price_from + (price_from / 100) * percent)) + " USD"
-            if sign > 0:
-                # bull opening < closing
-                t.opening = str((price_from - (price_from / 100) * percent_less)) + " USD"
-                t.closing = str((price_from + (price_from / 100) * percent_less)) + " USD"
-            else:
-                # bear opening > closing
-                t.closing = str((price_from - (price_from / 100) * percent_less)) + " USD"
-                t.opening = str((price_from + (price_from / 100) * percent_less)) + " USD"
-
-            if tframe == "year":
-                t.time = str(2014 + x) + "/01/01"
-            elif tframe == "month":
-                t.time = "2019/" + str(x + 1) + "/01"
-            elif tframe == "day":
-                t.time = "2019/10/" + str(x + 1)
-            elif tframe == "hour":
-                t.time = 1569888000 + x * 3600
-            res.append(t)
-        return res """
-
     def test(self, name=""):
         """
         kosmos 'j.threebot.package.token.test()'
         """
+
+        self.start()
 
         if "tf_grid_token" in [b.name for b in j.data.bcdb.instances]:
             m = j.data.bcdb.get("tf_grid_token")
@@ -82,6 +38,11 @@ class TFTokenFactory(j.baseclasses.threebot_factory):
         m.models_add(path=self._dirpath + "/models")
 
         gedis_cli = self.client_get()
+
+        # fetch the news
+        r = gedis_cli.actors.news.list()
+
+        j.shell()
 
         cl = j.clients.redis.get(port=8901)
         assert cl.execute_command("PING")
