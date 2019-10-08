@@ -193,7 +193,9 @@ class phonebook(j.baseclasses.threebot_actor):
 
         return jsxobject
 
-    def validate_signature(self, tid=None, name=None, email=None, payload=None, signature=None, schema_out=None, user_session=None):
+    def validate_signature(
+        self, tid=None, name=None, email=None, payload=None, signature=None, schema_out=None, user_session=None
+    ):
         """
         ```in
         tid = (I)
