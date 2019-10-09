@@ -41,14 +41,15 @@
 </script>
 
 <div class="post col-xl-6">
-  <div class="post-thumbnail">
+  <div class="post-thumbnail text-center">
     <a rel="prefetch" href="{username}/posts/{post.slug}">
 
       <img
         src={post_image_link}
         onerror="this.src = 'img/blog-post-1.jpeg"
         alt="..."
-        class="img-fluid" />
+        class="img-fluid"
+        style="max-height: 200px;" />
     </a>
   </div>
   <div class="post-details">

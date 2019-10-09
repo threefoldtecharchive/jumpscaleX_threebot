@@ -16,12 +16,12 @@
   }
 </script>
 
-<div class="row pagination-bar">
+<div class="row pagination-bar m-auto">
   {#if articlesCount >= articlesPerPage}
     <nav aria-label="Page navigation example">
       <ul class="pagination pagination-template d-flex justify-content-center">
         <li class="page-item {1 === page ? 'active' : ''}">
-          <a href="{objectPath}?page=1" class="page-link">&lt;&lt;</a>
+          <a href="{objectPath}?page=1" class="page-link"><i class="fa fa-angle-left"></i></a>
         </li>
 
         {#if page > 1}
@@ -38,7 +38,7 @@
         {#if page < range.length}
           <li class="page-item {range.length === page - 1 ? 'active' : ''}">
             <a href="{objectPath}?page={range.length}" class="page-link">
-              &gt;&gt;
+              <i class="fa fa-angle-right"></i>
             </a>
           </li>
         {/if}
@@ -46,7 +46,7 @@
         {#if page + 1 > range.length}
           <li class="page-item">
             <a href="{objectPath}?page={page}" class="page-link">
-              <i class="fa fa-angel-right">&gt;</i>
+              <i class="fa fa-angle-right"></i>
             </a>
           </li>
         {/if}

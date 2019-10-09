@@ -1,7 +1,6 @@
 <script>
   export let header = "";
   export let links = [];
-  console.log(links);
 </script>
 
 {#if links}
