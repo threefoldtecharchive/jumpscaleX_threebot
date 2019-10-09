@@ -9,6 +9,7 @@ __version__ = "0.0.1"
 
 j.builders.runtimes.python3.pip_package_install("beautifulsoup4")
 
+XMON_BLOG = "git@gitlab.com:xmonader/sample-blog-jsx.git"
 
 def get_excerpt(content, maxlen=400):
 
@@ -189,14 +190,14 @@ class Package(j.baseclasses.threebot_package):
         # self.bcdb.models_add(models_location)
         self.blog_dest = ""
 
-    def prepare(self, blog_name, repo_url):
+    def prepare(self):
         """
         is called at install time
         :return:
         """
-        self.blog_name = blog_name
-        self.blog_dest = dest = j.clients.git.pullGitRepo(repo_url)
-
+        self.blog_name = "xmon"
+        self.blog_dest = dest = j.clients.git.pullGitRepo(XMON_BLOG)
+        repo_url = XMON_BLOG
         # JSX> j.sal.fs.listDirsInDir(dest)
         # ['/sandbox/code/gitlab/xmonader/sample-blog-jsx/.git', '/sandbox/code/gitlab/xmonader/sample-blog-jsx/posts']
         # JSX> j.sal.fs.listFilesInDir(dest)
@@ -225,7 +226,7 @@ class Package(j.baseclasses.threebot_package):
 
         # population
         blogobj = BlogLoader(
-            blog=blog, meta=meta, dest=dest, post_model=post_model, blog_name=self.blog_name, repo_url=repo_url
+            blog=blog, meta=meta, dest=dest, post_model=post_model, blog_name=self.blog_name, repo_url=XMON_BLOG
         )
         blogobj.create_blog()
         blogobj.create_posts()
@@ -250,8 +251,8 @@ class Package(j.baseclasses.threebot_package):
 
         website_location = locations.locations_static.new()
         website_location.name = "blogs"
-        website_location.name = f"blog_{self.blog_name}_assets"
-        website_location.path_url = f"/blog_{self.blog_name}/assets"
+        website_location.name = f"blog_xmon_assets"
+        website_location.path_url = f"/blog_xmon/assets"
 
         fullpath = j.sal.fs.joinPaths(self.blog_dest, "assets")
         website_location.path_location = fullpath
@@ -292,3 +293,20 @@ class Package(j.baseclasses.threebot_package):
 
         locations.configure()
         website.configure()
+        self._start_blog_app()
+
+    def _start_blog_app(self, reset=True):
+
+        s = j.servers.startupcmd.get("blogs")
+        s.cmd_start = f"""
+        cd {self._dirpath}/sapper-blog
+        export DEV=0
+        npm run build
+        node __sapper__/build
+        """
+        s.executor = "tmux"
+        s.interpreter = "bash"
+        s.timeout = 10
+        s.ports = [3000]
+
+        s.start(reset=reset)

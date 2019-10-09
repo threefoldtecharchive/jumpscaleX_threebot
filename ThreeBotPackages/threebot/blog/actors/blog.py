@@ -26,6 +26,8 @@ class blog(j.baseclasses.threebot_actor):
         ```
         """
         # get saved blog's metadata from bcdb by name
+        # print("ALL MODELS: ",self.blog_model)
+        print("BLOGNAME : ", blog_name)
         found_blog = self.blog_model.find(name=blog_name)[0]
         if found_blog:
             return j.data.serializers.json.dumps(found_blog.metadata._ddict)
