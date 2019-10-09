@@ -24,7 +24,7 @@ class mail(j.baseclasses.threebot_actor):
         if isinstance(mail, str):
             mail = json.loads(mail)
         server = app.MailServer()
-        server.store_mail(mail)
+        server.store_mail(mail, is_send=True)
         out = schema_out.new()
         out.success = True
         return out
