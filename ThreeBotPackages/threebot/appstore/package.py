@@ -34,9 +34,9 @@ class Package(j.baseclasses.threebot_package):
                 "image": "upcoming",
             },
             {
-                "appname": "Wallet",
+                "appname": "Docs",
                 "installed": False,
-                "description": "TFT, BTC, GFT, ... Keep them safe, keep them here.",
+                "description": "All your docs belong to you",
                 "image": "upcoming",
             },
             {
