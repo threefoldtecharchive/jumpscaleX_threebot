@@ -23,7 +23,6 @@
     });
     search_res = search_res.data;
   }
-
   export function clear_results(e) {
     if (e.key === "Escape" || e.type === "click") {
       search_res = "";
@@ -33,7 +32,7 @@
   }
 </script>
 
-<div class="search-area">
+<div class="search-area" on:keypress={clear_results}>
   <div
     class="search-area-inner d-flex align-items-center justify-content-center">
     <div class="close-btn">
@@ -44,7 +43,7 @@
         <form on:submit={search_method} on:keyup={clear_results}>
           <div class="form-group">
             <input
-              type="search"
+              type="text"
               bind:value={query}
               name="search"
               id="search"

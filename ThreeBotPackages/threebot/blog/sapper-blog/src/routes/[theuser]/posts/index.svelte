@@ -58,7 +58,7 @@
   <ListPagination
     articlesCount={totalPostsLength}
     articlesPerPage={metadata.posts_per_page}
-    objectPath="/{username}/posts"
+    objectPath="/blog/{username}/posts"
     page={pageNum} />
 
 {/await}

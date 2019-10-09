@@ -32,7 +32,7 @@
   import Footer from "../../components/Footer.svelte";
   // import Header from "../../components/Header.svelte";
   import TagCloud from "../../components/TagCloud.svelte";
-  import Pagination from "../../components/ListPagination.svelte";
+  import ListPagination from "../../components/ListPagination.svelte";
 
   export let segment;
   export let pages = [];
@@ -76,7 +76,7 @@
             <slot />
           </div>
           <!-- Pagination -->
-          <Pagination />
+          <ListPagination />
         </div>
       </main>
 

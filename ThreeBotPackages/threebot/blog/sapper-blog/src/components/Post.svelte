@@ -53,8 +53,8 @@
             class="author d-flex align-items-center flex-wrap">
             <div class="avatar">
               <img
-                src={post_author_image_link}
-                onerror="this.src='me.jpg'"
+                src={post_image_link}
+                onerror="this.src = img/blog-post-1.jpeg"
                 alt="..."
                 class="img-fluid" />
             </div>
