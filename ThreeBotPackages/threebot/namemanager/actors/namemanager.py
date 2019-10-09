@@ -29,8 +29,10 @@ class namemanager(j.baseclasses.threebot_actor):
         if not result.is_valid:
             raise j.exceptions.Value("Invalid signature")
 
-        first, last = doublename.split(".")
         fqdn = f"{doublename}.{THREEBOT_DOMAIN}"
         self.tfgateway.tcpservice_register(fqdn, fqdn, privateip)
-        self.tfgateway.domain_register_cname(first, f"{last}.{THREEBOT_DOMAIN}", GATEWAY_DOMAIN)
+
+        gateway_records = self.tfgateway.subdomain_get(THREEBOT_DOMAIN, "gateway")
+        a_records_ips = [r["ip"] for r in gateway_records["a"]]
+        self.tfgateway.domain_register_a(doublename, THREEBOT_DOMAIN, a_records_ips)
         return True
