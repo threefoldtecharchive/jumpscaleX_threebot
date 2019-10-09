@@ -5,25 +5,6 @@ class TFTokenFactory(j.baseclasses.threebot_factory):
     __jslocation__ = "j.threebot.package.token"
     _web = False
 
-    def start(self):
-        gedis_client = j.servers.threebot.local_start_default(web=True)
-        gedis_client.actors.package_manager.package_add(path=self._dirpath)
-
-    def client_get(self):
-        """
-        j.threebot.package.token.client_get()
-        :return:
-        """
-        j.servers.threebot.local_start_default(web=True)
-        self.client = j.servers.threebot.current.client
-        self.client.actors.package_manager.package_add(
-            git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/threefold/tfgrid_token"
-        )
-        self.client.reload()
-        """ self.client.reload(namespace="token") """
-
-        return self.client
-
     def test(self, name=""):
         """
         kosmos 'j.threebot.package.token.test()'

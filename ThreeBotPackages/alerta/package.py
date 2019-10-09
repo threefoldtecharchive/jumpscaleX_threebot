@@ -3,18 +3,7 @@ from os.path import dirname, abspath, join
 
 
 class Package(j.baseclasses.threebot_package):
-    def _init(self, **kwargs):
-        if "branch" in kwargs.keys():
-            self.branch = kwargs["branch"]
-        else:
-            self.branch = "*"
-
-    def prepare(self):
-        """
-        is called at install time
-        :return:
-        """
-        pass
+    # TODO: remark branches are supposed to be configured in your package (code as configuration, not as argument)
 
     def start(self):
         """
@@ -33,6 +22,7 @@ class Package(j.baseclasses.threebot_package):
 
         website_location = locations.locations_spa.new()
         website_location.name = "alerta"
+        # TODO: how can this work? the path_url is / and it puts it to the html dir of this package, now the general one is overwritten
         website_location.path_url = "/"
         website_location.use_jumpscale_weblibs = False
         fullpath = j.sal.fs.joinPaths(self.package_root, "html/")

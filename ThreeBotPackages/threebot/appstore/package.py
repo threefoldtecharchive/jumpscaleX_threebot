@@ -58,16 +58,3 @@ class Package(j.baseclasses.threebot_package):
             if appModel.count(appname=application["appname"]) == 0:
                 app = appModel.new(application)
                 app.save()
-
-    def start(self):
-        self.bcdb.models_add(path=self.package_root + "/models")
-        self.gedis_server.actors_add(path=self.package_root + "/actors")
-
-    def stop(self):
-        pass
-
-    def uninstall(self):
-        """
-        Remove Dependencies
-        """
-        # clear database

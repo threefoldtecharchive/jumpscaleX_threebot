@@ -33,9 +33,10 @@ class Package(j.baseclasses.threebot_package):
         # radicale.log.logger.setLevel(logging.DEBUG)
         from radicale import application
 
-        rack = j.servers.rack.get()
+        rack = self.rack_server
 
         rack.bottle_server_add(name="radicale", port=8851, app=application)
+        # TODO: cant we do on /name/... for url in stead of port
         website = self.openresty.websites.get("radicale")
         website.ssl = False
         website.port = 8001
@@ -51,22 +52,9 @@ class Package(j.baseclasses.threebot_package):
         website_location = locations.locations_static.new()
         website_location.name = "static"
         website_location.path_url = "/static/"
+        # TODO: i see not static path here
         website_location.path_location = f"{self._dirpath}/static"
         # website_location.use_jumpscale_weblibs = True
 
         locations.configure()
         website.configure()
-
-    def stop(self):
-        """
-        called when the 3bot stops
-        :return:
-        """
-        pass
-
-    def uninstall(self):
-        """
-        called when the package is no longer needed and will be removed from the threebot
-        :return:
-        """
-        j.builders.runtimes.python3.pip_package_uninstall("filetype")

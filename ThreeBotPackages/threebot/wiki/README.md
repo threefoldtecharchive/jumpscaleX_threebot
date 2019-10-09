@@ -41,13 +41,10 @@ to sum up an external client would call this threebot actors method through redi
 
 to load wikis or werbsites , use this package
 
-### Install
 
-`j.threebot.package.wikis.install()`
+### Start
 
-### Run
-
-`j.threebot.package.wikis.start()`
+```kosmos 'j.threebot.package.wikis.start()'```
 
 ### Screenshot
 

@@ -1,26 +1,15 @@
 from Jumpscale import j
 
 
-class WebsitesFactory(j.baseclasses.object, j.baseclasses.testtools):
+class WebsitesFactory(j.baseclasses.threebot_factory):
 
-    __jslocation__ = "j.threebot.package.freeflownation"
+    __jslocation__ = "j.threebot.package.website_freeflownation"
 
     def install(self, branch="development"):
         """
         install website packages
         """
-        self.server = j.servers.threebot.get("freeflownation.org")
 
-        # freeflownation.org
-        threefold_io_package = j.tools.threebot_packages.get(
-            "freeflownation.org",
-            branch=branch,
-            giturl=f"https://github.com/freeflownation/www_freeflownation/tree/{branch}/package",
-            threebot_server_name=self.server.name,
+        self.client.actors_default.package_manager.package_add(
+            git_url="https://github.com/freeflownation/www_freeflownation/tree/%s/package" % branch
         )
-        threefold_io_package.prepare()
-        threefold_io_package.save()
-
-    def start(self, ssl=True, branch="development"):
-        self.install(branch=branch)
-        self.server.start(web=True, ssl=ssl)

@@ -16,17 +16,22 @@ class Package(j.baseclasses.threebot_package):
         # TODO: ADD REVERSE PROXY
 
         # Couldn't import file app.py directly!
+        # TODO: fileserver does not exist
         from fileserver.filemanager_UI.app import App
 
         root = os.path.dirname(os.path.abspath(__file__)) + "/filemanager_UI"
-        rack = j.servers.rack.get()
+
+        rack = self.rack_server
+
         app = App(root=root)()
+
         rack.bottle_server_add(name="fileman", port=6999, app=app)
 
         website = self.openresty.websites.get(f"filemanager")
         website.ssl = False
         website.port = 7000
 
+        # TODO: should be on location not port
         locations = website.locations.get("filemanager")
         proxy_location = locations.locations_proxy.new()
         proxy_location.name = "filemanager"
@@ -73,7 +78,10 @@ class Package(j.baseclasses.threebot_package):
         # Couldn't import file directly!
         from fileserver.webdav.app import App
 
-        rack = j.servers.rack.get()
+        # TODO: don't do this, always go for existing rack
+        # rack = j.servers.rack.get()
+        rack = self.rack_server
+
         app = App(path="/", port=7501).app
         rack.bottle_server_add(name="webdav", port=7501, app=app)
         website = self.openresty.websites.get("webdav")
@@ -96,13 +104,6 @@ class Package(j.baseclasses.threebot_package):
 
         locations.configure()
         website.configure()
-
-    def stop(self):
-        """
-        called when the 3bot stops
-        :return:
-        """
-        pass
 
     def uninstall(self):
         """

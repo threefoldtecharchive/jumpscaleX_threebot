@@ -21,7 +21,31 @@ class Package(j.baseclasses.threebot_package):
         self.openresty.configure()
 
         # get our main webserver
+
+        website = self.openresty.get_from_port(80)
+        locations = website.locations.get("static")
+        website_location = locations.locations_static.new()
+        website_location.name = "static"
+        website_location.path_url = "/static"
+        website_location.path_location = self.openresty.path_web
+        website_location.use_jumpscale_weblibs = True
+
         website = self.openresty.get_from_port(443)
+        locations = website.locations.get("static")
+        website_location = locations.locations_static.new()
+        website_location.name = "static"
+        website_location.path_url = "/static"
+        # website_location.path_location = f"{self._dirpath}/static"
+        website_location.path_location = self.openresty.path_web
+        website_location.use_jumpscale_weblibs = True
+
+        # link weblibs into the static dir
+        # NOT NEEDED DONE IN OPENRESTY SERVER
+        # j.core.tools.link(
+        #     "/sandbox/code/github/threefoldtech/jumpscale_weblibs/static",
+        #     "%s/static/weblibs" % self.openresty.path_web,
+        #     overwriteTarget=True,
+        # )
 
         # start bottle server
         self.rack_server.bottle_server_add(port=bottle_server_new)

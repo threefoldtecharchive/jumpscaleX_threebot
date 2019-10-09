@@ -22,6 +22,10 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot starts
         :return:
         """
+
+        # TODO: not needed, there is j.tools.threebot.me... which deals with registration...
+        # TODO: FLOW IS WRONG, people should already have there 3bot configured, should not be done by a package like this
+
         config = j.core.myenv.config
         doublename = config.get("3BOT_DOUBLE_NAME", None)
         email = config.get("3BOT_EMAIL", None)
@@ -62,17 +66,3 @@ class Package(j.baseclasses.threebot_package):
         signature = j.data.nacl.payload_sign(f"{doublename}{privateip}", nacl=nacl)
         namemanager.actors.namemanager.domain_register(doublename, privateip, signature)
         print(f"Done, your url is: {doublename}.{THREEBOT_DOMAIN}")
-
-    def stop(self):
-        """
-        called when the 3bot stops
-        :return:
-        """
-        pass
-
-    def uninstall(self):
-        """
-        called when the package is no longer needed and will be removed from the threebot
-        :return:
-        """
-        pass

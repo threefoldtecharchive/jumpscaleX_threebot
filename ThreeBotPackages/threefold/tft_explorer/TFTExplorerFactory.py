@@ -3,25 +3,9 @@ import uuid
 import random
 
 
-class TFTExplorerFactory(j.baseclasses.object, j.baseclasses.testtools):
+class TFTExplorerFactory(j.baseclasses.threebot_factory):
 
     __jslocation__ = "j.threebot.package.tftexplorer"
-
-    def client_get(self):
-        """
-        j.threebot.package.tftexplorer.client_get()
-        :return:
-        """
-        self.client = j.servers.threebot.local_start_default()
-
-        self.client.actors.package_manager.package_add(
-            "threebot_phonebook",
-            git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/threefold/tft_explorer",
-        )
-
-        # self.client.reload(namespace="default")
-
-        return self.client
 
     def test(self, name=""):
         """

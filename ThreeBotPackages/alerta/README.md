@@ -2,8 +2,8 @@
 
 Central monitoring system built using sapper and gedis actors (with jumpscale alert handler integration).
 
-![alerta](./alerta1.png)
-![alerta](./alerta2.png)
+![alerta](./images/alerta1.png)
+![alerta](./images/alerta2.png)
 
 ## Running
 

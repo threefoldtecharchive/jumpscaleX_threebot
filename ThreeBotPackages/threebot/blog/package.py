@@ -19,6 +19,8 @@ def get_excerpt(content, maxlen=400):
     return text[:maxlen]
 
 
+# TODO: wrong location, need to create a jumpscale module (j.tools....) and it will be loaded automatically with your required functionality
+# best to make proper configuration manager
 class BlogLoader(j.baseclasses.object):
 
     __jslocation__ = "j.tools.blogloader"
@@ -182,18 +184,16 @@ class BlogLoader(j.baseclasses.object):
 
 class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
-        self.branch = kwargs["package"].branch or "master"
-
-        # load models
-        # models_location = j.sal.fs.joinPaths(self.package_root, "models")
-        # self.bcdb.models_add(models_location)
         self.blog_dest = ""
 
+    # TODO: wrong location, this should be on actor so people can remotely call to add blogs
     def prepare(self, blog_name, repo_url):
         """
         is called at install time
         :return:
         """
+        j.builders.runtimes.nodejs.install()
+
         self.blog_name = blog_name
         self.blog_dest = dest = j.clients.git.pullGitRepo(repo_url)
 
@@ -238,11 +238,8 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot starts
         :return:
         """
-        j.builders.runtimes.nodejs.install()
 
         server = self.openresty
-        server.install(reset=False)
-        server.configure()
 
         website = server.get_from_port(443)
 
@@ -269,20 +266,22 @@ class Package(j.baseclasses.threebot_package):
         # website_location_assets.path_location = fullpath
 
         ## START BOTTLE ACTORS ENDPOINT
-        rack = j.servers.rack.get()
-        app = j.servers.gedishttp.get_app()
-        rack.bottle_server_add(name="gedishttp", port=9201, app=app)
 
-        proxy_location = locations.locations_proxy.new()
-        proxy_location.name = "gedishttp"
-        proxy_location.path_url = "/actors"
-        proxy_location.ipaddr_dest = "0.0.0.0"
-        proxy_location.port_dest = 9201
-        proxy_location.scheme = "http"
+        # app = j.servers.gedishttp.get_app()
+        # rack.bottle_server_add(name="gedishttp", port=8903, app=app)
+
+        # TODO: think gedishttp not used properly, was in this file but need not to be here
+        # proxy_location = locations.locations_proxy.new()
+        # proxy_location.name = "gedishttp"
+        # proxy_location.path_url = "/actors"
+        # proxy_location.ipaddr_dest = "0.0.0.0"
+        # proxy_location.port_dest = 8903
+        # proxy_location.scheme = "http"
         ## END BOTTLE ACTORS ENDPOINT
 
         proxy_location = locations.locations_proxy.new()
         proxy_location.name = "nodeapp"
+        # TODO: don't know how it could have worked because path_url did not exist on model
         proxy_location.path_url = f"/blog"
         proxy_location.path_dest = f"/blog"
 
