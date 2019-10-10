@@ -47,7 +47,6 @@ class Package(j.baseclasses.threebot_package):
         locations.configure()
         website.configure()
         self._start_blog_app()
-        j.tools.blog_loader.launch_blog("xmon", "git@gitlab.com:xmonader/sample-blog-jsx.git")
 
     def _start_blog_app(self, reset=True):
 
@@ -64,6 +63,3 @@ class Package(j.baseclasses.threebot_package):
         s.ports = [3000]
 
         s.start(reset=reset)
-
-
-"""cl = j.servers.threebot.local_start_default(web=True); cl.actors.package_manager.package_add(path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog")"""

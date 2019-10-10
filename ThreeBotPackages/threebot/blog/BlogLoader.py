@@ -182,6 +182,9 @@ class BlogLoader(j.baseclasses.object):
 
         self.dest = j.clients.git.pullGitRepo(repo_url)
         bcdb = j.data.bcdb.system
+        bcdb.models_add(
+            path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog/models"
+        )
         post_model = bcdb.model_get(url="jumpscale.blog.post")
         blog_model = bcdb.model_get(url="jumpscale.blog")
 
@@ -194,10 +197,10 @@ class BlogLoader(j.baseclasses.object):
             raise j.exceptions.RuntimeError("no metadata.yml file found in the repo.")
         meta = j.data.serializers.yaml.load(metafile)
 
-        found = blog_model.find(name=self.blog_name)
+        found = blog_model.find(name=blog_name)
         if not found:
             blog = blog_model.new()
-            blog.name = self.blog_name
+            blog.name = blog_name
         else:
             blog = found[0]
 
@@ -216,6 +219,8 @@ class BlogLoader(j.baseclasses.object):
 
     def launch_blog(self, blog_name, repo_url):
         # set locations
+        self.blog_name = blog_name
+        self.repo_url = repo_url
         self.add_blog(blog_name, repo_url)
         threebot_server = j.servers.threebot.default
         server = threebot_server.openresty_server
