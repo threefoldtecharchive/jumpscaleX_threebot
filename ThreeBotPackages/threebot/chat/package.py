@@ -17,10 +17,9 @@ class Package(j.baseclasses.threebot_package):
 
         server = self.openresty
         server.configure()
-        port = kwargs.get("port", 80)
+        port = kwargs.get("port", 443)
         domain = kwargs.get("domain", None)
         website = server.get_from_port(port=port, domain=domain)
-        website.ssl = False
         locations = website.locations.get("main_chat")
 
         website_location = locations.locations_static.new()
@@ -28,11 +27,17 @@ class Package(j.baseclasses.threebot_package):
         website_location.path_url = "/static"
         website_location.path_location = f"{self._dirpath}/static"
         website_location.use_jumpscale_weblibs = True
+        app = j.threebot.package.chat.get_app()
 
-        lapis_location = locations.locations_lapis.new()
-        lapis_location.name = "chat"
-        lapis_location.path_url = "/chat"
-        lapis_location.path_location = self._dirpath
+        self.rack_server.bottle_server_add(name="chatapp", port=8522, app=app)
+
+        proxy_location = locations.locations_proxy.new()
+        proxy_location.name = "chat"
+        proxy_location.path_url = "/chat"
+        proxy_location.ipaddr_dest = "0.0.0.0"
+        proxy_location.port_dest = 8522
+        proxy_location.scheme = "http"
+
 
         locations.configure()
         website.configure()
