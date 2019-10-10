@@ -29,10 +29,10 @@ class BlogLoader(j.baseclasses.object):
         self.repo_url = repo_url
         self.post_model = post_model
 
-    def remove_date(self, filename):
+    def _remove_date(self, filename):
         return re.sub(r"(\d+\-)+", "", filename)
 
-    def published_date(self, filename):
+    def _published_date(self, filename):
         found = re.findall(r"^(\d+\-\d+\-\d+)", filename)
         if found:
             return found[0]
@@ -40,14 +40,14 @@ class BlogLoader(j.baseclasses.object):
             today = j.data.time.epoch
             return j.data.time.epoch2pythonDate(today).isoformat().replace("/", "-")
 
-    def slugify(self, string):
+    def _slugify(self, string):
         """
         Slugify a unicode string.
         Example:
-            >>> slugify(u"Héllø Wörld")
+            >>> _slugify(u"Héllø Wörld")
             u"hello-world"
         """
-        string = self.remove_date(string)
+        string = self._remove_date(string)
         return re.sub(
             r"[-\s]+",
             "-",
@@ -57,7 +57,7 @@ class BlogLoader(j.baseclasses.object):
         )
 
     # populate posts
-    def create_blog(self):
+    def _create_blog(self):
         self.posts_dir_path = j.sal.fs.joinPaths(self.dest, self.meta.get("posts_dir", "posts"))
         self.blog.metadata.blog_title = self.meta.get("blog_title", "blog title")
         self.blog.metadata.blog_description = self.meta.get("blog_description", "blog desc")
@@ -88,7 +88,7 @@ class BlogLoader(j.baseclasses.object):
         self.blog.posts = []
         self.blog.save()
 
-    def create_posts(self):
+    def _create_posts(self):
         self.posts_dir_path = j.sal.fs.joinPaths(self.dest, self.meta.get("posts_dir", "posts"))
         posts = j.sal.fs.listFilesInDir(self.posts_dir_path)
         for post in posts:
@@ -98,7 +98,7 @@ class BlogLoader(j.baseclasses.object):
             parsed = j.data.markdown.document_get(content)
             meta = parsed.meta
 
-            post_title = self.remove_date(basename)
+            post_title = self._remove_date(basename)
 
             the_title = post_title
             if "title" in meta:
@@ -111,7 +111,7 @@ class BlogLoader(j.baseclasses.object):
                 post_obj = self.post_model.new()
 
             post_obj.title = the_title
-            post_obj.slug = self.slugify(post_title)
+            post_obj.slug = self._slugify(post_title)
             post_obj.content_with_meta = content
             post_obj.content = parsed.strip_meta(content)
             if len(meta.get("tags", [])) > 0:
@@ -126,7 +126,7 @@ class BlogLoader(j.baseclasses.object):
             if meta.get("published_at"):
                 the_author_published_at = meta.get("published_at")[0]
             else:
-                the_author_published_at = self.published_date(basename)
+                the_author_published_at = self._published_date(basename)
 
             post_obj.author_name = the_author_name
             post_obj.author_email = the_author_email
@@ -140,7 +140,7 @@ class BlogLoader(j.baseclasses.object):
             self.blog.posts.append(post_obj)
             self.blog.save()
 
-    def create_pages(self):
+    def _create_pages(self):
 
         pages_dir_path = j.sal.fs.joinPaths(self.dest, self.meta.get("pages_dir", "pages"))
         if not j.sal.fs.exists(pages_dir_path):
@@ -153,7 +153,7 @@ class BlogLoader(j.baseclasses.object):
             parsed = j.data.markdown.document_get(content)
             meta = parsed.meta
 
-            post_title = self.remove_date(basename)
+            post_title = self._remove_date(basename)
 
             the_title = post_title
             if "title" in meta:
@@ -166,7 +166,7 @@ class BlogLoader(j.baseclasses.object):
                 post_obj = self.post_model.new()
 
             post_obj.title = meta.get("title", [the_title])[0]
-            post_obj.slug = self.slugify(post_title)
+            post_obj.slug = self._slugify(post_title)
             post_obj.content_with_meta = content
             post_obj.content = parsed.strip_meta(content)
             tags = meta.get("tags", [])[0]
@@ -178,7 +178,7 @@ class BlogLoader(j.baseclasses.object):
             self.blog.pages.append(post_obj)
             self.blog.save()
 
-    def add_blog(self, blog_name, repo_url):
+    def _load_blog(self, blog_name, repo_url):
 
         self.dest = j.clients.git.pullGitRepo(repo_url)
         bcdb = j.data.bcdb.system
@@ -212,16 +212,16 @@ class BlogLoader(j.baseclasses.object):
         blogobj.post_model = post_model
         blogobj.blog_name = blog_name
         blogobj.repo_url = repo_url
-        blogobj.create_blog()
-        blogobj.create_posts()
-        blogobj.create_pages()
+        blogobj._create_blog()
+        blogobj._create_posts()
+        blogobj._create_pages()
         self._log_info(f"blog {blog_name} loaded")
 
-    def launch_blog(self, blog_name, repo_url):
+    def add_blog(self, blog_name, repo_url):
         # set locations
         self.blog_name = blog_name
         self.repo_url = repo_url
-        self.add_blog(blog_name, repo_url)
+        self._load_blog(blog_name, repo_url)
         threebot_server = j.servers.threebot.default
         server = threebot_server.openresty_server
         server.install(reset=False)

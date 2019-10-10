@@ -4,7 +4,7 @@
 ## Start
 
 1- Load your blogs via the blogs tool with the name and url in `kosmos`:
-`j.tools.blog_loader.launch_blog("xmon", "git@gitlab.com:xmonader/sample-blog-jsx.git")`
+`j.tools.blog_loader.add_blog("xmon", "git@gitlab.com:xmonader/sample-blog-jsx.git")`
 
 2- Start the threebot server first in `kosmos` using:
 `cl = j.servers.threebot.local_start_default(web=True)`
