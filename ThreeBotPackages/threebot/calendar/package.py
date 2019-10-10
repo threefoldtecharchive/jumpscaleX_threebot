@@ -13,7 +13,6 @@ class Package(j.baseclasses.threebot_package):
         j.builders.runtimes.python3.pip_package_install("filetype")
         j.builders.runtimes.python3.pip_package_install("vobject")
         j.builders.runtimes.python3.pip_package_install("caldav")
-    
 
     @property
     def bcdb(self):
