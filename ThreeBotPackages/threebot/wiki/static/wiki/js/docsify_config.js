@@ -26,22 +26,14 @@ function docsifyConfig(name, repo) {
                     }
                     if (lang === "slideshow") {
 
-                        String.prototype.replaceAll = function (stringToFind, stringToReplace) {
-                            if (stringToFind === stringToReplace) return this;
-                            var temp = this;
-                            var index = temp.indexOf(stringToFind);
-                            while (index != -1) {
-                                temp = temp.replace(stringToFind, stringToReplace);
-                                index = temp.indexOf(stringToFind);
-                            }
-                            return temp;
-                        };
-
                         let rendered_code = function (code) {
                             code = code.replaceAll("$path", imagesPath);
                             return code;
                         }
-
+                        let images_counter = findAll("<img", rendered_code(code)).length
+                        if (images_counter < 2) {
+                            return (`<div class="slides" style="position: initial;">${rendered_code(code)}</div>`)
+                        }
                         return (`<div class="reveal"><div class="slides" style="position: initial;">${rendered_code(code)}</div></div>`);
                     }
                     if (lang === "gallery") {
@@ -116,4 +108,27 @@ function docsifyConfig(name, repo) {
             },
         ]
     };
+}
+// helper methods
+// replace all in a string
+String.prototype.replaceAll = function (stringToFind, stringToReplace) {
+    if (stringToFind === stringToReplace) return this;
+    var temp = this;
+    var index = temp.indexOf(stringToFind);
+    while (index != -1) {
+        temp = temp.replace(stringToFind, stringToReplace);
+        index = temp.indexOf(stringToFind);
+    }
+    return temp;
+};
+// find all matches
+function findAll(regexPattern, sourceString) {
+    let output = []
+    let match
+    let regexPatternWithGlobal = RegExp(regexPattern, "g")
+    while (match = regexPatternWithGlobal.exec(sourceString)) {
+        delete match.input
+        output.push(match)
+    }
+    return output
 }
