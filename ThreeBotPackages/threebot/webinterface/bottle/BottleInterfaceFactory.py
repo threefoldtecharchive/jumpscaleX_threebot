@@ -32,8 +32,6 @@ def enable_cors(fn):
 #######################################
 @app.route("/gedis/websocket", apply=[websocket])
 def gedis_websocket(ws):
-    import ipdb
-
     # TODO: getting a gedis client should happen only once
     client_gedis = j.clients.gedis.get("main", port=GEDIS_PORT)
     while True:
@@ -86,10 +84,22 @@ def gedis_http(name, cmd):
         response.status = 400
         return f"content_type needs to be either json or msgpack"
     response.headers["Content-Type"] = f"application/{content_type}"
-    result = command(**data["args"])
-    if content_type:
-        result = getattr(result, f"_{content_type}", result)
+    try:
+
+        result = command(**data["args"])
+    except Exception as ex:
+        err = "".join(traceback.format_exception(etype=type(ex), value=ex, tb=ex.__traceback__))
+        response.status = 400
+        result = {"error": err}
+        if content_type == "json":
+            result = j.data.serializers.json.dumps(result)
+        else: #msgpack
+            result = j.data.serializers.msgpack.dumps(result)
+    else:
+        if content_type:
+            result = getattr(result, f"_{content_type}", result)
     return result
+
 
 
 #######################################
