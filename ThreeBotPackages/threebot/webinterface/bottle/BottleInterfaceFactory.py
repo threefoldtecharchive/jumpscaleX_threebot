@@ -122,14 +122,21 @@ class BottleInterfaceFactory(j.baseclasses.object, j.baseclasses.testtools):
     def get_app(self):
         return app
 
-    def test(self):
+    def test(self, port=None, prefix=None, scheme="http"):
         """
         kosmos `j.servers.bottle_web.test()'
         :return:
         """
+        base_url = f"{scheme}://0.0.0.0"
+        if port:
+            base_url = base_url + f":{port}"
+
+        if prefix:
+            base_url = base_url + f"/{prefix}"
+
         print("testing bcdbfs")
         j.sal.bcdbfs.file_write("/test", "hello world", create=True, append=False)
-        assert j.clients.http.get("http://0.0.0.0:9999/bcdbfs/test") == "hello world"
+        assert j.clients.http.get(f"{base_url}/bcdbfs/test") == "hello world"
         print("bcdbfs OK")
 
         print("testing gedis http")
@@ -137,7 +144,7 @@ class BottleInterfaceFactory(j.baseclasses.object, j.baseclasses.testtools):
         # TODO: check also the content
         assert (
             j.clients.http.post(
-                "http://0.0.0.0:9999/gedis/http/echo/echo",
+                f"{base_url}/gedis/http/echo/echo",
                 data=b'{"args":{"message":"hello world"}}',
                 headers={"Content-Type": "application/json"},
             )
@@ -150,7 +157,7 @@ class BottleInterfaceFactory(j.baseclasses.object, j.baseclasses.testtools):
         from websocket import WebSocket
 
         ws = WebSocket()
-        ws.connect("ws://0.0.0.0:9999/gedis/websocket")
+        ws.connect(f"{base_url}/gedis/websocket")
 
         assert ws.connected
         payload = """{
