@@ -110,6 +110,26 @@ class addressbook(j.baseclasses.threebot_actor):
             etag = None
         self.client.delete_vcard(href, etag)
         return True
+    
+    def find_vcards(self, text, addressbook_href, schema_out=None, user_session=None):
+        """
+        ```in
+        text = (S)
+        addressbook_href = (S)
+
+        ```
+        ```out
+        vcards = (LS)
+        ```
+        """
+        self._verify_client()
+        if not addressbook_href:
+            vcards = []
+        else:
+            vcards = self.client.find_vcards(text, addressbook_href)
+        output = schema_out.new()
+        output.vcards = vcards
+        return output
 
     def update_vcard(self, vcard, href, etag=None, user_session=None):
         """
