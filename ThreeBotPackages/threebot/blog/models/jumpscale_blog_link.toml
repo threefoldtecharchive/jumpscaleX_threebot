@@ -21,6 +21,8 @@ nav_links = (LO)      !jumpscale.blog.link
 sidebar_social_links = (LO) !jumpscale.blog.link
 sidebar_links = (LO)  !jumpscale.blog.link
 allow_disqus = true (B) 
+allow_navbar = true (B)
+allow_footer = true (B)
 
 
 @url = jumpscale.blog.post
