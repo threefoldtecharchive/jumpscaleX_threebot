@@ -66,6 +66,8 @@ class BlogLoader(j.baseclasses.object):
         self.blog.metadata.author_image = self.meta["author_image_filename"]
         self.blog.metadata.posts_dir = self.posts_dir_path
         self.blog.metadata.allow_disqus = self.meta.get("allow_disqus", True)
+        self.blog.metadata.allow_navbar = self.meta.get("allow_navbar", True)
+        self.blog.metadata.allow_footer = self.meta.get("allow_footer", True)
 
         sidebar_links = self.blog.metadata.sidebar_links
         sidebar_social_links = self.blog.metadata.sidebar_social_links

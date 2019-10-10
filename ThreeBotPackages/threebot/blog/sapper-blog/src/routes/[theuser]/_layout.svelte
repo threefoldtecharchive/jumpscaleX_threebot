@@ -55,6 +55,7 @@
 {:then value}
   <Nav {segment} pages={value} />
 {/await}
+<Nav {metadata} />
 <div>
   <div class="container">
     <div class="row">
@@ -74,6 +75,6 @@
       </aside>
     </div>
   </div>
-  <Footer />
+  <Footer {metadata} />
 
 </div>
