@@ -20,6 +20,8 @@ class Package(j.baseclasses.threebot_package):
         j.threebot.package.chat.install()
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
         self.gedis_server.chatbot.chatflows_load(j.sal.fs.joinPaths(self.package_root, "chatflows"))
+        wiki = j.tools.markdowndocs.load(path=j.sal.fs.joinPaths(self.package_root, "wiki"), name='wordpress')
+        wiki.write()
 
     def stop(self):
         """
