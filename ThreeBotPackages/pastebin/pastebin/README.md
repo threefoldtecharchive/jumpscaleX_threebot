@@ -1,351 +1,109 @@
+# sapper-template
 
-This is a tool which is used to <b> auto highlight</b> your code and allow you to <b>share</b> with friends using an auto generated URL
+The default [Sapper](https://github.com/sveltejs/sapper) template, available for Rollup and webpack.
 
-# Features
-* Auto Highlight code
-* Share code
-* Download code
-* Copy code
 
-## svelte app
+## Getting started
 
-This is a project template for [Svelte](https://svelte.dev) apps. It lives at https://github.com/sveltejs/template.
 
-To create a new project based on this template using [degit](https://github.com/Rich-Harris/degit):
+### Using `degit`
+
+[`degit`](https://github.com/Rich-Harris/degit) is a scaffolding tool that lets you create a directory from a branch in a repository. Use either the `rollup` or `webpack` branch in `sapper-template`:
 
 ```bash
-npx degit sveltejs/template svelte-app
-cd svelte-app
+# for Rollup
+npx degit "sveltejs/sapper-template#rollup" my-app
+# for webpack
+npx degit "sveltejs/sapper-template#webpack" my-app
 ```
 
-*Note that you will need to have [Node.js](https://nodejs.org) installed.*
+
+### Using GitHub templates
+
+Alternatively, you can use GitHub's template feature with the [sapper-template-rollup](https://github.com/sveltejs/sapper-template-rollup) or [sapper-template-webpack](https://github.com/sveltejs/sapper-template-webpack) repositories.
 
 
-## Get started
+### Running the project
 
-Install the dependencies...
-
-```bash
-cd svelte-app
-npm install
-```
-
-...then start [Rollup](https://rollupjs.org):
+However you get the code, you can install dependencies and run the project in development mode with:
 
 ```bash
+cd my-app
+npm install # or yarn
 npm run dev
 ```
 
-Navigate to [localhost:5000](http://localhost:5000). You should see your app running. Edit a component file in `src`, save it, and reload the page to see your changes.
-## project structure 
-```
-.
-├── back-end
-│   ├── Api.py
-│   └── views
-│       └── 404.tpl
-├── front-end
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── public
-│   │   ├── favicon.png
-│   │   ├── global.css
-│   │   └── index.html
-│   ├── rollup.config.js
-│   └── src
-│       ├── App.svelte
-│       ├── components
-│       │   ├── HighlightedCode.svelte
-│       │   ├── NotFound.svelte
-│       │   ├── OriginalCode.svelte
-│       │   └── SharedCode.svelte
-│       ├── main.js
-│       ├── Navigation.svelte
-│       └── routes.js
-├── README.md
-└── tree
+Open up [localhost:3000](http://localhost:3000) and start clicking around.
 
-6 directories, 18 files
-```
+Consult [sapper.svelte.dev](https://sapper.svelte.dev) for help getting started.
 
-## Routing between components
-- Install the dependencies for external router **svelte-spa-router**...
 
-```bash
-npm install svelte-spa-router
-```
+## Structure
 
-- Register your routes to the component
-```javascript
-let routes
-routes = new Map()
-routes.set('/highlight', OriginalCode)
-routes.set('/share/:codeId', SharedCode)
-routes.set('/', OriginalCode)
-routes.set('*', NotFound)
+Sapper expects to find two directories in the root of your project —  `src` and `static`.
+
+
+### src
+
+The [src](src) directory contains the entry points for your app — `client.js`, `server.js` and (optionally) a `service-worker.js` — along with a `template.html` file and a `routes` directory.
+
+
+#### src/routes
+
+This is the heart of your Sapper app. There are two kinds of routes — *pages*, and *server routes*.
+
+**Pages** are Svelte components written in `.svelte` files. When a user first visits the application, they will be served a server-rendered version of the route in question, plus some JavaScript that 'hydrates' the page and initialises a client-side router. From that point forward, navigating to other pages is handled entirely on the client for a fast, app-like feel. (Sapper will preload and cache the code for these subsequent pages, so that navigation is instantaneous.)
+
+**Server routes** are modules written in `.js` files, that export functions corresponding to HTTP methods. Each function receives Express `request` and `response` objects as arguments, plus a `next` function. This is useful for creating a JSON API, for example.
+
+There are three simple rules for naming the files that define your routes:
+
+* A file called `src/routes/about.svelte` corresponds to the `/about` route. A file called `src/routes/blog/[slug].svelte` corresponds to the `/blog/:slug` route, in which case `params.slug` is available to the route
+* The file `src/routes/index.svelte` (or `src/routes/index.js`) corresponds to the root of your app. `src/routes/about/index.svelte` is treated the same as `src/routes/about.svelte`.
+* Files and directories with a leading underscore do *not* create routes. This allows you to colocate helper modules and components with the routes that depend on them — for example you could have a file called `src/routes/_helpers/datetime.js` and it would *not* create a `/_helpers/datetime` route
+
+
+### static
+
+The [static](static) directory contains any static assets that should be available. These are served using [sirv](https://github.com/lukeed/sirv).
+
+In your [service-worker.js](src/service-worker.js) file, you can import these as `files` from the generated manifest...
+
+```js
+import { files } from '@sapper/service-worker';
 ```
 
-For more information about the router check <https://www.npmjs.com/package/svelte-spa-router>
+...so that you can cache them (though you can choose not to, for example if you don't want to cache very large files).
 
-## Working on front-end
-* Add all the front-end libraries <b> example</b> ```Bootstrap and Font awesome``` in ```/public/index.html```
 
-* Create navigation component <b>example</b> ```front-end/src/Navigation.svelte``` and import this component in ```front-end/src/App.svelte``` <b>example</b> ```import Navigation from './Navigation.svelte';```to use this component ```<Navigation />```
+## Bundler config
 
-```html
-<div>
-	<nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
-		<a class="navbar-brand" href="#">Sharable Highlited Code</a>
-		<button
-			class="navbar-toggler"
-			type="button"
-			data-toggle="collapse"
-			data-target="#navbarText"
-			aria-controls="navbarText"
-			aria-expanded="false"
-			aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon" />
-		</button>
-		<div class="collapse navbar-collapse" id="navbarText">
-			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active">
-					<a class="nav-link" href="/">
-						Home
-						<span class="sr-only">(current)</span>
-					</a>
-				</li>
-			</ul>
-			<span class="navbar-text">
-				We Share your code and keep the Highlights
-			</span>
-		</div>
-	</nav>
-</div>
+Sapper uses Rollup or webpack to provide code-splitting and dynamic imports, as well as compiling your Svelte components. With webpack, it also provides hot module reloading. As long as you don't do anything daft, you can edit the configuration files to add whatever plugins you'd like.
 
-```
 
-* Create  ```front-end/src/components/OriginalCode.svelte``` component which contain all the required logic to get the orginal code and highlight it
-```html
-<script>
-  import hljs from "highlight.js";
-  import { newPaste } from "./data";
+## Production mode and deployment
 
-  import HighlightedCode from "./HighlightedCode.svelte";
+To start a production version of your app, run `npm run build && npm start`. This will disable live reloading, and activate the appropriate bundler plugins.
 
-  hljs.initHighlightingOnLoad();
-  let shareableUrl = "";
-
-  let originalCode = "";
-  let highlightedCode = { value: "" };
-  function highlightCode(originalCode) {
-    highlightedCode = hljs.highlightAuto(originalCode);
-    newPaste(originalCode)
-      .then(function(response) {
-        // let parsedJson = JSON.parse(response);
-        shareableUrl = `${window.location.href}#/share/${response.data.id}`;
-      })
-      .catch(function(error) {});
-  }
-
-  //Copy the code
-  function copyToClipboard(elementId) {
-    var range = document.createRange();
-    range.selectNode(document.getElementById(elementId));
-    window.getSelection().removeAllRanges(); // clear current selection
-    window.getSelection().addRange(range); // to select text
-    document.execCommand("copy");
-    window.getSelection().removeAllRanges(); // to deselect
-  }
-  //Download the code3
-  function downloadCode(data, fileName = "originalCode") {
-    var element = document.createElement("a");
-    element.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(data)
-    );
-    element.setAttribute("download", fileName);
-    element.style.display = "none";
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-  }
-</script>
-
-<div class="row">
-  <!--[Left-Side]-->
-  <div class="col-sm-6">
-    <!--[Content]-->
-    <div class="row">
-      <div class="col-sm-12">
-        <textarea
-          id="original-code"
-          rows="25"
-          cols="95"
-          bind:value={originalCode} />
-      </div>
-    </div>
-    <!--[BTNs]-->
-    <div class="d-flex justify-content-between mt-4">
-      <!--[Submit-BTN]-->
-      <div>
-        <button
-          type="button"
-          on:click={() => highlightCode(originalCode)}
-          class="btn btn-dark btn-lg">
-          Submit
-        </button>
-      </div>
-      <!--[Download-BTN]-->
-      <div>
-        <button
-          type="button"
-          class="btn btn-dark btn-lg"
-          on:click={() => downloadCode(originalCode)}>
-          Download
-        </button>
-      </div>
-      <!--[Submit-Copy]-->
-      <div>
-        <button
-          class="btn btn-dark btn-lg"
-          on:click={() => copyToClipboard('original-code')}>
-          <i class="far fa-copy" />
-        </button>
-      </div>
-    </div>
-    <!--[Sharabe-Link]-->
-    {#if shareableUrl != ''}
-      <div class="row">
-        <div class="col-sm-12">
-          <div class="d-flex mt-5 align-items-center">
-            <!--[Display-URL]-->
-            <div class="h3" id="shareable-url">{shareableUrl}</div>
-            <div>
-              <!--[Copy-BTN]-->
-              <button
-                class="btn btn-grey ml-3"
-                on:click={() => copyToClipboard('shareable-url')}>
-                <i class="far fa-copy" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    {/if}
-
-  </div>
-  <!--[Right-Side]-->
-  <div class="col-sm-6">
-    <HighlightedCode {highlightedCode} />
-  </div>
-</div>
-``` 
-
-* Create ```front-end/src/components/NotFound.svelte``` component to handle the not found pages
-```
-<h2>Not Found</h2>
-<h3>Oops, this route doesn't exist!</h3>
-```
-
-* Create  ```front-end/src/components/SharedCode.svelte``` component which contain all the required logic to all the user to get the shared code from the API in bottle server
-```html
-<script>
-  import HighlightedCode from "./HighlightedCode.svelte";
-  import { getPaste } from "./data";
-
-  let highlightedCode = { value: "" };
-  export let params;
-  if (params && params.codeId != null && params.codeId != undefined) {
-    getSharedCode(params.codeId);
-  }
-
-  function getSharedCode(codeId) {
-    getPaste(codeId)
-      .then(function(response) {
-        // handle success
-        //call highlitedCode
-
-        //Get the orginal code from the response to be highlighted
-        // let parsedJson = JSON.parse(response);
-        let actualCode = response.data.code;
-        highlightCode(actualCode);
-      })
-      .catch(function(error) {
-        // handle error
-        console.log(error);
-      })
-      .finally(function() {
-        // always executed
-      });
-  }
-
-  function highlightCode(originalCode) {
-    highlightedCode = hljs.highlightAuto(originalCode);
-  }
-</script>
-
-<div>
-  <h1>The shared code</h1>
-  <HighlightedCode {highlightedCode} />
-</div>
-```
-* Create ```front-end/src/components/HighlightedCode.svelte``` component which will contain the logic to render the Highlighted code.
-```html
-<script>
-	export let highlightedCode;
-</script>
-	<!--[Highlighted-Code]-->
-	{#if highlightedCode.value}
-		<pre>
-			<code class="hljs">
-				{@html highlightedCode.value}
-			</code>
-		</pre>
-	{/if}
-```
-* In code highlighting, I have used <b>highlighjs library</b>, to install ```npm install highlight.js```, import this library ```	import hljs from 'highlight.js';```, call ```hljs.initHighlightingOnLoad();``` to attache highlighting to the page load event and call ```highlightAuto(value, languageSubset)``` to get the markup that will highligh the code
-```
-highlightedCode = hljs.highlightAuto(originalCode);
-```
-to render it it must be in ```<pre>``` and ```<code>``` tags 
-```html
-<pre>
-	<code class="hljs">
-	    {@html highlightedCode.value}
-	</code>
-</pre>
-```
-
- * Add ```Axios``` to handle the HTTP requests ```$ npm install axios```
-example 
-```javascript
-import axios from 'axios'
-
-export function getPaste(pasteId) {
-    return (axios.post("/actors/pastebin/get_paste", { "args": { "paste_id": pasteId } }))
-}
-
-export function newPaste(code) {
-    return (axios.post("/actors/pastebin/new_paste", { "args": { "code": code } }))
-}
-```
-
-## Deploying to the web
-
-### With [now](https://zeit.co/now)
-
-Install `now` if you haven't already:
+You can deploy your application to any environment that supports Node 8 or above. As an example, to deploy to [Now](https://zeit.co/now), run these commands:
 
 ```bash
 npm install -g now
-```
-
-Then, from within your project folder:
-
-```bash
-cd public
 now
 ```
 
-As an alternative, use the [Now desktop client](https://zeit.co/download) and simply drag the unzipped project folder to the taskbar icon.
 
+## Using external components
+
+When using Svelte components installed from npm, such as [@sveltejs/svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list), Svelte needs the original component source (rather than any precompiled JavaScript that ships with the component). This allows the component to be rendered server-side, and also keeps your client-side app smaller.
+
+Because of that, it's essential that the bundler doesn't treat the package as an *external dependency*. You can either modify the `external` option under `server` in [rollup.config.js](rollup.config.js) or the `externals` option in [webpack.config.js](webpack.config.js), or simply install the package to `devDependencies` rather than `dependencies`, which will cause it to get bundled (and therefore compiled) with your app:
+
+```bash
+npm install -D @sveltejs/svelte-virtual-list
+```
+
+
+## Bugs and feedback
+
+Sapper is in early development, and may have the odd rough edge here and there. Please be vocal over on the [Sapper issue tracker](https://github.com/sveltejs/sapper/issues).
