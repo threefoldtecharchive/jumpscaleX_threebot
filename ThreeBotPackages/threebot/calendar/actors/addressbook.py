@@ -16,7 +16,9 @@ class addressbook(j.baseclasses.threebot_actor):
         password = (S)
         ```
         """
-        self.client = j.clients.carddav.get(resource=f"http://172.17.0.2:8851/{username}", user=username, passwd=password)
+        self.client = j.clients.carddav.get(
+            resource=f"http://172.17.0.2:8851/{username}", user=username, passwd=password
+        )
         self.username = username
 
     def _verify_client(self):
@@ -63,7 +65,6 @@ class addressbook(j.baseclasses.threebot_actor):
         output = schema_out.new()
         output.addressbook = addressbook
         return output
-        
 
     def delete_addressbook(self, href, user_session=None):
         """
@@ -75,8 +76,7 @@ class addressbook(j.baseclasses.threebot_actor):
         self.client.delete_abook(href)
         return True
 
-
-    def add_vcard(self, vcard,  href, user_session=None):
+    def add_vcard(self, vcard, href, user_session=None):
         """
         ```in
         vcard = (S)
