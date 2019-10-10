@@ -2,10 +2,10 @@ import axios from "axios";
 
 
 export function getJobs() {
-    return axios.post("/api/actors/myjobs/list_jobs");
+    return axios.post("/web/gedis/http/myjobs/list_jobs");
 }
 
 export function getWorkers() {
-    return axios.post("/api/actors/myjobs/list_workers");
+    return axios.post("/web/gedis/http/myjobs/list_workers");
 }
 
