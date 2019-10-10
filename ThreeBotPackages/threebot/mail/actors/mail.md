@@ -11,10 +11,10 @@ date_from = "10/6/2019"
 date_to =  "20/6/2019"
 ```
 
-at ```/update_Folder_name```
+at ```/update_folder_name```
 ```
-mail_id = 10
-folder_name =  "test25"
+old_name = "test"
+new_name =  "test2"
 ```
 
 at ```/delete```
