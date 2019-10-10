@@ -25,24 +25,26 @@ class calendar(j.baseclasses.threebot_actor):
         if raise_error:
             raise j.exceptions.NotFound(f"Couldn't find calendar with id: {cal_id}")
 
-    def list_abooks(self):
+    def list_calendars(self):
         self._verify_client()
-        self.client.list_abooks()
+        return [j.sal.fs.getBaseName(cal.canonical_url) for cal in self.client.calendars()]
 
-    # def add_calendar(self, name, cal_id=None):
-    #     self._verify_client()
-    #     calendar = self.client.make_calendar(name, cal_id)
-    #     return j.sal.fs.getBaseName(calendar.canonical_url)
-
-    def get_abook(self, href):
+    def add_calendar(self, name, cal_id=None):
         self._verify_client()
-        return self.client.get_abook(href)
+        calendar = self.client.make_calendar(name, cal_id)
+        return j.sal.fs.getBaseName(calendar.canonical_url)
 
-    # def delete_calender(self, cal_id):
-    #     self._verify_client()
-    #     calendar = self._get_calendar(cal_id, raise_error=False)
-    #     if calendar:
-    #         calendar.delete()
+    def get_calendar(self, cal_id):
+        self._verify_client()
+        calendar = self._get_calendar(cal_id)
+        events = [j.sal.fs.getBaseName(event.canonical_url) for event in calendar.events()]
+        return {"name": calendar.name, "id": cal_id, "url": calendar.canonical_url, "events": events}
+
+    def delete_calender(self, cal_id):
+        self._verify_client()
+        calendar = self._get_calendar(cal_id, raise_error=False)
+        if calendar:
+            calendar.delete()
 
     def _verfiy_time(self, dtstart, dtend):
         if not (dtstart and dtend):
