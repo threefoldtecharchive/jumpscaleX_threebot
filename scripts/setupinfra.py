@@ -79,7 +79,7 @@ corednsconfig = """\
     redis  {
         address 127.0.0.1:6379
     }
-    forward 8.8.8.8 9.9.9.9
+    forward . 8.8.8.8 9.9.9.9
 }
 """
 
