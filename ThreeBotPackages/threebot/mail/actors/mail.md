@@ -26,8 +26,8 @@ folder_name =  "test2"
 
 at ```/update_folder_name```
 ```
-mail_id = 10
-folder_name =  "test25"
+old_name = "test"
+new_name =  "test2"
 ```
 
 at ```/delete```
