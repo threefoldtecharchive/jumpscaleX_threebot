@@ -28,4 +28,4 @@ class ThreeBotTests(TestCase):
             test = module.__getattribute__("test")
             test()
         else:
-            self.skipTest(f"{location} doesn't has test")
+            self.skipTest(f"{location} doesn't have test")
