@@ -178,14 +178,15 @@ class BlogLoader(j.baseclasses.object):
             self.blog.pages.append(post_obj)
             self.blog.save()
 
-    def _load_blog(self, blog_name, repo_url):
+    def _load_blog(self):
 
-        self.dest = j.clients.git.pullGitRepo(repo_url)
+        self.dest = j.clients.git.pullGitRepo(self.repo_url)
         bcdb = j.data.bcdb.system
         bcdb.models_add(
             path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog/models"
         )
-        post_model = bcdb.model_get(url="jumpscale.blog.post")
+        self.post_model = bcdb.model_get(url="jumpscale.blog.post")
+
         blog_model = bcdb.model_get(url="jumpscale.blog")
 
         # dirs = j.sal.fs.listDirsInDir(dest)
@@ -195,33 +196,33 @@ class BlogLoader(j.baseclasses.object):
             metafile = metafiles[0]
         else:
             raise j.exceptions.RuntimeError("no metadata.yml file found in the repo.")
-        meta = j.data.serializers.yaml.load(metafile)
+        self.meta = j.data.serializers.yaml.load(metafile)
 
-        found = blog_model.find(name=blog_name)
+        found = blog_model.find(name=self.blog_name)
         if not found:
-            blog = blog_model.new()
-            blog.name = blog_name
+            self.blog = blog_model.new()
+            self.blog.name = self.blog_name
         else:
-            blog = found[0]
+            self.blog = found[0]
 
         # population
         blogobj = j.tools.blog_loader
-        blogobj.blog = blog
-        blogobj.meta = meta
+        blogobj.blog = self.blog
+        blogobj.meta = self.meta
         blogobj.dest = self.dest
-        blogobj.post_model = post_model
-        blogobj.blog_name = blog_name
-        blogobj.repo_url = repo_url
+        blogobj.post_model = self.post_model
+        blogobj.blog_name = self.blog_name
+        blogobj.repo_url = self.repo_url
         blogobj._create_blog()
         blogobj._create_posts()
         blogobj._create_pages()
-        self._log_info(f"blog {blog_name} loaded")
+        self._log_info(f"blog {self.blog_name} loaded")
 
     def add_blog(self, blog_name, repo_url):
         # set locations
         self.blog_name = blog_name
         self.repo_url = repo_url
-        self._load_blog(blog_name, repo_url)
+        self._load_blog()
         threebot_server = j.servers.threebot.default
         server = threebot_server.openresty_server
         server.install(reset=False)
@@ -240,4 +241,3 @@ class BlogLoader(j.baseclasses.object):
 
         locations.configure()
         website.configure()
-        server.reload()
