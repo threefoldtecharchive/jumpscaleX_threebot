@@ -2,6 +2,7 @@
   import TasksRendering from "./TasksRendering.svelte";
   import { getJobs } from "../data";
   import { formatDate } from "../common";
+  import Spinner from "./Spinner.svelte";
   import { onMount } from "svelte";
 
   let allTasks = [];
@@ -50,7 +51,5 @@
     <h2>There is no Jobs</h2>
   </div>
 {:else if !isAllTasksAvailable}
-  <div class="text-center">
-    <img src={'/img/loader.gif'} class="img-fluid" alt="Responsive image" />
-  </div>
+  <Spinner />
 {/if}
