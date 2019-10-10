@@ -4,13 +4,13 @@ import random
 redisconfig = """\
 bind {bindip}
 protected-mode yes
-port 6379
+port 6378
 tcp-backlog 511
 timeout 0
 tcp-keepalive 300
 daemonize no
 supervised no
-pidfile /var/run/redis_6379.pid
+pidfile /var/run/redis_6378.pid
 loglevel notice
 logfile ""
 always-show-logo yes
@@ -75,12 +75,14 @@ WantedBy=multi-user.target
 """
 
 corednsconfig = """\
-. {
-    redis  {
-        address 127.0.0.1:6379
-    }
+{domain} 3bot {{
+    redis  {{
+        address 127.0.0.1:6378
+    }}
+}}
+. {{
     forward . 8.8.8.8 9.9.9.9
-}
+}}
 """
 
 routerconfig = """\
@@ -91,7 +93,7 @@ redirectToHttps = true
 [server.dbbackend]
 type 	 = "redis"
 addr     = "127.0.0.1"
-port     = 6379
+port     = 6378
 refresh  = 10
 """
 
@@ -111,8 +113,8 @@ if not j.sal.fs.exists(corednspath):
     j.builders.network.coredns.install()
 
 # we want 3 routers
+project_name = "3bot Infrastructure"
 do = j.clients.digitalocean.get()
-do.project_name = "3bot Infrastructure"
 size = "s-1vcpu-1gb"
 regions = do.digitalocean_region_names
 random.shuffle(regions)
@@ -160,7 +162,8 @@ def configure_systemd_unit(executor, name, path):
 def configure_coredns(executor):
     print("  Configuring coredns")
     configpath = "/sandbox/cfg/coredns.conf"
-    executor.file_write(configpath, corednsconfig)
+    config = corednsconfig.format(domain=THREEBOT_DOMAIN)
+    executor.file_write(configpath, config)
     executor.execute("systemctl stop systemd-resolved && systemctl disable systemd-resolved")
     configure_systemd_unit(executor, "coredns", path=f"{corednspath} -conf {configpath}")
 
@@ -168,14 +171,14 @@ def configure_coredns(executor):
 def configure_redis(executor, privateip):
     print("  Configuring redis")
     dbpath = "/sandbox/var/redis/"
-    configpath = "/sandbox/cfg/redis.conf"
+    configpath = "/sandbox/cfg/redis-jsx.conf"
     if privateip != MASTERIP:
         bindip = f"127.0.0.1 {privateip}"
     else:
         bindip = privateip
     config = redisconfig.format(bindip=bindip, dbpath=dbpath)
     if privateip != MASTERIP:
-        config += f"\nslaveof {MASTERIP} 6379\n"
+        config += f"\nslaveof {MASTERIP} 6378\n"
     executor.file_write(configpath, config)
     configure_systemd_unit(executor, "redis-jsx", path=f"{redisserverpath} {configpath}")
 
@@ -188,14 +191,19 @@ def configure_tcprouter(executor):
 
 
 configure_redis(j.tools.executorLocal, MASTERIP)
-j.sal.nettools.waitConnectionTest(MASTERIP, 6379)
+j.sal.nettools.waitConnectionTest(MASTERIP, 6378)
 
-rediscli = j.clients.redis.get(MASTERIP)
+rediscli = j.clients.redis.get(MASTERIP, port=6378)
 tfgateway = j.tools.tf_gateway.get(rediscli)
 tfgateway.domain_register_a("@", THREEBOT_DOMAIN, MASTERPUBLIC)
-tfgateway.domain_register_cname("phonebook", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
-tfgateway.domain_register_cname("namemanager", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
-tfgateway.domain_register_cname("gridmanager", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
+
+# tfgateway.domain_register_cname("phonebook", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
+# tfgateway.domain_register_cname("namemanager", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
+# tfgateway.domain_register_cname("gridmanager", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
+## workaround
+tfgateway.domain_register_a("phonebook", THREEBOT_DOMAIN, MASTERPUBLIC)
+tfgateway.domain_register_a("namemanager", THREEBOT_DOMAIN, MASTERPUBLIC)
+tfgateway.domain_register_a("gridmanager", THREEBOT_DOMAIN, MASTERPUBLIC)
 
 
 for x, region in enumerate(regions):
@@ -203,7 +211,7 @@ for x, region in enumerate(regions):
     sshname = f"do_{name}"
     if not do.droplet_exists(name):
         print(f"Droplet create {name}")
-        droplet, _ = do.droplet_create(name, "Jo", region=region, size_slug=size)
+        droplet, _ = do.droplet_create(name, "Jo", region=region, size_slug=size, project_name=project_name)
     else:
         print(f"Droplet get {name}")
         droplet = do._droplet_get(name)
@@ -225,6 +233,9 @@ for x, region in enumerate(regions):
 
 wg.save()
 wg.configure()
+
+print("Wating for DNS ...")
+j.sal.nettools.waitConnectionTest("gateway.3bot.grid.tf", 443, timeout=60)
 
 print("Start local 3bot")
 client = j.servers.threebot.local_start_default()

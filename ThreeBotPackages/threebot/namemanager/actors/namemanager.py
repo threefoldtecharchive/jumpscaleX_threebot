@@ -10,7 +10,7 @@ MASTERIP = "192.168.99.254"
 class namemanager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.phonebook = j.clients.gedis.get(host=PHONEBOOK_DOMAIN, port=8901)
-        redisclient = j.clients.redis.get(MASTERIP)
+        redisclient = j.clients.redis.get(MASTERIP, port=6378)
         self.tfgateway = j.tools.tf_gateway.get(redisclient)
 
     def domain_register(self, doublename, privateip, signature, user_session=None):
@@ -29,14 +29,15 @@ class namemanager(j.baseclasses.threebot_actor):
         if not result.is_valid:
             raise j.exceptions.Value("Invalid signature")
 
+        first, last = doublename.split(".")
         fqdn = f"{doublename}.{THREEBOT_DOMAIN}"
         self.tfgateway.tcpservice_register(fqdn, fqdn, privateip)
 
         gateway_records = self.tfgateway.subdomain_get(THREEBOT_DOMAIN, "gateway")
         a_records_ips = [r["ip"] for r in gateway_records["a"]]
 
-        self.tfgateway.domain_register_a(doublename, THREEBOT_DOMAIN, a_records_ips)
-        self.tfgateway.domain_register_a(doublename, THREEBOT_PRIVATE_DOMAIN, privateip)
+        self.tfgateway.domain_register_a(first, f"{last}.{THREEBOT_DOMAIN}", a_records_ips)
+        self.tfgateway.domain_register_a(first, f"{last}.{THREEBOT_PRIVATE_DOMAIN}", privateip)
         return True
 
     def subdomain_register(self, doublename, subdomain, signature, user_session=None):
