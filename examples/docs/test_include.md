@@ -58,12 +58,12 @@ when no account or repo then is current repo
 
 ## include long
 
-!!!include("https://gitlab.com/threefoldforks/Threefold-Circles-back:CODE_OF_CONDUCT.md")
+
+!!!include("threefoldforks:Threefold-Circles-back:CODE_OF_CONDUCT.md", host="gitlab.com")
 
 ```
 when https and : inside then it means it needs to be a git repo (can be gitlabs or gogs too) so the code will be checked out and fhe file looked for
-when https and no : then its a real link which can be downloaded with curl
+when https and raw=True: then its a real link which can be downloaded with curl
 ```
 
-!!!include("https://gitlab.com/threefoldforks/Threefold-Circles-back/raw/master/CODE_OF_CONDUCT.md")
-
+!!!include("https://gitlab.com/threefoldforks/Threefold-Circles-back/raw/master/CODE_OF_CONDUCT.md", raw=True)
