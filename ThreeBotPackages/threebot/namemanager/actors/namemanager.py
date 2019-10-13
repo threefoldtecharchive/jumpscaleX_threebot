@@ -33,10 +33,8 @@ class namemanager(j.baseclasses.threebot_actor):
         fqdn = f"{doublename}.{THREEBOT_DOMAIN}"
         self.tfgateway.tcpservice_register(fqdn, fqdn, privateip)
 
-        gateway_records = self.tfgateway.subdomain_get(THREEBOT_DOMAIN, "gateway")
-        a_records_ips = [r["ip"] for r in gateway_records["a"]]
-
-        self.tfgateway.domain_register_a(first, f"{last}.{THREEBOT_DOMAIN}", a_records_ips)
+        self.tfgateway.domain_register_cname("@", f"{last}.{THREEBOT_DOMAIN}", f"{GATEWAY_DOMAIN}.")
+        self.tfgateway.domain_register_cname(first, f"{last}.{THREEBOT_DOMAIN}", f"{GATEWAY_DOMAIN}.")
         self.tfgateway.domain_register_a(first, f"{last}.{THREEBOT_PRIVATE_DOMAIN}", privateip)
         return True
 
@@ -59,12 +57,13 @@ class namemanager(j.baseclasses.threebot_actor):
         if not self.tfgateway.domain_exists(f"{doublename}.{THREEBOT_DOMAIN}"):
             raise j.exceptions.NotFound("domain name is not registered")
 
-        record = self.tfgateway.subdomain_get(THREEBOT_PRIVATE_DOMAIN, doublename)
+        first, last = doublename.split(".")
+        record = self.tfgateway.subdomain_get(f"{last}.{THREEBOT_PRIVATE_DOMAIN}", first)
         privateip = record["a"][0]["ip"]
 
         fqdn = f"{subdomain}.{doublename}.{THREEBOT_DOMAIN}"
         self.tfgateway.tcpservice_register(fqdn, fqdn, privateip)
 
-        gateway_records = self.tfgateway.subdomain_get(THREEBOT_DOMAIN, "gateway")
-        a_records_ips = [r["ip"] for r in gateway_records["a"]]
-        self.tfgateway.domain_register_a(doublename, THREEBOT_DOMAIN, a_records_ips)
+        doublenamefqdn = f"{doublename}.{THREEBOT_DOMAIN}"
+        self.tfgateway.domain_register_cname("@", doublenamefqdn, f"gateway.{THREEBOT_DOMAIN}")
+        self.tfgateway.domain_register_cname(subdomain, doublenamefqdn, f"gateway.{THREEBOT_DOMAIN}")
