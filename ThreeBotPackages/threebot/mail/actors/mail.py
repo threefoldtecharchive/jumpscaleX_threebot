@@ -24,7 +24,8 @@ class mail(j.baseclasses.threebot_actor):
         if isinstance(mail, str):
             mail = json.loads(mail)
         server = app.MailServer()
-        server.store_mail(mail, is_send=True)
+        mail_stored = server.store_mail(mail, is_send=True)
+        self.bcdb_mailbox.create_folder(mail_stored.folder)
         out = schema_out.new()
         out.success = True
         return out
@@ -132,7 +133,8 @@ class mail(j.baseclasses.threebot_actor):
         if isinstance(mail, str):
             mail = json.loads(mail)
         server = app.MailServer()
-        server.store_mail(mail)
+        mail_stored = server.store_mail(mail)
+        self.bcdb_mailbox.create_folder(mail_stored.folder)
         out = schema_out.new()
         out.success = True
         return out
