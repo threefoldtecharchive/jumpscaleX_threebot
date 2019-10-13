@@ -197,13 +197,9 @@ rediscli = j.clients.redis.get(MASTERIP, port=6378)
 tfgateway = j.tools.tf_gateway.get(rediscli)
 tfgateway.domain_register_a("@", THREEBOT_DOMAIN, MASTERPUBLIC)
 
-# tfgateway.domain_register_cname("phonebook", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
-# tfgateway.domain_register_cname("namemanager", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
-# tfgateway.domain_register_cname("gridmanager", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
-## workaround
-tfgateway.domain_register_a("phonebook", THREEBOT_DOMAIN, MASTERPUBLIC)
-tfgateway.domain_register_a("namemanager", THREEBOT_DOMAIN, MASTERPUBLIC)
-tfgateway.domain_register_a("gridmanager", THREEBOT_DOMAIN, MASTERPUBLIC)
+tfgateway.domain_register_cname("phonebook", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
+tfgateway.domain_register_cname("namemanager", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
+tfgateway.domain_register_cname("gridmanager", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
 
 
 for x, region in enumerate(regions):
