@@ -49,7 +49,9 @@ def get_ws_url():
 
 @app.route("/wiki")
 def home_handler():
-    return env.get_template("home.html").render()
+    wikis_names = j.sal.bcdbfs.list_dirs("/docsites")
+    wikis_names = [wiki[10:] for wiki in wikis_names]
+    return env.get_template("home.html").render(wikis_names=wikis_names)
 
 
 @app.route("/wiki/<docsite>", method="get")
