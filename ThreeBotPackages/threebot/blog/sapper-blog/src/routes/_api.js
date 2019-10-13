@@ -4,12 +4,12 @@ import posts from './_posts';
 import tags from './_tags';
 import pages from './_pages';
 import blogs from './_blogs';
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
-
-axios.defaults.baseURL = "http://127.0.0.1:8903";
-axios.defaults.port = 8903
-const BLOG_API = "http://127.0.0.1:8903/blog";
+axios.defaults.baseURL = "https://127.0.0.1:443";
+axios.defaults.port = 443
+const BLOG_API = "https://127.0.0.1:443/web/gedis/http/blog";
 
 async function callActorWithArgs(actorCmd, actorArgs) {
 
