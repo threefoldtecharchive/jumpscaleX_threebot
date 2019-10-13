@@ -53,9 +53,8 @@
 {#await pages}
   loading
 {:then value}
-  <Nav {segment} pages={value} />
+  <Nav {segment} {metadata} pages={value} />
 {/await}
-<Nav {metadata} />
 <div>
   <div class="container">
     <div class="row">
