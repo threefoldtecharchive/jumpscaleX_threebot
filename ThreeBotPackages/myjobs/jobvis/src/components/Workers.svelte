@@ -1,6 +1,7 @@
 <script>
   import { getWorkers } from "../data";
   import { formatDate } from "../common";
+  import Spinner from "./Spinner.svelte";
   import { onMount } from "svelte";
 
   const state = {
@@ -295,7 +296,5 @@
     <h2>There is no Workers matching your criteria</h2>
   </div>
 {:else if !isAllWorkersAvailable}
-  <div class="text-center">
-    <img src={'/img/loader.gif'} class="img-fluid" alt="Responsive image" />
-  </div>
+  <Spinner />
 {/if}

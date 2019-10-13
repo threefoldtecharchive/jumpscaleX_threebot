@@ -119,9 +119,9 @@ class pastebin(j.baseclasses.threebot_actor):
         return res
 
 ```
-- the actors of your registered packages are exposed on http endpoint `/api/actors` more [here](https://github.com/threefoldtech/jumpscaleX_core/blob/be2496d7ca03ad1cbf43caa2b9ec132ae471598a/JumpscaleCore/servers/gedis_http)
+- the actors of your registered packages are exposed on http endpoint `/web/gedis/http` more [here](https://github.com/threefoldtech/jumpscaleX_core/blob/be2496d7ca03ad1cbf43caa2b9ec132ae471598a/JumpscaleCore/servers/gedis_http)
 
-- if you want to communicate over websocket (unrecommended) use `/api/actors_websocket
+- if you want to communicate over websocket (unrecommended) use `/web/gedis/http_websocket
 - http/websocket clients available [here](https://github.com/threefoldtech/jumpscaleX_weblibs/tree/master/static/gedis) as well
 
 or if you want to use pure http client, here's an example in javascript
@@ -129,11 +129,11 @@ or if you want to use pure http client, here's an example in javascript
 import axios from 'axios'
 
 export function getPaste(pasteId) {
-    return (axios.post("/api/actors/pastebin/get_paste", { "args": { "paste_id": pasteId } }))
+    return (axios.post("/web/gedis/http/pastebin/get_paste", { "args": { "paste_id": pasteId } }))
 }
 
 export function newPaste(code) {
-    return (axios.post("/api/actors/pastebin/new_paste", { "args": { "code": code } }))
+    return (axios.post("/web/gedis/http/pastebin/new_paste", { "args": { "code": code } }))
 }
 ```
 

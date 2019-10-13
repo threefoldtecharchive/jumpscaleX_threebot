@@ -7,6 +7,10 @@
 <!--[Data-Listing]-->
 <ul class="list-group">
   <li class="list-group-item">
+    <b>ID :</b>
+    <a href="/alert/{myAlert.id}">{myAlert.id}</a>
+  </li>
+  <li class="list-group-item">
     <b>Severity :</b>
     {myAlert.severity}
   </li>

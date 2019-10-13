@@ -64,7 +64,7 @@ when no account or repo then is current repo
 
 ### or using the full url
 
-### full url
+#### full url
 js file
 !!!include("https://gitlab.com/threefoldforks/Threefold-Circles-events/blob/master/gulpfile.js")
 
@@ -72,7 +72,7 @@ markdown document
 
 !!!include("https://gitlab.com/threefoldforks/Threefold-Circles-events/blob/master/README.md")
 
-### raw urls
+#### raw urls
 when https and : inside then it means it needs to be a git repo (can be gitlabs or gogs too) so the code will be checked out and fhe file looked for
 when https and raw=True: then its a real link which can be downloaded with curl
 
