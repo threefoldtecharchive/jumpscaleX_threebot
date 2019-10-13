@@ -22,9 +22,23 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot starts
         :return:
         """
-        # start one worker to sync farms
-        # j.servers.myjobs.workers_tmux_start(1)
-        # gevent.spawn(self.sync_directory)
+        server = self.openresty
+        server.install(reset=False)
+        server.configure()
+
+        website = server.get_from_port(443)
+
+        locations = website.locations.get("cockpit_locations")
+
+        website_location = locations.locations_spa.new()
+        website_location.name = "cockpit"
+        website_location.path_url = "/cockpit"
+        website_location.use_jumpscale_weblibs = False
+        fullpath = j.sal.fs.joinPaths(self.package_root, "frontend/")
+        website_location.path_location = fullpath
+
+        locations.configure()
+        website.configure()
 
     def sync_directory(self):
         sync_dir = j.tools.codeloader.load(path=os.path.join(self.package_root, "jobs", "sync_directory.py"))

@@ -59,8 +59,12 @@ class Package(j.baseclasses.threebot_package):
         wireguard = gridmanager_client.network_connect("3botnetwork", doublename)
         # Request a record from the name manager
         privateip = wireguard.network_private.split("/")[0]
-        signature = j.data.nacl.payload_sign(f"{doublename}{privateip}", nacl=nacl)
+        signature = j.data.nacl.payload_sign(doublename, nacl=nacl)
         namemanager.actors.namemanager.domain_register(doublename, privateip, signature)
+
+        content = "\n".join([f"nameserver {p.network_public}" for p in wireguard.peers_objects])
+        j.sal.fs.writeFile("/etc/resolv.conf", content + "\n", append=False)
+
         print(f"Done, your url is: {doublename}.{THREEBOT_DOMAIN}")
 
     def stop(self):

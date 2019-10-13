@@ -48,6 +48,12 @@ class mail(j.baseclasses.threebot_actor):
         mails = self.bcdb_mailbox.get_messages()
         return json.dumps([o._ddict for o in mails])
 
+    def list_folders(self, user_session=None):
+        """
+        """
+        folders = self.bcdb_mailbox.list_folders()
+        return folders
+
     def update_folder_name(self, old_name, new_name, schema_out=None, user_session=None):
         """
         ```in
@@ -60,6 +66,24 @@ class mail(j.baseclasses.threebot_actor):
         """
 
         self.bcdb_mailbox.rename_folder(old_name, new_name)
+        out = schema_out.new()
+        out.success = True
+        return out
+
+    def move_message(self, mail_id, folder_name, schema_out=None, user_session=None):
+        """
+        ```in
+        mail_id = (I)
+        folder_name = (S)
+        ```
+        ```out
+        success = (B)
+        ```
+        """
+
+        model = self.bcdb_mailbox.get_object(mail_id)
+        model.folder = folder_name
+        model.save()
         out = schema_out.new()
         out.success = True
         return out
