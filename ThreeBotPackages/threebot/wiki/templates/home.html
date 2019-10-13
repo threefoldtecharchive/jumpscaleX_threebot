@@ -27,12 +27,15 @@
                 </div>
                 <div class="row">
                     <div class="col-sm text-center">
+
+
                         <h1>Wikis</h1>
                         <ul>
-                            <li><a href="/wiki/foundation">Foundation</a></li>
-                            <li><a href="/wiki/grid">Grid</a></li>
-                            <li><a href="/wiki/tokens">Tokens</a></li>
+                            {% for wiki in wikis_names %}
+                                <li><a href="/wiki/{{wiki}}">{{wiki}}</a></li>
+                            {% endfor %}
                         </ul>
+
                     </div>
 
                 </div>
