@@ -60,9 +60,11 @@
         <tbody>
 
           <!-- content here -->
-          {#each alerts as myAlert, i}
+          {#each alerts as myAlert}
             <tr>
-              <th scope="row">{i + 1}</th>
+              <th scope="row">
+                <a href="/alerta/alert/{myAlert.id}">{myAlert.id}</a>
+              </th>
               {#if myAlert.severity == severity.CRITICAL}
                 <td>
                   <span class="badge badge-danger">{myAlert.severity}</span>
@@ -113,7 +115,7 @@
                       type="button"
                       class="btn btn-warning pointer"
                       data-toggle="modal"
-                      data-target="#modal{i}">
+                      data-target="#modal{myAlert.id}">
                       Details
                     </button>
                   </div>
@@ -121,7 +123,7 @@
               </td>
               <!--[Modal]-->
               <div>
-                <AlertModal {myAlert} index={i} />
+                <AlertModal {myAlert} index={myAlert.id} />
               </div>
             </tr>
           {/each}
