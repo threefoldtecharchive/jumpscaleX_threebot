@@ -11,10 +11,23 @@ date_from = "10/6/2019"
 date_to =  "20/6/2019"
 ```
 
-at ```/update_Folder_name```
+
+at ```/list_folders```
+```
+no args needed
+```
+
+
+at ```/move_message```
 ```
 mail_id = 10
-folder_name =  "test25"
+folder_name =  "test2"
+```
+
+at ```/update_folder_name```
+```
+old_name = "test"
+new_name =  "test2"
 ```
 
 at ```/delete```

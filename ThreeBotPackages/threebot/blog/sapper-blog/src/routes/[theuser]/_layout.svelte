@@ -42,17 +42,6 @@
   import { stores } from "@sapper/app";
 </script>
 
-<style>
-  main {
-    position: relative;
-    max-width: 56em;
-    background-color: white;
-    padding: 2em;
-    margin: 0 auto;
-    box-sizing: border-box;
-  }
-</style>
-
 <!-- {#await metadata then value}
   <Header
     blogName={value.blog_name}
@@ -64,7 +53,7 @@
 {#await pages}
   loading
 {:then value}
-  <Nav {segment} pages={value} />
+  <Nav {segment} {metadata} pages={value} />
 {/await}
 <div>
   <div class="container">
@@ -85,6 +74,6 @@
       </aside>
     </div>
   </div>
-  <Footer />
+  <Footer {metadata} />
 
 </div>
