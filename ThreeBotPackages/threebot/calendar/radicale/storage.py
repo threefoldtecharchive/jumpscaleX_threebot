@@ -989,14 +989,14 @@ class Collection(BaseCollection):
                 yield (href, self.get(href, verify_href=False))
 
     def get_all(self):
-        return (self.get(href, verify_href=False) for href in self.list())
+        data = (self.get(href, verify_href=False) for href in self.list())
+        return (item for item in data if item)
 
     def get_all_filtered(self, filters):
         tag, start, end, simple = xmlutils.simplify_prefilters(filters, collection_tag=self.get_meta("tag"))
         if not tag:
             # no filter
             yield from ((item, simple) for item in self.get_all())
-            return
         for item, (itag, istart, iend) in (self._get_with_metadata(href, verify_href=False) for href in self.list()):
             if tag == itag and istart < end and iend > start:
                 yield item, simple and (start <= istart or iend <= end)
@@ -1025,6 +1025,9 @@ class Collection(BaseCollection):
             if items:
                 item = items[0]
                 item.delete()
+                collection = Database.get_collection(self.collection_id, self.user_id)
+                collection.items.remove(item)
+                collection.save()              
 
     def get_meta(self, key=None):
         try:
