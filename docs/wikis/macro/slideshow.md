@@ -1,15 +1,5 @@
-# Slideshow macro 
+# Slideshow macro
 you can use this macro to include slides from different presentations into your docsite
-
-# Prerequisites 
-In order to use this macro you must make sure that Gdrive package is working, check the
-[docs here](https://github.com/threefoldtech/digitalmeX/blob/master/packages/gdrive/README.md)
-The macro uses google service account credentials.
-
-### Service account
-- Create project using [Google console](https://console.developers.google.com/flows/enableapi?apiid=slides.googleapis.com) and enable Google Drive API.
-- Create credentials (type service account)
-- Download credentials (as json and save it anywhere on your filesystem) then add move it to /sandbox/var/cred.json
 
 ### Example
 
