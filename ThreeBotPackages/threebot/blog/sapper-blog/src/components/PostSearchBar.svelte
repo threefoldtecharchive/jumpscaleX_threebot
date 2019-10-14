@@ -1,15 +1,17 @@
 <script>
   import axios from "axios";
+
   axios.defaults.headers.get["Content-Type"] = "application/json";
 
   import { stores } from "@sapper/app";
+
   const { preloading, page, session } = stores();
+
   export let blogName = $page.params.theuser;
   let query = "";
-  let search_res = "";
+  export let search_res = "";
 
   const BLOG_API = `search.json`;
-
   export async function search_method(e) {
     // if (!query) {
     //   alert("empty search !");
@@ -23,12 +25,13 @@
     });
     search_res = search_res.data;
   }
-
   export function clear_results(e) {
     if (e.key === "Escape" || e.type === "click") {
       search_res = "";
-      document.querySelector(".search-area").style.display = "none";
-      document.getElementById("search").value = "";
+    } else if (e.key == "Backspace") {
+      if (query === "") {
+        search_res = "";
+      }
     }
   }
 </script>
@@ -40,8 +43,23 @@
       bind:value={query}
       placeholder="What are you looking for?"
       id="search" />
-    <button type="submit" class="submit search-btn">
+    <button type="submit" class="submit search-btn" on:click={search_method}>
       <i class="icon-search" />
     </button>
+    {#if search_res}
+      <p>Search Result</p>
+      <ul>
+        {#each search_res as res}
+          <li class="list-results">
+            <a
+              href="{res.blog_name}/{res.type}/{res.slug}"
+              on:click={clear_results}>
+              {res.slug} - Type: {res.type}
+            </a>
+          </li>
+        {/each}
+      </ul>
+      <p>Total: {Object.keys(search_res).length} Results</p>
+    {/if}
   </div>
 </form>
