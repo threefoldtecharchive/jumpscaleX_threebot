@@ -158,10 +158,15 @@ ignore = ["^- "]
 #### From another hosting service
 
 Including a link from gitlab.com
-!!!include("threefoldforks:Threefold-Circles-back:CODE_OF_CONDUCT.md", host="gitlab.com")
 
+```
+!!!include("threefoldforks:Threefold-Circles-back:CODE_OF_CONDUCT.md", host="gitlab.com")
+```
 
 ### Raw links
 
 Directly download a raw link
+
+```
 !!!include("https://gitlab.com/threefoldforks/Threefold-Circles-back/raw/master/CODE_OF_CONDUCT.md", raw=True)
+```
