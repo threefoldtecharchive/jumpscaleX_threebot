@@ -1,5 +1,4 @@
 import vobject
-from carddav import carddav
 import datetime
 from Jumpscale import j
 
