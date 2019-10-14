@@ -31,3 +31,4 @@ When executing any macro, errors can occur, in such case, they are saved in a do
 * [gallery](gallery.md): to create a gallery from images list
 * [gslide](gslide.md): to include slides from google presentation
 * [slideshow](slideshow.md): to include slides from multuple google presentations
+* [markdown.md](markdown.md): to include markdown from google documents directly
