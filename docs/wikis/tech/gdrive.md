@@ -5,9 +5,9 @@ It is integrated by default with open publish tool.
 
 ## available endpoints
 
-`/wiki/gdrive/doc/{doc_guid}`: downloads gdrive doc and redirect to it
-`/wiki/gdrive/slide/{presentation_guid}/{slide_guid}`: downloads the full presentation and redirect to the given slide
-`/wiki/gdrive/sheet/{sheet_guid}`: downloads the spread sheet as pdf and redirect to it
+- `/wiki/gdrive/doc/{doc_guid}`: downloads gdrive doc and redirect to it
+- `/wiki/gdrive/slide/{presentation_guid}/{slide_guid}`: downloads the full presentation and redirect to the given slide
+- `/wiki/gdrive/sheet/{sheet_guid}`: downloads the spread sheet as pdf and redirect to it
 
 ## How to Configure
 1- configure the main instance of gdrive client and make sure to provide a credentials file with the correct permissions
