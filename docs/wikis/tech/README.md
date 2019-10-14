@@ -37,6 +37,9 @@ You can start threebot wiki package as follows:
 
 Then open your brwoser with 3bot/container hostname at `https:<hostname>/wiki/<your_docsite_name>`.
 
-## Extra features
+## Setting up gdrive and service account
 
+Gdrive extension and `gslide/slideshow` macros require google service account credentials to work properly.
+
+* [Service account](service_account.md)
 * [GDrive](gdrive.md) serve your google documents, sheets and slides directly from wikis.
