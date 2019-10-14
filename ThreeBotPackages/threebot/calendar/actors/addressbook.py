@@ -65,6 +65,23 @@ class addressbook(j.baseclasses.threebot_actor):
         output.addressbook = addressbook
         return output
 
+    def get_addressbook_meta(self, addressbook_id, schema_out=None, user_session=None):
+        """
+        ```in
+        addressbook_id = (S)
+        ```
+        ```out
+        addressbook = (dict)
+        ```
+        returns dict of addressbook vcards {hrefs: etags}
+        """
+        self._verify_client()
+        addressbook = self.client.get_abook(addressbook_id, get_meta=True)
+        output = schema_out.new()
+        output.addressbook = addressbook
+        return output
+
+
     def delete_addressbook(self, href, user_session=None):
         """
         ```in
