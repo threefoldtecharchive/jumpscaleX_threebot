@@ -29,3 +29,5 @@ When executing any macro, errors can occur, in such case, they are saved in a do
 * [dot](dot.md): to convert [DOT](https://en.wikipedia.org/wiki/DOT_(graph_description_language)) graphs to images directly from blocks.
 * [team](team.md): for team member listing (with data from another repository).
 * [gallery](gallery.md): to create a gallery from images list
+* [gslide](gslide.md): to include slides from google presentation
+* [slideshow](slideshow.md): to include slides from multuple google presentations
