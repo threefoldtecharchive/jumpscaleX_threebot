@@ -88,18 +88,18 @@ $(document).ready(function () {
     // ---------------------------------------------- //
     // Search Bar
     // ---------------------------------------------- //
-    $('.search-btn').on('click', function (e) {
-        e.preventDefault();
-        $('.search-area').fadeIn();
-        $('#search').focus();
-    });
-    $('.search-area .close-btn').on('click', function (e) {
-        $('.search-area').fadeOut();
-    });
+    // $('.search-btn').on('click', function (e) {
+    //     e.preventDefault();
+    //     $('.search-area').fadeIn();
+    //     $('#search').focus();
+    // });
+    // $('.search-area .close-btn').on('click', function (e) {
+    //     $('.search-area').fadeOut();
+    // });
 
-    $('.search-area a').click(function (e) {
-        $('.search-area').fadeOut();
-    });
+    // $('.search-area a').click(function (e) {
+    //     $('.search-area').fadeOut();
+    // });
 
 
     // ---------------------------------------------- //
