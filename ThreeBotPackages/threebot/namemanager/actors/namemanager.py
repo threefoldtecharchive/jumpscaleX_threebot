@@ -9,9 +9,21 @@ MASTERIP = "192.168.99.254"
 
 class namemanager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        self.phonebook = j.clients.gedis.get(host=PHONEBOOK_DOMAIN, port=8901)
-        redisclient = j.clients.redis.get(MASTERIP, port=6378)
-        self.tfgateway = j.tools.tf_gateway.get(redisclient)
+        self._phonebook = None
+        self._tfgateway = None
+
+    @property
+    def phonebook(self):
+        if self._phonebook is None:
+            self._phonebook = j.clients.gedis.get(host=PHONEBOOK_DOMAIN, port=8901)
+        return self._phonebook
+
+    @property
+    def tfgateway(self):
+        if self._tfgateway is None:
+            redisclient = j.clients.redis.get(MASTERIP, port=6378)
+            self._tfgateway = j.tools.tf_gateway.get(redisclient)
+        return self._tfgateway
 
     def domain_register(self, doublename, privateip, signature, user_session=None):
         """

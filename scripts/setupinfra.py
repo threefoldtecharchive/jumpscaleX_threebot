@@ -107,10 +107,10 @@ MASTERPUBLIC = j.sal.nettools.getReachableIpAddress("8.8.8.8", 53)
 
 if not j.sal.fs.exists(redisserverpath) or not j.sal.fs.exists(tcprouterpath):
     print("Installing tcprouter")
-    j.builders.network.tcprouter.install()
+    j.builders.network.tcprouter.install(reset=True)
 if not j.sal.fs.exists(corednspath):
     print("Installing coredns")
-    j.builders.network.coredns.install()
+    j.builders.network.coredns.install(reset=True)
 
 # we want 3 routers
 project_name = "3bot Infrastructure"
@@ -132,6 +132,7 @@ wg.network_public = MASTERPUBLIC
 wg.network_private = f"{MASTERIP}/24"
 wg.install()
 wg.save()
+wg.configure()
 
 
 def configure_wg(ssh_name, privateip):
@@ -187,7 +188,7 @@ def configure_tcprouter(executor):
     print("  Configuring tcprouter")
     configpath = "/sandbox/cfg/router.toml"
     executor.file_write(configpath, routerconfig)
-    configure_systemd_unit(executor, "tcprouter", path=f"{tcprouterpath} {configpath}")
+    configure_systemd_unit(executor, "tcprouter", path=f"{tcprouterpath} -config {configpath}")
 
 
 configure_redis(j.tools.executorLocal, MASTERIP)
