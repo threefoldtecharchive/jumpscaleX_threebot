@@ -28,7 +28,7 @@ jsx wiki-load -u https://github.com/threefoldtech/jumpscaleX_threebot/tree/devel
 
 Opening the browser to `/wiki` and you will find loaded wikis (may take some time to load).
 
-![screenshot.png][images/wikis_home.png]
+![screenshot.png](images/wikis_home.png)
 
 
 ### Markdowndocs loader
@@ -56,7 +56,7 @@ You can start threebot wiki package as follows:
 - `kosmos -p "j.threebot.wikis.start()"`
 
 > Note: the wiki package will be loaded by default.
- 
+
 
 Then open your browser with 3bot/container hostname at `https:<hostname>/wiki/<your_docsite_name>`.
 
