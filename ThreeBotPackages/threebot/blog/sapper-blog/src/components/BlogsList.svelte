@@ -14,9 +14,6 @@
 
     <header>
       <h2>Blogs</h2>
-      <p class="text-big">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-      </p>
     </header>
     <div class="row">
       {#each blogs as blogName}
