@@ -19,7 +19,7 @@ You can find some markdown docs examples [here](../examples).
 Usage example:
 
 ```python
-url = "https://github.com/threefoldtech/jumpscaleX_threebot/tree/development/docs/wiki/examples/docs"
+url = "https://github.com/threefoldtech/jumpscaleX_threebot/tree/development/docs/wikis/examples/docs"
 docsite = j.tools.markdowndocs.load(url, name="test_example")
 docsite.write()
 ```
