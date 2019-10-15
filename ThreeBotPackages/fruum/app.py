@@ -57,14 +57,14 @@ def get_view(doc):
     }
 
 
-def get_current_user():
-    return {
-        "id": "123",
+def get_user(username=None):
+    user =  {
+        "id": username,
         "anonymous": False,
         "admin": True,
         "blocked": False,
-        "username": "admin",
-        "displayname": "Admin",
+        "username": username,
+        "displayname": username,
         "email": "",
         "avatar": "",
         "created": 0,
@@ -80,13 +80,56 @@ def get_current_user():
         "last_visit": 1569166490774,
         "server_now": 1569166490774,
     }
+    return user
 
 
 def list_users(start, size):
-    user = get_current_user()
-    user['last_login'] = 0
+
     return [
-        user
+        {
+            "id": "hamdy",
+            "anonymous": False,
+            "admin": False,
+            "blocked": False,
+            "username": "hamdy",
+            "displayname": "hamdy",
+            "email": "",
+            "avatar": "",
+            "created": 0,
+            "last_login": 0,
+            "last_logout": 0,
+            "onboard": 0,
+            "karma": 0,
+            "logout_karma": 0,
+            "watch": [],
+            "tags": [],
+            "notifications": [],
+            "meta": {},
+            "last_visit": 1569166490774,
+            "server_now": 1569166490774,
+        },
+        {
+            "id": "aly",
+            "anonymous": False,
+            "admin": False,
+            "blocked": False,
+            "username": "aly",
+            "displayname": "aly",
+            "email": "",
+            "avatar": "",
+            "created": 0,
+            "last_login": 0,
+            "last_logout": 0,
+            "onboard": 0,
+            "karma": 0,
+            "logout_karma": 0,
+            "watch": [],
+            "tags": [],
+            "notifications": [],
+            "meta": {},
+            "last_visit": 1569166490774,
+            "server_now": 1569166490774,
+        }
     ]
 
 
@@ -129,10 +172,10 @@ def auth(sid, data):
             doc.order = 0
             doc.save()
 
-        user = get_current_user()
+        user = get_user(username=data['user']['id'])
 
         session['user'] = user
-        return sio.emit("fruum:auth", {"user": user})
+        return sio.emit("fruum:auth", {"user": user}, room=sid)
 
 
 @sio.on("fruum:view")
@@ -143,9 +186,12 @@ def view(sid, data):
         if not docs:
             pass
         doc = docs[0]
+        if doc.type == 'channel':
+            sio.enter_room(sid, doc.doc_id)
     sio.emit(
         "fruum:view",
-       get_view(doc)
+        get_view(doc),
+        room=sid
     )
 
 
@@ -159,6 +205,7 @@ def add(sid, data):
         doc.doc_id = '%s-%s' % (data['header'], str(uuid.uuid4()))
         doc.header = data['header']
         doc.body = data['body']
+        doc.usage = data['usage']
         doc.created = now
         doc.updated = now
         doc.parent = data['parent']
@@ -184,19 +231,28 @@ def add(sid, data):
         doc['id'] = doc.pop('doc_id')
         doc.pop('app_name')
 
-        sio.emit(
-            "fruum:add",
-            doc
-        )
+        if doc['type'] == 'post' and doc['parent_type'] == 'channel':
+            room = parent.doc_id
+            sio.emit(
+                "fruum:add",
+                doc,
+                room=room
+            )
+        else:
+            sio.emit(
+                "fruum:add",
+                doc,
+            )
 
 
 @sio.on("fruum:profile")
 def profile(sid, data):
-    user_id = data['id']
-    sio.emit(
-        "fruum:profile",
-        get_current_user()
-    )
+    with sio.session(sid) as session:
+        sio.emit(
+            "fruum:profile",
+            session['user'],
+            room=sid
+        )
 
 
 @sio.on("fruum:delete")
@@ -213,19 +269,13 @@ def archive(sid, data):
 def restore(sid, data):
     return "ok"
 
-
-
-
-
 @sio.on("fruum:update")
 def update(sid, data):
     return "ok"
 
-
 @sio.on("fruum:field")
 def field(sid, data):
     return "ok"
-
 
 @sio.on("fruum:watch")
 def watch(sid, data):
@@ -321,7 +371,8 @@ def feed(sid, data):
 def user_list(sid, data):
     sio.emit(
         "fruum:user:list",
-        {'users': list_users(data['from'], data['size'])}
+        {'users': list_users(data['from'], data['size'])},
+        room=sid
     )
 
 
