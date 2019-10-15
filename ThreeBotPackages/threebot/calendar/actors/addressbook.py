@@ -16,7 +16,7 @@ class addressbook(j.baseclasses.threebot_actor):
         ```
         """
         self.client = j.clients.carddav.get(
-            resource=f"http://172.17.0.2:8851/{username}", user=username, passwd=password
+            resource=f"{self.base_url}/{username}", user=username, passwd=password
         )
         self.username = username
 
@@ -126,7 +126,7 @@ class addressbook(j.baseclasses.threebot_actor):
             etag = None
         self.client.delete_vcard(href, etag)
         return True
-    
+
     def find_vcards(self, text, addressbook_href, schema_out=None, user_session=None):
         """
         ```in
