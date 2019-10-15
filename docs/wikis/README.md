@@ -2,7 +2,7 @@
 
 Wikis are a collection of docsites, which are a collection of markdown documents, images and files.
 
-A [simple docsite](examples/simple) can only consists of two files, `README.md` and `_sidebar.md`.
+A [simple docsite](examples/simple) can only consists of two files, `README.md` and `_sidebar.md`, the later is used for navigation in [docsify.js](https://docsify.js.org/#/more-pages?id=sidebar).
 
 We use [docsify.js](https://docsify.js.org/) to get an html web page directly from markdown, we also use our [markdowndocs](https://github.com/threefoldtech/jumpscaleX_libs/tree/development/JumpscaleLibs/tools/markdowndocs) tool to pre-process this docsites to support some markdown extenstions like [macros](macro/README.md).
 
