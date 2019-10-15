@@ -15,7 +15,9 @@ The output is written to bcdb filesystem under `/docsites`, it's also indexed in
 
 ### jsx wiki_load
 
-jsx wiki-load -u https://github.com/threefoldtech/jumpscaleX_threebot/tree/development/docs/wikis/examples/docs -n testwiki -f
+the following command can be used to load a wiki using its url
+
+`jsx wiki-load -u https://github.com/threefoldtech/jumpscaleX_threebot/tree/development/docs/wikis/examples/docs -n testwiki -f`
 
 - `-u` or `--url` : docsite url
 - `-n` or `--name`: wiki name to be used in the url `/wiki/wiki_name`
