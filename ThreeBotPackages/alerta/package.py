@@ -38,17 +38,5 @@ class Package(j.baseclasses.threebot_package):
         fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
         website_location.path_location = fullpath
 
-        # if you start with a different port please enable gedis http part down.
-        ## IF U WANT PER APP (specific endpoints or relative urls u can proxy the calls on ur website to :8903)
-        # PROXY for gedis HTTP
-        # proxy_location = website.locations.get().locations_proxy.new()
-        # proxy_location.name = "gedishttp"
-        # proxy_location.path_url = "/api/actors/"
-        # proxy_location.ipaddr_dest = "127.0.0.1"
-        # proxy_location.port_dest = 8903
-        # proxy_location.path_dest = "/"
-        # proxy_location.type = "http"
-        # proxy_location.scheme = "http"
-
         locations.configure()
         website.configure()
