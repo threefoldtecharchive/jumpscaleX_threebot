@@ -6,7 +6,7 @@ Use this macro to include mardown text from a google doc into your documents.
 ````
 ```
 !!!markdown
-https://docs.google.com/document/d/1h8fydUhQ1HTlt1zabbF9pJM1JHGkI_-58BygtsyWy0c/edit
+url = "https://docs.google.com/document/d/1h8fydUhQ1HTlt1zabbF9pJM1JHGkI_-58BygtsyWy0c/edit"
 ```
 ````
 
