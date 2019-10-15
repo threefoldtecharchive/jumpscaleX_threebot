@@ -48,13 +48,6 @@ This will pull the repo at the branch specified, then generate a docsite at `/do
 
 Jumpscale job queue can be used too to load docsites in background, see [threefold wikis](https://github.com/threefoldtech/jumpscaleX_threebot/tree/development/ThreeBotPackages/threefold/threefold_wikis) package.
 
-
-## Serving using wiki package (won't be needed)
-
-You can start threebot wiki package as follows:
-
-- `kosmos -p "j.threebot.wikis.start()"`
-
 > Note: the wiki package will be loaded by default.
 
 
