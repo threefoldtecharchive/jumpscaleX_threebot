@@ -3,5 +3,5 @@
 * [Test source](test_src.md)
 * [Team](test_team.md)
 * [Gallery](test_gallery.md)
-* [slides](test_presentaion.md)
-* [mddocs](test_docs.md)
+* [Slides](test_presentaion.md)
+* [Markdown](test_markdown.md)
