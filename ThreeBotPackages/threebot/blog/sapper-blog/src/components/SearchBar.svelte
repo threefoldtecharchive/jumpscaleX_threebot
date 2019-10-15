@@ -77,7 +77,7 @@
                 <a
                   href="{res.blog_name}/{res.type}/{res.slug}"
                   on:click={clear_results}>
-                  {res.type}:{res.slug}
+                  {res.type}: {res.slug}
                 </a>
               </li>
             {/each}

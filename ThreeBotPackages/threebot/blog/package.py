@@ -41,6 +41,7 @@ class Package(j.baseclasses.threebot_package):
         s.cmd_start = f"""
         cd {self._dirpath}/sapper-blog
         export DEV=0
+        npm install
         npm run build
         node __sapper__/build
         """
