@@ -11,7 +11,7 @@
   import SearchBar from "./SearchBar.svelte";
   export let metadata = {};
   let converter = new showdown.Converter({ metadata: true });
-  if (typeof metadata.allow_navbar !== "boolean") {
+  if (metadata.allow_navbar === undefined) {
     metadata.allow_navbar = true; // handeling all blogs case
   }
 </script>

@@ -4,7 +4,7 @@
   const { preloading, page, session } = stores();
   export let metadata = {};
   let converter = new showdown.Converter({ metadata: true });
-  if (typeof metadata.allow_footer !== "boolean") {
+  if (metadata.allow_footer === undefined) {
     metadata.allow_footer = true; // handeling all blogs case
   }
 </script>
