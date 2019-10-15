@@ -22,19 +22,6 @@ class Package(j.baseclasses.threebot_package):
 
         locations = website.locations.get("blogs_locations")
 
-        ## START BOTTLE ACTORS ENDPOINT
-        rack = j.servers.rack.get()
-        app = j.servers.gedishttp.get_app()
-        rack.bottle_server_add(name="gedishttp", port=9201, app=app)
-
-        proxy_location = locations.locations_proxy.new()
-        proxy_location.name = "gedishttp"
-        proxy_location.path_url = "/actors"
-        proxy_location.ipaddr_dest = "0.0.0.0"
-        proxy_location.port_dest = 8903
-        proxy_location.scheme = "http"
-        ## END BOTTLE ACTORS ENDPOINT
-
         proxy_location = locations.locations_proxy.new()
         proxy_location.name = "nodeapp"
         proxy_location.path_url = f"/blog"
