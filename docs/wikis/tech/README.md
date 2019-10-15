@@ -60,3 +60,6 @@ Gdrive extension and `gslide/slideshow` macros require google service account cr
 
 * [Service account](service_account.md)
 * [GDrive](gdrive.md) serve your google documents, sheets and slides directly from wikis.
+
+## Writing you own macro
+[Macros](../macro) can extend markdown, we have different types of macros to do many operations, also, you can write your own macro as [described here](macro.md).
