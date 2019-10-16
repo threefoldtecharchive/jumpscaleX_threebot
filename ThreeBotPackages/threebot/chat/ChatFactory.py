@@ -26,13 +26,11 @@ def enable_cors(fn):
     return _enable_cors
 
 
-
-
 def get_ws_url():
     """get the proper ws url from the request"""
     url_parts = request.urlparts
     ws_scheme = "ws"
-    if url_parts.scheme == "https" or request.headers['x-forwarded-proto'] == "https":
+    if url_parts.scheme == "https" or request.headers["x-forwarded-proto"] == "https":
         ws_scheme = "wss"
 
     ws_url = f"{ws_scheme}://{url_parts.hostname}"
@@ -52,7 +50,6 @@ def topic_handler(topic):
     ws_url = get_ws_url()
 
     return env.get_template("chat/index.html").render(topic=topic, url=ws_url)
-
 
 
 class ChatFactory(j.baseclasses.threebot_factory):
