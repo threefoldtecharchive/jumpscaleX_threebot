@@ -1,6 +1,4 @@
 import hmac
-import json
-import traceback
 
 from bottle import abort, response, request, Bottle, redirect
 from hashlib import sha1
@@ -8,7 +6,7 @@ from hashlib import sha1
 from Jumpscale import j
 
 app = Bottle()
-GITHUB_TOKEN = "/sandbox/var/github_token"
+SECRET = "/sandbox/var/github_webhook_secret"
 
 
 @app.route("/webhook/github", method="post")
@@ -25,17 +23,14 @@ def webhook_github():
     if not signature:
         abort(400, "No signature header found")
 
-    import ipdb
-
-    ipdb.set_trace()
-    token = j.sal.fs.readFile(GITHUB_TOKEN).rstrip()
-    hexdigest = hmac.new(bytes(token, "utf-8"), request.body.read(), sha1).hexdigest()
+    webhook_secret = j.sal.fs.readFile(SECRET, binary=True).rstrip()
+    hexdigest = hmac.new(webhook_secret, request.body.read(), sha1).hexdigest()
     hashed_body = f"sha1={hexdigest}"
 
     if not hmac.compare_digest(signature, hashed_body):
         abort(401, "Invalid secret")
 
-    payload = json.loads(request.params.payload)
+    payload = j.data.serializers.json.loads(request.params.payload)
     j.clients.git.pullGitRepo(payload["repository"]["ssh_url"])
 
 
