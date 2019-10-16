@@ -39,16 +39,27 @@ def get_ws_url():
     return ws_url
 
 
+def _get_chatflows():
+    gedis_client = j.clients.gedis.get(port=8901)
+    chatflows = gedis_client.actors.chatbot.chatflows_list()
+    return [chatflow.decode() for chatflow in chatflows]
+
+
 @app.route("/chat")
 def home_handler():
-    return env.get_template("chat/home.html").render()
+    chatflows = _get_chatflows()
+    data = [(chatflow, chatflow.capitalize().replace("_", " ")) for chatflow in chatflows]
+    return env.get_template("chat/home.html").render(chatflows=data)
 
 
 @app.route("/chat/session/<topic>", method="get")
 @enable_cors
 def topic_handler(topic):
+    if topic not in _get_chatflows():
+        response.status = 404
+        error = f"Specified chatflow {topic} is not registered on the system"
+        return env.get_template("chat/error.html").render(error=error)
     ws_url = get_ws_url()
-
     return env.get_template("chat/index.html").render(topic=topic, url=ws_url)
 
 
