@@ -39,10 +39,16 @@ class workload_manager(j.baseclasses.threebot_actor):
             if action == "set_post":
                 index = model.IndexTable.get_or_none(reservation_id=obj.id)
                 if not index:
-                    for _, workload in self._iterate_over_workloads(obj):
-                        index = model.IndexTable.create(
-                            reservation_id=obj.id, workload_id=workload.workload_id, node_id=workload.node_id
-                        )
+                    for wt, workload in self._iterate_over_workloads(obj):
+                        if wt == "network":
+                            for nr in workload.network_resources:
+                                index = model.IndexTable.create(
+                                    reservation_id=obj.id, workload_id=workload.workload_id, node_id=nr.node_id
+                                )
+                        else:
+                            index = model.IndexTable.create(
+                                reservation_id=obj.id, workload_id=workload.workload_id, node_id=workload.node_id
+                            )
 
         IndexTable._meta.database = self.reservation_model.bcdb.sqlite_index_client
         IndexTable.create_table(safe=True)
@@ -190,10 +196,7 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         reservations = []
         for reservation_id in reservations_ids:
-            try:
-                reservation = self._reservation_get(reservation_id)
-            except j.exceptions.NotFound:
-                continue
+            reservation = self._reservation_get(reservation_id)
             if states and str(reservation.next_action) not in [s.upper() for s in states]:
                 continue
 
