@@ -28,7 +28,8 @@ class application(j.baseclasses.threebot_actor):
             gedis_cl.actors.document.add()
 
             # @TODO: Authenticate and return user
-            return j.data.serializers.json.dumps({
+            return j.data.serializers.json.dumps(
+                {
                     "id": "123",
                     "anonymous": False,
                     "admin": True,
@@ -49,7 +50,8 @@ class application(j.baseclasses.threebot_actor):
                     "meta": {},
                     "last_visit": 1569166490774,
                     "server_now": 1569166490774,
-                })
+                }
+            )
 
     def add(self, app_name, schema_out=None, user_session=None):
         app = self.model.new()

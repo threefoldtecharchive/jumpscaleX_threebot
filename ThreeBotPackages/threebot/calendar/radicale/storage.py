@@ -1027,7 +1027,7 @@ class Collection(BaseCollection):
                 item.delete()
                 collection = Database.get_collection(self.collection_id, self.user_id)
                 collection.items.remove(item)
-                collection.save()              
+                collection.save()
 
     def get_meta(self, key=None):
         try:
