@@ -11,7 +11,11 @@ The output is written to bcdb filesystem under `/docsites`, it's also indexed in
 * [Custom link format](../links.md)
 * [Macros](../macros/)
 
-## Tool usage
+## Loading wikis
+
+First make sure you have a threebot server running ` kosmos -p 'j.servers.threebot.local_start_default()'`
+
+then load your wikis in one of two ways using `jsx wiki_load` or the markdowndocs tool
 
 ### jsx wiki_load
 
