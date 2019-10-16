@@ -33,12 +33,7 @@ class Package(j.baseclasses.threebot_package):
                 "description": "Standard private calendar.",
                 "image": "upcoming",
             },
-            {
-                "appname": "Docs",
-                "installed": False,
-                "description": "All your docs belong to you",
-                "image": "upcoming",
-            },
+            {"appname": "Docs", "installed": False, "description": "All your docs belong to you", "image": "upcoming"},
             {
                 "appname": "Browser",
                 "installed": False,

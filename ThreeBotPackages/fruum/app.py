@@ -25,46 +25,40 @@ doc_model = bcdb.model_get(url="jumpscale.fruum.document")
 
 def get_view(doc):
     doc = doc._ddict
-    app_name = doc.pop('app_name')
+    app_name = doc.pop("app_name")
 
-    doc['id'] = doc.pop('doc_id')
+    doc["id"] = doc.pop("doc_id")
 
-
-    doc_breadcrumb = doc['breadcrumb']
+    doc_breadcrumb = doc["breadcrumb"]
 
     breadcrumb = []
 
     for bc in doc_breadcrumb:
         d = doc_model.find(app_name=app_name, doc_id=bc)[0]
         d = d._ddict
-        d['id'] = d.pop('doc_id')
-        d.pop('app_name')
+        d["id"] = d.pop("doc_id")
+        d.pop("app_name")
         breadcrumb.append(d)
     breadcrumb.append(doc)
 
     children = []
-    for d in doc_model.find(app_name=app_name, parent=doc['id']):
+    for d in doc_model.find(app_name=app_name, parent=doc["id"]):
         d = d._ddict
-        d['id'] = d.pop('doc_id')
-        d.pop('app_name')
+        d["id"] = d.pop("doc_id")
+        d.pop("app_name")
         children.append(d)
 
-    return {
-        "id": doc['id'],
-        "breadcrumb": breadcrumb,
-        "documents": children,
-        "online": {},
-    }
+    return {"id": doc["id"], "breadcrumb": breadcrumb, "documents": children, "online": {}}
 
 
-def get_current_user():
-    return {
-        "id": "123",
+def get_user(username=None):
+    user = {
+        "id": username,
         "anonymous": False,
         "admin": True,
         "blocked": False,
-        "username": "admin",
-        "displayname": "Admin",
+        "username": username,
+        "displayname": username,
         "email": "",
         "avatar": "",
         "created": 0,
@@ -80,13 +74,56 @@ def get_current_user():
         "last_visit": 1569166490774,
         "server_now": 1569166490774,
     }
+    return user
 
 
 def list_users(start, size):
-    user = get_current_user()
-    user['last_login'] = 0
+
     return [
-        user
+        {
+            "id": "hamdy",
+            "anonymous": False,
+            "admin": False,
+            "blocked": False,
+            "username": "hamdy",
+            "displayname": "hamdy",
+            "email": "",
+            "avatar": "",
+            "created": 0,
+            "last_login": 0,
+            "last_logout": 0,
+            "onboard": 0,
+            "karma": 0,
+            "logout_karma": 0,
+            "watch": [],
+            "tags": [],
+            "notifications": [],
+            "meta": {},
+            "last_visit": 1569166490774,
+            "server_now": 1569166490774,
+        },
+        {
+            "id": "aly",
+            "anonymous": False,
+            "admin": False,
+            "blocked": False,
+            "username": "aly",
+            "displayname": "aly",
+            "email": "",
+            "avatar": "",
+            "created": 0,
+            "last_login": 0,
+            "last_logout": 0,
+            "onboard": 0,
+            "karma": 0,
+            "logout_karma": 0,
+            "watch": [],
+            "tags": [],
+            "notifications": [],
+            "meta": {},
+            "last_visit": 1569166490774,
+            "server_now": 1569166490774,
+        },
     ]
 
 
@@ -97,18 +134,18 @@ def connect(sid, environ):
 @sio.on("fruum:auth")
 def auth(sid, data):
     with sio.session(sid) as session:
-        session['app_name'] = data['app_id']
+        session["app_name"] = data["app_id"]
         try:
-            app = app_model.get_by_name(data['app_id'])
+            app = app_model.get_by_name(data["app_id"])
         except j.exceptions.NotFound:
             # Auto Add APP
             app = app_model.new()
-            app.name = data['app_id']
+            app.name = data["app_id"]
             app.save()
 
             # Auto Add home
             doc = doc_model.new()
-            doc.app_name=data['app_id']
+            doc.app_name = data["app_id"]
             doc.doc_id = "home"
             doc.breadcrumb = []
             doc.parent = ""
@@ -129,24 +166,23 @@ def auth(sid, data):
             doc.order = 0
             doc.save()
 
-        user = get_current_user()
+        user = get_user(username=data["user"]["id"])
 
-        session['user'] = user
-        return sio.emit("fruum:auth", {"user": user})
+        session["user"] = user
+        return sio.emit("fruum:auth", {"user": user}, room=sid)
 
 
 @sio.on("fruum:view")
 def view(sid, data):
-    doc_id = data.get('id')
+    doc_id = data.get("id")
     with sio.session(sid) as session:
-        docs = doc_model.find(app_name=session['app_name'], doc_id=doc_id)
+        docs = doc_model.find(app_name=session["app_name"], doc_id=doc_id)
         if not docs:
             pass
         doc = docs[0]
-    sio.emit(
-        "fruum:view",
-       get_view(doc)
-    )
+        if doc.type == "channel":
+            sio.enter_room(sid, doc.doc_id)
+    sio.emit("fruum:view", get_view(doc), room=sid)
 
 
 @sio.on("fruum:add")
@@ -155,48 +191,47 @@ def add(sid, data):
         now = int(time.time())
 
         doc = doc_model.new()
-        doc.app_name = session['app_name']
-        doc.doc_id = '%s-%s' % (data['header'], str(uuid.uuid4()))
-        doc.header = data['header']
-        doc.body = data['body']
+        doc.app_name = session["app_name"]
+        doc.doc_id = "%s-%s" % (data["header"], str(uuid.uuid4()))
+        doc.header = data["header"]
+        doc.body = data["body"]
+        doc.usage = data["usage"]
         doc.created = now
         doc.updated = now
-        doc.parent = data['parent']
-        doc.type = data['type']
-        doc.initials = data['initials']
-        doc.thumbnail = data['thumbnail']
+        doc.parent = data["parent"]
+        doc.type = data["type"]
+        doc.initials = data["initials"]
+        doc.thumbnail = data["thumbnail"]
         doc.attachments = data["attachments"]
-        doc.tags = data['tags']
+        doc.tags = data["tags"]
         doc.usage = data["usage"]
         doc.permission = data["permission"]
         doc.order = data["order"]
-        parent = doc_model.find(app_name=session['app_name'], doc_id=data['parent'])[0]
+        parent = doc_model.find(app_name=session["app_name"], doc_id=data["parent"])[0]
         doc.parent_type = parent.type
 
         doc.breadcrumb = list(parent.breadcrumb) + [parent.doc_id]
-        doc.user_id = session['user']['id']
-        doc.user_username = session['user']['username']
-        doc.user_displayname = session['user']['displayname']
-        doc.user_avatar = session['user']['avatar']
+        doc.user_id = session["user"]["id"]
+        doc.user_username = session["user"]["username"]
+        doc.user_displayname = session["user"]["displayname"]
+        doc.user_avatar = session["user"]["avatar"]
         doc.save()
 
         doc = doc._ddict
-        doc['id'] = doc.pop('doc_id')
-        doc.pop('app_name')
+        doc["id"] = doc.pop("doc_id")
+        doc.pop("app_name")
 
-        sio.emit(
-            "fruum:add",
-            doc
-        )
+        if doc["type"] == "post" and doc["parent_type"] == "channel":
+            room = parent.doc_id
+            sio.emit("fruum:add", doc, room=room)
+        else:
+            sio.emit("fruum:add", doc)
 
 
 @sio.on("fruum:profile")
 def profile(sid, data):
-    user_id = data['id']
-    sio.emit(
-        "fruum:profile",
-        get_current_user()
-    )
+    with sio.session(sid) as session:
+        sio.emit("fruum:profile", session["user"], room=sid)
 
 
 @sio.on("fruum:delete")
@@ -212,9 +247,6 @@ def archive(sid, data):
 @sio.on("fruum:restore")
 def restore(sid, data):
     return "ok"
-
-
-
 
 
 @sio.on("fruum:update")
@@ -284,12 +316,12 @@ def categories(sid, data):
 
 @sio.on("fruum:typing")
 def typing(sid, data):
-    sio.emit('fruum:typing', {})
+    sio.emit("fruum:typing", {})
 
 
 @sio.on("fruum:onboard")
 def onboard(sid, data):
-    sio.emit('fruum:onboard', data)
+    sio.emit("fruum:onboard", data)
 
 
 @sio.on("fruum:optimize")
@@ -319,10 +351,7 @@ def feed(sid, data):
 
 @sio.on("fruum:user:list")
 def user_list(sid, data):
-    sio.emit(
-        "fruum:user:list",
-        {'users': list_users(data['from'], data['size'])}
-    )
+    sio.emit("fruum:user:list", {"users": list_users(data["from"], data["size"])}, room=sid)
 
 
 @sio.event

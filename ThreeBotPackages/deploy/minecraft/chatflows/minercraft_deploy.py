@@ -7,7 +7,6 @@ def chat(bot):
     """
     username = bot.string_ask("Username:")
 
-
     # j.builders.apps.wordpress.install(path, host_url, title, admin_user, admin_password, admin_email)
 
     res = f"""

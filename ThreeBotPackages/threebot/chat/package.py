@@ -38,7 +38,6 @@ class Package(j.baseclasses.threebot_package):
         proxy_location.port_dest = 8522
         proxy_location.scheme = "http"
 
-
         locations.configure()
         website.configure()
 
