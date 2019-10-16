@@ -48,13 +48,17 @@ def get_ws_url():
 
 
 @app.route("/wiki")
+@app.route("/wiki/")
 def home_handler():
-    wikis_names = j.sal.bcdbfs.list_dirs("/docsites")
-    wikis_names = [wiki[10:] for wiki in wikis_names]
+    wikis_names = []
+    if j.sal.bcdbfs.exists("/docsites"):
+        wikis_names = j.sal.bcdbfs.list_dirs("/docsites")
+        wikis_names = [wiki[10:] for wiki in wikis_names]
     return env.get_template("home.html").render(wikis_names=wikis_names)
 
 
 @app.route("/wiki/<docsite>", method="get")
+@app.route("/wiki/<docsite>/", method="get")
 @enable_cors
 def wiki_handler(docsite):
     docsite_path = j.sal.fs.joinPaths("/docsites", docsite)
