@@ -20,6 +20,7 @@ peers = (LO) !wireguard.peer.1
 public_key = "" (S)
 allowed_iprange = "" (Liprange)     # is the the same as iprange in the net_resource
 endpoint = "" (S)                   # optional, only needed to connect out
+iprange = "10.10.11.0/24" (iprange)
 
 
 
