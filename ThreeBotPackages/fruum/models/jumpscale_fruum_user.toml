@@ -10,8 +10,8 @@ created** = (I)
 last_login** = (I)
 last_logout** = (I)
 onboard** = (I)
-karma** = (I)
-logout_karma** = (I)
+karma** = 0 (I)
+logout_karma** = 0 (I)
 
 
 @url = jumpscale.fruum.application
