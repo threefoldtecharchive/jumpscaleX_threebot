@@ -13,3 +13,4 @@ install:
 
 script:
   - source /sandbox/env.sh; nosetests-3.4 -v /sandbox/code/github/threefoldtech/jumpscaleX_threebot/test_loader.py --with-xunit --xunit-file=/test.xml --xunit-testsuite-name=jumpscaleX_threebot
+  - source /sandbox/env.sh; nosetests-3.4 -v /sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/wiki/tests/ --with-xunit --xunit-file=/test.xml --xunit-testsuite-name=Test_wikis
