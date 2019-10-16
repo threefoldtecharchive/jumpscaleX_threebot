@@ -261,4 +261,3 @@ for endpoint in client.actors.gridnetwork.network_endpoint_find("3botnetwork").r
 for executor in clients:
     if executor.sshclient.addr not in existingendpoints:
         client.actors.gridnetwork.network_endpoint_add("3botnetwork", executor.sshclient.name)
-

@@ -21,4 +21,3 @@ class Wiki(TestCase):
 
         r = requests.get("https://127.0.0.1/web/bcdbfs/docsites/test_example/test_include.md", verify=False)
         self.assertEqual(r.status_code, 200)
-
