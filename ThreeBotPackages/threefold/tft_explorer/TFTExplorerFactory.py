@@ -3,7 +3,7 @@ import uuid
 import random
 
 
-class TFTExplorerFactory(j.baseclasses.object, j.baseclasses.testtools):
+class TFTExplorerFactory(j.baseclasses.threebot_factory, j.baseclasses.testtools):
 
     __jslocation__ = "j.threebot.package.tftexplorer"
 
@@ -12,14 +12,8 @@ class TFTExplorerFactory(j.baseclasses.object, j.baseclasses.testtools):
         j.threebot.package.tftexplorer.client_get()
         :return:
         """
+        self.install()
         self.client = j.servers.threebot.local_start_default()
-
-        self.client.actors.package_manager.package_add(
-            "threebot_phonebook",
-            git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/threefold/tft_explorer",
-        )
-
-        # self.client.reload(namespace="default")
 
         return self.client
 
@@ -67,6 +61,7 @@ class TFTExplorerFactory(j.baseclasses.object, j.baseclasses.testtools):
             t.include_in_block_height = x
             print("*****************************************:%s" % x)
             trans.append(t._ddict)
+
         data4 = gedis_cli.actors.tft_explorer.set_transactions(trans)
 
         assert len(data4) == 10
