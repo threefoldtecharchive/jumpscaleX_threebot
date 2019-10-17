@@ -1,10 +1,10 @@
-from Jumpscale import j
-
-from bottle import post, run, response, request, Bottle, abort
-from bottle.ext.websocket import GeventWebSocketServer
-from bottle.ext.websocket import websocket
 import json
 import mimetypes
+import traceback
+
+from bottle import Bottle, abort, post, request, response, run
+from bottle.ext.websocket import GeventWebSocketServer, websocket
+from Jumpscale import j
 
 GEDIS_PORT = 8901
 client_gedis = None
