@@ -27,10 +27,8 @@ def sync_directory():
             farm_object = farmobjs[0]
 
         nodes = j.clients.threefold_directory.client.ListCapacityGenerator(
-            query_params={"farmer": farm["iyo_organization"], "proofs": False}
+            query_params={"farmer": farm["iyo_organization"], "proofs": True}
         )
-
-        nodes = response.json()
 
         for node in nodes:
             j.core.tools.log("Processing node %s" % node["node_id"], level=20)
