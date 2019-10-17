@@ -1,3 +1,5 @@
+from Jumpscale import j
+
 def sync_directory():
     from datetime import datetime
 
@@ -24,16 +26,9 @@ def sync_directory():
         else:
             farm_object = farmobjs[0]
 
-        response = j.clients.threefold_directory.client.ListCapacity(
+        nodes = j.clients.threefold_directory.client.ListCapacityGenerator(
             query_params={"farmer": farm["iyo_organization"], "proofs": True}
-        )[1]
-        if response.status_code != 200:
-            j.core.tools.log(
-                "Failed to list capacity for farmer %s: %s" % (farm["iyo_organization"], response.reason), level=40
-            )
-            continue
-
-        nodes = response.json()
+        )
 
         for node in nodes:
             j.core.tools.log("Processing node %s" % node["node_id"], level=20)
@@ -60,3 +55,7 @@ def sync_directory():
                 j.core.tools.log("Creating new node %s" % node["node_id"], level=20)
                 node_object = node_model.new(node)
                 node_object.save()
+
+
+if __name__ == "__main__":
+    sync_directory()

@@ -21,8 +21,6 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot starts
         :return:
         """
-        self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
-
         server = self.openresty
         server.install(reset=False)
         server.configure()
@@ -40,3 +38,7 @@ class Package(j.baseclasses.threebot_package):
 
         locations.configure()
         website.configure()
+
+        # setup alert handler to intercept errors
+        j.tools.alerthandler.setup()
+
