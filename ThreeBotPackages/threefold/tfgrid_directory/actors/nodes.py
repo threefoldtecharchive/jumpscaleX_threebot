@@ -61,25 +61,34 @@ class nodes(j.baseclasses.threebot_actor):
         """
 
         output = schema_out.new()
-        for node in self.node_model.iterate():
-            if farm_id and farm_id != node.farm_id:
-                continue
-            if country != "" and node.location.country != country:
-                continue
-            if city != "" and node.location.city != city:
-                continue
-            if cru > -1 and node.total_resources.cru < cru:
-                continue
-            if mru > -1 and node.total_resources.mru < mru:
-                continue
-            if sru > -1 and node.total_resources.sru < sru:
-                continue
-            if hru > -1 and node.total_resources.hru < hru:
-                continue
+        fields = ["id"]
+        values = []
+        statements = []
+        stringfields = {"farm_id": farm_id, "location_country": country, "location_city": city}
+        for field, value in stringfields.items():
+            if value:
+                fields.append(field)
+                statements.append(f"{field} = ?")
+                values.append(value)
+
+        intfields = {
+            "total_resources_cru": cru,
+            "total_resources_mru": mru,
+            "total_resources_sru": sru,
+            "total_resources_hru": hru,
+        }
+        for field, value in intfields.items():
+            if value > -1:
+                fields.append(field)
+                statements.append(f"{field} > ?")
+                values.append(value)
+
+        whereclause = " AND ".join(statements)
+        for row in self.node_model.query_model(fields, whereclause, values):
+            node = self.node_model.get(row[0])
             if not proofs:
                 node.proofs = []
             output.nodes.append(node)
-
         return output
 
     def get(self, node_id, proofs, schema_out=None, user_session=None):

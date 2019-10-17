@@ -1,9 +1,9 @@
 
 @url = tfgrid.location.1
-city = (S)
-country = (S)
-continent = (S)
-latitude = (F)
-longitude = (F)
+city** = (S)
+country** = (S)
+continent** = (S)
+latitude** = (F)
+longitude** = (F)
 
 
