@@ -39,10 +39,10 @@ version = (I)
 
 
 @url = tfgrid.node.resource.amount.1
-cru = (I)
-mru = (I)
-hru = (I)
-sru = (I)
+cru** = (I)
+mru** = (I)
+hru** = (I)
+sru** = (I)
 
 @url = tfgrid.node.proof.1
 created = (T)
