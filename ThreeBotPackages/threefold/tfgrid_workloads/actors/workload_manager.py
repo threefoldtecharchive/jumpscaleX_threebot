@@ -75,10 +75,11 @@ class workload_manager(j.baseclasses.threebot_actor):
         :param payload: the payload
         :param signature: the signature object (tfgrid.reservation.signing.signature)
         """
-        user = self.user_model.get(signature.tid)
-        if not user:
+        try:
+            user = self.user_model.get(signature.tid)
+            return self._validate_signature(payload, signature.signature, user.pubkey)
+        except j.exceptions.NotFound:
             return False
-        return self._validate_signature(payload, signature.signature, user.pubkey)
 
     def _request_check(self, payload, request, signatures):
         """
@@ -101,10 +102,11 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         Checks if the signature of the customer is valid or not
         """
-        user = self.user_model.get(jsxobj.customer_tid)
-        if not user:
+        try:
+            user = self.user_model.get(jsxobj.customer_tid)
+            return self._validate_signature(jsxobj.json, jsxobj.customer_signature, user.pubkey)
+        except j.exceptions.NotFound:
             return False
-        return self._validate_signature(jsxobj.json, jsxobj.customer_signature, user.pubkey)
 
     def _validate_farmers_signature(self, jsxobj):
         """
@@ -307,7 +309,7 @@ class workload_manager(j.baseclasses.threebot_actor):
     def workload_get(self, gwid, schema_out, user_session):
         """
         ```in
-        gwid = (S) 
+        gwid = (S)
         ```
 
         ```out
@@ -419,7 +421,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         Set the result of the deployment of the workload
         :param workload_id: is the global workload id, unique in BCDB
         :param result: The result of the deployment of the workload
-        
+
         ```in
         global_workload_id = (S)
         result = (O) !tfgrid.reservation.result.1
@@ -444,7 +446,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         Mark a workload as deleted
         this is called by a node once a workloads as been decomissioned
-        
+
         ```in
         workload_id = (I)
         ```
