@@ -48,7 +48,6 @@ def get_ws_url():
 
 
 @app.route("/wiki")
-@app.route("/wiki/")
 def home_handler():
     wikis_names = []
     if j.sal.bcdbfs.exists("/docsites"):
@@ -58,7 +57,6 @@ def home_handler():
 
 
 @app.route("/wiki/<docsite>", method="get")
-@app.route("/wiki/<docsite>/", method="get")
 @enable_cors
 def wiki_handler(docsite):
     docsite_path = j.sal.fs.joinPaths("/docsites", docsite)

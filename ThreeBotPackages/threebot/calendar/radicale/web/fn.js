@@ -22,8 +22,7 @@
  * @type {string}
  */
 var SERVER = (location.protocol + '//' + location.hostname +
-              (location.port ? ':' + location.port : ''));
-
+    (location.port ? ':' + location.port : ''));
 /**
  * Path of the root collection on the server (must end with /)
  * @const
@@ -51,11 +50,11 @@ var COLOR_RE = new RegExp("^(#[0-9A-Fa-f]{6})(?:[0-9A-Fa-f]{2})?$");
  */
 function escape_xml(s) {
     return (s
-            .replace("&", "&amp;")
-            .replace('"', "&quot;")
-            .replace("'", "&apos;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;"));
+        .replace("&", "&amp;")
+        .replace('"', "&quot;")
+        .replace("'", "&apos;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;"));
 }
 
 /**
@@ -71,7 +70,7 @@ var CollectionType = {
     CALENDAR: "CALENDAR",
     JOURNAL: "JOURNAL",
     TASKS: "TASKS",
-    is_subset: function(a, b) {
+    is_subset: function (a, b) {
         var components = a.split("_");
         var i;
         for (i = 0; i < components.length; i++) {
@@ -81,7 +80,7 @@ var CollectionType = {
         }
         return true;
     },
-    union: function(a, b) {
+    union: function (a, b) {
         if (a.search(this.ADDRESSBOOK) !== -1 || b.search(this.ADDRESSBOOK) !== -1) {
             if (a && a !== this.ADDRESSBOOK || b && b !== this.ADDRESSBOOK) {
                 throw "Invalid union: " + a + " " + b;
@@ -129,7 +128,7 @@ function Collection(href, type, displayname, description, color) {
 function get_principal(user, password, callback) {
     var request = new XMLHttpRequest();
     request.open("PROPFIND", SERVER + ROOT_PATH, true, user, password);
-    request.onreadystatechange = function() {
+    request.onreadystatechange = function () {
         if (request.readyState !== 4) {
             return;
         }
@@ -152,12 +151,12 @@ function get_principal(user, password, callback) {
         }
     };
     request.send('<?xml version="1.0" encoding="utf-8" ?>' +
-                 '<propfind xmlns="DAV:">' +
-                     '<prop>' +
-                         '<current-user-principal />' +
-                         '<displayname />' +
-                     '</prop>' +
-                 '</propfind>');
+        '<propfind xmlns="DAV:">' +
+        '<prop>' +
+        '<current-user-principal />' +
+        '<displayname />' +
+        '</prop>' +
+        '</propfind>');
     return request;
 }
 
@@ -171,9 +170,9 @@ function get_principal(user, password, callback) {
  */
 function get_collections(user, password, collection, callback) {
     var request = new XMLHttpRequest();
-    request.open("PROPFIND", SERVER + collection.href, true, user, password);
+    request.open("PROPFIND", SERVER + ROOT_PATH + collection.href, true, user, password);
     request.setRequestHeader("depth", "1");
-    request.onreadystatechange = function() {
+    request.onreadystatechange = function () {
         if (request.readyState !== 4) {
             return;
         }
@@ -234,7 +233,7 @@ function get_collections(user, password, collection, callback) {
                     collections.push(new Collection(href, type, displayname, description, sane_color));
                 }
             }
-            collections.sort(function(a, b) {
+            collections.sort(function (a, b) {
                 /** @type {string} */ var ca = a.displayname || a.href;
                 /** @type {string} */ var cb = b.displayname || b.href;
                 return ca.localeCompare(cb);
@@ -245,21 +244,21 @@ function get_collections(user, password, collection, callback) {
         }
     };
     request.send('<?xml version="1.0" encoding="utf-8" ?>' +
-                 '<propfind xmlns="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav" ' +
-                         'xmlns:CR="urn:ietf:params:xml:ns:carddav" ' +
-                         'xmlns:I="http://apple.com/ns/ical/" ' +
-                         'xmlns:INF="http://inf-it.com/ns/ab/" ' +
-                         'xmlns:RADICALE="http://radicale.org/ns/">' +
-                     '<prop>' +
-                         '<resourcetype />' +
-                         '<RADICALE:displayname />' +
-                         '<I:calendar-color />' +
-                         '<INF:addressbook-color />' +
-                         '<C:calendar-description />' +
-                         '<C:supported-calendar-component-set />' +
-                         '<CR:addressbook-description />' +
-                     '</prop>' +
-                 '</propfind>');
+        '<propfind xmlns="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav" ' +
+        'xmlns:CR="urn:ietf:params:xml:ns:carddav" ' +
+        'xmlns:I="http://apple.com/ns/ical/" ' +
+        'xmlns:INF="http://inf-it.com/ns/ab/" ' +
+        'xmlns:RADICALE="http://radicale.org/ns/">' +
+        '<prop>' +
+        '<resourcetype />' +
+        '<RADICALE:displayname />' +
+        '<I:calendar-color />' +
+        '<INF:addressbook-color />' +
+        '<C:calendar-description />' +
+        '<C:supported-calendar-component-set />' +
+        '<CR:addressbook-description />' +
+        '</prop>' +
+        '</propfind>');
     return request;
 }
 
@@ -272,8 +271,8 @@ function get_collections(user, password, collection, callback) {
  */
 function delete_collection(user, password, collection, callback) {
     var request = new XMLHttpRequest();
-    request.open("DELETE", SERVER + collection.href, true, user, password);
-    request.onreadystatechange = function() {
+    request.open("DELETE", SERVER + ROOT_PATH + collection.href, true, user, password);
+    request.onreadystatechange = function () {
         if (request.readyState !== 4) {
             return;
         }
@@ -297,8 +296,8 @@ function delete_collection(user, password, collection, callback) {
  */
 function create_edit_collection(user, password, collection, create, callback) {
     var request = new XMLHttpRequest();
-    request.open(create ? "MKCOL" : "PROPPATCH", SERVER + collection.href, true, user, password);
-    request.onreadystatechange = function() {
+    request.open(create ? "MKCOL" : "PROPPATCH", SERVER + ROOT_PATH + collection.href, true, user, password);
+    request.onreadystatechange = function () {
         if (request.readyState !== 4) {
             return;
         }
@@ -335,29 +334,29 @@ function create_edit_collection(user, password, collection, create, callback) {
     }
     var xml_request = create ? "mkcol" : "propertyupdate";
     request.send('<?xml version="1.0" encoding="UTF-8" ?>' +
-                 '<' + xml_request + ' xmlns="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav" xmlns:CR="urn:ietf:params:xml:ns:carddav" xmlns:I="http://apple.com/ns/ical/" xmlns:INF="http://inf-it.com/ns/ab/">' +
-                     '<set>' +
-                         '<prop>' +
-                             (create ? '<resourcetype><collection />' + resourcetype + '</resourcetype>' : '') +
-                             (components ? '<C:supported-calendar-component-set>' + components + '</C:supported-calendar-component-set>' : '') +
-                             (displayname ? '<displayname>' + displayname + '</displayname>' : '') +
-                             (calendar_color ? '<I:calendar-color>' + calendar_color + '</I:calendar-color>' : '') +
-                             (addressbook_color ? '<INF:addressbook-color>' + addressbook_color + '</INF:addressbook-color>' : '') +
-                             (addressbook_description ? '<CR:addressbook-description>' + addressbook_description + '</CR:addressbook-description>' : '') +
-                             (calendar_description ? '<C:calendar-description>' + calendar_description + '</C:calendar-description>' : '') +
-                         '</prop>' +
-                     '</set>' +
-                     (!create ? ('<remove>' +
-                         '<prop>' +
-                             (!components ? '<C:supported-calendar-component-set />' : '') +
-                             (!displayname ? '<displayname />' : '') +
-                             (!calendar_color ? '<I:calendar-color />' : '') +
-                             (!addressbook_color ? '<INF:addressbook-color />' : '') +
-                             (!addressbook_description ? '<CR:addressbook-description />' : '') +
-                             (!calendar_description ? '<C:calendar-description />' : '') +
-                         '</prop>' +
-                     '</remove>'): '') +
-                 '</' + xml_request + '>');
+        '<' + xml_request + ' xmlns="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav" xmlns:CR="urn:ietf:params:xml:ns:carddav" xmlns:I="http://apple.com/ns/ical/" xmlns:INF="http://inf-it.com/ns/ab/">' +
+        '<set>' +
+        '<prop>' +
+        (create ? '<resourcetype><collection />' + resourcetype + '</resourcetype>' : '') +
+        (components ? '<C:supported-calendar-component-set>' + components + '</C:supported-calendar-component-set>' : '') +
+        (displayname ? '<displayname>' + displayname + '</displayname>' : '') +
+        (calendar_color ? '<I:calendar-color>' + calendar_color + '</I:calendar-color>' : '') +
+        (addressbook_color ? '<INF:addressbook-color>' + addressbook_color + '</INF:addressbook-color>' : '') +
+        (addressbook_description ? '<CR:addressbook-description>' + addressbook_description + '</CR:addressbook-description>' : '') +
+        (calendar_description ? '<C:calendar-description>' + calendar_description + '</C:calendar-description>' : '') +
+        '</prop>' +
+        '</set>' +
+        (!create ? ('<remove>' +
+            '<prop>' +
+            (!components ? '<C:supported-calendar-component-set />' : '') +
+            (!displayname ? '<displayname />' : '') +
+            (!calendar_color ? '<I:calendar-color />' : '') +
+            (!addressbook_color ? '<INF:addressbook-color />' : '') +
+            (!addressbook_description ? '<CR:addressbook-description />' : '') +
+            (!calendar_description ? '<C:calendar-description />' : '') +
+            '</prop>' +
+            '</remove>') : '') +
+        '</' + xml_request + '>');
     return request;
 }
 
@@ -386,19 +385,19 @@ function edit_collection(user, password, collection, callback) {
 /**
  * @interface
  */
-function Scene() {}
+function Scene() { }
 /**
  * Scene is on top of stack and visible.
  */
-Scene.prototype.show = function() {};
+Scene.prototype.show = function () { };
 /**
  * Scene is no longer visible.
  */
-Scene.prototype.hide = function() {};
+Scene.prototype.hide = function () { };
 /**
  * Scene is removed from scene stack.
  */
-Scene.prototype.release = function() {};
+Scene.prototype.release = function () { };
 
 
 /**
@@ -489,7 +488,7 @@ function LoginScene() {
                 // Fetch principal
                 var loading_scene = new LoadingScene();
                 push_scene(loading_scene, false);
-                principal_req = get_principal(user, password, function(collection, error1) {
+                principal_req = get_principal(user, password, function (collection, error1) {
                     if (scene_index === null) {
                         return;
                     }
@@ -501,12 +500,12 @@ function LoginScene() {
                         // show collections
                         var saved_user = user;
                         user = "";
-                        if (typeof(sessionStorage) !== "undefined") {
+                        if (typeof (sessionStorage) !== "undefined") {
                             sessionStorage.setItem("radicale_user", saved_user);
                             sessionStorage.setItem("radicale_password", password);
                         }
                         var collections_scene = new CollectionsScene(
-                            saved_user, password, collection, function(error1) {
+                            saved_user, password, collection, function (error1) {
                                 error = error1;
                                 user = saved_user;
                             });
@@ -517,7 +516,7 @@ function LoginScene() {
                 error = "Username is empty";
                 fill_form();
             }
-        } catch(err) {
+        } catch (err) {
             console.error(err);
         }
         return false;
@@ -536,7 +535,7 @@ function LoginScene() {
         return false;
     }
 
-    this.show = function() {
+    this.show = function () {
         var saved_first_show = first_show;
         first_show = false;
         this.release();
@@ -545,7 +544,7 @@ function LoginScene() {
         html_scene.style.display = "block";
         user_form.focus();
         scene_index = scene_stack.length - 1;
-        if (typeof(sessionStorage) !== "undefined") {
+        if (typeof (sessionStorage) !== "undefined") {
             if (saved_first_show && sessionStorage.getItem("radicale_user")) {
                 user_form.value = sessionStorage.getItem("radicale_user");
                 password_form.value = sessionStorage.getItem("radicale_password");
@@ -556,12 +555,12 @@ function LoginScene() {
             }
         }
     };
-    this.hide = function() {
+    this.hide = function () {
         read_form();
         html_scene.style.display = "none";
         form.onsubmit = null;
     };
-    this.release = function() {
+    this.release = function () {
         scene_index = null;
         // cancel pending requests
         if (principal_req !== null) {
@@ -581,13 +580,13 @@ function LoginScene() {
  */
 function LoadingScene() {
     var html_scene = document.getElementById("loadingscene");
-    this.show = function() {
+    this.show = function () {
         html_scene.style.display = "block";
     };
-    this.hide = function() {
+    this.hide = function () {
         html_scene.style.display = "none";
     };
-    this.release = function() {};
+    this.release = function () { };
 }
 
 /**
@@ -616,7 +615,7 @@ function CollectionsScene(user, password, collection, onerror) {
         try {
             var create_collection_scene = new CreateEditCollectionScene(user, password, collection);
             push_scene(create_collection_scene, false);
-        } catch(err) {
+        } catch (err) {
             console.error(err);
         }
         return false;
@@ -626,7 +625,7 @@ function CollectionsScene(user, password, collection, onerror) {
         try {
             var edit_collection_scene = new CreateEditCollectionScene(user, password, collection);
             push_scene(edit_collection_scene, false);
-        } catch(err) {
+        } catch (err) {
             console.error(err);
         }
         return false;
@@ -636,14 +635,14 @@ function CollectionsScene(user, password, collection, onerror) {
         try {
             var delete_collection_scene = new DeleteCollectionScene(user, password, collection);
             push_scene(delete_collection_scene, false);
-        } catch(err) {
+        } catch (err) {
             console.error(err);
         }
         return false;
     }
 
     function show_collections(collections) {
-        nodes.forEach(function(node) {
+        nodes.forEach(function (node) {
             template.parentNode.removeChild(node);
         });
         nodes = [];
@@ -661,27 +660,27 @@ function CollectionsScene(user, password, collection, onerror) {
                 color_form.style.display = "none";
             }
             var possible_types = [CollectionType.ADDRESSBOOK];
-            [CollectionType.CALENDAR, ""].forEach(function(e) {
-                [CollectionType.union(e, CollectionType.JOURNAL), e].forEach(function(e) {
-                    [CollectionType.union(e, CollectionType.TASKS), e].forEach(function(e) {
+            [CollectionType.CALENDAR, ""].forEach(function (e) {
+                [CollectionType.union(e, CollectionType.JOURNAL), e].forEach(function (e) {
+                    [CollectionType.union(e, CollectionType.TASKS), e].forEach(function (e) {
                         if (e) {
                             possible_types.push(e);
                         }
                     });
                 });
             });
-            possible_types.forEach(function(e) {
+            possible_types.forEach(function (e) {
                 if (e !== collection.type) {
                     node.querySelector("[name=" + e + "]").style.display = "none";
                 }
             });
             title_form.textContent = collection.displayname || collection.href;
             description_form.textContent = collection.description;
-            var href = SERVER + collection.href;
+            var href = SERVER + ROOT_PATH + collection.href;
             url_form.href = href;
             url_form.textContent = href;
-            delete_btn.onclick = function(ev) {return ondelete(collection);};
-            edit_btn.onclick = function(ev) {return onedit(collection);};
+            delete_btn.onclick = function (ev) { return ondelete(collection); };
+            edit_btn.onclick = function (ev) { return onedit(collection); };
             node.style.display = saved_template_display;
             nodes.push(node);
             template.parentNode.insertBefore(node, template);
@@ -693,7 +692,7 @@ function CollectionsScene(user, password, collection, onerror) {
             var loading_scene = new LoadingScene();
             push_scene(loading_scene, false);
         }
-        collections_req = get_collections(user, password, collection, function(collections1, error) {
+        collections_req = get_collections(user, password, collection, function (collections1, error) {
             if (scene_index === null) {
                 return;
             }
@@ -717,7 +716,7 @@ function CollectionsScene(user, password, collection, onerror) {
         });
     }
 
-    this.show = function() {
+    this.show = function () {
         saved_template_display = template.style.display;
         template.style.display = "none";
         html_scene.style.display = "block";
@@ -740,7 +739,7 @@ function CollectionsScene(user, password, collection, onerror) {
             }
         }
     };
-    this.hide = function() {
+    this.hide = function () {
         html_scene.style.display = "none";
         template.style.display = saved_template_display;
         new_btn.onclick = null;
@@ -755,7 +754,7 @@ function CollectionsScene(user, password, collection, onerror) {
         }
         show_collections([]);
     };
-    this.release = function() {
+    this.release = function () {
         scene_index = null;
         if (collections_req !== null) {
             collections_req.abort();
@@ -787,7 +786,7 @@ function DeleteCollectionScene(user, password, collection) {
         try {
             var loading_scene = new LoadingScene();
             push_scene(loading_scene);
-            delete_req = delete_collection(user, password, collection, function(error1) {
+            delete_req = delete_collection(user, password, collection, function (error1) {
                 if (scene_index === null) {
                     return;
                 }
@@ -799,7 +798,7 @@ function DeleteCollectionScene(user, password, collection) {
                     pop_scene(scene_index - 1);
                 }
             });
-        } catch(err) {
+        } catch (err) {
             console.error(err);
         }
         return false;
@@ -808,13 +807,13 @@ function DeleteCollectionScene(user, password, collection) {
     function oncancel() {
         try {
             pop_scene(scene_index - 1);
-        } catch(err) {
+        } catch (err) {
             console.error(err);
         }
         return false;
     }
 
-    this.show = function() {
+    this.show = function () {
         this.release();
         scene_index = scene_stack.length - 1;
         html_scene.style.display = "block";
@@ -823,12 +822,12 @@ function DeleteCollectionScene(user, password, collection) {
         delete_btn.onclick = ondelete;
         cancel_btn.onclick = oncancel;
     };
-    this.hide = function() {
+    this.hide = function () {
         html_scene.style.display = "none";
         cancel_btn.onclick = null;
         delete_btn.onclick = null;
     };
-    this.release = function() {
+    this.release = function () {
         scene_index = null;
         if (delete_req !== null) {
             delete_req.abort();
@@ -929,7 +928,7 @@ function CreateEditCollectionScene(user, password, collection) {
             var loading_scene = new LoadingScene();
             push_scene(loading_scene);
             var collection = new Collection(href, type, displayname, description, sane_color);
-            var callback = function(error1) {
+            var callback = function (error1) {
                 if (scene_index === null) {
                     return;
                 }
@@ -946,7 +945,7 @@ function CreateEditCollectionScene(user, password, collection) {
             } else {
                 create_edit_req = create_collection(user, password, collection, callback);
             }
-        } catch(err) {
+        } catch (err) {
             console.error(err);
         }
         return false;
@@ -955,13 +954,13 @@ function CreateEditCollectionScene(user, password, collection) {
     function oncancel() {
         try {
             pop_scene(scene_index - 1);
-        } catch(err) {
+        } catch (err) {
             console.error(err);
         }
         return false;
     }
 
-    this.show = function() {
+    this.show = function () {
         this.release();
         scene_index = scene_stack.length - 1;
         // Clone type_form because it's impossible to hide options without removing them
@@ -977,7 +976,7 @@ function CreateEditCollectionScene(user, password, collection) {
         submit_btn.onclick = onsubmit;
         cancel_btn.onclick = oncancel;
     };
-    this.hide = function() {
+    this.hide = function () {
         read_form();
         html_scene.style.display = "none";
         // restore type_form
@@ -987,7 +986,7 @@ function CreateEditCollectionScene(user, password, collection) {
         submit_btn.onclick = null;
         cancel_btn.onclick = null;
     };
-    this.release = function() {
+    this.release = function () {
         scene_index = null;
         if (create_edit_req !== null) {
             create_edit_req.abort();

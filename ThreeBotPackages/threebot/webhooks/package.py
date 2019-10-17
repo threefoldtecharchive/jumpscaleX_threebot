@@ -17,7 +17,7 @@ class Package(j.baseclasses.threebot_package):
 
         server = self.openresty
         server.configure()
-        website = server.get_from_port(port=80)
+        website = server.get_from_port(port=443)
         locations = website.locations.get("main_webhooks")
 
         app = j.threebot.package.webhooks.get_app()
