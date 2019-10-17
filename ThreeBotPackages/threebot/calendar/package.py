@@ -5,15 +5,6 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-    def prepare(self):
-        """
-        is called at install time
-        :return:
-        """
-        j.builders.runtimes.python3.pip_package_install("filetype")
-        j.builders.runtimes.python3.pip_package_install("vobject")
-        j.builders.runtimes.python3.pip_package_install("caldav")
-
     @property
     def bcdb(self):
         return self._package.threebot_server.bcdb_get("caldav")
@@ -31,26 +22,24 @@ class Package(j.baseclasses.threebot_package):
         # radicale.log.logger.setLevel(logging.DEBUG)
         from radicale import application
 
-        rack = j.servers.rack.get()
+        rack = self.threebot_server.rack_server
 
-        rack.bottle_server_add(name="radicale", port=8851, app=application)
-        website = self.openresty.websites.get("radicale")
-        website.ssl = False
-        website.port = 8001
+        rack.bottle_server_add(name="calendar", port=8851, app=application)
+        website = self.openresty.get_from_port(443)
 
-        locations = website.locations.get("radicale")
+        locations = website.locations.get("calendar")
         proxy_location = locations.locations_proxy.new()
-        proxy_location.name = "radicale"
-        proxy_location.path_url = "/"
+        proxy_location.name = "calendar"
+        proxy_location.path_url = "/calendar/"
         proxy_location.ipaddr_dest = "0.0.0.0"
         proxy_location.port_dest = 8851
+        proxy_location.path_dest = "/"
         proxy_location.scheme = "http"
 
         website_location = locations.locations_static.new()
         website_location.name = "static"
         website_location.path_url = "/static/"
         website_location.path_location = f"{self._dirpath}/static"
-        # website_location.use_jumpscale_weblibs = True
 
         locations.configure()
         website.configure()
