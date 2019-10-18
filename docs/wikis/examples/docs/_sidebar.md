@@ -1,5 +1,6 @@
 * [Test](test.md)
 * [Test Include](test_include.md)
+* [Test Links](test_links.md)
 * [Test source](test_src.md)
 * [Team](test_team.md)
 * [Gallery](test_gallery.md)
