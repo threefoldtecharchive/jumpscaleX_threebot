@@ -2,8 +2,7 @@
 
 ## links
 
-[document][https://github.com/threefoldfoundation/info_tokens/blob/master/docs/what_are_tfts.md]
-
+- [document](https://github.com/threefoldfoundation/info_tokens/blob/master/docs/what_are_tfts.md)
 - [link](threefoldtech:home(master):schemas/readme.md)
 - [link](threefoldtech:home:projects/readme.md)
 - [link](https://github.com/threefoldfoundation:projects/readme.md)
