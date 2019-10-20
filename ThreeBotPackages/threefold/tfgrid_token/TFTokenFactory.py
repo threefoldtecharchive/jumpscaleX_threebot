@@ -42,7 +42,7 @@ class TFTokenFactory(j.baseclasses.threebot_factory):
         # fetch the news
         r = gedis_cli.actors.news.list()
 
-        j.shell()
+        # j.shell()
 
         cl = j.clients.redis.get(port=8901)
         assert cl.execute_command("PING")

@@ -16,7 +16,9 @@ class addressbook(j.baseclasses.threebot_actor):
         ```
         currentlly any username and password will work
         """
-        self.client = j.clients.carddav.get(resource=f"{self.base_url}/{username}", user=username, passwd=password, verif=False, name="test")
+        self.client = j.clients.carddav.get(
+            resource=f"{self.base_url}/{username}", user=username, passwd=password, verif=False, name="test"
+        )
         self.username = username
 
     def _verify_client(self):
