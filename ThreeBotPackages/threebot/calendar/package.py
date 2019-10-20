@@ -24,7 +24,7 @@ class Package(j.baseclasses.threebot_package):
 
         rack = self.threebot_server.rack_server
 
-        rack.bottle_server_add(name="calendar", port=8851, app=application)
+        rack.bottle_server_add(name="calendar", port=8851, app=application, strip_slash=False)
         website = self.openresty.get_from_port(443)
 
         locations = website.locations.get("calendar")
