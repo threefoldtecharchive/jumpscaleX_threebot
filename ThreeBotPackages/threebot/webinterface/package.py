@@ -25,23 +25,24 @@ class Package(j.baseclasses.threebot_package):
         self.openresty.configure()
 
         # get our main webserver
-        website = self.openresty.get_from_port(443)
+        for port in (443, 80):
+            website = self.openresty.get_from_port(port)
 
-        # start bottle server
-        app = j.servers.bottle_web.get_app()
-        self.rack_server.bottle_server_add(name="bottle_web_interface", port=9999, app=app, websocket=True)
+            # start bottle server
+            app = j.servers.bottle_web.get_app()
+            self.rack_server.bottle_server_add(name="bottle_web_interface", port=9999, app=app, websocket=True)
 
-        # PROXY for gedis HTTP
-        proxy_location = website.locations.get().locations_proxy.new()
-        proxy_location.name = "webinterface"
-        proxy_location.path_url = "/web/"
-        proxy_location.ipaddr_dest = "127.0.0.1"
-        proxy_location.port_dest = 9999
-        proxy_location.path_dest = "/"
-        proxy_location.type = "http"
-        proxy_location.scheme = "http"
+            # PROXY for gedis HTTP
+            proxy_location = website.locations.get().locations_proxy.new()
+            proxy_location.name = "webinterface"
+            proxy_location.path_url = "/web/"
+            proxy_location.ipaddr_dest = "127.0.0.1"
+            proxy_location.port_dest = 9999
+            proxy_location.path_dest = "/"
+            proxy_location.type = "http"
+            proxy_location.scheme = "http"
 
-        website.configure()
+            website.configure()
 
     def start(self):
         self.prepare()
