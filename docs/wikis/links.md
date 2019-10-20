@@ -8,18 +8,21 @@ Links can be written in a custom format that make it easy to reference other doc
 [description](link)
 ```
 
-`link` can be in the following format
+`link` can be in the following format (colon separated).
 
 ```
-account:repository(branch):name_or_path!marker
+host:account:repository(branch):name_or_path!marker
 ```
 
 This can be broken down into:
-* `account`: github account or organization (optional)
-* `repository`: github repository (optional)
+* `host`: hosting service e.g. `gitlab.com` (optional)
+* `account`: account or organization (optional)
+* `repository`: repository (optional)
 * `branch`: branch (defaults to master) (optional)
 * `name_or_path`: the name or full path of a document or file
 * `marker`: marker name, see [markers](markers.md)) (optional)
+
+`host`, `account` and `repository` can be optional only if they're at the start of the link, you cannot have a link like `github.com:jumpscaleX:readme.md` as it would be a bit hard to guess which is which.
 
 If any optional part is not specefied, it will be replaced by current wiki or repository information (see the following examples).
 
@@ -30,6 +33,13 @@ If any optional part is not specefied, it will be replaced by current wiki or re
 ```
 [document][https://github.com/threefoldfoundation/info_tokens/tree/master/docs/document.md]
 ```
+
+#### A link with host
+
+```
+[link](gitlab.com:threefoldforks:Threefold-Circles-back:CODE_OF_CONDUCT.md)
+```
+
 
 #### With account and repository
 
@@ -71,5 +81,3 @@ Will be replaced by
 ```
 [Issue][https://github.com/threefoldfoundation/info_tokens/issues/122]
 ```
-
-
