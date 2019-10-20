@@ -30,8 +30,8 @@ class Package(j.baseclasses.threebot_package):
             locations = website.locations.get("main_wiki")
 
             website_location = locations.locations_static.new()
-            website_location.name = "static"
-            website_location.path_url = "/static"
+            website_location.name = "wikistatic"
+            website_location.path_url = "/wikistatic"
             website_location.path_location = f"{self._dirpath}/static"
             website_location.use_jumpscale_weblibs = True
 
