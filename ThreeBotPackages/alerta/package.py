@@ -41,4 +41,3 @@ class Package(j.baseclasses.threebot_package):
 
         # setup alert handler to intercept errors
         j.tools.alerthandler.setup()
-
