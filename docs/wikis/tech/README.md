@@ -17,6 +17,13 @@ First make sure you have a threebot server running ` kosmos -p 'j.servers.threeb
 
 then load your wikis in one of two ways using `jsx wiki_load` or the markdowndocs tool
 
+## Reload wiki
+
+First make sure you have a threebot server running ` kosmos -p 'j.servers.threebot.local_start_default()'`
+
+using `jsx wiki-reload -n "your-wiki-name"` ex. foundation, testwikis .. this will look for the changes in the repo locally, if not will pull it from github and update the changes.
+
+
 ### jsx wiki_load
 
 the following command can be used to load a wiki using its url
