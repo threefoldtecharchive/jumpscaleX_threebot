@@ -59,6 +59,11 @@ markdown document
 
 !!!include("https://gitlab.com/threefoldforks/Threefold-Circles-events/blob/master/README.md")
 
+raw link (auto detected)
+
+!!!include("https://gitlab.com/threefoldforks/Threefold-Circles-back/raw/master/CODE_OF_CONDUCT.md")
+
+
 #### raw urls
 when https and : inside then it means it needs to be a git repo (can be gitlabs or gogs too) so the code will be checked out and fhe file looked for
 when https and raw=True: then its a real link which can be downloaded with curl
