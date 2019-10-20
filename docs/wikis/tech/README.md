@@ -17,12 +17,6 @@ First make sure you have a threebot server running ` kosmos -p 'j.servers.threeb
 
 then load your wikis in one of two ways using `jsx wiki_load` or the markdowndocs tool
 
-## Reload wiki
-
-First make sure you have a threebot server running ` kosmos -p 'j.servers.threebot.local_start_default()'`
-
-using `jsx wiki-reload -n "your-wiki-name"` ex. foundation, testwikis .. this will look for the changes in the repo locally, if not will pull it from github and update the changes.
-
 
 ### jsx wiki_load
 
@@ -63,6 +57,14 @@ Jumpscale job queue can be used too to load docsites in background, see [threefo
 
 
 Then open your browser with 3bot/container hostname at `https:<hostname>/wiki/<your_docsite_name>`.
+
+## Reload wiki
+
+First make sure you have a threebot server running ` kosmos -p 'j.servers.threebot.local_start_default()'`
+
+using `jsx wiki-reload -n "your-wiki-name"` ex. foundation, testwikis .. this will look for the changes in the repo locally, if not will pull it from github and update the changes.
+
+
 
 
 ## Setting up gdrive and service account
