@@ -1,8 +1,8 @@
 @url = tfgrid.reservation.workload.1
-workload_id = (S)
+workload_id = (I)
 user = (S)
 type = "zdb,container,volume,network" (E)
-content = (dict) 
+content = (dict)
 created = (T)
 duration = (I)
 signature = (S)
