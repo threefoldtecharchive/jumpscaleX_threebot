@@ -14,18 +14,11 @@ def main(self):
     farmer_signing_key = signing.SigningKey.generate()
     signer_signing_key = signing.SigningKey.generate()
 
-    try:
-        bcdb = j.data.bcdb.new("tf_workloads")
-    except:
-        bcdb = j.data.bcdb.get("tf_workloads")
+    bcdb = j.servers.threebot.default.bcdb_get("tf_workloads")
     reservation_model = bcdb.model_get(url="tfgrid.reservation.1")
     reservation_model.destroy()  # ensure it's empty
 
-    try:
-        ph_bcdb = j.data.bcdb.new("threebot_phonebook")
-    except:
-        ph_bcdb = j.data.bcdb.get("threebot_phonebook")
-
+    ph_bcdb = j.servers.threebot.default.bcdb_get("threebot_phonebook")
     model = ph_bcdb.model_get(url="threebot.phonebook.user.1")
     model.destroy()
 
@@ -54,6 +47,7 @@ def main(self):
     container_model = bcdb.model_get(url="tfgrid.reservation.container.1")
     volume_model = bcdb.model_get(url="tfgrid.reservation.volume.1")
     zdb_model = bcdb.model_get(url="tfgrid.reservation.zdb.1")
+
     # create container
     container = container_model.new()
     container.node_id = 1
@@ -70,9 +64,11 @@ def main(self):
     zdb.workload_id = 3
     zdb.farmer_tid = tbots["farmer"].id
 
+    # add workloads to reservation
     reservation.data_reservation.containers.append(container)
     reservation.data_reservation.volumes.append(volume)
     reservation.data_reservation.zdbs.append(zdb)
+
     # create sigining request
     request_model = bcdb.model_get(url="tfgrid.reservation.signing.request.1")
     request = request_model.new()
@@ -109,7 +105,8 @@ def main(self):
     reservations = cl.actors.workload_manager.reservations_list(epoch=j.data.time.epoch + 1000)
     assert len(reservations) == 0
 
-    # TEST04: SING RESERVATION
+    # TEST04: SIGN RESERVATION
+
     signature = customer_signing_key.sign(reservation.json.encode())
     cl.actors.workload_manager.sign_customer(reservation.id, binascii.hexlify(signature.signature))
     reservation = cl.actors.workload_manager.reservation_get(reservation.id)
@@ -127,14 +124,15 @@ def main(self):
     reservation = cl.actors.workload_manager.reservation_get(reservation.id)
     assert reservation.next_action == "DEPLOY"
 
+    import ipdb; ipdb.set_trace()
     # TEST07: LIST WORKLOADS
-    workloads = cl.actors.workload_manager.workloads_list(node_id=1)
+    workloads = cl.actors.workload_manager.workloads_list(node_id=1).workloads
     assert len(workloads) == 2
 
-    workloads = cl.actors.workload_manager.workloads_list(node_id=2)
-    assert len(workloads) == 1
+    workloads = cl.actors.workload_manager.workloads_list(node_id=2).workloads
+    assert len(workloads) == 0
 
-    workloads = cl.actors.workload_manager.workloads_list(node_id=0)
+    workloads = cl.actors.workload_manager.workloads_list(node_id=0).workloads
     assert len(workloads) == 0
 
     # TEST08: FILL SING DELETE
