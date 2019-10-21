@@ -2,7 +2,7 @@ from Jumpscale import j
 
 WORKER_STATES = dict(zip(range(5), ["NEW", "ERROR", "BUSY", "WAITING", "HALTED"]))
 WORKER_TYPES = dict(zip(range(3), ["tmux", "subprocess", "inprocess"]))
-JOB_STATES = dict(zip(range(5), ["NEW", "ERROR", "OK", "RUNNING", "HALTED"]))
+JOB_STATES = dict(zip(range(5), ["NEW", "ERROR", "OK", "RUNNING", "DONE"]))
 
 
 class myjobs(j.baseclasses.threebot_actor):
