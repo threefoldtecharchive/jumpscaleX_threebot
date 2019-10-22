@@ -176,7 +176,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
         out = schema_out.new()
         out.network_private = f"{newip}/{subnet.prefixlen}"
 
-        peer = j.tools.wireguard.new(name=f"{networkname}-{peername}")
+        peer = j.tools.wireguard.get(name=f"{networkname}-{peername}")
         peer.key_public = publickey
         peer.network_private = out.network_private
         peer.save()

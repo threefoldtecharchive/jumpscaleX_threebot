@@ -199,7 +199,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservations = []
         for reservation_id in reservations_ids:
             reservation = self._reservation_get(reservation_id)
-            if states and str(reservation.next_action) not in [s.upper() for s in states]:
+            if states and reservation.next_action not in states:
                 continue
 
             if epoch != INT_NULL_VALUE and epoch >= reservation.epoch:
@@ -271,12 +271,17 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         if state and not isinstance(state, list):
             state = [state]
-        return self._filter_reservations(node_id, state, epoch)
+        reservations = self._filter_reservations(node_id, state, epoch)
+
+        output = schema_out.new()
+        output.reservations = reservations
+
+        return output
 
     def workloads_list(self, node_id, epoch, schema_out, user_session):
         """
         ```in
-        node_id = (S)  # filter results by node id
+        node_id = (I)  # filter results by node id
         epoch = (I)  # filter results which created after this epoch
         ```
 
@@ -287,7 +292,6 @@ class workload_manager(j.baseclasses.threebot_actor):
         output = schema_out.new()
         reservations = self._filter_reservations(node_id, ["deploy", "delete"], epoch)
         for reservation in reservations:
-
             for _type, workload in self._iterate_over_workloads(reservation):
                 if node_id and workload.node_id != node_id:
                     continue
