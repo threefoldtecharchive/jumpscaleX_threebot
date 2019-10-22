@@ -2,7 +2,7 @@ from Jumpscale import j
 import os
 
 
-class WorkloadManagerFactory(j.baseclasses.threebot_factory):
+class WorkloadManagerFactory(j.baseclasses.threebot_factory, j.baseclasses.testtools):
 
     __jslocation__ = "j.threebot.package.workloadmanager"
 
@@ -18,8 +18,8 @@ class WorkloadManagerFactory(j.baseclasses.threebot_factory):
         """
         basepath = os.path.dirname(os.path.dirname(__file__))
         self.client = j.servers.threebot.local_start_default()
-        self.client.actors.package_manager.package_add("tf_workloads", os.path.join(basepath, "tfgrid_workloads"))
-        self.client.actors.package_manager.package_add("threebot_phonebook", os.path.join(basepath, "phonebook"))
+        self.client.actors.package_manager.package_add(path=os.path.join(basepath, "tfgrid_workloads"))
+        self.client.actors.package_manager.package_add(path=os.path.join(basepath, "phonebook"))
 
         self.client.reload()
 
