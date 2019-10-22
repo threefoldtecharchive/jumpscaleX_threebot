@@ -4,7 +4,7 @@ module.exports = {
 
   // if you need to serve at `/`
   publicPath: process.env.dev === '1'
-    ? '/location-example'
+    ? '/vuejs'
     : '/',
   devServer: {
     host: '0.0.0.0',
@@ -12,5 +12,4 @@ module.exports = {
     public: '0.0.0.0:8080',
     disableHostCheck: true,
   },
-
 }

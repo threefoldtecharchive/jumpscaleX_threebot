@@ -6,7 +6,16 @@ class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
         # CHANGE ME (default 1: development mode will serve at /location-example)
         os.environ["dev"] = "1"
+        self.mylocation = "/vuejs"
         self.DEV = os.environ.get("dev")
+
+    def add_test_data(self):
+        model = self.bcdb.model_get(url="jumpscale.example.vuejs")
+        test_persopn = model.new()
+        test_persopn.myname = "hamada"
+        test_persopn.job = "software engineer"
+        test_persopn.aboutme = "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+        test_persopn.save()
 
     def prepare(self):
         """
@@ -23,6 +32,7 @@ class Package(j.baseclasses.threebot_package):
         cp newproject/dist/* html/ -R
         """
         j.sal.process.execute(prepare_cmd)
+        self.add_test_data()
 
     def start(self):
         """
@@ -35,12 +45,12 @@ class Package(j.baseclasses.threebot_package):
 
         website = server.get_from_port(443)
 
-        locations = website.locations.get("vuejs_locations")
+        locations = website.locations.get(f"{self.mylocation}_locations")
 
         website_location = locations.locations_spa.new()
-        website_location.name = "vuejs"
+        website_location.name = self.mylocation
         if self.DEV == "1":
-            website_location.path_url = "/location-example"
+            website_location.path_url = self.mylocation
         else:
             website_location.path_url = "/"
         website_location.use_jumpscale_weblibs = False

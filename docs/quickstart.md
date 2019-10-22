@@ -165,3 +165,7 @@ As you already figured out we use `openresty` for running applications and proxy
 - Pastebin
   - [backend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/pastebin/README.md)
   - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/pastebin/pastebin/README.md)
+
+- VueJS
+  
+  - // To add

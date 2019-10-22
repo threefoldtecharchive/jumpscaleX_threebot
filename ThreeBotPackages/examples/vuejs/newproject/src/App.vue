@@ -8,6 +8,7 @@
     <br />
     <router-link to="/test">Go to Test Page</router-link>
     <router-view></router-view>
+    <br />
   </div>
 </template>
 
