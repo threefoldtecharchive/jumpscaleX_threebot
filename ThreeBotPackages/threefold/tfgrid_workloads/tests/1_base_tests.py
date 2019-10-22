@@ -129,9 +129,9 @@ def main(self):
     assert len(workloads) == 2
 
     workloads = cl.actors.workload_manager.workloads_list(node_id=2).workloads
-    assert len(workloads) == 0
+    assert len(workloads) == 1
 
-    workloads = cl.actors.workload_manager.workloads_list(node_id=0).workloads
+    workloads = cl.actors.workload_manager.workloads_list(node_id=3).workloads
     assert len(workloads) == 0
 
     # TEST08: FILL SING DELETE
