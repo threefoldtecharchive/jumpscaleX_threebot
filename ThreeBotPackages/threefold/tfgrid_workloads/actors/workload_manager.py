@@ -281,7 +281,7 @@ class workload_manager(j.baseclasses.threebot_actor):
     def workloads_list(self, node_id, epoch, schema_out, user_session):
         """
         ```in
-        node_id = (S)  # filter results by node id
+        node_id = (I)  # filter results by node id
         epoch = (I)  # filter results which created after this epoch
         ```
 
@@ -292,7 +292,6 @@ class workload_manager(j.baseclasses.threebot_actor):
         output = schema_out.new()
         reservations = self._filter_reservations(node_id, ["deploy", "delete"], epoch)
         for reservation in reservations:
-
             for _type, workload in self._iterate_over_workloads(reservation):
                 if node_id and workload.node_id != node_id:
                     continue
