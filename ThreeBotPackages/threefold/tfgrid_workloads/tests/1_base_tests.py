@@ -93,16 +93,16 @@ def main(self):
     assert reservation.next_action == "CREATE"
 
     # TEST03: LIST RESERVATION
-    reservations = cl.actors.workload_manager.reservations_list()
+    reservations = cl.actors.workload_manager.reservations_list().reservations
     assert len(reservations) == 1
 
-    reservations = cl.actors.workload_manager.reservations_list(node_id=1)
+    reservations = cl.actors.workload_manager.reservations_list(node_id=1).reservations
     assert len(reservations) == 1
 
-    reservations = cl.actors.workload_manager.reservations_list(node_id=3)
+    reservations = cl.actors.workload_manager.reservations_list(node_id=3).reservations
     assert len(reservations) == 0
 
-    reservations = cl.actors.workload_manager.reservations_list(epoch=j.data.time.epoch + 1000)
+    reservations = cl.actors.workload_manager.reservations_list(epoch=j.data.time.epoch + 1000).reservations
     assert len(reservations) == 0
 
     # TEST04: SIGN RESERVATION
@@ -124,7 +124,6 @@ def main(self):
     reservation = cl.actors.workload_manager.reservation_get(reservation.id)
     assert reservation.next_action == "DEPLOY"
 
-    import ipdb; ipdb.set_trace()
     # TEST07: LIST WORKLOADS
     workloads = cl.actors.workload_manager.workloads_list(node_id=1).workloads
     assert len(workloads) == 2
