@@ -25,4 +25,14 @@ class provisioning_actor(j.baseclasses.threebot_actor):
             threebot_machine.create_new_do_machine()
         threebot_machine.machine_init()
         threebot_machine.jsx_install()
-        threebot_machine.threebot_start()
+
+    def threebot_registration(self, name, doublename):
+        """
+        ```in
+        name = (S)
+        doublename = (S)
+        ```
+        """
+        threebot_machine = j.tools.threebot_deploy.get(name=name, create=False)
+
+        pass
