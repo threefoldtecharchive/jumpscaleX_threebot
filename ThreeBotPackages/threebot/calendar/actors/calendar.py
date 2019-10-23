@@ -31,6 +31,26 @@ class calendar(j.baseclasses.threebot_actor):
         if raise_error:
             raise j.exceptions.NotFound(f"Couldn't find calendar with id: {cal_id}")
 
+    def search_events(self, cal_id, start, end, schema_out=None, user_session=None):
+        """
+        ```in
+        cal_id = (S)
+        start = (T)
+        end = (T)
+        ```
+        ```out
+        events = (LS)
+        ```
+        """
+        calendar = self._get_calendar(cal_id)
+        events = calendar.date_search(datetime.datetime.fromtimestamp(start), datetime.datetime.fromtimestamp(end))
+        output = schema_out.new()
+        output.events = [j.sal.fs.getBaseName(event.canonical_url).split(".")[0] for event in events]
+        return output
+        
+
+
+
     def list_calendars(self, schema_out=None, user_session=None):
         """
         ```out
@@ -151,16 +171,20 @@ class calendar(j.baseclasses.threebot_actor):
     def _get_event_dict(self, cal_id, uid):
         self._verify_client()
         event = self._get_event_object(cal_id, uid)
-        cal_object = vobject.readOne(event.data)
-        event = {
-            "calendar_id": cal_id,
-            "uid": uid,
-            "summary": cal_object.vevent.summary.value,
-            "dtstart": int(cal_object.vevent.dtstart.value.timestamp()),
-            "dtend": int(cal_object.vevent.dtend.value.timestamp()),
+        
+        event_dict = self._dictify_event(event)
+        return event_dict
+
+    def _dictify_event(self, event):
+        event_dict = {
+            "calendar_id": j.sal.fs.getBaseName(event.parent.canonical_url),
+            "uid": event.vobject_instance.vevent.uid.value,
+            "summary": event.vobject_instance.vevent.summary.value,
+            "dtstart": int(event.vobject_instance.vevent.dtstart.value.timestamp()),
+            "dtend": int(event.vobject_instance.vevent.dtend.value.timestamp()),
             "raw": event.data,
         }
-        return event
+        return event_dict
 
     def delete_event(self, cal_id, uid, user_session=None):
         """
