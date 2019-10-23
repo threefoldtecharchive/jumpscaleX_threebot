@@ -911,7 +911,8 @@ class Collection(BaseCollection):
                 item.dtend = int(vobject_item.vevent.dtend.value.timestamp())
                 item.type = "VEVENT"
                 item.timezone = vobject_item.vevent.dtstart.value.tzname()
-
+            else:
+                item.type = vobject_item.name
             item.save()
             collection.append(item)
         collection.save()
@@ -1021,6 +1022,8 @@ class Collection(BaseCollection):
             item.dtend = int(vobject_item.vevent.dtend.value.timestamp())
             item.type = "VEVENT"
             item.timezone = vobject_item.vevent.dtstart.value.tzname()
+        else:
+            item.type = vobject_item.name
         item.save()
         collection.items.append(item)
         collection.save()
