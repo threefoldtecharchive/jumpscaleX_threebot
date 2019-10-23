@@ -1,4 +1,4 @@
-# show another slide using v2
+# show presentation v2
 
 ```
 !!!slideshow_v2
@@ -12,6 +12,6 @@ slide = "1,2:3"
 
 [[slideshow]]
 presentation =  "trip"
-slide = "1:5,8"
+slide = ":"
 ```
 
