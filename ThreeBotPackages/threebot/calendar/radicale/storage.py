@@ -906,6 +906,12 @@ class Collection(BaseCollection):
             item = Database.item_model.new()
             item.item_id = href
             item.content = text
+            if vobject_item.name == "VCALENDAR":
+                item.dtstart = int(vobject_item.vevent.dtstart.value.timestamp())
+                item.dtend = int(vobject_item.vevent.dtend.value.timestamp())
+                item.type = "VEVENT"
+                item.timezone = vobject_item.vevent.dtstart.value.tzname()
+
             item.save()
             collection.append(item)
         collection.save()
@@ -1010,6 +1016,11 @@ class Collection(BaseCollection):
         item.user_id = self.user_id
         item.content = text
         item.epoch = j.data.time.epoch
+        if vobject_item.name == "VCALENDAR":
+            item.dtstart = int(vobject_item.vevent.dtstart.value.timestamp())
+            item.dtend = int(vobject_item.vevent.dtend.value.timestamp())
+            item.type = "VEVENT"
+            item.timezone = vobject_item.vevent.dtstart.value.tzname()
         item.save()
         collection.items.append(item)
         collection.save()
