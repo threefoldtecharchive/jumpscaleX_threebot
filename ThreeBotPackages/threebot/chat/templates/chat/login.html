@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/chatstatic/weblibs/bootstrap4/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/chatstatic/home/css/fonts.css">
+
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+    <link rel="stylesheet" href="/chatstatic/weblibs/bootstrap3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/chatstatic/weblibs/fontawesome4/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/chatstatic/chat/css/form-elements.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+        crossorigin="" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/chatstatic/home/css/style.css">
+</head>
+
+<body>
+    <div class="intro">
+        <div class="container">
+            <div class="intro-text justify-content-center">
+                <div class="row">
+                    <div class="col-sm">
+                        <img src="/chatstatic/home/img/3BOT - ROBOT.png" alt="3Bot">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm text-center">
+                        <h2>Please select one of the following providers to login.</h2>
+
+                        <span class="li-social">
+                            {% for provider in providers%}
+                            <a href="{{oauth_server}}/authorize/{{provider}}?{{query}}"><i class="fa fa-{{provider}}"
+                                    style="font-size: 33px"></i></a>
+                            {% endfor %}
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
