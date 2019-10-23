@@ -31,3 +31,6 @@ We register a sample chatflow `food_get` in threebot
 ![Chat Flow3](../images/chat/chat3.png)
 ![Chat Flow4](../images/chat/chat4.png)
 ![Chat Flow5](../images/chat/chat5.png)
+
+
+For more technical information on the chat package please check [tech.md](./tech.md)
