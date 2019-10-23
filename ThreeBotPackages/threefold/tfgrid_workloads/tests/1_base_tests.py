@@ -22,9 +22,11 @@ def main(self):
 
     reservation_model.IndexTable = index_table
     reservation_model.trigger_add(j.threebot.package.workloadmanager.reservation_index_create())
-    reservations = reservation_model.find()
-    for reservation in reservations:
+
+    for reservation in reservation_model.find():
         reservation.delete()
+
+    reservation_model.destroy()
 
     ph_bcdb = j.servers.threebot.default.bcdb_get("threebot_phonebook")
     model = ph_bcdb.model_get(url="threebot.phonebook.user.1")
@@ -46,9 +48,6 @@ def main(self):
         tbots[role] = tbot
 
     # TEST01: REGISTER RESERVATION
-    reservation_model = bcdb.model_get(url="tfgrid.reservation.1")
-    reservation_model.destroy()
-
     reservation = reservation_model.new()
     reservation.customer_tid = tbots["customer"].id
 
@@ -100,7 +99,6 @@ def main(self):
     request.save()
     reservation.data_reservation.signing_request_provision = request
     reservation.data_reservation.signing_request_delete = request
-    reservation.customer_tid = tbots["customer"].id
     reservation.data_reservation.expiration_provisioning = int(j.data.time.epoch + 3 * 60)
     reservation.data_reservation.expiration_reservation = int(j.data.time.epoch + 5 * 60)
     reservation.json = j.data.serializers.json.dumps(reservation.data_reservation._ddict)
@@ -168,3 +166,45 @@ def main(self):
     cl.actors.workload_manager.sign_delete(reservation.id, tbots["signer"].id, binascii.hexlify(signature.signature))
     reservation = cl.actors.workload_manager.reservation_get(reservation.id)
     assert reservation.next_action == "DELETE"
+
+    # TEST09: REGISTER RESERVATION WITH INEXISTANT CUSTOMER
+    reservation = reservation_model.new()
+    reservation.customer_tid = 1000000  # id of inexistant customer
+
+    container_model = bcdb.model_get(url="tfgrid.reservation.container.1")
+
+    # create container
+    container = container_model.new()
+    container.node_id = "1"
+    container.workload_id = 1
+    container.farmer_tid = tbots["farmer"].id
+
+    # add workloads to reservation
+    reservation.data_reservation.containers.append(container)
+
+    # create sigining request
+    request_model = bcdb.model_get(url="tfgrid.reservation.signing.request.1")
+    request = request_model.new()
+    request.signers = [tbots["signer"].id]
+    request.quorum_min = 1
+    request.save()
+    reservation.data_reservation.signing_request_provision = request
+    reservation.data_reservation.signing_request_delete = request
+    reservation.data_reservation.expiration_provisioning = int(j.data.time.epoch + 3 * 60)
+    reservation.data_reservation.expiration_reservation = int(j.data.time.epoch + 5 * 60)
+    reservation.json = j.data.serializers.json.dumps(reservation.data_reservation._ddict)
+
+    reservation_data = reservation._ddict
+
+    # register reservation
+    reservation = cl.actors.workload_manager.reservation_register(reservation_data)
+    assert reservation.next_action == "CREATE"
+
+    # add a customer signature
+    cl.actors.workload_manager.sign_customer(reservation.id, "signature")
+    reservation = cl.actors.workload_manager.reservation_get(reservation.id)
+    assert reservation.next_action == "INVALID"
+
+    # FINAL: clean up created reservations
+    for reservation in reservation_model.find():
+        reservation.delete()

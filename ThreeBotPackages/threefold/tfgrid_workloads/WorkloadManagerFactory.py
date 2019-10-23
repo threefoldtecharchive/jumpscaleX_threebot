@@ -13,6 +13,7 @@ class WorkloadManagerFactory(j.baseclasses.threebot_factory, j.baseclasses.testt
     def test(self, name=""):
         """
 
+        Running the tests will destroy all existing reservations instances and phonebook users instances
         kosmos 'j.threebot.package.workloadmanager.test()'
 
         """
@@ -58,7 +59,7 @@ class WorkloadManagerFactory(j.baseclasses.threebot_factory, j.baseclasses.testt
                                 reservation_id=obj.id, workload_id=workload.workload_id, node_id=workload.node_id
                             )
             if action == "delete":
-                query = model.IndexTable.delete().where(model.IndexTable.reservation_id==obj.id)
+                query = model.IndexTable.delete().where(model.IndexTable.reservation_id == obj.id)
                 query.execute()
 
         return index_create
