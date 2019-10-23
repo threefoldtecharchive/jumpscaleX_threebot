@@ -13,7 +13,7 @@ install:
   - source /sandbox/env.sh; kosmos "j.builders.runtimes.lua.install(reset=True)"
 
 script:
-  - source /sandbox/env.sh; nosetests-3.4 -v /sandbox/code/github/threefoldtech/jumpscaleX_threebot/test_loader.py --nologcapture 
-    --with-xunit --xunit-file=/test.xml --xunit-testsuite-name=jumpscaleX_threebot
   - source /sandbox/env.sh; nosetests-3.4 -v /sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/wiki/tests/ 
     --nologcapture --with-xunit --xunit-file=/test.xml --xunit-testsuite-name=Test_wikis
+  - source /sandbox/env.sh; nosetests-3.4 -v /sandbox/code/github/threefoldtech/jumpscaleX_threebot/test_loader.py --nologcapture 
+    --with-xunit --xunit-file=/test.xml --xunit-testsuite-name=jumpscaleX_threebot
