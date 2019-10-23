@@ -13,5 +13,13 @@ slide = "1,2:3"
 [[slideshow]]
 presentation =  "trip"
 slide = ":"
+
+[[slideshow]]
+presentation =  "business"
+slide = ":3"
+
+[[slideshow]]
+presentation =  "business"
+slide = "18:,21"
 ```
 
