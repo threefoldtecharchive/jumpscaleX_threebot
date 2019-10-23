@@ -16,7 +16,15 @@ def main(self):
 
     bcdb = j.servers.threebot.default.bcdb_get("tf_workloads")
     reservation_model = bcdb.model_get(url="tfgrid.reservation.1")
-    reservation_model.destroy()  # ensure it's empty
+    index_table = j.threebot.package.workloadmanager.reservation_index_model()
+    index_table._meta.database = reservation_model.bcdb.sqlite_index_client
+    index_table.create_table(safe=True)
+
+    reservation_model.IndexTable = index_table
+    reservation_model.trigger_add(j.threebot.package.workloadmanager.reservation_index_create())
+    reservations = reservation_model.find()
+    for reservation in reservations:
+        reservation.delete()
 
     ph_bcdb = j.servers.threebot.default.bcdb_get("threebot_phonebook")
     model = ph_bcdb.model_get(url="threebot.phonebook.user.1")
