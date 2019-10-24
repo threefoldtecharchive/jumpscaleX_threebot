@@ -6,14 +6,19 @@ All authentication are done by [https://oauth2.3bot.grid.tf](https://oauth2.3bot
 The server will authenticate with the configured oauth2 data(client id, secret,..) and upon success will redirect the user back to his threebot.
 
 there are two endpoint in this server
+
 - ```/auth/authorize/<provider_name>```: authorization url
+
 - ```/auth/callback/<provider_name>```: callback url
+
 ### Support new provider
 
 #### Create oauth2 application
+
 To support new provider you need to create an oauth2 application and set the callback with ```https://oauth2.3bot.grid.tf/auth/callback/<provider_name>``` 
 
 #### Register the new provider
+
 To register the new provider to the server use `site_providers` client:
 
 ```python
@@ -49,3 +54,26 @@ The following endpoints were added for this flow:
 
 By default chat pages can be accessed without logging in. To force authentication on an endpoint we use the `auth` wrapper.
 The wrapper will check if the username is stored in the session or not otherwise it will redirect to the login page.
+
+### Session middleware
+
+In order to use session in the bottle framework, session middleware was used from the `beaker` package.
+After defining the bottle app route and configurations the app is overridden with the middleware app which is then used to run the bottle server.
+
+```python
+session_opts = {"session.type": "file", "session.data_dir": "./data", "session.auto": True}
+app = SessionMiddleware(app, session_opts)
+```
+
+To access the session data:
+
+```python
+session = request.environ.get("beaker.session")
+```
+
+### Providers
+
+The server has a variable called `PROVIDERS` which is a list of all the available providers.
+The list consists of the name of the providers which is sent to the oauth server.
+
+The name is also used for the class for displaying the logo of the provider in the front end.

@@ -14,19 +14,7 @@ env = Environment(loader=FileSystemLoader(templates_path), autoescape=select_aut
 
 app = Bottle()
 
-PROVIERS = ["github"]
-
-
-def _get_domain():
-    certs_dir = "/etc/resty-auto-ssl/letsencrypt/certs/"
-    if j.sal.fs.exists(certs_dir):
-        domains = list(map(j.sal.fs.getBaseName, j.sal.fs.listDirsInDir(certs_dir)))
-        if domains:
-            return f"https://{domains[0]}"
-    return "https://localhost"
-
-
-SERVER_DOMAIN = _get_domain()
+PROVIDERS = ["github"]
 
 
 def enable_cors(fn):
@@ -80,8 +68,11 @@ def login():
     session = request.environ.get("beaker.session")
     session_uid = j.data.idgenerator.generateGUID()
     session["uid"] = session_uid
-    query_params = f"uid={session_uid}&redirect_url={SERVER_DOMAIN}/chat/authorize"
-    return env.get_template("chat/login.html").render(oauth_server=OAUTH_SERVER, query=query_params, providers=PROVIERS)
+    server_domain = "https://" + request.headers["HOST"]
+    query_params = f"uid={session_uid}&redirect_url={server_domain}/chat/authorize"
+    return env.get_template("chat/login.html").render(
+        oauth_server=OAUTH_SERVER, query=query_params, providers=PROVIDERS
+    )
 
 
 @app.route("/chat/authorize")
@@ -101,21 +92,23 @@ def chat_authorize():
 @app.route("/chat")
 @auth
 def home_handler():
+    session = request.environ.get("beaker.session")
     chatflows = _get_chatflows()
     data = [(chatflow, chatflow.capitalize().replace("_", " ")) for chatflow in chatflows]
-    return env.get_template("chat/home.html").render(chatflows=data)
+    return env.get_template("chat/home.html").render(chatflows=data, username=session["username"])
 
 
 @app.route("/chat/session/<topic>", method="get")
 @enable_cors
 @auth
 def topic_handler(topic):
+    session = request.environ.get("beaker.session")
     if topic not in _get_chatflows():
         response.status = 404
         error = f"Specified chatflow {topic} is not registered on the system"
-        return env.get_template("chat/error.html").render(error=error)
+        return env.get_template("chat/error.html").render(error=error, username=session["username"])
     ws_url = get_ws_url()
-    return env.get_template("chat/index.html").render(topic=topic, url=ws_url)
+    return env.get_template("chat/index.html").render(topic=topic, url=ws_url, username=session["username"])
 
 
 session_opts = {"session.type": "file", "session.data_dir": "./data", "session.auto": True}
