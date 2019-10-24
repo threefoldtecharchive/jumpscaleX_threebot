@@ -1,5 +1,4 @@
 import traceback
-import uuid
 from Jumpscale import j
 from bottle import abort, response, request, Bottle, redirect
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -49,9 +48,8 @@ def enable_cors(fn):
 def auth(fn):
     def _auth(*args, **kwargs):
         session = request.environ.get("beaker.session")
-        if not session.get("username"):
+        if "username" not in session:
             session["next-url"] = request.path
-            session.save()
             redirect("/chat/login")
         return fn(*args, **kwargs)
 
@@ -80,9 +78,8 @@ def _get_chatflows():
 @app.route("/chat/login")
 def login():
     session = request.environ.get("beaker.session")
-    session_uid = str(uuid.uuid4())
+    session_uid = j.data.idgenerator.generateGUID()
     session["uid"] = session_uid
-    session.save()
     query_params = f"uid={session_uid}&redirect_url={SERVER_DOMAIN}/chat/authorize"
     return env.get_template("chat/login.html").render(oauth_server=OAUTH_SERVER, query=query_params, providers=PROVIERS)
 
@@ -93,7 +90,6 @@ def chat_authorize():
     session = request.environ.get("beaker.session")
     if data.get("uid") and data["uid"] == session.get("uid"):
         session["username"] = data["username"]
-        session.save()
         next_url = session.get("next-url", "/chat")
         redirect(next_url)
     else:

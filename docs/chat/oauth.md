@@ -2,8 +2,8 @@
 
 ## Central Oauth2 server
 
-All authentication are done by [https://oauth2.3bot.grid.tf](https://oauth2.3bot.grid.tf), which will direct the user to the specified provider(e.g github).
-The server will authenticate with the configured oauth2 data(client id, secret,..) and upon success will direct the user back to his threebot.
+All authentication are done by [https://oauth2.3bot.grid.tf](https://oauth2.3bot.grid.tf), which will redirect the user to the specified provider(e.g github).
+The server will authenticate with the configured oauth2 data(client id, secret,..) and upon success will redirect the user back to his threebot.
 
 there are two endpoint in this server
 - ```/auth/authorize/<provider_name>```: authorization url
@@ -27,7 +27,7 @@ client.provider_add(
         "redirect_url",
         "scope",
         "user_info_url",
-        "login_field" 
+        "login_field"
 )
 
 # To make sure it was added
@@ -41,7 +41,7 @@ The server should be able to support this provider now.
 
 ![Oauth flow](oauth.png)
 
-The following end points were added for this flow:
+The following endpoints were added for this flow:
 
 - `/chat/login`: Renders login page from which it is possible to select the provider. Will redirect here if user is not logged in. Will send the provider and the uuid as well as the callback endpoint.
 
