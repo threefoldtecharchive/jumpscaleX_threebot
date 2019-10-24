@@ -1,5 +1,5 @@
 from Jumpscale import j
-import uuid, requests
+import requests
 from urllib.parse import urlencode
 from bottle import Bottle, request, redirect, run, abort
 from beaker.middleware import SessionMiddleware
@@ -76,7 +76,7 @@ for provider_name, data in providers.items():
 def authorize_handler(provider):
     provider = providers_objects.get(provider)
     if not provider:
-        return abort(404, "Not found 2")
+        return abort(404, "Not found")
 
     uid = request.query.get("uid")
     redirect_url = request.query.get("redirect_url")
@@ -102,7 +102,8 @@ def callback_handler(provider):
         return abort(400, "Invalid state")
 
     username = provider.authorize(code, state)
-    rurl = "{redirect_url}?uid={uid}&username={username}".format(redirect_url=redirect_url, username=username, uid=uid)
+    params = urlencode({"uid": uid, "username": username})
+    rurl = "{redirect_url}?{params}".format(redirect_url=redirect_url, params=params)
     return redirect(rurl)
 
 
