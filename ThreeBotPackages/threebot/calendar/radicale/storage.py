@@ -694,10 +694,10 @@ class Database:
 
     @classmethod
     def find_collections(cls, collection_id, user_id):
-            calendars = cls.calendar_model.find(collection_id=collection_id, user_id=user_id)
+            calendars = cls.calendar_model.find(calendar_id=collection_id, user_id=user_id)
             if calendars:
                 return calendars
-            addressbooks = cls.addressbook_model.find(collection_id=collection_id, user_id=user_id)
+            addressbooks = cls.addressbook_model.find(addressbook_id=collection_id, user_id=user_id)
             if addressbooks:
                 return addressbooks
 
@@ -721,8 +721,8 @@ class Database:
             return []
         collection = collections[0]
         if collection.type == 'calendar':
-            return cls.event_model.find(item_id=item_id, collection_id=collection_id, user_id=user_id)
-        return cls.contact_model.find(item_id=item_id, collection_id=collection_id, user_id=user_id)
+            return cls.event_model.find(item_id=item_id, calendar_id=collection_id, user_id=user_id)
+        return cls.contact_model.find(item_id=item_id, addressbook_id=collection_id, user_id=user_id)
 
     @classmethod
     def get_collection(cls, collection_id, user_id):
@@ -809,7 +809,10 @@ class Collection(BaseCollection):
         self = cls(sane_path)
         collections = Database.calendar_model.find(user_id=self.user_id) + Database.addressbook_model.find(user_id=self.user_id)
         for collection in collections:
-            yield cls("/{}/{}".format(collection.user_id, collection.collection_id))
+            if collection.type == 'calendar':
+                yield cls("/{}/{}".format(collection.user_id, collection.calendar_id))
+            else:
+                yield cls("/{}/{}".format(collection.user_id, collection.addressbook_id))
 
     @classmethod
     def verify(cls):
@@ -858,12 +861,12 @@ class Collection(BaseCollection):
         if props.get("tag") == "VCALENDAR":
             col = Database.calendar_model.new()
             col.user_id = self.user_id
-            col.collection_id = self.collection_id
+            col.calendar_id = self.collection_id
             col.save()
         elif props.get("tag") == "VADDRESSBOOK":
                 col = Database.addressbook_model.new()
                 col.user_id = self.user_id
-                col.collection_id = self.collection_id
+                col.addressbook_id = self.collection_id
                 col.save()
 
         self.set_meta_all(props)
@@ -1021,7 +1024,7 @@ class Collection(BaseCollection):
         if vobject_item.name == "VCALENDAR":
             item = Database.event_model.new()
             item.item_id = href
-            item.collection_id = self.collection_id
+            item.calendar_id = self.collection_id
             item.user_id = self.user_id
             item.content = text
             item.epoch = j.data.time.epoch
@@ -1032,7 +1035,7 @@ class Collection(BaseCollection):
         else:
             item = Database.contact_model.new()
             item.item_id = href
-            item.collection_id = self.collection_id
+            item.addressbook_id = self.collection_id
             item.user_id = self.user_id
             item.content = text
             item.epoch = j.data.time.epoch

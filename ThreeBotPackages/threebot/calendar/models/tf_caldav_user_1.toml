@@ -6,7 +6,7 @@ user_id** = (S)
 @url = tf.caldav.event.1
 item_id** = (S)
 user_id** = (S)
-collection_id** = (S)
+calendar_id** = (S)
 content = (S)
 epoch = (T)
 dtstart = (T)
@@ -17,17 +17,14 @@ timezone = (S)
 @url = tf.caldav.contact.1
 item_id** = (S)
 user_id** = (S)
-collection_id** = (S)
+addressbook_id** = (S)
 content = (S)
 epoch = (T)
-dtstart = (T)
-dtend = (T)
 type = (S)
-timezone = (S)
 
 
 @url = tf.caldav.calendar.1
-collection_id** = (S)
+calendar_id** = (S)
 user_id** = (S)
 props = (S)
 cache = (S)
@@ -35,7 +32,7 @@ items = (LO) !tf.caldav.event.1
 type = "calendar" (S)
 
 @url = tf.caldav.addressbook.1
-collection_id** = (S)
+addressbook_id** = (S)
 user_id** = (S)
 props = (S)
 cache = (S)
