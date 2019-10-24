@@ -66,7 +66,7 @@ class Oauth2Provider(object):
 
 
 app = Bottle()
-providers = j.clients.site_providers.get("oauth2.grid.tf").providers
+providers = j.clients.site_providers.get("oauth2.3bot.grid.tf").providers
 providers_objects = {}
 for provider_name, data in providers.items():
     providers_objects[provider_name] = Oauth2Provider(provider_name, **data)

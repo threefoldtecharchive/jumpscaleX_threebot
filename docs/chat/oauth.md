@@ -5,13 +5,19 @@
 All authentication are done by [https://oauth2.3bot.grid.tf](https://oauth2.3bot.grid.tf), which will direct the user to the specified provider(e.g github).
 The server will authenticate with the configured oauth2 data(client id, secret,..) and upon success will direct the user back to his threebot.
 
-### Registering new providers
+there are two endpoint in this server
+- ```/auth/authorize/<provider_name>```: authorization url
+- ```/auth/callback/<provider_name>```: callback url
+### Support new provider
 
-To register new providers to the server use `site_providers` client:
+#### Create oauth2 application
+To support new provider you need to create an oauth2 application and set the callback with ```https://oauth2.3bot.grid.tf/auth/callback/<provider_name>``` 
+
+#### Register the new provider
+To register the new provider to the server use `site_providers` client:
 
 ```python
-client  = j.clients.site_providers.get("test")
-client.provider_add("provider_name", "client_id", "client_secret", )
+client  = j.clients.site_providers.get("oauth2.3bot.grid.tf")
 client.provider_add(
         "provider_name",
         "client_id",
@@ -21,7 +27,7 @@ client.provider_add(
         "redirect_url",
         "scope",
         "user_info_url",
-        "login_field"
+        "login_field" 
 )
 
 # To make sure it was added
