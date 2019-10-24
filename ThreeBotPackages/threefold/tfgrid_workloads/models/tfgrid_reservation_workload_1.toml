@@ -2,7 +2,7 @@
 workload_id = (S)
 user = (S)
 type = "zdb,container,volume,network" (E)
-content = (dict) 
+content = (dict)
 created = (T)
 duration = (I)
 signature = (S)

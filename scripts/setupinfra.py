@@ -243,7 +243,10 @@ client.actors.package_manager.package_add(
     path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/gridnetwork"
 )
 client.actors.package_manager.package_add(
-    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/phonebook"
+    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/tfgrid_directory"
+)
+client.actors.package_manager.package_add(
+    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/tfgrid_workloads"
 )
 client.reload()
 

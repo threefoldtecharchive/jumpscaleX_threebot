@@ -2,10 +2,9 @@
 
 @url = tfgrid.reservation.container.1
 #unique id inside the reservation is an autoincrement
-workload_id = (S)
+workload_id = (I)
 #links to unique node on the TFGrid
-node_id = (I)
-reservation_id** = (I)
+node_id = (S)
 flist = (S)
 hub_url = (S)
 #env variables
