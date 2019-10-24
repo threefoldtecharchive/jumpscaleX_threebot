@@ -168,4 +168,5 @@ As you already figured out we use `openresty` for running applications and proxy
 
 - VueJS
   
-  - // To add
+  - [backend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/examples/vuejs/README.md)
+  - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/examples/vuejs/newproject/README.md)
