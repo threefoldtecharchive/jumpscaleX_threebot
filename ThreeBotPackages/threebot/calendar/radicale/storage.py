@@ -691,15 +691,15 @@ class Database:
     addressbook_model = bcdb.model_get(url="tf.caldav.addressbook.1")
     event_model = bcdb.model_get(url="tf.caldav.event.1")
     contact_model = bcdb.model_get(url="tf.caldav.contact.1")
+    attachment_model = bcdb.model_get(url="tf.caldav.attachment.1")
+
 
     @classmethod
     def find_collections(cls, collection_id, user_id):
-            calendars = cls.calendar_model.find(calendar_id=collection_id, user_id=user_id)
-            if calendars:
-                return calendars
-            addressbooks = cls.addressbook_model.find(addressbook_id=collection_id, user_id=user_id)
-            if addressbooks:
-                return addressbooks
+        calendars = cls.calendar_model.find(calendar_id=collection_id, user_id=user_id)
+        if calendars:
+            return calendars
+        return cls.addressbook_model.find(addressbook_id=collection_id, user_id=user_id)
 
     @classmethod
     def user_exists(cls, user_id):
@@ -919,6 +919,16 @@ class Collection(BaseCollection):
                 item.dtend = int(vobject_item.vevent.dtend.value.timestamp())
                 item.type = "VEVENT"
                 item.timezone = vobject_item.vevent.dtstart.value.tzname()
+                item.title = vobject_item.vevent.summary.value
+                item.description = vobject_item.vevent.description.value
+                item.location = vobject_item.vevent.location.value
+                for e in vobject_item.vevent.getChildren():
+                    if e.name == 'ATTACH':
+                        a = Database.attachment_model.new()
+                        a.name = e.params['FILENAME'].replace("['", '').replace("']", '')
+                        a.encoding = e.params['ENCODING'].replace("['", '').replace("']", '').lower()
+                        a.content = e.value
+                        a.save()
             else:
                 item = Database.contact_model.new()
                 item.item_id = href
@@ -1032,6 +1042,18 @@ class Collection(BaseCollection):
             item.dtend = int(vobject_item.vevent.dtend.value.timestamp())
             item.type = "VEVENT"
             item.timezone = vobject_item.vevent.dtstart.value.tzname()
+            item.title = vobject_item.vevent.summary.value
+            item.description = vobject_item.vevent.description.value
+            item.location = vobject_item.vevent.location.value
+
+            for e in vobject_item.vevent.getChildren():
+                if e.name == 'ATTACH':
+                    a = Database.attachment_model.new()
+                    a.name = e.params['FILENAME'].replace("['", '').replace("']", '')
+                    a.encoding = e.params['ENCODING'].replace("['", '').replace("']", '').lower()
+                    a.content = e.value
+                    a.save()
+
         else:
             item = Database.contact_model.new()
             item.item_id = href

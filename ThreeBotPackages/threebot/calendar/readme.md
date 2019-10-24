@@ -45,3 +45,113 @@ to start the threebot server manually
 ```bash
 kosmos -p 'j.servers.threebot.default.start(background=False,web=False)'
 ```
+
+# actors
+
+**`login`**
+
+- input
+ ```
+ {
+    "args": {
+        "username": "admin",
+        "password": "admin"
+    }
+ }
+ ```
+
+
+**`add_calendar`**
+
+- input
+
+     ```
+     {
+    "args":{
+      "calendar": {
+        "description":"description",
+        "color": "#123abc",
+        "display_name": "Calendar1"
+      }
+    }
+}
+    ```
+- output
+    ```
+   {
+    "calendar": {
+        "calendar_id": "56785aa9-95bd-4e0f-872f-b621e80d1915",
+        "user_id": "admin",
+        "props": "{\"D:displayname\": \"Calendar1\", \"tag\": \"VCALENDAR\", \"C:calendar-description\": \"description\", \"ICAL:calendar-color\": \"#123abc\"}",
+        "cache": "",
+        "items": [],
+        "type": "calendar",
+        "display_name": "",
+        "description": "description",
+        "color": "#123abc",
+        "id": 3
+    }
+}
+    ```
+**`list`**
+- output
+```
+
+{
+    "calendars": [
+
+        {
+            "calendar_id": "56785aa9-95bd-4e0f-872f-b621e80d1915",
+            "user_id": "admin",
+            "props": "{\"D:displayname\": \"Calendar1\", \"tag\": \"VCALENDAR\", \"C:calendar-description\": \"description\", \"ICAL:calendar-color\": \"#123abc\"}",
+            "cache": "",
+            "items": [],
+            "type": "calendar",
+            "display_name": "",
+            "description": "description",
+            "color": "#123abc",
+            "id": 3
+        }
+    ]
+}
+```
+
+***get**
+- input
+```
+{
+    "args":{
+      "calendar_id": "e43050ae-bb01-42bd-8be5-9ecbc5ea98b7"
+    	
+    }
+}
+```
+
+- output
+```
+{
+    "calendar_id": "e43050ae-bb01-42bd-8be5-9ecbc5ea98b7",
+    "user_id": "admin",
+    "props": "{\"D:displayname\": \"Hi Jimber\", \"tag\": \"VCALENDAR\", \"C:calendar-description\": \"test@jimber.org\", \"ICAL:calendar-color\": \"tests@jimber.org\"}",
+    "cache": "",
+    "items": [],
+    "type": "calendar",
+    "display_name": "",
+    "description": "test@jimber.org",
+    "color": "tests@jimber.org",
+    "id": 2
+}
+```
+
+***delete**
+- input
+```
+{
+    "args":{
+      "calendar_id": "e43050ae-bb01-42bd-8be5-9ecbc5ea98b7"
+    	
+    }
+}
+```
+
+
