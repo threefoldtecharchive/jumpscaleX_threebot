@@ -39,7 +39,10 @@ class nodes(j.baseclasses.threebot_actor):
             raise Exception("Can not create node without {}".format(" or ".join(validation_errors)))
         old_node = self._find(node.node_id)
         if old_node:
+            node.updated = j.data.time.epoch
             return self.node_model.set_dynamic(node._ddict, obj_id=old_node.id)
+        else:
+            node.created = j.data.time.epoch
         return self.node_model.new(data=node).save()
 
     def list(self, farm_id, country, city, cru, sru, mru, hru, proofs, schema_out=None, user_session=None):
@@ -191,5 +194,21 @@ class nodes(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound("node %s not found" % id)
 
         node.public_config = public
+        node.save()
+        return True
+
+    def uptime_update(self, node_id, uptime):
+        """
+        ```in
+        node_id = (S)
+        uptime = (I)
+        ```
+        """
+        node = self._find(node_id)
+        if not node:
+            raise j.exceptions.NotFound("node %s not found" % id)
+
+        node.uptime = uptime
+        node.updated = j.data.time.epoch
         node.save()
         return True

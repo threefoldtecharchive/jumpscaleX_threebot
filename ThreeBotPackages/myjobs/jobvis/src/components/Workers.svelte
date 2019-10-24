@@ -10,8 +10,6 @@
     NEW: "NEW",
     HALTED: "HALTED",
     WAITING: "WAITING",
-    RUNNING: "RUNNING",
-    WARNING: "WARNING",
     ALL: "all"
   };
   let isAllWorkersAvailable = false;
@@ -19,10 +17,8 @@
     success: 0,
     error: 0,
     new: 0,
-    running: 0,
     halted: 0,
     waiting: 0,
-    warning: 0
   };
 
   let currentFilter = state.ALL;
@@ -60,10 +56,8 @@
       if (worker.state == state.RESULT) counters["success"]++;
       else if (worker.state == state.ERROR) counters["error"]++;
       else if (worker.state == state.NEW) counters["new"]++;
-      else if (worker.state == state.RUNNING) counters["running"]++;
       else if (worker.state == state.HALTED) counters["halted"]++;
       else if (worker.state == state.WAITING) counters["waiting"]++;
-      else if (worker.state == state.WARNING) counters["warning"]++;
       else {
       }
     });
@@ -73,10 +67,8 @@
       success: 0,
       error: 0,
       new: 0,
-      running: 0,
       halted: 0,
-      waiting: 0,
-      warning: 0
+      waiting: 0
     };
     statsticsCalculation();
     if (currentFilter == state.ALL) return workers;
@@ -84,12 +76,8 @@
       return WorkersFiltering(state.RESULT);
     else if (currentFilter == state.ERROR) return WorkersFiltering(state.ERROR);
     else if (currentFilter == state.NEW) return WorkersFiltering(state.NEW);
-    else if (currentFilter == state.RUNNING)
-      return WorkersFiltering(state.RUNNING);
     else if (currentFilter == state.HALTED)
       return WorkersFiltering(state.HALTED);
-    else if (currentFilter == state.WARNING)
-      return WorkersFiltering(state.WARNING);
     else if (currentFilter == state.WAITING)
       return WorkersFiltering(state.WAITING);
   };
@@ -151,22 +139,6 @@
   <div class="mr-3">
     <button
       class="btn"
-      on:click={() => updateFilter(state.WARNING)}
-      class:active={currentFilter === state.WARNING}>
-      Warning
-    </button>
-  </div>
-  <div class="mr-3">
-    <button
-      class="btn"
-      on:click={() => updateFilter(state.RUNNING)}
-      class:active={currentFilter === state.RUNNING}>
-      Running
-    </button>
-  </div>
-  <div class="mr-3">
-    <button
-      class="btn"
       on:click={() => updateFilter(state.HALTED)}
       class:active={currentFilter === state.HALTED}>
       Halted
@@ -194,8 +166,6 @@
           <th class="text-center" scope="col">New</th>
           <th class="text-center" scope="col">Success</th>
           <th class="text-center" scope="col">Failure</th>
-          <th class="text-center" scope="col">Warning</th>
-          <th class="text-center" scope="col">Running</th>
           <th class="text-center" scope="col">Halted</th>
           <th class="text-center" scope="col">Waiting</th>
         </tr>
@@ -205,8 +175,6 @@
         <td>{counters['new']}</td>
         <td>{counters['success']}</td>
         <td>{counters['error']}</td>
-        <td>{counters['warning']}</td>
-        <td>{counters['running']}</td>
         <td>{counters['halted']}</td>
         <td>{counters['waiting']}</td>
       </tbody>
@@ -257,10 +225,6 @@
                   <td>
                     <span class="badge badge-primary">{worker.state}</span>
                   </td>
-                {:else if worker.state == state.RUNNING}
-                  <td>
-                    <span class="badge badge-info">{worker.state}</span>
-                  </td>
                 {:else if worker.state == state.HALTED}
                   <td>
                     <span class="badge badge-secondary">{worker.state}</span>
@@ -276,7 +240,11 @@
                 {/if}
                 <td>{worker.halt}</td>
                 <td>{worker.pid}</td>
-                <td>{worker.current_job}</td>
+                {#if worker.current_job == 2147483647} 
+                    <td>N/A</td>
+                {:else}
+                    <td>{worker.current_job}</td>
+                {/if}
                 <td>{worker.last_update}</td>
                 <td>{worker.time_start}</td>
                 <td>{worker.timeout}</td>
