@@ -871,6 +871,8 @@ class Application:
         return client.CREATED, headers, None
 
     def do_REPORT(self, environ, base_prefix, path, user):
+        import ipdb; ipdb.set_trace()
+
         """Manage REPORT request."""
         if not self._access(user, path, "r"):
             return NOT_ALLOWED

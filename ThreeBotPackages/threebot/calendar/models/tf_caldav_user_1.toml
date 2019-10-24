@@ -3,6 +3,13 @@
 user_id** = (S)
 
 
+
+@url = tf.caldav.attachment.1
+name** = (S)
+content = (S)
+encoding = (S)
+
+
 @url = tf.caldav.event.1
 item_id** = (S)
 user_id** = (S)
@@ -13,6 +20,11 @@ dtstart = (T)
 dtend = (T)
 type = (S)
 timezone = (S)
+title = (S)
+description = (S)
+location = (S)
+attachments = (LO) !tf.caldav.attachment.1
+
 
 @url = tf.caldav.contact.1
 item_id** = (S)
@@ -30,6 +42,9 @@ props = (S)
 cache = (S)
 items = (LO) !tf.caldav.event.1
 type = "calendar" (S)
+display_name = (S)
+description = (S)
+color = (S)
 
 @url = tf.caldav.addressbook.1
 addressbook_id** = (S)
@@ -38,3 +53,6 @@ props = (S)
 cache = (S)
 items = (LO) !tf.caldav.contact.1
 type = "addressbook" (S)
+display_name = (S)
+description = (S)
+color = (S)
