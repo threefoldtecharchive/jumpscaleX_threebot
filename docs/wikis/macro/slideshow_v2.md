@@ -1,4 +1,4 @@
-# Slideshow macro
+# Slideshow macro version 2
 you can use this macro to include slides from different presentations into your docsite
 
 ### Example
@@ -18,7 +18,7 @@ presentation =  "presentation_2"
 slide = "required slide numbers"
 ```
 
-**required slide numbers** can be:
+**Required slide numbers** can be:
 
 * separated slides : **"1,2,3,4"** slide number_1,number_2,number_3,number_4
 * ranges :
@@ -29,4 +29,10 @@ slide = "required slide numbers"
  * mix all of that:
     * **"1,2,3,6:8"** slide number_1,slide number_2,slide number_3 and all the slides from slide number_6 to slide number_8
     * **"1,2,6:"** slide number_1,slide number_2 and all the slides starting from slide number_6 till the end of the presentation.
+    
+    **This macros depends on :**
+    * Serializing a valid toml to dictionary  
+    * Slice the ```required slide numbers``` to identify the required slides and the ranges
+    * Using Gdrive to downloaded the slides. [more information ](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/docs/wikis/tech/README.md#setting-up-gdrive-and-service-account)
+    * Map the downloaded slides to the required slides
     * ****
