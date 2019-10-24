@@ -1,7 +1,7 @@
 from Jumpscale import j
 import uuid, requests
 from urllib.parse import urlencode
-from bottle import Bottle, request, redirect, run
+from bottle import Bottle, request, redirect, run, abort
 from beaker.middleware import SessionMiddleware
 
 
