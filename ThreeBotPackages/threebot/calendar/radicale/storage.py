@@ -975,11 +975,12 @@ class Collection(BaseCollection):
         """Like ``get`` but additonally returns the following metadata:
         tag, start, end: see ``xmlutils.find_tag_and_time_range``. If
         extraction of the metadata failed, the values are all ``None``."""
+
         items = Database.find_items(href, self.collection_id, self.user_id)
         if items:
             raw_text = items[0].content
         else:
-            return None, None
+            return None, (None, None, None)
 
         vobject_items = tuple(vobject.readComponents(raw_text))
         if len(vobject_items) != 1:
@@ -1024,6 +1025,7 @@ class Collection(BaseCollection):
         if not tag:
             # no filter
             yield from ((item, simple) for item in self.get_all())
+
         for item, (itag, istart, iend) in (self._get_with_metadata(href, verify_href=False) for href in self.list()):
             if tag == itag and istart < end and iend > start:
                 yield item, simple and (start <= istart or iend <= end)
