@@ -1,12 +1,11 @@
 from Jumpscale import j
-import gevent
 
 
 def chat(bot):
     """
     to call http://localhost:5050/chat/session/threebot_deploy
     """
-    phonebook = j.clients.gedis.get(name='phonebook', port=8901, host="phonebook.3bot.grid.tf") 
+    phonebook = j.clients.gedis.get(name="phonebook", port=8901, host="phonebook.3bot.grid.tf")
     token = j.clients.digitalocean.provisioning.token_
     question = "Please enter your 3BOT doublename: {}"
     remark = ""
@@ -21,7 +20,6 @@ def chat(bot):
         except:
             break
 
-
     question = "Please enter your email: {}"
     remark = ""
     while True:
@@ -35,7 +33,7 @@ def chat(bot):
     bot.md_show("Deployment will start this might take several minutes")
 
     threebot_machine = j.tools.threebot_deploy.get(
-        name, do_machine_name=f"threebot-{name}", do_token=token
+        name, do_machine_name=f"threebot-{name}", do_token=token, do_project_name="3bots"
     )
     if not threebot_machine.exists():
         threebot_machine.create_new_do_machine()
@@ -55,6 +53,8 @@ def chat(bot):
     url = f"https://{name}.3bot.grid.tf"
     res = """
     # Your 3bot has been registered successfully you can find it here ({0})[{0}]
-    """.format(url)
+    """.format(
+        url
+    )
     bot.md_show(res)
-    #bot.redirect("https://threefold.me")
+    # bot.redirect("https://threefold.me")

@@ -15,9 +15,7 @@ class provisioning(j.baseclasses.threebot_actor):
         ```
         """
         threebot_machine = j.tools.threebot_deploy.get(
-            name,
-            do_machine_name=f"threebot-{name}",
-            do_token=self.token,
+            name, do_machine_name=f"threebot-{name}", do_token=self.token, do_project_name="3bots"
         )
         if not threebot_machine.exists():
             threebot_machine.create_new_do_machine()
