@@ -12,6 +12,7 @@ class calendar(j.baseclasses.threebot_actor):
         self.client = None
         bcdb = j.data.bcdb.get("caldav")
         self.calendar_model = bcdb.model_get(url="tf.caldav.calendar.1")
+        self.event_model = bcdb.model_get(url="tf.caldav.event.1")
 
     def _verfiy_time(self, dtstart, dtend, user_session=None):
         if not (dtstart and dtend):
@@ -49,23 +50,7 @@ class calendar(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound(f"Couldn't find event with uid: {uid}")
         return event
 
-    def _get_event_dict(self, cal_id, uid):
-        self._verify_client()
-        event = self._get_event_object(cal_id, uid)
 
-        event_dict = self._dictify_event(event)
-        return event_dict
-
-    def _dictify_event(self, event):
-        event_dict = {
-            "calendar_id": j.sal.fs.getBaseName(event.parent.canonical_url),
-            "uid": event.vobject_instance.vevent.uid.value,
-            "summary": event.vobject_instance.vevent.summary.value,
-            "dtstart": int(event.vobject_instance.vevent.dtstart.value.timestamp()),
-            "dtend": int(event.vobject_instance.vevent.dtend.value.timestamp()),
-            "raw": event.data,
-        }
-        return event_dict
 
     def add(self, calendar, schema_out=None, user_session=None):
         """
@@ -129,106 +114,83 @@ class calendar(j.baseclasses.threebot_actor):
         output.calendars = self.calendar_model.find()
         return output
 
-    def add_event(self, cal_id, uid, summary, dtstart, dtend, schema_out=None, user_session=None):
+    def add_event(self, event, schema_out=None, user_session=None):
         """
         ```in
-        cal_id = (S)
-        uid = (S)
-        summary = (S)
-        dtstart = (I)
-        dtend = (I)
+        event = (O) !tf.caldav.event.1
         ```
         ```out
-        event = (dict)
+        event = (O) !tf.caldav.event.1
         ```
         This actor method is used to add event (only used to add invitation)
         """
         self._verify_client()
-        self._verfiy_time(dtstart, dtend)
-        calendar = self._get_calendar(cal_id)
+        self._verfiy_time(event.dtstart, event.dtend)
+        calendar = self._get_calendar(event.calendar_id)
         cal_object = vobject.iCalendar()
 
+        event.item_id = str(uuid.uuid4())
         cal_object.add("vevent")
-        cal_object.vevent.add("uid").value = uid
-        cal_object.vevent.add("summary").value = summary
+        cal_object.vevent.add("uid").value = event.item_id
+        cal_object.vevent.add("summary").value = event.title
+        cal_object.vevent.add("description").value = event.description
+        cal_object.vevent.add("location").value = event.location
 
+        # @TODO: Add attachments
         utc = vobject.icalendar.utc
         start = cal_object.vevent.add("dtstart")
-        start.value = datetime.datetime.fromtimestamp(dtstart, utc)
+        start.value = datetime.datetime.fromtimestamp(event.dtstart, utc)
         end = cal_object.vevent.add("dtend")
-        end.value = datetime.datetime.fromtimestamp(dtend, utc)
-
-        output = schema_out.new()
+        end.value = datetime.datetime.fromtimestamp(event.dtend, utc)
         calendar.add_event(cal_object.serialize())
-        output.event = self._get_event_dict(cal_id, uid)
-        return output
+        return self.event_model.find(item_id=f"{event.item_id}.ics")[0]
 
-    def search_events(self, cal_id, start, end, schema_out=None, user_session=None):
+    def get_event(self, event_id, schema_out=None, user_session=None):
         """
         ```in
-        cal_id = (S)
-        start = (T)
-        end = (T)
+        event_id = (S)
         ```
         ```out
-        events = (LS)
+        events = (O) !tf.caldav.event.1
         ```
         """
-        calendar = self._get_calendar(cal_id)
-        events = calendar.date_search(datetime.datetime.fromtimestamp(start), datetime.datetime.fromtimestamp(end))
-        output = schema_out.new()
-        output.events = [j.sal.fs.getBaseName(event.canonical_url).split(".")[0] for event in events]
-        return output
-        
+        events = self.event_model.find(item_id=event_id)
+        if not events:
+            raise j.exceptions.NotFound(f"Couldn't find event with id: {event_id}")
+        return events[0]
 
-
-
-
-
-    def get_event(self, cal_id, uid, schema_out=None, user_session=None):
+    def list_events(self, calendar_id, schema_out=None, user_session=None):
         """
         ```in
-        cal_id = (S)
-        uid = (S)
+        calendar_id = (S)
         ```
         ```out
-        event = (dict)
+        events = (LO) !tf.caldav.event.1
         ```
         """
+        calendars = self.calendar_model.find(calendar_id=calendar_id)
+        if not calendars:
+            raise j.exceptions.NotFound(f"Couldn't find calendar with id: {calendar_id}")
+        calendar = calendars[0]
         output = schema_out.new()
-        output.event = self._get_event_dict(cal_id, uid)
+        output.events = calendar.items
         return output
 
-
-    def delete_event(self, cal_id, uid, user_session=None):
+    def delete_event(self, calendar_id, event_id, user_session=None):
         """
         ```in
-        cal_id = (S)
-        uid = (S)
+        calendar_id = (S)
+        event_id = (S)
         ```
         """
         self._verify_client()
-        calendar = self._get_calendar(cal_id)
+        calendar = self._get_calendar(calendar_id)
         try:
-            event = calendar.event_by_uid(uid)
+            event = calendar.event_by_uid(event_id.replace('.ics', ''))
             event.delete()
         except caldav.error.NotFoundError:
             pass
 
-    def list_events(self, cal_id, schema_out=None, user_session=None):
-        """
-        ```in
-        cal_id = (S)
-        ```
-        ```out
-        events = (LS)
-        ```
-        """
-        self._verify_client()
-        calendar = self._get_calendar(cal_id)
-        output = schema_out.new()
-        output.events = [j.sal.fs.getBaseName(event.canonical_url).split(".")[0] for event in calendar.events()]
-        return output
 
     def edit_event(self, cal_id, uid, summary=None, dtstart=None, dtend=None, schema_out=None, user_session=None):
         """
@@ -260,3 +222,33 @@ class calendar(j.baseclasses.threebot_actor):
         output = schema_out.new()
         output.event = self._get_event_dict(cal_id, uid)
         return output
+
+
+    def search_events(self, cal_id, start, end, schema_out=None, user_session=None):
+        """
+        ```in
+        cal_id = (S)
+        start = (T)
+        end = (T)
+        ```
+        ```out
+        events = (LS)
+        ```
+        """
+        calendar = self._get_calendar(cal_id)
+        events = calendar.date_search(datetime.datetime.fromtimestamp(start), datetime.datetime.fromtimestamp(end))
+        output = schema_out.new()
+        output.events = [j.sal.fs.getBaseName(event.canonical_url).split(".")[0] for event in events]
+        return output
+        
+
+
+
+
+
+
+
+
+
+
+

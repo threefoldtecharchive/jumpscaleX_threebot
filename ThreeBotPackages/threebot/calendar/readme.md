@@ -154,4 +154,124 @@ kosmos -p 'j.servers.threebot.default.start(background=False,web=False)'
 }
 ```
 
+**add_event**
+- input
+```
+{
+    "args":{
+      "event": {
+        "description":"desco",
+        "title": "title",
+        "location": "locas",
+        "dtstart": 1571933731,
+        "dtend": 1571933750,
+        "calendar_id": "f74cc3e7-be95-4eaf-a48d-02edfa777754"
+      }
+    }
+}
+
+```
+
+- output
+
+```
+{
+    "item_id": "a23672a5-4bce-4282-89e6-8487adf38bf9.ics",
+    "user_id": "admin",
+    "calendar_id": "f74cc3e7-be95-4eaf-a48d-02edfa777754",
+    "content": "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//PYVOBJECT//NONSGML Version 1//EN\r\nBEGIN:VEVENT\r\nUID:a23672a5-4bce-4282-89e6-8487adf38bf9\r\nDTSTART:20191024T161531Z\r\nDTEND:20191024T161550Z\r\nDESCRIPTION:desco\r\nDTSTAMP:20191024T163030Z\r\nLOCATION:locas\r\nSUMMARY:title\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
+    "epoch": 1571934630,
+    "dtstart": 1571933731,
+    "dtend": 1571933750,
+    "type": "VEVENT",
+    "timezone": "UTC",
+    "title": "title",
+    "description": "desco",
+    "location": "locas",
+    "attachments": [],
+    "id": 3
+}
+```
+
+**get_event**
+
+- input
+```
+{
+    "args":{
+    
+    	"event_id": "a23672a5-4bce-4282-89e6-8487adf38bf9.ics"
+    }
+}
+```
+
+- output
+```
+{
+    "item_id": "a23672a5-4bce-4282-89e6-8487adf38bf9.ics",
+    "user_id": "admin",
+    "calendar_id": "f74cc3e7-be95-4eaf-a48d-02edfa777754",
+    "content": "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//PYVOBJECT//NONSGML Version 1//EN\r\nBEGIN:VEVENT\r\nUID:a23672a5-4bce-4282-89e6-8487adf38bf9\r\nDTSTART:20191024T161531Z\r\nDTEND:20191024T161550Z\r\nDESCRIPTION:desco\r\nDTSTAMP:20191024T163030Z\r\nLOCATION:locas\r\nSUMMARY:title\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
+    "epoch": 1571934630,
+    "dtstart": 1571933731,
+    "dtend": 1571933750,
+    "type": "VEVENT",
+    "timezone": "UTC",
+    "title": "title",
+    "description": "desco",
+    "location": "locas",
+    "attachments": [],
+    "id": 3
+}
+```
+
+**list_events**
+
+- input
+```
+{
+    "args":{
+    
+    	"calendar_id": "f74cc3e7-be95-4eaf-a48d-02edfa777754"
+    }
+}
+```
+
+- output
+```
+{
+    "events": [
+        {
+            "item_id": "a23672a5-4bce-4282-89e6-8487adf38bf9.ics",
+            "user_id": "admin",
+            "calendar_id": "f74cc3e7-be95-4eaf-a48d-02edfa777754",
+            "content": "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//PYVOBJECT//NONSGML Version 1//EN\r\nBEGIN:VEVENT\r\nUID:a23672a5-4bce-4282-89e6-8487adf38bf9\r\nDTSTART:20191024T161531Z\r\nDTEND:20191024T161550Z\r\nDESCRIPTION:desco\r\nDTSTAMP:20191024T163030Z\r\nLOCATION:locas\r\nSUMMARY:title\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
+            "epoch": 1571934630,
+            "dtstart": 1571933731,
+            "dtend": 1571933750,
+            "type": "VEVENT",
+            "timezone": "UTC",
+            "title": "title",
+            "description": "desco",
+            "location": "locas",
+            "attachments": [],
+            "id": 3
+        }
+    ]
+}
+```
+
+**delete_event**
+
+- input
+```
+{
+    "args":{
+    
+    	"event_id": "a23672a5-4bce-4282-89e6-8487adf38bf9.ics",
+    	"calendar_id": "f74cc3e7-be95-4eaf-a48d-02edfa777754"
+    }
+}
+
+```
 
