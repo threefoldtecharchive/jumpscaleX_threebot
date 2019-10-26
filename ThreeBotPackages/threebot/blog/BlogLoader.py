@@ -120,15 +120,16 @@ class BlogLoader(j.baseclasses.object):
                 tags = meta.get("tags", [])[0]
                 tags = [t.strip() for t in tags.split(",")]
                 post_obj.tags = tags
-
-            the_author_name = meta.get("author_name", [self.blog.metadata.author_name])[0]
+            the_author_name = (
+                meta.get("author")[0]
+                if meta.get("author")
+                else meta.get("author_name", [self.blog.metadata.author_name])[0]
+            )
             the_author_email = meta.get("author_email", [self.blog.metadata.author_email])[0]
             the_author_image = meta.get("author_image", [self.blog.metadata.author_image])[0]
-            the_author_published_at = ""
-            if meta.get("published_at"):
-                the_author_published_at = meta.get("published_at")[0]
-            else:
-                the_author_published_at = self._published_date(basename)
+            the_author_published_at = (
+                meta.get("published_at")[0] if meta.get("published_at") else self._published_date(basename)
+            )
 
             post_obj.author_name = the_author_name
             post_obj.author_email = the_author_email
@@ -176,9 +177,9 @@ class BlogLoader(j.baseclasses.object):
             post_obj.tags = tags
             post_obj.save()
             print("POST INFO: ", post_obj)
-
-            self.blog.pages.append(post_obj)
-            self.blog.save()
+            if not post_obj in self.blog.pages:
+                self.blog.pages.append(post_obj)
+                self.blog.save()
 
     def _load_blog(self):
 
