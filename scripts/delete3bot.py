@@ -9,10 +9,13 @@ MASTERIP = "192.168.99.254"
 
 def destroy(doublename):
     mainname = f"threebot-{doublename}"
-    sshnames = [mainname, f"{mainname}_docker"]
+    sshnames = [f"do_{mainname}", f"do_{mainname}_docker"]
     for name in sshnames:
         j.clients.ssh.delete(name)
     j.clients.digitalocean.delete(mainname)
+    gedismodel = j.data.bcdb.system.model_get(url="jumpscale.gedis.client")
+    for cl in gedismodel.find(name=mainname):
+        cl.delete()
     j.tools.threebot_deploy.delete(doublename)
     redisclient = j.clients.redis.get(MASTERIP, port=6378)
     first, last = doublename.split(".")
