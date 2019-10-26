@@ -226,21 +226,4 @@ class BlogLoader(j.baseclasses.object):
         self.blog_name = blog_name
         self.repo_url = repo_url
         self._load_blog()
-        threebot_server = j.servers.threebot.default
-        server = threebot_server.openresty_server
-        server.install(reset=False)
-        server.configure()
-        website = server.get_from_port(443)
 
-        locations = website.locations.get("blogs_locations")
-
-        website_location = locations.locations_static.new()
-        website_location.name = "blogs"
-        website_location.name = f"blog_{blog_name}_assets"
-        website_location.path_url = f"/blog_{blog_name}/assets"
-
-        fullpath = j.sal.fs.joinPaths(self.dest, "assets")
-        website_location.path_location = fullpath
-
-        locations.configure()
-        website.configure()
