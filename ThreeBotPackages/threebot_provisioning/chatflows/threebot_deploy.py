@@ -42,11 +42,8 @@ def chat(bot):
     threebot_machine.wireguard_install()
     threebot_machine.threebot_start()
     print("Finished installing threebot")
+    print("Start registration installing threebot")
 
-    res = f"""
-    # Your 3bot has been deployed successfully, starting registration
-    """
-    bot.md_show(res)
     client = threebot_machine.threebot_client()
     client.actors.registration.register(name, email, description)
 
