@@ -19,6 +19,7 @@ class Package(j.baseclasses.threebot_package):
         npm install
         npm run export
         popd
+        mkdir -p html/
         cp sapper-blog/__sapper__/export/blog/* html/ -R
         """
         j.sal.process.execute(prepare_cmd)
