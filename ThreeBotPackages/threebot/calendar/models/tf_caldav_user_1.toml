@@ -16,13 +16,13 @@ user_id** = (S)
 calendar_id** = (S)
 content = (S)
 epoch = (T)
-dtstart = (T)
-dtend = (T)
+dtstart** = (T)
+dtend** = (T)
 type = (S)
 timezone = (S)
-title = (S)
-description = (S)
-location = (S)
+title** = (S)
+description** = (S)
+location** = (S)
 attachments = (LO) !tf.caldav.attachment.1
 
 

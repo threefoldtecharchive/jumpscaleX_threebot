@@ -227,12 +227,40 @@ kosmos -p 'j.servers.threebot.default.start(background=False,web=False)'
 
 **list_events**
 
-- input
+list/filters
+choose one or more of these fields provided to filter against
+you can filter by 
+- start/end datetimes  (epochs)
+- timezone
+- location
+- description
+- title
 ```
 {
     "args":{
-    
-    	"calendar_id": "f74cc3e7-be95-4eaf-a48d-02edfa777754"
+      "event": {
+        "calendar_id": "f5f05de8-d354-4dc3-96c1-1ab62f427c70",
+        "title": "title2",
+        "dtstart": 157193373,
+        "dtend":1571933750,
+        "timezone": "UTC",
+         "location": "locas2",
+         "description": "desco2"
+
+      }
+    }
+}
+
+```
+
+- example
+
+```
+{
+    "args":{
+      "event": {
+        "calendar_id": "f74cc3e7-be95-4eaf-a48d-02edfa777754"
+      }
     }
 }
 ```
@@ -240,24 +268,7 @@ kosmos -p 'j.servers.threebot.default.start(background=False,web=False)'
 - output
 ```
 {
-    "events": [
-        {
-            "item_id": "a23672a5-4bce-4282-89e6-8487adf38bf9.ics",
-            "user_id": "admin",
-            "calendar_id": "f74cc3e7-be95-4eaf-a48d-02edfa777754",
-            "content": "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//PYVOBJECT//NONSGML Version 1//EN\r\nBEGIN:VEVENT\r\nUID:a23672a5-4bce-4282-89e6-8487adf38bf9\r\nDTSTART:20191024T161531Z\r\nDTEND:20191024T161550Z\r\nDESCRIPTION:desco\r\nDTSTAMP:20191024T163030Z\r\nLOCATION:locas\r\nSUMMARY:title\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n",
-            "epoch": 1571934630,
-            "dtstart": 1571933731,
-            "dtend": 1571933750,
-            "type": "VEVENT",
-            "timezone": "UTC",
-            "title": "title",
-            "description": "desco",
-            "location": "locas",
-            "attachments": [],
-            "id": 3
-        }
-    ]
+    "events": [] # Not found!
 }
 ```
 
@@ -273,5 +284,45 @@ kosmos -p 'j.servers.threebot.default.start(background=False,web=False)'
     }
 }
 
+```
+
+**edit_event**
+
+- input
+```
+{
+    "args":{
+      "event": {
+        "description":"desco3",
+        "title": "title3",
+        "location": "locas3",
+        "dtstart": 1571933731,
+        "dtend": 1571933750,
+        "calendar_id": "f5f05de8-d354-4dc3-96c1-1ab62f427c70",
+        "item_id": "caa7d6bf-dfbc-4f65-99a4-ae3ed010adf2.ics",
+        "timezone": "Africa/Cairo"
+      }
+    }
+}
+```
+
+- output
+
+```
+{
+    "item_id": "caa7d6bf-dfbc-4f65-99a4-ae3ed010adf2.ics",
+    "user_id": "",
+    "calendar_id": "f5f05de8-d354-4dc3-96c1-1ab62f427c70",
+    "content": "",
+    "epoch": 0,
+    "dtstart": 1571933731,
+    "dtend": 1571933750,
+    "type": "",
+    "timezone": "Africa/Cairo",
+    "title": "title3",
+    "description": "desco3",
+    "location": "locas3",
+    "attachments": []
+}
 ```
 
