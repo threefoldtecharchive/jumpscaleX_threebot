@@ -12,6 +12,12 @@
 3- Add The blogs package:
 `cl.actors.package_manager.package_add(path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog")`
 
+4- Build the fronend using
+
+```bash
+bash build_blog.sh
+```
+
 your blogs then should be accessible via `https://{yoursitename/ip}/blog`
 
 ## Blog structure

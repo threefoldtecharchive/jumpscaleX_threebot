@@ -7,6 +7,9 @@
 
 <span>
   {#each tags as tag}
-    <a href="{username}/tags/{tag.trim()}">#{tag}</a>
+    <a href="{username}/tags/{tag.trim()}">
+      <p>#{tag}</p>
+    </a>
+    &emsp;
   {/each}
 </span>
