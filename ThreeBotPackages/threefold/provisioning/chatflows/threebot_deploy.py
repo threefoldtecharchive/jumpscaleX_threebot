@@ -5,8 +5,6 @@ def chat(bot):
     """
     to call http://localhost:5050/chat/session/threebot_deploy
     """
-<<<<<<< HEAD:ThreeBotPackages/tfgrid/threebot_provisioning/chatflows/threebot_deploy.py
-=======
 
     progress = """\
 # Deploying your 3Bot
@@ -18,7 +16,6 @@ def chat(bot):
   </div>
 </div> 
 """
->>>>>>> origin/development:ThreeBotPackages/threefold/provisioning/chatflows/threebot_deploy.py
     phonebook = j.clients.gedis.get(name="phonebook", port=8901, host="phonebook.3bot.grid.tf")
     token = j.clients.digitalocean.provisioning.token_
     question = "Please enter your 3BOT doublename: {}"
@@ -46,14 +43,10 @@ def chat(bot):
     description = bot.string_ask(question)
     bot.md_show("Deployment will start this might take several minutes")
 
-<<<<<<< HEAD:ThreeBotPackages/tfgrid/threebot_provisioning/chatflows/threebot_deploy.py
-    threebot_machine = j.tools.threebot_deploy.get(name, do_machine_name=f"threebot-{name}", do_token=token)
-=======
     threebot_machine = j.tools.threebot_deploy.get(
         name, do_machine_name=f"threebot-{name}", do_token=token, do_project_name="3bots"
     )
     bot.md_show_update(progress.format(0, "Creating 3Bot"))
->>>>>>> origin/development:ThreeBotPackages/threefold/provisioning/chatflows/threebot_deploy.py
     if not threebot_machine.exists():
         threebot_machine.create_new_do_machine()
     bot.md_show_update(progress.format(10, "Configuring 3Bot"))
@@ -72,13 +65,8 @@ def chat(bot):
     client.actors.registration.register(name, email, description)
 
     url = f"https://{name}.3bot.grid.tf"
-<<<<<<< HEAD:ThreeBotPackages/tfgrid/threebot_provisioning/chatflows/threebot_deploy.py
-    res = """
-    # Your 3bot has been registered successfully you can find it here ({0})[{0}]
-=======
     res = """\
 # Your 3bot has been registered successfully you can find it here ({0})[{0}]
->>>>>>> origin/development:ThreeBotPackages/threefold/provisioning/chatflows/threebot_deploy.py
     """.format(
         url
     )
