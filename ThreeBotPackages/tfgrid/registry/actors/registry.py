@@ -8,7 +8,7 @@ NONE = 2147483647
 from ..models.ENTRY import ENTRY
 
 
-class phonebook(j.baseclasses.threebot_actor):
+class registry(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
         self.bcdb = self._bcdb_get("threebot_phonebook")
         self.registration_model = ENTRY()
