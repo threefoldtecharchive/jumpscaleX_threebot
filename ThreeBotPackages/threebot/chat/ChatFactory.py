@@ -37,8 +37,11 @@ def auth(fn):
     def _auth(*args, **kwargs):
         session = request.environ.get("beaker.session")
         if "username" not in session:
-            session["next-url"] = request.path
-            redirect("/chat/login")
+            if j.data.types.ipaddr.check(request.headers["HOST"]):
+                session["username"] = "Guest"
+            else:
+                session["next-url"] = request.path
+                redirect("/chat/login")
         return fn(*args, **kwargs)
 
     return _auth
