@@ -2,7 +2,12 @@ import traceback
 from Jumpscale import j
 from bottle import abort, response, request, Bottle, redirect
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from beaker.middleware import SessionMiddleware
+
+try:
+    from beaker.middleware import SessionMiddleware
+except (ModuleNotFoundError, ImportError):
+    j.builders.runtimes.python3.pip_package_install("beaker")
+    from beaker.middleware import SessionMiddleware
 
 
 OAUTH_SERVER = "https://oauth2.3bot.grid.tf/auth"
@@ -123,6 +128,3 @@ class ChatFactory(j.baseclasses.threebot_factory):
 
     def get_app(self):
         return app
-
-    def install(self):
-        j.builders.runtimes.python3.pip_package_install("beaker")

@@ -2,7 +2,12 @@ from Jumpscale import j
 import requests
 from urllib.parse import urlencode
 from bottle import Bottle, request, redirect, run, abort
-from beaker.middleware import SessionMiddleware
+
+try:
+    from beaker.middleware import SessionMiddleware
+except (ModuleNotFoundError, ImportError):
+    j.builders.runtimes.python3.pip_package_install("beaker")
+    from beaker.middleware import SessionMiddleware
 
 
 class Oauth2Provider(object):
@@ -113,9 +118,6 @@ app = SessionMiddleware(app, session_opts)
 
 class Oauth2Factory(j.baseclasses.threebot_factory):
     __jslocation__ = "j.threebot.package.oauth2"
-
-    def install(self):
-        j.builders.runtimes.python3.pip_package_install("beaker")
 
     def get_app(self):
         return app
