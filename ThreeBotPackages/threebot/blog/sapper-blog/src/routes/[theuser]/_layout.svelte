@@ -16,19 +16,19 @@
   export async function preload({ host, path, params, query }) {
     try {
       let blogName = params.theuser;
-      const pages = await await callActorWithArgs("get_pages", {
+      const pages = await callActorWithArgs("get_pages", {
         blog_name: blogName
       });
 
-      const metadata = await await callActorWithArgs("get_metadata", {
+      const metadata = await callActorWithArgs("get_metadata", {
         blog_name: blogName
       });
 
-      const tags = await await callActorWithArgs("get_tags", {
+      const tags = await callActorWithArgs("get_tags", {
         blog_name: blogName
       });
 
-      const allPosts = await await callActorWithArgs("get_posts", {
+      const allPosts = await callActorWithArgs("get_posts", {
         blog_name: blogName
       });
 
@@ -38,6 +38,7 @@
       // because.. javascript `\-()-/`
 
       let posts = allPosts.slice(0, 3);
+
       return { pages, posts, metadata, tags };
     } catch (error) {
       console.log(error);
@@ -58,7 +59,9 @@
   export let posts = [];
   export let metadata = {};
   export let tags = [];
+
   import { stores } from "@sapper/app";
+  const { preloading, page, session } = stores();
 </script>
 
 <!-- {#await metadata then value}
