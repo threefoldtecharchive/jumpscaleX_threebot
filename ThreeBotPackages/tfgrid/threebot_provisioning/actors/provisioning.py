@@ -14,11 +14,7 @@ class provisioning(j.baseclasses.threebot_actor):
         ssh_key = (S)
         ```
         """
-        threebot_machine = j.tools.threebot_deploy.get(
-            name,
-            do_machine_name=f"threebot-{name}",
-            do_token=self.token,
-        )
+        threebot_machine = j.tools.threebot_deploy.get(name, do_machine_name=f"threebot-{name}", do_token=self.token)
         if not threebot_machine.exists():
             threebot_machine.create_new_do_machine()
         threebot_machine.machine_init()

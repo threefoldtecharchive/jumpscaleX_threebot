@@ -1,13 +1,13 @@
 from Jumpscale import j
 
 
-class HumanityPollFactory(j.baseclasses.threebot_factory):
+class TFPhonebookFactory(j.baseclasses.threebot_factory):
 
-    __jslocation__ = "j.threebot.package.humanitypoll"
+    __jslocation__ = "j.threebot.package.threefold.registry"
 
     def client_get(self):
         """
-        j.threebot.package.humanitypoll.client_get()
+        j.threebot.package.threefold.registry.client_get()
         :return:
         """
         self.client = j.servers.threebot.local_start_default(web=True)
@@ -16,10 +16,9 @@ class HumanityPollFactory(j.baseclasses.threebot_factory):
 
     def test(self, name=""):
         """
-        kosmos -p 'j.threebot.package.humanitypoll.test()'
+        kosmos -p 'j.threebot.package.threefold.registry.test()'
         """
         cl = self.client_get()
-        # j.shell()
 
         print(name)
 
