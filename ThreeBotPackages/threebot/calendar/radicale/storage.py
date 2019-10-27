@@ -1081,7 +1081,15 @@ class Collection(BaseCollection):
                 item = items[0]
                 item.delete()
                 collection = Database.get_collection(self.collection_id, self.user_id)
-                collection.items.remove(item)
+                try:
+                    collection.items.remove(item)
+                except ValueError:
+                    idx = -1
+                    for i, item in enumerate(collection.items):
+                        if item.item_id == href:
+                            idx = i
+                    if idx != -1:
+                        collection.items.pop(idx)
                 collection.save()
 
     def get_meta(self, key=None):
