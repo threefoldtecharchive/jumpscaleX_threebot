@@ -16,7 +16,7 @@ def chat(bot):
   </div>
 </div> 
 """
-    phonebook = j.clients.gedis.get(name="phonebook", port=8901, host="phonebook.3bot.grid.tf")
+    explorer = j.clients.gedis.get(name="explorer", port=8901, host="explorer.testnet.grid.tf")
     token = j.clients.digitalocean.provisioning.token_
     question = "Please enter your 3BOT doublename: {}"
     remark = ""
@@ -26,7 +26,7 @@ def chat(bot):
             remark = "(Doublename should have atleast one dot)"
             continue
         try:
-            phonebook.actors.phonebook.get(name=name)
+            explorer.actors.phonebook.get(name=name)
             remark = "(Doublename is alreayd in use)"
         except:
             break
@@ -64,9 +64,9 @@ def chat(bot):
     client = threebot_machine.threebot_client()
     client.actors.registration.register(name, email, description)
 
-    url = f"https://{name}.3bot.grid.tf"
+    url = f"https://{name}.3bot.testnet.grid.tf"
     res = """\
-# Your 3bot has been registered successfully you can find it here ({0})[{0}]
+# Your 3bot has been registered successfully you can find it here [{0}]({0})
     """.format(
         url
     )

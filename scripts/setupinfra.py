@@ -244,6 +244,9 @@ client.actors.package_manager.package_add(
 client.actors.package_manager.package_add(
     path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/tfgrid_workloads"
 )
+client.actors.package_manager.package_add(
+    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/provisioning"
+)
 client.reload()
 
 networks = client.actors.gridnetwork.network_find()
