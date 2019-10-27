@@ -14,13 +14,9 @@ class provisioning(j.baseclasses.threebot_actor):
         ssh_key = (S)
         ```
         """
-<<<<<<< HEAD:ThreeBotPackages/tfgrid/threebot_provisioning/actors/provisioning.py
-        threebot_machine = j.tools.threebot_deploy.get(name, do_machine_name=f"threebot-{name}", do_token=self.token)
-=======
         threebot_machine = j.tools.threebot_deploy.get(
             name, do_machine_name=f"threebot-{name}", do_token=self.token, do_project_name="3bots"
         )
->>>>>>> origin/development:ThreeBotPackages/threefold/provisioning/actors/provisioning.py
         if not threebot_machine.exists():
             threebot_machine.create_new_do_machine()
         threebot_machine.machine_init()
