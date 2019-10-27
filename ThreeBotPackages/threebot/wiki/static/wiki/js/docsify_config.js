@@ -46,6 +46,9 @@ function docsifyConfig(name, repo) {
           if (lang === "markdown") {
             return (`<div class="reveal"><div class="slides" style="position: initial;">${code}</div></div>`);
           }
+          if (lang === "inline_html") {
+            return `${code}`;
+          }
           return this.origin.code.apply(this, arguments);
         }
       }
