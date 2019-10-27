@@ -237,7 +237,7 @@ j.sal.nettools.waitConnectionTest("gateway.3bot.grid.tf", 443, timeout=60)
 print("Start local 3bot")
 client = j.servers.threebot.local_start_default()
 client.actors.package_manager.package_add(
-    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/namemanager"
+    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/namemanager"
 )
 client.actors.package_manager.package_add(
     path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/gridnetwork"
