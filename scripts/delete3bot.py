@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 from Jumpscale import j
 
-THREEBOT_DOMAIN = "3bot.grid.tf"
-THREEBOT_PRIVATE_DOMAIN = "3bot"
-PHONEBOOK_DOMAIN = f"phonebook.{THREEBOT_DOMAIN}"
-GATEWAY_DOMAIN = f"gateway.{THREEBOT_DOMAIN}"
+TESTNET_DOMAIN = "testnet.grid.tf"
+THREEBOT_DOMAIN = f"3bot.{TESTNET_DOMAIN}"
+EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
+
 MASTERIP = "192.168.99.254"
 
 def destroy(doublename):
@@ -30,7 +30,7 @@ def destroy(doublename):
     for result in phonebook_model.find(name=doublename):
         result.delete()
 
-    cl = j.clients.gedis.get(name="gridnetwork", host="3bot.grid.tf", port=8901)
+    cl = j.clients.gedis.get(name="explorer", host=EXPLORER_DOMAIN, port=8901)
     try:
         cl.actors.gridnetwork.network_peer_remove("3botnetwork", doublename)
     except j.exceptions.RemoteException:
