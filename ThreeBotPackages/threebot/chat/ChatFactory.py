@@ -10,7 +10,7 @@ except (ModuleNotFoundError, ImportError):
     from beaker.middleware import SessionMiddleware
 
 
-OAUTH_SERVER = "https://oauth2.3bot.grid.tf/auth"
+OAUTH_SERVER = "https://oauth2.3bot.testnet.grid.tf/auth"
 
 
 templates_path = j.sal.fs.joinPaths(j.sal.fs.getDirName(__file__), "templates")
