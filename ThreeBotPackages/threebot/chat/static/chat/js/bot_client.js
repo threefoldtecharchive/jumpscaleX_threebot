@@ -192,6 +192,16 @@ var generateSlide = function (res) {
         return
     }
 
+    function work_get() {
+        EXEC_OBJ['command'] = "work_get";
+        delete EXEC_OBJ['args']['result'];
+        // Ignore work_report response and wait for getting next question
+        GEDIS_CLIENT.execute(EXEC_OBJ).then(function (res) {
+            res = JSON.parse(res);
+            generateSlide(res);
+        });
+    }
+
     function next(value, spinner) {
         $("#error").addClass("hidden");
         $(this).attr("disabled", "disabled");
@@ -201,17 +211,15 @@ var generateSlide = function (res) {
                 "duration": 400
             });
         }
-        EXEC_OBJ['command'] = "work_report";
-        EXEC_OBJ['args']['result'] = value;
-        GEDIS_CLIENT.execute(EXEC_OBJ).then(function (res) {
-            EXEC_OBJ['command'] = "work_get";
-            delete EXEC_OBJ['args']['result'];
-            // Ignore work_report response and wait for getting next question
+        if (value !== null) {
+            EXEC_OBJ['command'] = "work_report";
+            EXEC_OBJ['args']['result'] = value;
             GEDIS_CLIENT.execute(EXEC_OBJ).then(function (res) {
-                res = JSON.parse(res);
-                generateSlide(res);
+                work_get();
             });
-        });
+        } else {
+            work_get();
+        }
     }
 
     let contents = "";
@@ -265,7 +273,7 @@ var generateSlide = function (res) {
     if (res['cat'] == "md_show_update") {
         $(".btn-submit").html("<i class='fa fa-spinner fa-spin '></i>");
         $(".btn-submit").attr("disabled", "disabled");
-        return next("");
+        return next(null);
     }
 
     $(".btn-submit").on("click", function (ev) {
