@@ -1039,7 +1039,15 @@ class Collection(BaseCollection):
         uid, etag, text, name, tag, _, _ = self._item_cache_content(vobject_item)
         collection = Database.get_collection(collection_id=self.collection_id, user_id=self.user_id)
         if vobject_item.name == "VCALENDAR":
-            item = Database.event_model.new()
+            events = Database.event_model.find(item_id=href)
+            new = True
+            # already existing
+            if events:
+                item = events[0]
+                new = False
+            else:
+                item = Database.event_model.new()
+
             item.item_id = href
             item.calendar_id = self.collection_id
             item.user_id = self.user_id
@@ -1060,6 +1068,17 @@ class Collection(BaseCollection):
                     a.encoding = e.params["ENCODING"].replace("['", "").replace("']", "").lower()
                     a.content = e.value
                     a.save()
+
+            item.save()
+
+            if new:
+                collection.items.append(item)
+            else:
+                idx = [i.item_id for i in collection.items].index(f'{vobject_item.vevent.uid.value}.ics')
+                collection.items[idx] = item
+            collection.save()
+            item = Item(self, href=href, etag=etag, text=text, item=vobject_item, uid=uid, name=name, component_name=tag)
+            return item
         else:
             contacts = Database.contact_model.find(item_id=href)
 
@@ -1169,16 +1188,16 @@ class Collection(BaseCollection):
                     im.type = child.name.replace('X-', '').capitalize()
                     item.ims.append(im)
 
-        item.save()
+            item.save()
 
-        if new:
-            collection.items.append(item)
-        else:
-            idx = [i.contact_id for i in collection.items].index(vobject_item.uid.value)
-            collection.items[idx] = item
-        collection.save()
-        item = Item(self, href=href, etag=etag, text=text, item=vobject_item, uid=uid, name=name, component_name=tag)
-        return item
+            if new:
+                collection.items.append(item)
+            else:
+                idx = [i.contact_id for i in collection.items].index(vobject_item.uid.value)
+                collection.items[idx] = item
+            collection.save()
+            item = Item(self, href=href, etag=etag, text=text, item=vobject_item, uid=uid, name=name, component_name=tag)
+            return item
 
     def delete(self, href=None):
         if href is None:
