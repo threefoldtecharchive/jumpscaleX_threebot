@@ -43,26 +43,19 @@ def chat(bot):
     description = bot.string_ask(question)
     bot.md_show("Deployment will start this might take several minutes")
 
-    threebot_machine = j.tools.threebot_deploy.get(
-        name, do_machine_name=f"threebot-{name}", do_token=token, do_project_name="3bots"
-    )
+    deployer = j.tools.threebot_deploy.get()
     bot.md_show_update(progress.format(0, "Creating 3Bot"))
-    if not threebot_machine.exists():
-        threebot_machine.create_new_do_machine()
+    machine = deployer.machines.get_available()
     bot.md_show_update(progress.format(10, "Configuring 3Bot"))
-    threebot_machine.machine_init()
-    bot.md_show_update(progress.format(15, "Installing 3Bot software"))
-    threebot_machine.jsx_install()
-    bot.md_show_update(progress.format(55, "Installing 3Bot network software"))
-    threebot_machine.wireguard_install()
-    bot.md_show_update(progress.format(65, "Starting 3Bot"))
-    threebot_machine.threebot_start()
+    container = machine.threebot_deploy(name, start=False)
+    bot.md_show_update(progress.format(70, "Starting 3Bot"))
+    container.threebot_start()
     print("Finished installing threebot")
     print("Start registration installing threebot")
-
     bot.md_show_update(progress.format(90, "Registering 3Bot"))
-    client = threebot_machine.threebot_client()
+    client = container.threebot_client
     client.actors.registration.register(name, email, description)
+    bot.md_show_update(progress.format(100, "Registering 3Bot completed"))
 
     url = f"https://{name}.3bot.testnet.grid.tf"
     res = """\
