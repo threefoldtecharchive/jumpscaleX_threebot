@@ -1,13 +1,24 @@
 @url = threebot.registry.entry.1
 @acl = false
 url** = ""                              #unique url
-tid_author = (I)
+authors = (LI)  #list of tid's, the authors can modify/delete info
+readers = (LI)  #list of tid's, only relevant when encrypted, the readers can decrypt using their private key
+format = "yaml,json,msgpack,unstructured" (E)
+encrypted = (B)
+schema = ""  #jumpscale schema url
+data = (LO) !threebot.registry.entry.data.1
 #e.g. https://www.mapdevelopers.com/geocode_tool.php
 location_latitude** = (F)
 location_longitude** = (F)
 #see https://www.unece.org/cefact/locode/service/location.html
 country_code** = ""
 format** = "website,blog,wiki,doc,solutionpackage,threebotpackage" (E)
-category** = "travel,food,it,spirituality,health,education,finance,varia" (E)
+category** = "publicity,info,knowledge,code,spec,config,varia" (E)
+topic** = "travel,food,it,spirituality,health,education,finance,varia" (E)
 description = ""
-signature = ""                          #proof that content is ok, is on fields aggregated in order
+
+@url = threebot.registry.entry.data.1
+tid = 0 (I)
+data = (BIN)  #or Binary?, what is type for binary
+
+
