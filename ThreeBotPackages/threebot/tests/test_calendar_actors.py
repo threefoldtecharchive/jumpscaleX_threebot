@@ -1,5 +1,6 @@
 from ThreeBotPackages.threebot.tests.base_test import BaseTest
 from Jumpscale import j
+from time import sleep
 
 
 class CalenderActorsTests(BaseTest):
@@ -11,6 +12,7 @@ class CalenderActorsTests(BaseTest):
         cmd = 'kosmos -p "j.threebot.package.calendar.start()"'
         cls.info("execute in main tmux : {} ".format(cmd))
         cls.pan = j.servers.tmux.execute(cmd)
+        sleep(30)
 
     @classmethod
     def tearDownClass(cls):
@@ -24,8 +26,10 @@ class CalenderActorsTests(BaseTest):
         gedis_client = j.clients.gedis.get("test", port=8901)
         gedis_client.actors.package_manager.package_add(
             path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/calendar")
-        self.actors.login("admin", "admin")
         self.actors = gedis_client.actors.addressbook
+        self.actors.login("admin", "admin")
+        self.info("* Test case : {}".format(self._testMethodName))
+        print('\n')
 
     def _create_addressbook(self):
         self.info("create new addressbook")
@@ -57,9 +61,7 @@ class CalenderActorsTests(BaseTest):
         :return:
         """
         old_addressbooks = self.actors.list_addressbooks().addressbooks
-
-        new_addressbook_id = self._create_addressbook()
-
+        self._create_addressbook()
         new_addressbooks = self.actors.list_addressbooks().addressbooks
 
         self.info("assert there is a new addressbook")
@@ -69,11 +71,10 @@ class CalenderActorsTests(BaseTest):
         new_addressbook_id = self._create_addressbook()
 
         self.info("get the address book meta data")
-        description = self.actors.get_addressbook_meta(new_addressbook_id).addressbook[new_addressbook_id]["description"]
+        description = self.actors.get_addressbook_meta(new_addressbook_id).addressbook['{}/'.format(new_addressbook_id)]["description"]
 
         self.info("assert it has the correct value")
         self.assertEqual(self.address_desc, description)
-
 
     def test003_delete_addressbook(self):
         new_addressbook_id = self._create_addressbook()
