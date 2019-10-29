@@ -34,16 +34,14 @@ class Package(j.baseclasses.threebot_package):
         server = self.openresty
         server.install(reset=False)
         server.configure()
-        website = server.get_from_port(80)
+        website = server.get_from_port(443)
         locations = website.locations.get("interface_location")
 
         website_location = locations.locations_spa.new()
         website_location.name = "interface"
         website_location.path_url = "/"
-
-        website_location.path_location = j.clients.git.getContentPathFromURLorPath(
-            "https://github.com/jimbertools/3botui_builds.git"
-        )
+        fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
+        website_location.path_location = fullpath
 
         locations.configure()
         website.configure()
