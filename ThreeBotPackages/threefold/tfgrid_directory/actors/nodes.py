@@ -197,7 +197,7 @@ class nodes(j.baseclasses.threebot_actor):
         node.save()
         return True
 
-    def uptime_update(self, node_id, uptime):
+    def uptime_update(self, node_id, uptime, user_session=None):
         """
         ```in
         node_id = (S)

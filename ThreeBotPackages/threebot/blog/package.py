@@ -7,47 +7,40 @@ class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
         self.branch = kwargs["package"].branch or "master"
 
+    def prepare(self):
+        pass
+
     def start(self):
         """
         called when the 3bot starts
         :return:
         """
-        j.builders.runtimes.nodejs.install()
-
         server = self.openresty
         server.install(reset=False)
         server.configure()
+        for port in [80, 443]:
+            website = server.get_from_port(port)
 
-        website = server.get_from_port(443)
+            locations = website.locations.get("blogs_locations")
+            # adding blogs static assests
+            blog_model = self.bcdb.model_get(url="jumpscale.blog")
+            for blog in blog_model.find():
+                if blog.name:
+                    blog_name = blog.name
+                    website_location = locations.locations_static.new()
+                    website_location.name = "blogs"
+                    website_location.name = f"blog_{blog_name}_assets"
+                    website_location.path_url = f"/blog_{blog_name}/assets"
+                    assets_path = j.sal.fs.joinPaths(j.sal.fs.getParent(blog.metadata.posts_dir), "assets")
+                    website_location.path_location = assets_path
 
-        locations = website.locations.get("blogs_locations")
+            # blog spa
+            website_location = locations.locations_spa.new()
+            website_location.name = "blog"
+            website_location.path_url = "/blog"
+            website_location.use_jumpscale_weblibs = False
+            fullpath = j.sal.fs.joinPaths(self.package_root, "html")
+            website_location.path_location = fullpath
 
-        proxy_location = locations.locations_proxy.new()
-        proxy_location.name = "nodeapp"
-        proxy_location.path_url = f"/blog"
-        proxy_location.path_dest = f"/blog"
-
-        proxy_location.ipaddr_dest = "0.0.0.0"
-        proxy_location.port_dest = 3000
-        proxy_location.scheme = "http"
-
-        locations.configure()
-        website.configure()
-        self._start_blog_app()
-
-    def _start_blog_app(self, reset=True):
-
-        s = j.servers.startupcmd.get("blogs")
-        s.cmd_start = f"""
-        cd {self._dirpath}/sapper-blog
-        export DEV=0
-        npm install
-        npm run build
-        node __sapper__/build
-        """
-        s.executor = "tmux"
-        s.interpreter = "bash"
-        s.timeout = 10
-        s.ports = [3000]
-
-        s.start(reset=reset)
+            locations.configure()
+            website.configure()

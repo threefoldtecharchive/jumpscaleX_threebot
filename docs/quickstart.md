@@ -20,6 +20,8 @@ JSX> cl = j.servers.threebot.local_start_default(web=True)
 JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta')
 ```
 
+**Note** you can pass timeout=`yourtime` to control your starting server timeout, in case if you have a slow machine or your package takes longer to start
+
 ## Package structure
 - models directory registers the model on the package loading. no need to manually add the models
 - actors directory is registered automatically when loading the package no need to manually add actors
@@ -260,3 +262,8 @@ class Package(j.baseclasses.threebot_package):
 - Pastebin
   - [backend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/pastebin/README.md)
   - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/pastebin/pastebin/README.md)
+
+- VueJS
+  
+  - [backend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/examples/vuejs/README.md)
+  - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/examples/vuejs/newproject/README.md)

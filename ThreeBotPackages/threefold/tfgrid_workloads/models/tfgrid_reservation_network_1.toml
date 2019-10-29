@@ -6,6 +6,7 @@ iprange = "10.10.0.0/16" (iprange)
 #where to send the statistics too
 stats_aggregator = (LO) !tfgrid.reservation.statsaggregator.1
 network_resources = (LO) !tfgrid.network.net_resource.1
+farmer_tid = (I)
 
 
 @url = tfgrid.network.net_resource.1
