@@ -1,0 +1,15 @@
+@url = community.app.1
+name** = "" (S)
+topic** = "" (S)
+code** = (S)
+
+
+@url = user.app.1
+email** = (S)
+interest = (S)
+code** = (S)
+topics = (S)
+county = (S)
+invited_by = (S)
+community = (LS) !community.app.1
+
