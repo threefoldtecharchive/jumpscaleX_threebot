@@ -3,7 +3,7 @@ import uuid
 import random
 
 
-class TFTExplorerFactory(j.baseclasses.threebot_factory, j.baseclasses.testtools):
+class TFTExplorerFactory(j.baseclasses.threebot_factory):
 
     __jslocation__ = "j.threebot.package.tftexplorer"
 
