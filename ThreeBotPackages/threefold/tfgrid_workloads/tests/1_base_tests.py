@@ -139,15 +139,7 @@ def main(self):
     signature = signer_signing_key.sign(reservation.json.encode())
     cl.actors.workload_manager.sign_provision(reservation.id, tbots["signer"].id, binascii.hexlify(signature.signature))
     reservation = cl.actors.workload_manager.reservation_get(reservation.id)
-
-    # Temporary change to simplify reservation flow for testing
-    # assert reservation.next_action == "PAY"
-
-    # TEST06: FILL FARMER SIGNATURE
-    # signature = farmer_signing_key.sign(reservation.json.encode())
-    # cl.actors.workload_manager.sign_farmer(reservation.id, tbots["farmer"].id, binascii.hexlify(signature.signature))
-    # reservation = cl.actors.workload_manager.reservation_get(reservation.id)
-    # assert reservation.next_action == "DEPLOY"
+    assert reservation.next_action == "DEPLOY"
 
     # TEST07: LIST WORKLOADS
     workloads = cl.actors.workload_manager.workloads_list(node_id="1").workloads
@@ -162,12 +154,11 @@ def main(self):
     assert len(workloads) == 1
     assert [workload.type for workload in workloads] == ["network"]
 
-    # Temporary change to simplify reservation flow for testing
     # TEST08: FILL SING DELETE
-    # signature = signer_signing_key.sign(reservation.json.encode())
-    # cl.actors.workload_manager.sign_delete(reservation.id, tbots["signer"].id, binascii.hexlify(signature.signature))
-    # reservation = cl.actors.workload_manager.reservation_get(reservation.id)
-    # assert reservation.next_action == "DELETE"
+    signature = signer_signing_key.sign(reservation.json.encode())
+    cl.actors.workload_manager.sign_delete(reservation.id, tbots["signer"].id, binascii.hexlify(signature.signature))
+    reservation = cl.actors.workload_manager.reservation_get(reservation.id)
+    assert reservation.next_action == "DELETE"
 
     # TEST09: REGISTER RESERVATION WITH INEXISTANT CUSTOMER
     reservation = reservation_model.new()
@@ -207,6 +198,22 @@ def main(self):
     reservation = cl.actors.workload_manager.reservation_get(reservation.id)
     assert reservation.next_action == "INVALID"
 
+    # TEST10: CREATE RESERVATION WITH SINGLE API CALL
+    reservation = reservation_model.new()
+    reservation.customer_tid = tbots["customer"].id
+    reservation.data_reservation.containers.append(container)
+    reservation.data_reservation.expiration_provisioning = int(j.data.time.epoch + 3 * 60)
+    reservation.data_reservation.expiration_reservation = int(j.data.time.epoch + 5 * 60)
+    reservation.json = j.data.serializers.json.dumps(reservation.data_reservation._ddict)
+    signature = customer_signing_key.sign(reservation.json.encode())
+    reservation.customer_signature = binascii.hexlify(signature.signature)
+    reservation_data = reservation._ddict
+    reservation = cl.actors.workload_manager.reservation_register(reservation_data)
+    reservation = cl.actors.workload_manager.reservation_get(reservation.id)
+    assert reservation.next_action == "DEPLOY"
+
     # FINAL: clean up created reservations
     for reservation in reservation_model.find():
         reservation.delete()
+
+    print("ALL TESTS ARE OK")

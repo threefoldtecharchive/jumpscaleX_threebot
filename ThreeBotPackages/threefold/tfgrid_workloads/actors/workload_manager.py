@@ -160,7 +160,6 @@ class workload_manager(j.baseclasses.threebot_actor):
             # Temporary change to simplify reservation flow for testing
             # if self._validate_farmers_signature(jsxobj):
             jsxobj.next_action = "deploy"
-            pass
 
         if jsxobj.next_action == "deploy":
             # Temporary change to simplify reservation flow for testing
@@ -360,11 +359,15 @@ class workload_manager(j.baseclasses.threebot_actor):
         signature = (S)
         ```
         """
+        # Temporary change to simplify reservation flow for testing
+        # reservation = self._reservation_get(reservation_id)
+        # signature_obj = self.signature_model.new()
+        # signature_obj.tid = tid
+        # signature_obj.signature = signature
+        # reservation.signatures_delete.append(signature_obj)
+        # reservation.save()
         reservation = self._reservation_get(reservation_id)
-        signature_obj = self.signature_model.new()
-        signature_obj.tid = tid
-        signature_obj.signature = signature
-        reservation.signatures_delete.append(signature_obj)
+        reservation.next_action = "delete"
         reservation.save()
         return True
 
