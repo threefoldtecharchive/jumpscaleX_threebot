@@ -27,6 +27,6 @@ class provisioning(j.baseclasses.threebot_actor):
         description = (S)
         ```
         """
-        container = j.tools.threebot_deploy.get_by_douple_name(doublename)
+        container = j.tools.threebot_deploy.get_by_double_name(doublename)
         client = container.threebot_client
         client.actors.registration.register(doublename, email, description)
