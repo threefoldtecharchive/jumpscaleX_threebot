@@ -1,7 +1,7 @@
 from Jumpscale import j
 
 
-class provisioning(j.baseclasses.threebot_actor):
+class community(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         pass
 
