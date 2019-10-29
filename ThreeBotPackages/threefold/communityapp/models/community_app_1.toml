@@ -1,15 +1,22 @@
-@url = community.app.1
-name** = "" (S)
-topic** = "" (S)
-code** = (S)
 
 
-@url = user.app.1
+
+@url = threefold.community.user.1
 email** = (S)
-interest = (S)
-code** = (S)
-topics = (S)
-county = (S)
-invited_by = (S)
-community = (LS) !community.app.1
+referral_codes** = (LS)
+country = (S)
+invited_by = (I)  #userid
+registration_date = (D)
+interests = (LO) !threefold.community.interest.1
+freeflow_spaces = (LO) !threefold.community.freeflow.space.1
+remark_threefold = ""
+remark_member = ""
+
+@url = threefold.community.interest.1
+name = "" (S)
+remark = "" (S)
+
+@url = threefold.community.freeflow.space.1
+name = "" (S)
+url = "" (S)
 

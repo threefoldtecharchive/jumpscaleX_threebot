@@ -12,6 +12,7 @@ class WebsitesFactory(j.baseclasses.object, j.baseclasses.testtools):
         self.server = j.servers.threebot.get("freeflownation.org")
 
         # freeflownation.org
+        # TODO: BAD
         threefold_io_package = j.tools.threebot_packages.get(
             "freeflownation.org",
             branch=branch,

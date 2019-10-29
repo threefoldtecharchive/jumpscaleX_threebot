@@ -11,7 +11,7 @@ class community(j.baseclasses.threebot_actor):
         """
         pass
 
-    def check_invitation(self, invitaion, description, user_session=None):
+    def check_invitation(self, invitation, description, user_session=None):
         """
         check the invitation is correct or not
         if correct send his username to community_join

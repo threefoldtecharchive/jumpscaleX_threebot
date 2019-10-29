@@ -7,11 +7,8 @@ def load_wiki(**kwargs):
 
 
 class Package(j.baseclasses.threebot_package):
-    def _init(self, **kwargs):
-        if "branch" in kwargs.keys():
-            self.branch = kwargs["branch"]
-        else:
-            self.branch = "master"
+    def _init(self):
+        self.branch = "master"
 
     @property
     def bcdb(self):
@@ -33,8 +30,3 @@ class Package(j.baseclasses.threebot_package):
         j.servers.myjobs.schedule(
             load_wiki, repo="grid", url="https://github.com/threefoldfoundation/info_grid/tree/%s/docs" % self.branch
         )
-
-    def prepare(self):
-        j.threebot.package.wikis.install()
-        j.servers.myjobs.workers_tmux_start()
-        self.load()
