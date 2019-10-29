@@ -24,7 +24,7 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
 
         # lets test for registration of a wiki page
 
-        schema = """]
+        schema = """
             @url = threebot.registry.test.schema.1
             url = ""                              #unique url, points to where the wiki is
             description = ""

@@ -34,8 +34,8 @@ class registry(j.baseclasses.threebot_actor):
         # need to verify if author is correct (use user_session tid or author if specified)
         # verification happens by means of signature, signature was done on data
 
-        # verifiy the  data is sigend with the input signature
-        verifiy_data = j.data.nacl.payload_verify(input_object, signature=signature_hex, die=False)
+        # verifiy the  data is signed with the input signature
+        verifiy_data = j.data.nacl.payload_verify(input_object._data, signature=signature_hex, die=True)
 
         if not verifiy_data:
             raise j.exceptions.Input("threebot cannot be registered, signature wrong")

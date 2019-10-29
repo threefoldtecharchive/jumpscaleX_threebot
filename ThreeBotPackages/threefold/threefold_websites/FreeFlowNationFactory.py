@@ -1,9 +1,10 @@
 from Jumpscale import j
 
 
+# TODO: this should be the right baseclass
 class WebsitesFactory(j.baseclasses.object, j.baseclasses.testtools):
 
-    __jslocation__ = "j.threebot.package.freeflownation"
+    __jslocation__ = "j.threebot.package.freeflownation_website"
 
     def install(self, branch="development"):
         """

@@ -1,9 +1,9 @@
 from Jumpscale import j
 
-
+# TODO: this should be the right baseclass
 class WebsitesFactory(j.baseclasses.object, j.baseclasses.testtools):
 
-    __jslocation__ = "j.threebot.package.threefold_io"
+    __jslocation__ = "j.threebot.package.threefoldio_website"
 
     def install(self, branch="development"):
         """
@@ -12,6 +12,7 @@ class WebsitesFactory(j.baseclasses.object, j.baseclasses.testtools):
         self.server = j.servers.threebot.get("threefold.io")
 
         # threefold.io
+        # TODO: WRONG:
         threefold_io_package = j.tools.threebot_packages.get(
             "threefold.io",
             branch=branch,
