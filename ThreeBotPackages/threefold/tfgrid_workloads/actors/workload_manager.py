@@ -25,35 +25,12 @@ class workload_manager(j.baseclasses.threebot_actor):
         self.user_model = tb_bcdb.model_get(url="threebot.phonebook.user.1")
         self.nacl = j.data.nacl.default
 
-        class IndexTable(j.clients.peewee.Model):
-            class Meta:
-                database = None
+        index_table = j.threebot.package.workloadmanager.reservation_index_model()
+        index_table._meta.database = self.reservation_model.bcdb.sqlite_index_client
+        index_table.create_table(safe=True)
 
-            pw = j.clients.peewee
-            id = pw.PrimaryKeyField()
-            reservation_id = pw.IntegerField(index=True, default=0)
-            workload_id = pw.IntegerField(index=True, default=0)
-            node_id = pw.TextField(index=True, default="")
-
-        def index_create(model, obj, action, **kwargs):
-            if action == "set_post":
-                index = model.IndexTable.get_or_none(reservation_id=obj.id)
-                if not index:
-                    for wt, workload in self._iterate_over_workloads(obj):
-                        if wt == "network":
-                            for nr in workload.network_resources:
-                                index = model.IndexTable.create(
-                                    reservation_id=obj.id, workload_id=workload.workload_id, node_id=nr.node_id
-                                )
-                        else:
-                            index = model.IndexTable.create(
-                                reservation_id=obj.id, workload_id=workload.workload_id, node_id=workload.node_id
-                            )
-
-        IndexTable._meta.database = self.reservation_model.bcdb.sqlite_index_client
-        IndexTable.create_table(safe=True)
-        self.reservation_model.IndexTable = IndexTable
-        self.reservation_model.trigger_add(index_create)
+        self.reservation_model.IndexTable = index_table
+        self.reservation_model.trigger_add(j.threebot.package.workloadmanager.reservation_index_create())
 
     def _iterate_over_workloads(self, obj):
         for _type in ["zdbs", "volumes", "containers", "networks"]:
@@ -85,6 +62,10 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         Make sure that at least the quorum_min number of signers signed with a valid signature
         """
+        # Temporary change to simplify reservation flow for testing
+        if request.quorum_min == INT_NULL_VALUE:
+            return True
+
         signers = 0
         for signature in signatures:
             if signature.tid not in request.signers:
@@ -113,7 +94,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         Checks that all the farmers signed with a valid signature
         """
         farmers_tids = set()
-        for _, workload in self._iterate_over_workloads(jsxobj):
+        for _, workload in j.threebot.package.workloadmanager.iterate_over_workloads(jsxobj):
             farmers_tids.add(workload.farmer_tid)
 
         for signature in jsxobj.signatures_farmer:
@@ -159,7 +140,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         if jsxobj.data_reservation.expiration_reservation < j.data.time.epoch:
             jsxobj.next_action = "delete"
 
-        elif jsxobj.next_action == "create":
+        if jsxobj.next_action == "create":
             if jsxobj.data_reservation.expiration_provisioning > j.data.time.epoch:
                 if jsxobj.customer_signature:
                     if self._validate_customer_signature(jsxobj):
@@ -169,21 +150,24 @@ class workload_manager(j.baseclasses.threebot_actor):
             else:
                 jsxobj.next_action = "invalid"
 
-        elif jsxobj.next_action == "sign":
+        if jsxobj.next_action == "sign":
             signatures = jsxobj.signatures_provision
             request = jsxobj.data_reservation.signing_request_provision
             if self._request_check(payload, request, signatures):
                 jsxobj.next_action = "pay"
 
-        elif jsxobj.next_action == "pay":
-            if self._validate_farmers_signature(jsxobj):
-                jsxobj.next_action = "deploy"
+        if jsxobj.next_action == "pay":
+            # Temporary change to simplify reservation flow for testing
+            # if self._validate_farmers_signature(jsxobj):
+            jsxobj.next_action = "deploy"
 
-        elif jsxobj.next_action == "deploy":
-            signatures = jsxobj.signatures_delete
-            request = jsxobj.data_reservation.signing_request_delete
-            if self._request_check(payload, request, signatures):
-                jsxobj.next_action = "delete"
+        if jsxobj.next_action == "deploy":
+            # Temporary change to simplify reservation flow for testing
+            # signatures = jsxobj.signatures_delete
+            # request = jsxobj.data_reservation.signing_request_delete
+            # if self._request_check(payload, request, signatures):
+            #     jsxobj.next_action = "delete"
+            pass
 
         jsxobj.save()
         return jsxobj
@@ -199,7 +183,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservations = []
         for reservation_id in reservations_ids:
             reservation = self._reservation_get(reservation_id)
-            if states and str(reservation.next_action) not in [s.upper() for s in states]:
+            if states and reservation.next_action not in states:
                 continue
 
             if epoch != INT_NULL_VALUE and epoch >= reservation.epoch:
@@ -209,7 +193,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         return reservations
 
     def _reservation_validate(self, reservation):
-        workloads = [l for _, l in self._iterate_over_workloads(reservation)]
+        workloads = [l for _, l in j.threebot.package.workloadmanager.iterate_over_workloads(reservation)]
         if not workloads:
             raise j.exceptions.Value("At least one workload should be defined")
 
@@ -271,7 +255,12 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         if state and not isinstance(state, list):
             state = [state]
-        return self._filter_reservations(node_id, state, epoch)
+        reservations = self._filter_reservations(node_id, state, epoch)
+
+        output = schema_out.new()
+        output.reservations = reservations
+
+        return output
 
     def workloads_list(self, node_id, epoch, schema_out, user_session):
         """
@@ -287,10 +276,14 @@ class workload_manager(j.baseclasses.threebot_actor):
         output = schema_out.new()
         reservations = self._filter_reservations(node_id, ["deploy", "delete"], epoch)
         for reservation in reservations:
-
-            for _type, workload in self._iterate_over_workloads(reservation):
-                if node_id and workload.node_id != node_id:
-                    continue
+            for _type, workload in j.threebot.package.workloadmanager.iterate_over_workloads(reservation):
+                if node_id:
+                    if _type in ["container", "zdb", "volume"] and workload.node_id != node_id:
+                        continue
+                    if _type == "network" and node_id not in [
+                        resource.node_id for resource in workload.network_resources
+                    ]:
+                        continue
 
                 workload.reservation_id = reservation.id
                 obj = self.workload_schema.new()
@@ -320,7 +313,7 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         out = schema_out.new()
         reservation = self._reservation_get(rid)
-        for _type, workload in self._iterate_over_workloads(reservation):
+        for _type, workload in j.threebot.package.workloadmanager.iterate_over_workloads(reservation):
             if int(workload.workload_id) == int(wid):
                 obj = self.workload_schema.new()
                 obj.type = _type
@@ -366,11 +359,15 @@ class workload_manager(j.baseclasses.threebot_actor):
         signature = (S)
         ```
         """
+        # Temporary change to simplify reservation flow for testing
+        # reservation = self._reservation_get(reservation_id)
+        # signature_obj = self.signature_model.new()
+        # signature_obj.tid = tid
+        # signature_obj.signature = signature
+        # reservation.signatures_delete.append(signature_obj)
+        # reservation.save()
         reservation = self._reservation_get(reservation_id)
-        signature_obj = self.signature_model.new()
-        signature_obj.tid = tid
-        signature_obj.signature = signature
-        reservation.signatures_delete.append(signature_obj)
+        reservation.next_action = "delete"
         reservation.save()
         return True
 
@@ -388,7 +385,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         reservation = self._reservation_get(reservation_id)
         farmers_tids = set()
-        for _, workload in self._iterate_over_workloads(reservation):
+        for _, workload in j.threebot.package.workloadmanager.iterate_over_workloads(reservation):
             farmers_tids.add(workload.farmer_tid)
 
         if tid not in farmers_tids:

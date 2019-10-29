@@ -2,6 +2,7 @@ from Jumpscale import j
 import binascii
 from io import BytesIO
 import json
+import os
 
 from JumpscaleLibs.servers.mail.smtp import app
 from JumpscaleLibs.servers.mail.imap.bcdbmailbox import BCDBMailboxdir
@@ -15,16 +16,15 @@ class mail(j.baseclasses.threebot_actor):
     def send(self, mail, schema_out=None, user_session=None):
         """
         ```in
-        mail = (S)
+        mail = (O) !email.message.1
         ```
         ```out
         success = (B)
         ```
         """
-        if isinstance(mail, str):
-            mail = json.loads(mail)
+
         server = app.MailServer()
-        mail_stored = server.store_mail(mail, is_send=True)
+        mail_stored = server.store_mail(mail._ddict, is_send=True)
         self.bcdb_mailbox.create_folder(mail_stored.folder)
         out = schema_out.new()
         out.success = True
@@ -54,6 +54,21 @@ class mail(j.baseclasses.threebot_actor):
         """
         folders = self.bcdb_mailbox.list_folders()
         return folders
+
+    def create_folder(self, name, schema_out=None, user_session=None):
+        """
+        ```in
+        name = (S)
+        ```
+        ```out
+        success = (B)
+        ```
+        """
+
+        self.bcdb_mailbox.create_folder(name)
+        out = schema_out.new()
+        out.success = True
+        return out
 
     def update_folder_name(self, old_name, new_name, schema_out=None, user_session=None):
         """
@@ -124,16 +139,15 @@ class mail(j.baseclasses.threebot_actor):
     def receive(self, mail, schema_out=None, user_session=None):
         """
         ```in
-        mail = (S)
+        mail = (O) !email.message.1
         ```
         ```out
         success = (B)
         ```
         """
-        if isinstance(mail, str):
-            mail = json.loads(mail)
+
         server = app.MailServer()
-        mail_stored = server.store_mail(mail)
+        mail_stored = server.store_mail(mail._ddict)
         self.bcdb_mailbox.create_folder(mail_stored.folder)
         out = schema_out.new()
         out.success = True

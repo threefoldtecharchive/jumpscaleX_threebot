@@ -24,7 +24,7 @@ Default storage uses one folder per collection and one file per collection
 entry.
 
 """
-
+import datetime
 import binascii
 import contextlib
 import json
@@ -687,15 +687,22 @@ ITEM_CACHE_VERSION = 1
 class Database:
     bcdb = j.data.bcdb.get("caldav")
     user_model = bcdb.model_get(url="tf.caldav.user.1")
-    collection_model = bcdb.model_get(url="tf.caldav.collection.1")
-    item_model = bcdb.model_get(url="tf.caldav.collection.item.1")
+    calendar_model = bcdb.model_get(url="tf.caldav.calendar.1")
+    addressbook_model = bcdb.model_get(url="tf.caldav.addressbook.1")
+    event_model = bcdb.model_get(url="tf.caldav.event.1")
+    contact_model = bcdb.model_get(url="tf.caldav.contact.1")
+    attachment_model = bcdb.model_get(url="tf.caldav.attachment.1")
+    email_model = bcdb.model_get(url="tf.caldav.email.1")
+    telephone_model = bcdb.model_get(url="tf.caldav.telephone.1")
+    mailaddress_model = bcdb.model_get(url="tf.caldav.mailaddress.1")
+    instantmessaging_model = bcdb.model_get(url="tf.caldav.instantmessaging.1")
 
     @classmethod
-    def find_collection(cls, collection_id, user_id):
-        collections = cls.collection_model.find(collection_id=collection_id, user_id=user_id)
-        # if len(collections) <= 0:
-        #     return None
-        return collections
+    def find_collections(cls, collection_id, user_id):
+        calendars = cls.calendar_model.find(calendar_id=collection_id, user_id=user_id)
+        if calendars:
+            return calendars
+        return cls.addressbook_model.find(addressbook_id=collection_id, user_id=user_id)
 
     @classmethod
     def user_exists(cls, user_id):
@@ -711,21 +718,18 @@ class Database:
         user.save()
 
     @classmethod
-    def find_item(cls, item_id, collection_id=None, user_id=None):
-        items = cls.item_model.find(item_id=item_id, collection_id=collection_id, user_id=user_id)
-        return items
-
-    @classmethod
-    def get_item(cls, item_id, collection_id=None, user_id=None):
-        items = cls.find_item(item_id=item_id, collection_id=collection_id, user_id=user_id)
-        if len(items) <= 0:
-            raise j.exceptions.NotFound(f"Can not find item:{item_id} in collection:{collection_id} for user:{user_id}")
-        return items[0]
+    def find_items(cls, item_id, collection_id=None, user_id=None):
+        collections = cls.find_collections(collection_id, user_id)
+        if not collections:
+            return []
+        collection = collections[0]
+        if collection.type == "calendar":
+            return cls.event_model.find(item_id=item_id, calendar_id=collection_id, user_id=user_id)
+        return cls.contact_model.find(item_id=item_id, addressbook_id=collection_id, user_id=user_id)
 
     @classmethod
     def get_collection(cls, collection_id, user_id):
-        collections = cls.find_collection(collection_id=collection_id, user_id=user_id)
-
+        collections = cls.find_collections(collection_id=collection_id, user_id=user_id)
         if len(collections) <= 0:
             raise j.exceptions.NotFound(f"Can not find collection:{collection_id} for user:{user_id}")
         return collections[0]
@@ -775,14 +779,13 @@ class Collection(BaseCollection):
             if len(path_list) == 1:
                 if not Database.user_exists(path_list[0]):
                     return
-            elif len(path_list) == 2:
-                if not Database.find_collection(path_list[1], path_list[0]):
+            else:
+                collections = Database.find_collections(path_list[1], path_list[0])
+                if not collections:
                     return
-            elif len(path_list) == 3:
-                if not Database.find_item(path_list[2], path_list[1], path_list[0]):
-                    return
+
         if len(attributes) >= 3:
-            if Database.find_item(attributes[-1], attributes[-2], attributes[-3]):
+            if Database.find_items(attributes[-1], attributes[-2], attributes[-3]):
                 href = attributes.pop()
             else:
                 return
@@ -807,9 +810,14 @@ class Collection(BaseCollection):
                 yield collection.get(href)
         # get all collections for a user
         self = cls(sane_path)
-        collections = Database.collection_model.find(user_id=self.user_id)
+        collections = Database.calendar_model.find(user_id=self.user_id) + Database.addressbook_model.find(
+            user_id=self.user_id
+        )
         for collection in collections:
-            yield cls("/{}/{}".format(collection.user_id, collection.collection_id))
+            if collection.type == "calendar":
+                yield cls("/{}/{}".format(collection.user_id, collection.calendar_id))
+            else:
+                yield cls("/{}/{}".format(collection.user_id, collection.addressbook_id))
 
     @classmethod
     def verify(cls):
@@ -855,12 +863,17 @@ class Collection(BaseCollection):
         href example: '/user1/01dea181-55a0-a992-4139-4cf8e948a7cf/'
         """
         self = cls(href)
-        # if not props:
-        col = Database.collection_model.new()
-        col.user_id = self.user_id
-        col.collection_id = self.collection_id
-        col.save()
-        # return cls(href)
+        if props.get("tag") == "VCALENDAR":
+            col = Database.calendar_model.new()
+            col.user_id = self.user_id
+            col.calendar_id = self.collection_id
+            col.save()
+        elif props.get("tag") == "VADDRESSBOOK":
+            col = Database.addressbook_model.new()
+            col.user_id = self.user_id
+            col.addressbook_id = self.collection_id
+            col.save()
+
         self.set_meta_all(props)
 
         if collection:
@@ -903,9 +916,29 @@ class Collection(BaseCollection):
 
         for href, vobject_item in vobject_items.items():
             text = vobject_item.serialize()
-            item = Database.item_model.new()
-            item.item_id = href
-            item.content = text
+            if vobject_item.name == "VCALENDAR":
+                item = Database.event_model.new()
+                item.item_id = href
+                item.content = text
+                item.dtstart = int(vobject_item.vevent.dtstart.value.timestamp())
+                item.dtend = int(vobject_item.vevent.dtend.value.timestamp())
+                item.type = "VEVENT"
+                item.timezone = vobject_item.vevent.dtstart.value.tzname()
+                item.title = vobject_item.vevent.summary.value
+                item.description = vobject_item.vevent.description.value
+                item.location = vobject_item.vevent.location.value
+                for e in vobject_item.vevent.getChildren():
+                    if e.name == "ATTACH":
+                        a = Database.attachment_model.new()
+                        a.name = e.params["FILENAME"].replace("['", "").replace("']", "")
+                        a.encoding = e.params["ENCODING"].replace("['", "").replace("']", "").lower()
+                        a.content = e.value
+                        a.save()
+            else:
+                item = Database.contact_model.new()
+                item.item_id = href
+                item.content = text
+                item.type = vobject_item.name
             item.save()
             collection.append(item)
         collection.save()
@@ -920,7 +953,7 @@ class Collection(BaseCollection):
     def list(self):
         if not self.collection_id:
             return
-        collections = Database.find_collection(self.collection_id, self.user_id)
+        collections = Database.find_collections(self.collection_id, self.user_id)
         if collections:
             for item in collections[0].items:
                 yield item.item_id
@@ -947,11 +980,12 @@ class Collection(BaseCollection):
         """Like ``get`` but additonally returns the following metadata:
         tag, start, end: see ``xmlutils.find_tag_and_time_range``. If
         extraction of the metadata failed, the values are all ``None``."""
-        items = Database.find_item(href, self.collection_id, self.user_id)
+
+        items = Database.find_items(href, self.collection_id, self.user_id)
         if items:
             raw_text = items[0].content
         else:
-            return None, None
+            return None, (None, None, None)
 
         vobject_items = tuple(vobject.readComponents(raw_text))
         if len(vobject_items) != 1:
@@ -977,7 +1011,6 @@ class Collection(BaseCollection):
         )
 
     def get_multi2(self, hrefs):
-
         collection = Database.get_collection(collection_id=self.collection_id, user_id=self.user_id)
         items = collection.items
         items_refs = list(map(lambda item: item.item_id, items))
@@ -997,6 +1030,7 @@ class Collection(BaseCollection):
         if not tag:
             # no filter
             yield from ((item, simple) for item in self.get_all())
+
         for item, (itag, istart, iend) in (self._get_with_metadata(href, verify_href=False) for href in self.list()):
             if tag == itag and istart < end and iend > start:
                 yield item, simple and (start <= istart or iend <= end)
@@ -1004,29 +1038,186 @@ class Collection(BaseCollection):
     def upload(self, href, vobject_item):
         uid, etag, text, name, tag, _, _ = self._item_cache_content(vobject_item)
         collection = Database.get_collection(collection_id=self.collection_id, user_id=self.user_id)
-        item = Database.item_model.new()
-        item.item_id = href
-        item.collection_id = self.collection_id
-        item.user_id = self.user_id
-        item.content = text
-        item.epoch = j.data.time.epoch
-        item.save()
-        collection.items.append(item)
-        collection.save()
-        item = Item(self, href=href, etag=etag, text=text, item=vobject_item, uid=uid, name=name, component_name=tag)
-        return item
+        if vobject_item.name == "VCALENDAR":
+            events = Database.event_model.find(item_id=href)
+            new = True
+            # already existing
+            if events:
+                item = events[0]
+                new = False
+            else:
+                item = Database.event_model.new()
+
+            item.item_id = href
+            item.calendar_id = self.collection_id
+            item.user_id = self.user_id
+            item.content = text
+            item.epoch = j.data.time.epoch
+            item.dtstart = int(vobject_item.vevent.dtstart.value.timestamp())
+            item.dtend = int(vobject_item.vevent.dtend.value.timestamp())
+            item.type = "VEVENT"
+            item.timezone = vobject_item.vevent.dtstart.value.tzname()
+            item.title = vobject_item.vevent.summary.value
+            item.description = vobject_item.vevent.description.value
+            item.location = vobject_item.vevent.location.value
+
+            for e in vobject_item.vevent.getChildren():
+                if e.name == "ATTACH":
+                    a = Database.attachment_model.new()
+                    a.name = e.params["FILENAME"].replace("['", "").replace("']", "")
+                    a.encoding = e.params["ENCODING"].replace("['", "").replace("']", "").lower()
+                    a.content = e.value
+                    a.save()
+
+            item.save()
+
+            if new:
+                collection.items.append(item)
+            else:
+                idx = [i.item_id for i in collection.items].index(f'{vobject_item.vevent.uid.value}.ics')
+                collection.items[idx] = item
+            collection.save()
+            item = Item(self, href=href, etag=etag, text=text, item=vobject_item, uid=uid, name=name, component_name=tag)
+            return item
+        else:
+            contacts = Database.contact_model.find(item_id=href)
+
+            new = True
+            # already existing
+            if contacts:
+                item = contacts[0]
+                new = False
+            else:
+                item = Database.contact_model.new()
+
+            item.contact_id = vobject_item.uid.value
+            item.item_id = href
+            item.addressbook_id = self.collection_id
+            item.user_id = self.user_id
+            item.content = text
+            item.epoch = j.data.time.epoch
+            item.type = vobject_item.name
+
+            for child in vobject_item.getChildren():
+                if child.name == 'N':
+                    item.givenname = vobject_item.n.value.given
+                    item.familyname = vobject_item.n.value.family
+
+                elif child.name == 'BDAY':
+                    item.birthday = int(datetime.datetime.strptime(child.value, '%Y-%m-%d').timestamp())
+
+                elif child.name == 'CALURI':
+                    item.calendar_url = child.value
+
+                elif child.name == 'CATEGORIES':
+                    item.categories = child.value
+
+                elif child.name == 'NICKNAME':
+                    item.nickname = child.value
+
+                elif child.name == 'X-EVOLUTION-VIDEO-URL':
+                    item.videchat = child.value
+
+                elif child.name == 'X-EVOLUTION-VIDEO-URL':
+                    item.videchat = child.value
+
+                elif child.name == 'X-EVOLUTION-BLOG-URL':
+                    item.blog = child.value
+
+                elif child.name == 'FBURL':
+                    item.facebook = child.value
+
+                elif child.name == 'X-EVOLUTION-ANNIVERSARY':
+                    item.anniversary = int(datetime.datetime.strptime(child.value, '%Y-%m-%d').timestamp())
+
+                elif child.name == 'NOTE':
+                    item.notes = child.value
+
+                elif child.name == 'EMAIL':
+                    item.emails = []
+                    e = Database.email_model.new()
+                    e.email = child.value
+                    e.type = child.params['TYPE'][0]
+                    e.save()
+                    item.emails.append(e)
+
+                elif child.name == 'TEL':
+                    item.telephones = []
+                    e = Database.telephone_model.new()
+                    e.telephone = child.value
+                    e.type = child.params['TYPE'][0]
+                    e.save()
+                    item.telephones.append(e)
+
+                elif child.name == 'ADR':
+                    item.mailaddresses = []
+                    e = Database.mailaddress_model.new()
+                    e.street = child.value.street
+                    e.city = child.value.city
+                    e.country = child.value.country
+                    e.code = child.value.code
+                    e.region = child.value.region
+                    e.box = child.value.box
+                    e.type = child.params['TYPE'][0]
+                    e.save()
+                    item.mailaddresses.append(e)
+
+                elif child.name == 'TITLE':
+                    item.job.title = child.value
+
+                elif child.name == 'X-EVOLUTION-MANAGER':
+                    item.job.manager = child.value
+
+                elif child.name == 'X-EVOLUTION-ASSISTANT':
+                    item.job.assistant = child.value
+
+                elif child.name == 'PRO':
+                    item.job.profession = child.value
+
+                elif child.name == 'ORG':
+                    item.job.company =  child.value[0]
+                    if len(child.value) >=2 :
+                        item.job.department = child.value[1]
+                    if len(child.value) ==3 :
+                        item.job.offic = child.value[2]
+
+                elif child.name in ['X-TWITTER', 'X-SKYPE']:
+                    item.ims = []
+                    im = Database.instantmessaging_model.new()
+                    im.username = child.value
+                    im.type = child.name.replace('X-', '').capitalize()
+                    item.ims.append(im)
+
+            item.save()
+
+            if new:
+                collection.items.append(item)
+            else:
+                idx = [i.contact_id for i in collection.items].index(vobject_item.uid.value)
+                collection.items[idx] = item
+            collection.save()
+            item = Item(self, href=href, etag=etag, text=text, item=vobject_item, uid=uid, name=name, component_name=tag)
+            return item
 
     def delete(self, href=None):
         if href is None:
             collection = Database.get_collection(self.collection_id, self.user_id)
             collection.delete()
         else:
-            items = Database.find_item(item_id=href, collection_id=self.collection_id, user_id=self.user_id)
+            items = Database.find_items(item_id=href, collection_id=self.collection_id, user_id=self.user_id)
             if items:
                 item = items[0]
                 item.delete()
                 collection = Database.get_collection(self.collection_id, self.user_id)
-                collection.items.remove(item)
+                try:
+                    collection.items.remove(item)
+                except ValueError:
+                    idx = -1
+                    for i, item in enumerate(collection.items):
+                        if item.item_id == href:
+                            idx = i
+                    if idx != -1:
+                        collection.items.pop(idx)
                 collection.save()
 
     def get_meta(self, key=None):

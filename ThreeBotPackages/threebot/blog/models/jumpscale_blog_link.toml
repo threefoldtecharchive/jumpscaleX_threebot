@@ -23,6 +23,7 @@ sidebar_links = (LO)  !jumpscale.blog.link
 allow_disqus = true (B) 
 allow_navbar = true (B)
 allow_footer = true (B)
+posts_per_page = (I)
 
 
 @url = jumpscale.blog.post

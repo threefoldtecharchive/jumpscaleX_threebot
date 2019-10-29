@@ -60,3 +60,15 @@ Open browser on port `80`
 ```
 j.threebot.package.wikis.test()
 ```
+
+### Actors
+
+#### content_wiki
+
+- **reload**: reload a previously loaded wiki.
+    - schema in:
+        ```
+        name = (S) # wiki name
+        ```
+
+

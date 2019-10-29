@@ -101,7 +101,7 @@ tcprouterpath = "/sandbox/bin/tcprouter"
 redisserverpath = "/sandbox/bin/redis-server"
 corednspath = "/sandbox/bin/coredns"
 
-THREEBOT_DOMAIN = "3bot.grid.tf"
+THREEBOT_DOMAIN = "3bot.testnet.grid.tf"
 MASTERIP = "192.168.99.254"
 MASTERPUBLIC = j.sal.nettools.getReachableIpAddress("8.8.8.8", 53)
 
@@ -196,11 +196,7 @@ j.sal.nettools.waitConnectionTest(MASTERIP, 6378)
 
 rediscli = j.clients.redis.get(MASTERIP, port=6378)
 tfgateway = j.tools.tf_gateway.get(rediscli)
-tfgateway.domain_register_a("@", THREEBOT_DOMAIN, MASTERPUBLIC)
 
-tfgateway.domain_register_cname("phonebook", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
-tfgateway.domain_register_cname("namemanager", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
-tfgateway.domain_register_cname("gridmanager", THREEBOT_DOMAIN, THREEBOT_DOMAIN)
 
 
 for x, region in enumerate(regions):
@@ -226,18 +222,18 @@ for x, region in enumerate(regions):
     configure_redis(executor, privateip)
     configure_tcprouter(executor)
     configure_coredns(executor)
-    tfgateway.domain_register_a("gateway", THREEBOT_DOMAIN, executor.sshclient.addr)
+    tfgateway.domain_register_a("@", THREEBOT_DOMAIN, executor.sshclient.addr)
 
 wg.save()
 wg.configure()
 
 print("Wating for DNS ...")
-j.sal.nettools.waitConnectionTest("gateway.3bot.grid.tf", 443, timeout=60)
+j.sal.nettools.waitConnectionTest(THREEBOT_DOMAIN, 443, timeout=60)
 
 print("Start local 3bot")
 client = j.servers.threebot.local_start_default()
 client.actors.package_manager.package_add(
-    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/namemanager"
+    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/namemanager"
 )
 client.actors.package_manager.package_add(
     path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/gridnetwork"
@@ -247,6 +243,9 @@ client.actors.package_manager.package_add(
 )
 client.actors.package_manager.package_add(
     path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/tfgrid_workloads"
+)
+client.actors.package_manager.package_add(
+    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/provisioning"
 )
 client.reload()
 

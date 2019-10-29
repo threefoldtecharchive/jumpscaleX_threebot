@@ -1,19 +1,116 @@
 
 @url = tf.caldav.user.1
 user_id** = (S)
-collections = (LO) !tf.caldav.collection.1
 
-@url = tf.caldav.collection.1
-collection_id** = (S)
+
+
+@url = tf.caldav.attachment.1
+name** = (S)
+content = (S)
+encoding = (S)  #binary, base64
+
+
+@url = tf.caldav.event.1
+item_id** = (S)
+user_id** = (S)
+calendar_id** = (S)
+content = (S)
+epoch = (T)
+dtstart** = (T)
+dtend** = (T)
+type = (S)
+timezone = (S)
+title** = (S)
+description** = (S)
+location** = (S)
+attachments = (LO) !tf.caldav.attachment.1
+
+
+@url = tf.caldav.email.1
+email** = (S)
+type = (S) # work, etc
+
+@url = tf.caldav.telephone.1
+telephone** = (S)
+type = (S) # work, etc
+
+@url = tf.caldav.instantmessaging.1
+username = (S)
+type = (S)
+
+@url = tf.caldav.job.1
+manager = (S)
+profession = (S)
+company = (S)
+office = (S)
+assistant = (S)
+title = (S)
+department = (S)
+role = (S)
+
+@url = tf.caldav.mailaddress.1
+street = (S)
+city = (S)
+code = (S)
+region = (S) #state
+country = (S)
+box = (S)
+extended = (S)
+type = (S)
+
+@url = tf.caldav.certificate.1
+type = (S) # pgp, x.509
+text = (S)
+
+
+@url = tf.caldav.contact.1
+item_id** = (S)
+contact_id** = (S)
+user_id** = (S)
+addressbook_id** = (S)
+content = (S)
+epoch = (T)
+type = (S)
+title** = (S)
+givenname** = (S)
+familyname** = (S)
+categories = (LS)
+nickname = (S)
+emails = (LO) !tf.caldav.email.1
+telephones = (LO) !tf.caldav.telephone.1
+ims = (LO) !tf.caldav.instantmessaging.1
+certificates = (LO) !tf.caldav.certificate.1
+mailaddresses = (LO) !tf.caldav.mailaddress.1
+job = (O) !tf.caldav.job.1
+anniversary = (T)
+birthday = (T)
+spouse = (S)
+notes = (S)
+picture = (O) !tf.caldav.attachment.1
+calendar_url = (S)
+facebook  = (S)
+homepage = (S)
+blog = (S)
+videchat = (S)
+
+@url = tf.caldav.calendar.1
+calendar_id** = (S)
 user_id** = (S)
 props = (S)
 cache = (S)
-items = (LO) !tf.caldav.collection.item.1
+items = (LO) !tf.caldav.event.1
+type = "calendar" (S)
+display_name = (S)
+description = (S)
+color = (S)
 
-
-@url = tf.caldav.collection.item.1
-item_id** = (S)
+@url = tf.caldav.addressbook.1
+addressbook_id** = (S)
 user_id** = (S)
-collection_id** = (S)
-content = (S) 
-epoch = (T)
+props = (S)
+cache = (S)
+items = (LO) !tf.caldav.contact.1
+type = "addressbook" (S)
+display_name = (S)
+description = (S)
+color = (S)
