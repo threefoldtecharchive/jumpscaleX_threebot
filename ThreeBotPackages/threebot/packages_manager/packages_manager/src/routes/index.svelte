@@ -1,12 +1,12 @@
 
 <script>
-	import { getPackages, addPackage, startPackage, stopPackage, enablePackage, disablePackage, deletePackage } from "./gedisClient";
 	import { onMount } from "svelte";
+	const localGedisClient = new GedisHTTPClient(`${location.protocol}//${location.hostname}/web/gedis/http`)
 
 	let method = "path";
 	let newPackagePath = "";
 	let lastError = null;
-	export let packages = [];
+	let packages = [];
 	const pkgStatus = {
 		0: {name: "Init", actions: ["delete"]},
 		1: {name: "Installed", actions: ['delete', "start"]},
@@ -21,91 +21,92 @@
 	});
 
 	function updatePackages() {
-		getPackages().then(response => {
-			packages = response.data.packages;
-			lastError = null;
+		localGedisClient.executeCommand("package_manager", "packages_list").then((resp) => {
+			if (resp.ok) {
+				resp.json().then((data) => {
+					packages = data.packages;
+					lastError = null;
+				})
+			} else {
+				let err = new Error(resp)
+				lastError = err;
+				throw err;
+			}
 		})
-		.catch(err => {
-			lastError = err;
-			throw err;
-			console.log("error ", err);
-		});
-	}
-
-	function packageEnable(name) {
-		enablePackage(name).then(response => {
-			updatePackages()
-			lastError = null;
-		})
-		.catch(err => {
-			lastError = err;
-			throw err;
-			console.log("error ", err);
-		});
-	}
-
-	function packageDisable(name) {
-		disablePackage(name).then(response => {
-			updatePackages()
-			lastError = null;
-		})
-		.catch(err => {
-			lastError = err;
-			throw err;
-			console.log("error ", err);
-		});
-	}
-
-	function packageStop(name) {
-		stopPackage(name).then(response => {
-			updatePackages()
-			lastError = null;
-		})
-		.catch(err => {
-			lastError = err;
-			throw err;
-			console.log("error ", err);
-		});
-	}
-
-	function packageStart(name) {
-		startPackage(name).then(response => {
-			updatePackages()
-			lastError = null;
-		})
-		.catch(err => {
-			lastError = err;
-			throw err;
-			console.log("error ", err);
-			
-		});
-	}
-
-	function packageDelete(name) {
-		deletePackage(name).then(response => {
-			updatePackages()
-			lastError = null;
-		})
-		.catch(err => {
-			lastError = err;
-			throw err;
-			console.log("error ", err);
-			
-		});
 	}
 
 	function packageAdd() {
-		addPackage(method, newPackagePath).then(response => {
-			updatePackages()
-			lastError = null;
+		let args = {};
+		args[method] = newPackagePath;
+		localGedisClient.executeCommand("package_manager", "package_add", args).then((resp) => {
+			if(resp.ok) {
+				lastError = null;
+				updatePackages()
+       		} else {
+				lastError = "Couldn't add package " + newPackagePath;
+			}
 		})
-		.catch(err => {
-			lastError = err;
-			throw err;
-			console.log("error ", err);
-		});
 	}
 
+	function packageEnable(name) {
+		let args = {name: name}
+		localGedisClient.executeCommand("package_manager", "package_enable", args).then((resp) => {
+			if(resp.ok) {
+				lastError = null;
+				updatePackages()
+       		} else {
+				lastError = "Couldn't enable package " + name;
+			}
+		})
+	}
+
+	function packageDisable(name) {
+		let args = {name: name}
+		localGedisClient.executeCommand("package_manager", "package_disable", args).then((resp) => {
+			if(resp.ok) {
+				lastError = null;
+				updatePackages()
+       		} else {
+				lastError = "Couldn't disable package " + name;
+			}
+		})
+	}
+
+	function packageStop(name) {
+		let args = {name: name}
+		localGedisClient.executeCommand("package_manager", "package_stop", args).then((resp) => {
+			if(resp.ok) {
+				lastError = null;
+				updatePackages()
+       		} else {
+				lastError = "Couldn't stop package " + name;
+			}
+		})
+	}
+
+	function packageStart(name) {
+		let args = {name: name}
+		localGedisClient.executeCommand("package_manager", "package_start", args).then((resp) => {
+			if(resp.ok) {
+				lastError = null;
+				updatePackages()
+       		} else {
+				lastError = "Couldn't start package " + name;
+			}
+		})
+	}
+
+	function packageDelete(name) {
+		let args = {name: name}
+		localGedisClient.executeCommand("package_manager", "package_delete", args).then((resp) => {
+			if(resp.ok) {
+				lastError = null;
+				updatePackages()
+       		} else {
+				lastError = "Couldn't delete package " + name;
+			}
+		})
+	}
 </script>
 
 <svelte:head>
@@ -131,11 +132,10 @@
 			</div>
 		</div>
 		<div class="col-auto">
-			<button type="button" class="btn btn-primary mb-2" on:click={()=>packageAdd()}>Add package</button>
+			<button type="button" class="btn btn-prweblibs/gedis/gedis_http.jsimary mb-2" on:click={()=>packageAdd()}>Add package</button>
 		</div>
 	</div>
 </form>
-
 <table class="table" style="margin-top:20px;">
   <caption>Packages</caption>
   <thead>
@@ -175,4 +175,4 @@
     </tr>
 	{/each}
   </tbody>
-</table>
+</table> 
