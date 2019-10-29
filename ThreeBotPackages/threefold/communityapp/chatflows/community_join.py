@@ -6,6 +6,8 @@ def chat(bot):
     """
     to call http://localhost:5050/chat/session/community_join
     """
+
+    # TODO: this should not be in chatflow, needs to be part of DSL
     html = """\
 # Loading communits...
  <div class="progress">
@@ -21,7 +23,7 @@ def chat(bot):
     for x in range(10):
         bot.md_show_update(html.format(x * 10))
         gevent.sleep(1)
-    invite = bot.single_choice("Choose you have invitaion code ", ["Yes", "No"])
+    invite = bot.single_choice("Choose you have invitation code ", ["Yes", "No"])
     if invite == "No":
         email = bot.string_ask("Email address")
         interest = bot.string_ask("reason for interest")
