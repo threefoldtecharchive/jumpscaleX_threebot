@@ -179,7 +179,7 @@ var generateSlide = function (message) {
     $("#spinner").hide();
     // if error: leave the old slide and show the error
     if (message["error"]) {
-        $("#error").html(res['error']);
+        $("#error").html(message['error']);
         $(".btn-submit").attr("disabled", "false");
         $(".form-box").hide({
             "duration": 400
@@ -188,7 +188,7 @@ var generateSlide = function (message) {
     }
     // If the response contains redirect, so this was the final slide and will take new action
     else if (message['cat'] === "redirect") {
-        $(location).attr("href", res["msg"]);
+        $(location).attr("href", message["msg"]);
         return
     }
 
@@ -327,12 +327,12 @@ var generateSlide = function (message) {
     });
 }
 
-
-
 EXEC_OBJ["command"] = "session_new";
 // TOPIC is set through etlua template
 EXEC_OBJ["args"] = {
-    "topic": TOPIC
+    "topic": TOPIC,
+    "query_params": QS
+
 };
 GEDIS_CLIENT.execute(EXEC_OBJ).then(function (res) {
     res = JSON.parse(res);
