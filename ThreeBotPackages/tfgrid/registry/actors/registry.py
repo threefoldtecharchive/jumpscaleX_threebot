@@ -12,7 +12,9 @@ class registry(j.baseclasses.threebot_actor):
         self.registration_model = self.bcdb.model_get(url="threebot.registry.entry.1")
         self.threebot_data_model = self.bcdb.model_get(url="threebot.registry.entry.data.1")
 
-    def register(self, author=0, input_object=None, signature_hex=None, schema_out=None, user_session=None):
+    def register(
+        self, author=0, verifykey=None, input_object=None, signature_hex=None, schema_out=None, user_session=None
+    ):
         """
         register an object of the type threebot.registry.entry.data.1
         can be given in multiple formats
@@ -23,23 +25,11 @@ class registry(j.baseclasses.threebot_actor):
         author = (I)  #tid of the author
         input_object = (O)  !threebot.registry.entry.data.1
         signature_hex = "" (S)
-        ```
-
-        ```out
-        result = (I)
+        verifykey = (BIN)
         ```
 
         :return: return the id of the object
         """
-        # need to verify if author is correct (use user_session tid or author if specified)
-        # verification happens by means of signature, signature was done on data
-
-        # verifiy the  data is signed with the input signature
-        verifiy_data = j.data.nacl.payload_verify(input_object._data, signature=signature_hex, die=True)
-
-        if not verifiy_data:
-            raise j.exceptions.Input("threebot cannot be registered, signature wrong")
-
         # verify author id is correct
         if user_session.threebot_id:
             threebot_id = user_session.threebot_id
@@ -47,41 +37,73 @@ class registry(j.baseclasses.threebot_actor):
         if author != 0:
             threebot_id = author
 
-        assert threebot_id in input_object.authors
+        if not threebot_id in input_object.authors:
+            raise j.exceptions.Input("Error data wasn't authored by the author")
+
+        # need to verify if author is correct (use user_session tid or author if specified)
+        # verification happens by means of signature, signature was done on data
+
+        # verifiy the  data is signed with the input signatures
+        signature_hex = binascii.a2b_hex(signature_hex)
+        verifiy_data = self.validate_signature(
+            tid=author, verifykey=verifykey, payload=input_object._data, signature=signature_hex
+        )
+
+        if not verifiy_data:
+            raise j.exceptions.Input("Registery cannot be registered, wrong signature")
 
         # register the data
-        # new_data_model = threebot_data_model.new() # for non jumpscale schema
+        new_data_model = None
+        if input_object.schema_url:
+            # TODO: register other formats
+            if input_object.registered_info:
+                new_data_model = j.data.serializers.jsxdata.loads(input_object.registered_info)
+            else:
+                new_data_model = input_object.registered_info_encrypted
 
-        # data_format = input_object.registered_info_format
-        input_object.save()
+        new_object = self.bcdb.model_get(url="threebot.registry.entry.data.1").new()
+        new_object.authors = input_object.authors
+        new_object.readers = input_object.readers
+        new_object.registered_info_format = input_object.registered_info_format
+        new_object.registered_info_encrypted = input_object.registered_info_encrypted
+        new_object.schema_url = input_object.schema_url
+        new_object.location_latitude = input_object.location_latitude
+        new_object.location_longitude = input_object.location_longitude
+        new_object.country_code = input_object.country_code
+        new_object.format = input_object.format
+        new_object.category = input_object.category
+        new_object.topic = input_object.topic
+        new_object.description = input_object.description
+        if input_object.registered_info:
+            new_object.registered_info = j.data.serializers.jsxdata.dumps(new_data_model)
+        new_object.save()
 
-        return input_object.id
+        return new_object.id
 
-    def get(self, tid=None, id=None, schema_out=None, user_session=None):
+    def get(self, tid=None, data_id=None, schema_out=None, user_session=None):
         """
         ```in
         tid = (I)
-        id = (I)
+        data_id = (I)
         ```
 
         ```out
-        !threebot.registry.entry.1
+        res = !threebot.registry.entry.data.1
         ```
         """
-        entry_model = self.registration_model.get(id=id)
+        # TODO: tune working for encrypted data
+        res = self.threebot_data_model.get(obj_id=data_id)
+        return res
 
     def schema_register(self, schema_url=None, schema_text=None, schema_out=None, user_session=None):
         """
 
         make sure the registrar knows about the schema's used
+        return: md5 of the schema
 
         ```in
         schema_url = ""
         schema_text = ""
-        ```
-
-        ```out
-        schema_md5=""
         ```
         """
         schema = j.data.schema.get_from_text(schema_text, schema_url)
@@ -115,26 +137,32 @@ class registry(j.baseclasses.threebot_actor):
         only return if < 50 results
 
         ```out
-        (LO) !threebot.registry.entry.data.1
+        res = (LO) !threebot.registry.entry.data.1
         ```
         :return:
         """
         # will only return data user allowed to
-        output = []
+        res = []
         table = self.threebot_data_model._index_.sql_table_name
-        query = self.threebot_data_model.query(
-            f"SELECT * FROM {table} WHERE country_code={country_code} OR format={format} OR category={category} OR topic={topic} OR description={description}"
-        )
+        query = f'SELECT * FROM {table} \
+            WHERE (country_code="{country_code}") \
+            OR (format="{format}") \
+            OR (category="{category}") \
+            OR (topic="{topic}")'
+
+        query = self.threebot_data_model.query(query)
         results = query.fetchall()
         for item in results:
-            if item.registered_info_encrypted.data:
-                if item.registered_info_encrypted.tid == tid:
-                    output.append(self.threebot_data_model.find(id=item[0]))
+            model = self.threebot_data_model.get(obj_id=item[0])
+            if model.registered_info_encrypted:
+                if tid in model.readers:
+                    if not model in res:
+                        res.append(model)
 
-        if output < 50:
-            return output
+        if len(res) > 50:
+            raise j.exceptions.Input("Can not return results is > 50")
 
-        raise j.exceptions.Input("Can not return results is > 50")
+        return res
 
     def find_formatted(
         self,
@@ -154,7 +182,7 @@ class registry(j.baseclasses.threebot_actor):
         will return the data as requested
 
         ```in
-        registered_info_format = "yaml,json,msgpack,unstructured" (E)
+        registered_info_format = "jsxschema,yaml,json,msgpack,unstructured" (E)
         #search arguments
         schema_url = ""  #jumpscale schema url
         country_code = ""
@@ -165,10 +193,6 @@ class registry(j.baseclasses.threebot_actor):
         ```
 
         only return if < 50 results
-
-        ```out
-        (LS)
-        ```
 
         :param schema_url:
         :param user_session:
@@ -183,21 +207,64 @@ class registry(j.baseclasses.threebot_actor):
         # if not jumpscale schema
         # deserialize & re-serialize if needed to make sure the return format is the right one
 
-        output = []
+        res = []
         table = self.threebot_data_model._index_.sql_table_name
-        query = self.threebot_data_model.query(
-            f"SELECT * FROM {table} WHERE country_code={country_code} OR format={format} OR category={category} OR topic={topic} OR description={description}"
-        )
+        query = f'SELECT * FROM {table} \
+            WHERE (country_code="{country_code}") \
+            OR (format="{format}") \
+            OR (category="{category}") \
+            OR (topic="{topic}")'
+
+        query = self.threebot_data_model.query(query)
         results = query.fetchall()
 
         for item in results:
-            if not item.registered_info_encrypted.data:
-                item_model = self.threebot_data_model.find(id=item[0])
-                if item_model.schema_url:
-                    item_out = j.data.serializers.jsxdata.dumps(item_model)
-                    # TODO: return the asked format
+            output = None
+            model = self.threebot_data_model.get(obj_id=item[0])
+            if model.registered_info:
+                if model.registered_info_format == "JSXSCHEMA":
+                    jsxobject = self.bcdb.model_get(url="threebot.registry.entry.data.1").new()
+                    jsxobject = j.data.serializers.jsxdata.loads(model.registered_info)
+                    output = jsxobject._data
 
-        if output < 50:
-            return output
+                if model.registered_info_format == "YAML":
+                    data = j.data.serializers.yaml.loads(model.registered_info)
+                    output = j.data.serializers.yaml.dumps(data)
 
-        raise j.exceptions.Input("Can not return results is > 50")
+                if model.registered_info_format == "JSON":
+                    data = j.data.serializers.json.loads(model.registered_info)
+                    output = j.data.serializers.json.dumps(data)
+
+                if model.registered_info_format == "msgpack":
+                    data = j.data.serializers.msgpack.loads(model.registered_info)
+                    output = j.data.serializers.msgpack.dumps(data)
+
+                if not output in res:
+                    res.append(output)
+
+        if len(res) > 50:
+            raise j.exceptions.Input("Can not return results is > 50")
+
+        return res
+
+    def validate_signature(
+        self, tid=None, verifykey=None, payload=None, signature=None, schema_out=None, user_session=None
+    ):
+        """
+        ```in
+        tid = (I)
+        name = (S)
+        email = (S)
+        payload = (S)
+        signature = (BIN)
+        verifykey = (BIN)
+        ```
+        
+        ```out
+        is_valid = (B)
+        ```
+        """
+
+        nacl = j.data.nacl.get()
+        is_valid = nacl.verify(payload, verify_key=verifykey, signature=signature)
+        return is_valid
