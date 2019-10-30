@@ -7,8 +7,6 @@ wallet_addresses = (LS)
 location = (O) !tfgrid.location.1
 email = (email)
 resource_prices = (LO) !tfgrid.node.resource.price.1
-# original /48 allocation of the farm
-prefix_zero = (iprange)
 
 @url = tfgrid.node.resource.price.1
 currency = "EUR,USD,TFT,AED,GBP" (E)

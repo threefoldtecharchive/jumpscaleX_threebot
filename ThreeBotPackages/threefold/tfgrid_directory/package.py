@@ -40,6 +40,9 @@ class Package(j.baseclasses.threebot_package):
         locations.configure()
         website.configure()
 
+        j.threebot.package.chat.install()
+        self.gedis_server.chatbot.chatflows_load(j.sal.fs.joinPaths(self.package_root, "chatflows"))
+
     def sync_directory(self):
         sync_dir = j.tools.codeloader.load(path=os.path.join(self.package_root, "jobs", "sync_directory.py"))
         job = j.servers.myjobs.schedule(sync_dir)

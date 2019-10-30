@@ -6,16 +6,34 @@ class farms(j.baseclasses.threebot_actor):
         bcdb = j.data.bcdb.get("tf_directory")
         self.farm_model = bcdb.model_get(url="tfgrid.farm.1")
 
-    def _get_farm(self, farm_id):
-        try:
-            return self.farm_model.get(farm_id)
-        except j.exceptions.NotFound:
-            raise j.exceptions.NotFound("farm %s not found" % farm_id)
+    def _get_farm(self, farm_id=None, name=None):
+        if farm_id:
+            try:
+                return self.farm_model.get(farm_id)
+            except j.exceptions.NotFound:
+                raise j.exceptions.NotFound("farm %s not found" % farm_id)
+        elif name:
+            try:
+                results = self.farm_model.find(name=name)
+                if not results:
+                    raise j.exceptions.NotFound("farm %s not found" % name)
+                return results[0]
+            except j.exceptions.NotFound:
+                raise j.exceptions.NotFound("farm %s not found" % name)
+        else:
+            raise j.exceptions.RuntimeError("can only search farm by ID and name")
 
     def _validate_farm(self, farm):
         for field in ["threebot_id", "name", "email", "wallet_addresses"]:
             if not getattr(farm, field):
                 raise j.exceptions.Value("%s is required" % field)
+        try:
+            found = self._get_farm(name=farm.name)
+        except j.exceptions.NotFound:
+            return
+        else:
+            if found:
+                raise j.exceptions.Value("farm with name %s already exists" % farm.name)
 
     def register(self, farm, schema_out=None, user_session=None):
         """
@@ -49,17 +67,18 @@ class farms(j.baseclasses.threebot_actor):
         self.farm_model.set_dynamic(farm._ddict, obj_id=farm_id)
         return True
 
-    def get(self, farm_id, schema_out=None, user_session=None):
+    def get(self, farm_id, name, schema_out=None, user_session=None):
         """
         ```in
         farm_id = (I)
+        name = (S)
         ```
 
         ```out
         farm = (O) !tfgrid.farm.1
         ```
         """
-        return self._get_farm(farm_id)
+        return self._get_farm(farm_id=farm_id, name=name)
 
     def list(self, country, city, schema_out=None, user_session=None):
         """
