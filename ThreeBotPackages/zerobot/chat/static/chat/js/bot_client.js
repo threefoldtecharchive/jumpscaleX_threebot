@@ -269,6 +269,9 @@ var generateSlide = function (message) {
                 break
         }
     }
+    if (res['cat'] === "user_info") {
+        next(USERNAME, true);
+    }
     contents = `
         <fieldset>
             <p id="error" class="red"></p>
@@ -276,7 +279,7 @@ var generateSlide = function (message) {
 			<span class="f1-buttons-right">
 				<button type="submit" class="btn btn-submit" required="true">Next</button>
 			</span>
-		</fieldset>`;
+        </fieldset>`;
     $("#wizard").html(contents);
     $(".form-box").show({
         "duration": 400
