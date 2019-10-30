@@ -45,6 +45,10 @@ class Package(j.baseclasses.threebot_package):
             proxy_location.port_dest = 8521
             proxy_location.scheme = "http"
 
+            modrewrite_wiki = locations.locations_custom.new()
+            modrewrite_wiki.name = "wikirewrite"
+            modrewrite_wiki.config = """rewrite ^/(.*)/wiki$ /wiki/$1;"""
+
             locations.configure()
             website.configure()
 
