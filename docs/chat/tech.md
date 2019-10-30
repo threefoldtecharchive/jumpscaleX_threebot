@@ -61,6 +61,13 @@ Pushing answers to chatbot on the last question is done using `work_report`
 ### GedisChatBot
 has all of the implementation details of getting questions, pushing questions, queues, also it's responsible for the primitive question types `int_ask`, `string_ask`, `captcha_ask`, `multi_choice`, `single_choice`, `drop_down_choice` 
 
+#### Validation
+
+Here's an example of validations required for a string input
+
+```python
+    email = bot.string_ask("Enter email", validate={"required": True, "email": True}).strip()
+```
 
 ### Implementing another question type
 
