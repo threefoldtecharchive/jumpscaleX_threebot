@@ -15,6 +15,7 @@ function docsifyConfig(name, repo) {
     disqus: '//tf-foundation.disqus.com/embed.js',
     repo: repo || ('https://github.com/threefoldfoundation/' + name),
     loadSidebar: true,
+    executeScript: true,
     markdown: {
       renderer: {
         code: function (code, lang) {
