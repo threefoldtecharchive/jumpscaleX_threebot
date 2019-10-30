@@ -1,3 +1,4 @@
+from Jumpscale import j
 from bottle import abort, response, request, Bottle, redirect
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import traceback
