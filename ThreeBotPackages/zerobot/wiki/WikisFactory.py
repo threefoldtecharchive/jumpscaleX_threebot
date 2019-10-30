@@ -1,7 +1,5 @@
 from Jumpscale import j
-from bottle import Bottle
-
-app = Bottle()
+from .BottleWebServerWiki import app
 
 
 class WikisFactory(j.baseclasses.threebot_factory):
