@@ -13,9 +13,9 @@ def chat(bot):
     gevent.sleep(1)
 
     email = bot.string_ask("Email address")
-    interest = bot.string_ask("reason for interest")
-    someone = bot.string_ask("if you know someone in threefold or if someone referred you")
-    code = bot.string_ask("your invitation code please")
+    interest = bot.string_ask("your interested subjects")
+    someone = bot.string_ask("please write the name of someone know in threefold or if someone referred you")
+    code = bot.string_ask("invitation code please")
 
     res = """
     # You will join {{interest}}: 
