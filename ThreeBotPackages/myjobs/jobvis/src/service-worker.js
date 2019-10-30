@@ -1,4 +1,4 @@
-import { timestamp, files, shell, routes } from '@sapper/service-worker';
+import { timestamp, files, shell } from '@sapper/service-worker';
 
 const ASSETS = `cache${timestamp}`;
 
@@ -60,7 +60,7 @@ self.addEventListener('fetch', event => {
 				try {
 					const response = await fetch(event.request);
 					if(!response || response.status !== 200 || response.type !== 'basic') {
-						return response;
+					    return response;
 					}
 
 					cache.put(event.request, response.clone());
