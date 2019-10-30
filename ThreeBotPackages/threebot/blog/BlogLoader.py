@@ -226,4 +226,3 @@ class BlogLoader(j.baseclasses.object):
         self.blog_name = blog_name
         self.repo_url = repo_url
         self._load_blog()
-
