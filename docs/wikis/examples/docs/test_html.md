@@ -55,7 +55,7 @@
 
 ```
 !!!dynamic_content
-actor = "html_test"
-method = "hello"
-name = "John Doe"
+actor = "community_manager"
+method = "info_get"
+name = "dylan_verstraete_1"
 ```
