@@ -130,7 +130,6 @@ def main(self):
     assert len(reservations) == 0
 
     # TEST04: SIGN RESERVATION
-
     signature = customer_signing_key.sign(reservation.json.encode())
     cl.actors.workload_manager.sign_customer(reservation.id, binascii.hexlify(signature.signature))
     reservation = cl.actors.workload_manager.reservation_get(reservation.id)
@@ -139,12 +138,6 @@ def main(self):
     # TEST05: FILL SIGNING REQUESTS
     signature = signer_signing_key.sign(reservation.json.encode())
     cl.actors.workload_manager.sign_provision(reservation.id, tbots["signer"].id, binascii.hexlify(signature.signature))
-    reservation = cl.actors.workload_manager.reservation_get(reservation.id)
-    assert reservation.next_action == "PAY"
-
-    # TEST06: FILL FARMER SIGNATURE
-    signature = farmer_signing_key.sign(reservation.json.encode())
-    cl.actors.workload_manager.sign_farmer(reservation.id, tbots["farmer"].id, binascii.hexlify(signature.signature))
     reservation = cl.actors.workload_manager.reservation_get(reservation.id)
     assert reservation.next_action == "DEPLOY"
 
@@ -205,6 +198,22 @@ def main(self):
     reservation = cl.actors.workload_manager.reservation_get(reservation.id)
     assert reservation.next_action == "INVALID"
 
+    # TEST10: CREATE RESERVATION WITH SINGLE API CALL
+    reservation = reservation_model.new()
+    reservation.customer_tid = tbots["customer"].id
+    reservation.data_reservation.containers.append(container)
+    reservation.data_reservation.expiration_provisioning = int(j.data.time.epoch + 3 * 60)
+    reservation.data_reservation.expiration_reservation = int(j.data.time.epoch + 5 * 60)
+    reservation.json = j.data.serializers.json.dumps(reservation.data_reservation._ddict)
+    signature = customer_signing_key.sign(reservation.json.encode())
+    reservation.customer_signature = binascii.hexlify(signature.signature)
+    reservation_data = reservation._ddict
+    reservation = cl.actors.workload_manager.reservation_register(reservation_data)
+    reservation = cl.actors.workload_manager.reservation_get(reservation.id)
+    assert reservation.next_action == "DEPLOY"
+
     # FINAL: clean up created reservations
     for reservation in reservation_model.find():
         reservation.delete()
+
+    print("ALL TESTS ARE OK")
