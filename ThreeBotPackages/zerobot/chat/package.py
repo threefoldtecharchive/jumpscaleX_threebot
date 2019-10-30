@@ -40,6 +40,13 @@ class Package(j.baseclasses.threebot_package):
             proxy_location.port_dest = 8522
             proxy_location.scheme = "http"
 
+            modrewrite_chat = locations.locations_custom.new()
+            modrewrite_chat.name = "chatrewrite"
+            modrewrite_chat.config = """rewrite ^/(.*)/chatflow/(.*)$ /chat/session/$2;"""
+
+
+
+
             locations.configure()
             website.configure()
 
