@@ -3,18 +3,18 @@ from Jumpscale import j
 
 """
 JSX> anew = j.clients.gedis(...., port=8901)
-JSX> anew.actors.alerta.list_alerts() 
+JSX> anew.actors.alerta.list_alerts()
 ... a very long list
 JSX> anew.actors.alerta.new_alert(
-   severity=10, 
-   status="new", 
-   environment="ALL", 
-   service="JSX", 
-   resource="xmonader", 
-   event="event 1", 
-   value="n/a", 
-   messageType="error", 
-   text="rafir text") 
+   severity=10,
+   status="new",
+   environment="ALL",
+   service="JSX",
+   resource="xmonader",
+   event="event 1",
+   value="n/a",
+   messageType="error",
+   text="rafir text")
 ## actors.default.alerta.new_alert.16c54214bfcd2a5b61f789be085a1d14
 res                 : True
 """
@@ -50,7 +50,6 @@ class alerta(j.baseclasses.threebot_actor):
         ```
 
         """
-
         if env_name.lower() == "all":
             alerts = self.alert_model.find()
         else:
