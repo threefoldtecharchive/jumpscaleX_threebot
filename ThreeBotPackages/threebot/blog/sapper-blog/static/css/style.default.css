@@ -1244,6 +1244,7 @@ main.posts-listing .post-footer {
 }
 
 .widget.latest-posts strong {
+  margin-bottom: 20px;
   font-size: 0.95em;
   display: block;
   line-height: 1em;

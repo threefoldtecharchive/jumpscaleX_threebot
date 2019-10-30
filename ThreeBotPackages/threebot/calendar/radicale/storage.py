@@ -24,7 +24,7 @@ Default storage uses one folder per collection and one file per collection
 entry.
 
 """
-
+import datetime
 import binascii
 import contextlib
 import json
@@ -692,6 +692,10 @@ class Database:
     event_model = bcdb.model_get(url="tf.caldav.event.1")
     contact_model = bcdb.model_get(url="tf.caldav.contact.1")
     attachment_model = bcdb.model_get(url="tf.caldav.attachment.1")
+    email_model = bcdb.model_get(url="tf.caldav.email.1")
+    telephone_model = bcdb.model_get(url="tf.caldav.telephone.1")
+    mailaddress_model = bcdb.model_get(url="tf.caldav.mailaddress.1")
+    instantmessaging_model = bcdb.model_get(url="tf.caldav.instantmessaging.1")
 
     @classmethod
     def find_collections(cls, collection_id, user_id):
@@ -1035,7 +1039,15 @@ class Collection(BaseCollection):
         uid, etag, text, name, tag, _, _ = self._item_cache_content(vobject_item)
         collection = Database.get_collection(collection_id=self.collection_id, user_id=self.user_id)
         if vobject_item.name == "VCALENDAR":
-            item = Database.event_model.new()
+            events = Database.event_model.find(item_id=href)
+            new = True
+            # already existing
+            if events:
+                item = events[0]
+                new = False
+            else:
+                item = Database.event_model.new()
+
             item.item_id = href
             item.calendar_id = self.collection_id
             item.user_id = self.user_id
@@ -1057,19 +1069,135 @@ class Collection(BaseCollection):
                     a.content = e.value
                     a.save()
 
+            item.save()
+
+            if new:
+                collection.items.append(item)
+            else:
+                idx = [i.item_id for i in collection.items].index(f'{vobject_item.vevent.uid.value}.ics')
+                collection.items[idx] = item
+            collection.save()
+            item = Item(self, href=href, etag=etag, text=text, item=vobject_item, uid=uid, name=name, component_name=tag)
+            return item
         else:
-            item = Database.contact_model.new()
+            contacts = Database.contact_model.find(item_id=href)
+
+            new = True
+            # already existing
+            if contacts:
+                item = contacts[0]
+                new = False
+            else:
+                item = Database.contact_model.new()
+
+            item.contact_id = vobject_item.uid.value
             item.item_id = href
             item.addressbook_id = self.collection_id
             item.user_id = self.user_id
             item.content = text
             item.epoch = j.data.time.epoch
             item.type = vobject_item.name
-        item.save()
-        collection.items.append(item)
-        collection.save()
-        item = Item(self, href=href, etag=etag, text=text, item=vobject_item, uid=uid, name=name, component_name=tag)
-        return item
+
+            for child in vobject_item.getChildren():
+                if child.name == 'N':
+                    item.givenname = vobject_item.n.value.given
+                    item.familyname = vobject_item.n.value.family
+
+                elif child.name == 'BDAY':
+                    item.birthday = int(datetime.datetime.strptime(child.value, '%Y-%m-%d').timestamp())
+
+                elif child.name == 'CALURI':
+                    item.calendar_url = child.value
+
+                elif child.name == 'CATEGORIES':
+                    item.categories = child.value
+
+                elif child.name == 'NICKNAME':
+                    item.nickname = child.value
+
+                elif child.name == 'X-EVOLUTION-VIDEO-URL':
+                    item.videchat = child.value
+
+                elif child.name == 'X-EVOLUTION-VIDEO-URL':
+                    item.videchat = child.value
+
+                elif child.name == 'X-EVOLUTION-BLOG-URL':
+                    item.blog = child.value
+
+                elif child.name == 'FBURL':
+                    item.facebook = child.value
+
+                elif child.name == 'X-EVOLUTION-ANNIVERSARY':
+                    item.anniversary = int(datetime.datetime.strptime(child.value, '%Y-%m-%d').timestamp())
+
+                elif child.name == 'NOTE':
+                    item.notes = child.value
+
+                elif child.name == 'EMAIL':
+                    item.emails = []
+                    e = Database.email_model.new()
+                    e.email = child.value
+                    e.type = child.params['TYPE'][0]
+                    e.save()
+                    item.emails.append(e)
+
+                elif child.name == 'TEL':
+                    item.telephones = []
+                    e = Database.telephone_model.new()
+                    e.telephone = child.value
+                    e.type = child.params['TYPE'][0]
+                    e.save()
+                    item.telephones.append(e)
+
+                elif child.name == 'ADR':
+                    item.mailaddresses = []
+                    e = Database.mailaddress_model.new()
+                    e.street = child.value.street
+                    e.city = child.value.city
+                    e.country = child.value.country
+                    e.code = child.value.code
+                    e.region = child.value.region
+                    e.box = child.value.box
+                    e.type = child.params['TYPE'][0]
+                    e.save()
+                    item.mailaddresses.append(e)
+
+                elif child.name == 'TITLE':
+                    item.job.title = child.value
+
+                elif child.name == 'X-EVOLUTION-MANAGER':
+                    item.job.manager = child.value
+
+                elif child.name == 'X-EVOLUTION-ASSISTANT':
+                    item.job.assistant = child.value
+
+                elif child.name == 'PRO':
+                    item.job.profession = child.value
+
+                elif child.name == 'ORG':
+                    item.job.company =  child.value[0]
+                    if len(child.value) >=2 :
+                        item.job.department = child.value[1]
+                    if len(child.value) ==3 :
+                        item.job.offic = child.value[2]
+
+                elif child.name in ['X-TWITTER', 'X-SKYPE']:
+                    item.ims = []
+                    im = Database.instantmessaging_model.new()
+                    im.username = child.value
+                    im.type = child.name.replace('X-', '').capitalize()
+                    item.ims.append(im)
+
+            item.save()
+
+            if new:
+                collection.items.append(item)
+            else:
+                idx = [i.contact_id for i in collection.items].index(vobject_item.uid.value)
+                collection.items[idx] = item
+            collection.save()
+            item = Item(self, href=href, etag=etag, text=text, item=vobject_item, uid=uid, name=name, component_name=tag)
+            return item
 
     def delete(self, href=None):
         if href is None:
@@ -1081,7 +1209,15 @@ class Collection(BaseCollection):
                 item = items[0]
                 item.delete()
                 collection = Database.get_collection(self.collection_id, self.user_id)
-                collection.items.remove(item)
+                try:
+                    collection.items.remove(item)
+                except ValueError:
+                    idx = -1
+                    for i, item in enumerate(collection.items):
+                        if item.item_id == href:
+                            idx = i
+                    if idx != -1:
+                        collection.items.pop(idx)
                 collection.save()
 
     def get_meta(self, key=None):
