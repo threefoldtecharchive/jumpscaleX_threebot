@@ -40,5 +40,7 @@ class community_manager(j.baseclasses.threebot_actor):
         # TODO: get spaces info for specific username (not implemented in the client yet)
         spaces = [{"name": "test_space", "desc": "hello world"}]
         out = schema_out.new()
-        out.content = j.tools.jinja2.template_get(self._dirpath + "/info_template.html").render(username=name, spaces=spaces)
+        out.content = j.tools.jinja2.template_get(self._dirpath + "/info_template.html").render(
+            username=name, spaces=spaces
+        )
         return out
