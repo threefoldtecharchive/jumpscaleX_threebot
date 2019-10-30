@@ -27,6 +27,8 @@ JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldt
 - actors directory is registered automatically when loading the package no need to manually add actors
 
 - package.py  where you define your package logic
+- meta.toml  where you define your package metadata (eg. name, description, frontend (optional)
+
 - PACKAGE_NAME_Factory the entry point for your package so it can be referenced within jumpscaleX ecosystem
 
 - for packages that need their own bcdb, you need to override bcdb property like this

@@ -1,0 +1,11 @@
+{% extends "chat/home.html"%}
+{% block title %}Login{% endblock %}
+{% block content %}
+<h2>Please select one of the following providers to login.</h2>
+
+<span class="li-social">
+    {% for provider in providers%}
+    <a href="{{oauth_server}}/authorize/{{provider}}?{{query}}"><i class="fa fa-{{provider}}" style="font-size: 33px"></i></a>
+    {% endfor %}
+</span>
+{% endblock %}

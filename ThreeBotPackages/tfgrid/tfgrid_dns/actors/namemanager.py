@@ -1,22 +1,22 @@
 from Jumpscale import j
-
-THREEBOT_DOMAIN = "3bot.grid.tf"
+TESTNET_DOMAIN = "testnet.grid.tf"
+THREEBOT_DOMAIN = f"3bot.{TESTNET_DOMAIN}"
 THREEBOT_PRIVATE_DOMAIN = "3bot"
-PHONEBOOK_DOMAIN = f"phonebook.{THREEBOT_DOMAIN}"
-GATEWAY_DOMAIN = f"gateway.{THREEBOT_DOMAIN}"
+EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
+
 MASTERIP = "192.168.99.254"
 
 
 class namemanager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        self._phonebook = None
+        self._explorer = None
         self._tfgateway = None
 
     @property
-    def phonebook(self):
-        if self._phonebook is None:
-            self._phonebook = j.clients.gedis.get(host=PHONEBOOK_DOMAIN, port=8901)
-        return self._phonebook
+    def explorer(self):
+        if self._explorer is None:
+            self._explorer = j.clients.gedis.get(host=EXPLORER_DOMAIN, port=8901)
+        return self._explorer
 
     @property
     def tfgateway(self):
@@ -35,7 +35,7 @@ class namemanager(j.baseclasses.threebot_actor):
         signature = (S) the signature of the payload "{doublename}"
         ```
         """
-        result = self.phonebook.actors.phonebook.validate_signature(
+        result = self.explorer.actors.phonebook.validate_signature(
             name=doublename, payload=doublename, signature=signature
         )
         if not result.is_valid:
@@ -45,8 +45,8 @@ class namemanager(j.baseclasses.threebot_actor):
         fqdn = f"{doublename}.{THREEBOT_DOMAIN}"
         self.tfgateway.tcpservice_register(fqdn, privateip)
 
-        self.tfgateway.domain_register_cname("@", f"{last}.{THREEBOT_DOMAIN}", f"{GATEWAY_DOMAIN}.")
-        self.tfgateway.domain_register_cname(first, f"{last}.{THREEBOT_DOMAIN}", f"{GATEWAY_DOMAIN}.")
+        self.tfgateway.domain_register_cname("@", f"{last}.{THREEBOT_DOMAIN}", f"{THREEBOT_DOMAIN}.")
+        self.tfgateway.domain_register_cname(first, f"{last}.{THREEBOT_DOMAIN}", f"{THREEBOT_DOMAIN}.")
         self.tfgateway.domain_register_a(first, f"{last}.{THREEBOT_PRIVATE_DOMAIN}", privateip)
         return True
 
@@ -60,7 +60,7 @@ class namemanager(j.baseclasses.threebot_actor):
         signature = (S) the signature of the payload "{doublename}"
         ```
         """
-        result = self.phonebook.actors.phonebook.validate_signature(
+        result = self.explorer.actors.phonebook.validate_signature(
             name=doublename, payload=doublename, signature=signature
         )
         if not result.is_valid:

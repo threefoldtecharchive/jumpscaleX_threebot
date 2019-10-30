@@ -17,6 +17,7 @@
         ├── error.html
         ├── home.html
         └── index.html
+        └── login.html
 ```
 
 - package.py describes the package and the installation
