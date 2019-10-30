@@ -37,9 +37,11 @@ class community_manager(j.baseclasses.threebot_actor):
         :param user_name:
         :return:
         """
-        # TODO: get spaces info for specific username (not implemented in the client yet)
-        spaces = [{"name": "test_space", "desc": "hello world"}]
+        cl = j.clients.freeflowpages.get()
+        user_id = cl.users.get_by_username(name)["id"]
+        spaces = cl.users.spaces(user_id)
         out = schema_out.new()
+        # TODO: improve html styling in the template
         out.content = j.tools.jinja2.template_get(self._dirpath + "/info_template.html").render(
             username=name, spaces=spaces
         )
