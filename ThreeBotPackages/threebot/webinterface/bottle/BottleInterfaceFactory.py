@@ -78,7 +78,12 @@ def gedis_http(name, cmd):
     if not command:
         response.status = 400
         return f"Actor {name} does not have command {cmd}"
-    data = request.json or {"args": {}}
+
+    if request.method == "GET":
+        params = dict(request.params)
+        data = {"args": params}
+    else:
+        data = request.json or {"args": {}}
     content_type = data.get("content_type", "json")
     if content_type not in ["json", "msgpack"]:
         response.status = 400
