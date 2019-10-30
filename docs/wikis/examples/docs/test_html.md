@@ -1,4 +1,4 @@
-## Html form test
+## Inline html form
 ```inline_html
 <div class="row">
     <div class="col-md-6 " id="form_container">
@@ -48,4 +48,14 @@
         </div>
     </div>
 </div>
+```
+
+
+## Dynamic macro
+
+```
+!!!dynamic_content
+actor = "html_test"
+method = "hello"
+name = "John Doe"
 ```

@@ -19,6 +19,7 @@ Editing the content of this wikis are done collaboratively at the previous repos
 
 * [Macros](macro/README.md)
 * [Custom link format](links.md)
+* [Inline HTML](html.md)
 
 ## Running your own wiki
 To run and setup your own wiki, more technical documentation about docsites and wikis can be found [here](tech/README.md).
