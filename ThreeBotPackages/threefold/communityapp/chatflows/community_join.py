@@ -4,30 +4,18 @@ import gevent
 
 def chat(bot):
     """
-    to call http://localhost:5050/chat/session/community_join
+    to call http://localhost/chat/session/community_join
     """
-
-    # TODO: this should not be in chatflow, needs to be part of DSL
-    html = """\
-# Loading communits...
- <div class="progress">
-  <div class="progress-bar active" role="progressbar" aria-valuenow="{0}"
-  aria-valuemin="0" aria-valuemax="100" style="width:{0}%">
-    {0}%
-  </div>
-</div> 
-"""
-
     # simple chatflow
     res = {}
-    for x in range(10):
-        bot.md_show_update(html.format(x * 10))
-        gevent.sleep(1)
-    invite = bot.single_choice("Choose you have invitation code ", ["Yes", "No"])
-    if invite == "No":
-        email = bot.string_ask("Email address")
-        interest = bot.string_ask("reason for interest")
-        someone = bot.string_ask("if you know someone in threefold or if someone referred you")
+    html = bot.html_show("community")
+    bot.md_show_update(html.format(100, "community"))
+    gevent.sleep(1)
+
+    email = bot.string_ask("Email address")
+    interest = bot.string_ask("reason for interest")
+    someone = bot.string_ask("if you know someone in threefold or if someone referred you")
+    code = bot.string_ask("your invitation code please")
 
     res = """
     # You will join {{interest}}: 
@@ -37,4 +25,4 @@ def chat(bot):
     """
     res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
     bot.md_show(res)
-    bot.redirect("https://threefold.me")
+    bot.redirect("/wiki")
