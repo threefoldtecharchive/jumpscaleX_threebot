@@ -3,7 +3,8 @@ from Jumpscale import j
 
 class community_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        pass
+        self.bcdb = j.data.bcdb.get("tf_community_app")
+        self.model = self.bcdb.model_get(url="threefold.community.user.1")
 
     def community_join(self, user_name, community_name, user_session=None):
         """
@@ -11,13 +12,27 @@ class community_manager(j.baseclasses.threebot_actor):
         """
         pass
 
-    def check_invitation(self, invitation, description, user_session=None):
+    def check_referral(self, email, referral, schema_out=None, user_session=None):
         """
-        check the invitation is correct or not
+        ```in
+        email = (S)
+        referral = (S)
+        ```
+        check the referral is correct or not
         if correct send his username to community_join
         else: send message this inviation is wrong
         """
-        pass
+        if referral:
+            users = self.model.find(email=email)
+            if not users:
+                user = self.model.new()
+                user.email = email
+            else:
+                user = users[0]
+            user.referral_codes.append(referral)
+            user.save()
+            return True
+        return False
 
     def unsubscribe_space(self, space, user, user_session=None):
         """

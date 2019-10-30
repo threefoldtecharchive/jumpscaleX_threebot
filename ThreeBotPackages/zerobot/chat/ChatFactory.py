@@ -110,13 +110,25 @@ def home_handler():
 @enable_cors
 @auth
 def topic_handler(topic):
+    query = request.urlparts.query
+    if query:
+        session = request.environ.get("beaker.session")
+        query = query.split("&")
+        query_params = {}
+        for q in query:
+            k, v = q.split("=")
+            query_params[k] = v
+
+        session["kwargs"] = query_params
     session = request.environ.get("beaker.session")
     if topic not in _get_chatflows():
         response.status = 404
         error = f"Specified chatflow {topic} is not registered on the system"
         return env.get_template("chat/error.html").render(error=error, username=session["username"])
     ws_url = get_ws_url()
-    return env.get_template("chat/index.html").render(topic=topic, url=ws_url, username=session["username"])
+    return env.get_template("chat/index.html").render(
+        topic=topic, url=ws_url, username=session["username"], qs=session["kwargs"]
+    )
 
 
 session_opts = {"session.type": "file", "session.data_dir": "./data", "session.auto": True}
