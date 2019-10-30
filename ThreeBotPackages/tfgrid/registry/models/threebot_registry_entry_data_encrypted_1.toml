@@ -1,7 +1,6 @@
-@url = threebot.registry.entry.1
-@acl = false
-signature_hex = ""  #see phonebook, signature is on data for threebot.registry.entry.data.1 (capnp)
-data_ = (BIN) # is the capnp format of !threebot.registry.entry.data.1
+@url = threebot.registry.entry.data_encrypted.1
+tid = 0 (I)
+data_ = (BIN)  # binary data
 
 @url = threebot.registry.entry.data.1
 authors = (LI)  #list of tid's, the authors can modify/delete info
@@ -20,9 +19,9 @@ category** = "publicity,info,knowledge,code,spec,config,varia" (E)
 topic** = "travel,food,it,spirituality,health,education,finance,varia" (E)
 description*** = ""
 
-
-@url = threebot.registry.entry.data_encrypted.1
-tid = 0 (I)
-data = (BIN)  #or Binary?, what is type for binary
-
+@url = threebot.registry.entry.1
+@acl = false
+signature_hex = ""  #see phonebook, signature is on data for threebot.registry.entry.data.1 (capnp)
+verify_key = (B)
+data_ = (BIN) !threebot.registry.entry.data.1 # is the capnp format of data 
 
