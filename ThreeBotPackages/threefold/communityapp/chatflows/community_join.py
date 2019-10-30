@@ -12,6 +12,9 @@ def chat(bot):
     bot.md_show_update(html.format(100, "community"))
     gevent.sleep(1)
 
+    # TODO: change it to get email not user_name after fixing outh
+    user_name = bot.user_info()
+    # if i have email don't ask this question
     email = bot.string_ask("Email address")
     interest = bot.string_ask("your interested subjects")
     someone = bot.string_ask("please write the name of someone know in threefold or if someone referred you")
@@ -19,10 +22,10 @@ def chat(bot):
 
     res = """
     # You will join {{interest}}: 
-    - Email : {{email}} 
+    - Email : {{user_name}} 
     ### Click next 
     for the final step which will redirect you to threefold.me
     """
     res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
     bot.md_show(res)
-    bot.redirect("/wiki")
+    bot.redirect("/info_get")
