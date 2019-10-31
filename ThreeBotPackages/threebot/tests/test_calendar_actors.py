@@ -1,4 +1,4 @@
-from ThreeBotPackages.threebot.tests.base_test import BaseTest
+from test.base_test import BaseTest
 from Jumpscale import j
 from time import sleep
 
