@@ -32,3 +32,4 @@ When executing any macro, errors can occur, in such case, they are saved in a do
 * [gslide](gslide.md): to include slides from google presentation
 * [slideshow](slideshow.md): to include slides from multuple google presentations
 * [markdown](markdown.md): to include markdown from google documents directly
+* [dynamic_content](markdown.md): to rener dynamic html content returned by actors

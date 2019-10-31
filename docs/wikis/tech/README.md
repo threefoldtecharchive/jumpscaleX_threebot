@@ -10,6 +10,7 @@ The output is written to bcdb filesystem under `/docsites`, it's also indexed in
 
 * [Custom link format](../links.md)
 * [Macros](../macros/)
+* [Inline HTML](../html.md)
 
 ## Loading wikis
 

@@ -53,10 +53,12 @@
 
 ## Dynamic macro
 
+#### html_test.hello
+
 ```
 !!!dynamic_content
-actor = "community_manager"
-method = "info_get"
-name = "dylan_verstraete_1"
+actor = "html_test"
+method = "hello"
+name = "John doe"
 
 ```
