@@ -178,12 +178,12 @@ class nodes(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound("node %s not found" % id)
 
         proof.hardware_hash = hash_proof(proof.hardware)
-        proof.disks_hash = hash_proof(proof.disks)
+        proof.disk_hash = hash_proof(proof.disks)
         proof.created = j.data.time.epoch
 
         # check if we already have this version of the proof
         for p in node.proofs:
-            if p.hardware_hash == proof.hardware_hash and p.disks_hash == proof.disks_hash:
+            if p.hardware_hash == proof.hardware_hash and p.disk_hash == proof.disk_hash:
                 return True
 
         node.proofs.append(proof)
