@@ -3,15 +3,15 @@
 Threebot is pluggable application server based on [openresty](https://openresty.org/en/) and gevent servers and comes with lots of goodies by default
 
 - [Wiki system](./docs/wikis/README.md)
-- [Chat](./ThreeBotPackages/threebot/chat/README.md)
-- [Multisite blog](./ThreeBotPackages/threebot/blog/README.md)
-- [Alerta](./ThreeBotPackages/zerobot/alerta/README.md)
-- [MyJobs Dashboard](./ThreeBotPackages/zerobot/myjobs/README.md)
-- [Pastebin](./ThreeBotPackages/demo/pastebin/README.md)
-- [Package Manager](./ThreeBotPackages/zerobot/packages_manager/README.md)
-- [Webhooks](./ThreeBotPackages/zerobot/webhooks/README.md)
-- [BCDBFS](./ThreeBotPackages/zerobot/webinterface)
-- [Gedis Server](./ThreeBotPackages/zerobot/webinterface)
+- [Chat](./ThreeBotPackages/zerobot/chat/wiki/README.md)
+- [Multisite blog](./ThreeBotPackages/threebot/blog/wiki/README.md)
+- [Alerta](./ThreeBotPackages/zerobot/alerta/wiki/README.md)
+- [MyJobs Dashboard](./ThreeBotPackages/zerobot/myjobs/wiki/README.md)
+- [Pastebin](./ThreeBotPackages/demo/pastebin/wiki/README.md)
+- [Package Manager](./ThreeBotPackages/zerobot/packages_manager/wiki/README.md)
+- [Webhooks](./ThreeBotPackages/zerobot/webhooks/wiki/README.md)
+- [BCDBFS](./ThreeBotPackages/zerobot/webinterface/wiki/README.md)
+- [Gedis Server](./ThreeBotPackages/zerobot/webinterface/wiki/README.md)
 
 
 As we mentioned, ThreebotServer can be extended with `packages`

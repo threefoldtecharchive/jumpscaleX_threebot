@@ -44,7 +44,7 @@ The server should be able to support this provider now.
 
 ## The flow
 
-![Oauth flow](oauth.png)
+![Oauth flow](./images/oauth.png)
 
 The following endpoints were added for this flow:
 
