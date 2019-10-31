@@ -51,7 +51,7 @@ res                 : True
 
 ## Factory
 
-A factory to start alerta package, see [AlertaFactory.py](AlertaFactory.py).
+A factory to start alerta package, see [AlertaFactory.py](../AlertaFactory.py).
 
 ## Alert handler integration
 
@@ -67,5 +67,5 @@ Then any error raised will be recorded into alerts model, to test, just raise an
 JSX> raise j.exceptions.NotImplemented('this one is not implemented', level=10)
 ```
 
-Then refersh alerta page to see it!
+Then refresh alerta page to see it!
 

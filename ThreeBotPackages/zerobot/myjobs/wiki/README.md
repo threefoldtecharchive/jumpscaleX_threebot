@@ -2,8 +2,8 @@
 
 Job visualizer for myjobs
 
-![myjobs1](./myjobs1.png)
-![myjobs2](./myjobs2.png)
+![myjobs1](./images/myjobs1.png)
+![myjobs2](./images/myjobs2.png)
 
 ## Running
 
@@ -31,5 +31,5 @@ See [actors](actors), for example, myjobs actor have the following methods:
 
 The factory file will make it easier to run this package directly (it will get the package and start the default threebot server).
 
-See [MyJobsDashboardFactory.py](MyJobsDashboardFactory.py).
+See [MyJobsDashboardFactory.py](../MyJobsDashboardFactory.py).
 
