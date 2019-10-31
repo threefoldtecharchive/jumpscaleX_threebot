@@ -11,16 +11,17 @@ class Package(j.baseclasses.threebot_package):
         server.install(reset=False)
         server.configure()
 
-        website = server.get_from_port(443)
+        for port in (443, 80):
+            website = server.get_from_port(port)
 
-        locations = website.locations.get("pastebin_locations")
+            locations = website.locations.get("pastebin_locations")
 
-        website_location = locations.locations_spa.new()
-        website_location.name = "pastebin"
-        website_location.path_url = "/pastebin"
-        website_location.use_jumpscale_weblibs = False
-        fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
-        website_location.path_location = fullpath
+            website_location = locations.locations_spa.new()
+            website_location.name = "pastebin"
+            website_location.path_url = "/pastebin"
+            website_location.use_jumpscale_weblibs = False
+            fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
+            website_location.path_location = fullpath
 
-        locations.configure()
-        website.configure()
+            locations.configure()
+            website.configure()
