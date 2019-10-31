@@ -15,13 +15,9 @@ class Package(j.baseclasses.threebot_package):
         "/web/gedis/http"       >    gedis htto interface
         "/web/gedis/websocket"  >    gedis websocket interface
         "/web/bcdbfs"           >    bcdbfs web server
+        "/weblibs"              >    static jumpscale weblibs files
         """
 
-        # bottle_port_original = 4442
-        # bottle_server_new = 8904
-        # websocket_port_original = 4444
-        # websocket_port_new = 4445
-        # gedis_port_http = 8903
         self.openresty.configure()
 
         # get our main webserver
