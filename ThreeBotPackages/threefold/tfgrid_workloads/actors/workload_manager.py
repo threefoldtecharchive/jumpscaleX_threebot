@@ -176,7 +176,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         query = None
         if node_id:
             query = self.reservation_model.IndexTable.node_id == node_id
-        
+
         if cursor:
             cur_query = self.reservation_model.IndexTable.reservation_id > cursor
             query = query and cur_query if query else cur_query
@@ -212,6 +212,9 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         if not reservation.data_reservation.expiration_reservation:
             raise j.exceptions.Value("expiration_reservation field is required")
+
+        if not self.user_model.get(reservation.customer_tid):
+            raise j.exceptions.Value("customer_tid is invalid, or user does not exist")
 
     def reservation_register(self, reservation, schema_out, user_session):
         """
