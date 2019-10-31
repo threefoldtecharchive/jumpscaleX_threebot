@@ -111,8 +111,8 @@ def home_handler():
 @auth
 def topic_handler(topic):
     query = request.urlparts.query
+    session = request.environ.get("beaker.session")
     if query:
-        session = request.environ.get("beaker.session")
         query = query.split("&")
         query_params = {}
         for q in query:
@@ -120,6 +120,8 @@ def topic_handler(topic):
             query_params[k] = v
 
         session["kwargs"] = query_params
+    else:
+        session["kwargs"] = {}
     session = request.environ.get("beaker.session")
     if topic not in _get_chatflows():
         response.status = 404
