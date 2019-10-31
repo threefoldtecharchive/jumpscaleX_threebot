@@ -20,6 +20,26 @@ As we mentioned, ThreebotServer can be extended with `packages`
 
 Package is an extension to ThreebotServer and it is driven using `package.py` file which controls the life cycle of the application, configurations (prepare) , start, stop .. etc
 
+
+## Creating a new package
+
+You can create a new package using `package-new` jsx subcommand to scaffold a new package
+```
+3BOTDEVEL:3bot:tmp: jsx package-new --name hello
+3BOTDEVEL:3bot:tmp: tree hello/
+hello/
+├── actors
+│   └── hello.py
+├── chatflows
+│   └── hello.py
+├── HelloFactory.py
+├── models
+├── package.py
+└── wiki
+
+```
+
+
 ## Starting threebot with registered packages
 - the recommended way is `j.servers.threebot.local_start_default()`.
 
@@ -37,6 +57,11 @@ JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldt
 ```
 
 **Note** you can pass timeout=`yourtime` to control your starting server timeout, in case if you have a slow machine or your package takes longer to start
+
+### Using the package manager UI
+After starting threebot you can go to `3BOT_URL/packages`
+
+![packagemanager](./docs/images/packagemanager.jpg)
 
 ## Package structure
 - models directory registers the model on the package loading. no need to manually add the models
