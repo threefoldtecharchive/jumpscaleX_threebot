@@ -3,8 +3,6 @@ from Jumpscale import j
 
 class Package(j.baseclasses.threebot_package):
     """
-    this is the base package for wikis it will only install the required configs
-    ** Note **: you must load this package before loading any wikis
     """
 
     def prepare(self):

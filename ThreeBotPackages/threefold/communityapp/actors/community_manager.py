@@ -11,7 +11,7 @@ class community_manager(j.baseclasses.threebot_actor):
         """
         ask FFP client to join to this space 
         """
-        pass
+        return user_name
 
     def set_current_user(self, user, schema_out=None, user_session=None):
         self.current_user = "dylan_verstraete_1"
