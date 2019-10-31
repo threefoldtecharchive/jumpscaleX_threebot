@@ -243,6 +243,24 @@ class Package(j.baseclasses.threebot_package):
         website.configure()
 ```
 
+#### Example for custom location
+
+For example `3botURL/wiki/PACKAGE_NAME` is the how the url of a certain wiki looks like, and to support the urls to be like `PACKAGE_NAME/wiki` we can use a custom location with rewriting the url as follows
+```python
+            modrewrite_wiki = locations.locations_custom.new()
+            modrewrite_wiki.name = "wikirewrite"
+            modrewrite_wiki.config = """rewrite ^/(.*)/wiki$ /wiki/$1;"""
+
+```
+
+Same for the chat package
+
+```python
+            modrewrite_chat = locations.locations_custom.new()
+            modrewrite_chat.name = "chatrewrite"
+            modrewrite_chat.config = """rewrite ^/(.*)/chatflow/(.*)$ /chat/session/$2;"""
+```
+Notice for chat package only cares about the `topic` not about the package name
 
 # Webinterface package
 
