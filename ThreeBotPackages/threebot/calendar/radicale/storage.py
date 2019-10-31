@@ -1074,10 +1074,12 @@ class Collection(BaseCollection):
             if new:
                 collection.items.append(item)
             else:
-                idx = [i.item_id for i in collection.items].index(f'{vobject_item.vevent.uid.value}.ics')
+                idx = [i.item_id for i in collection.items].index(f"{vobject_item.vevent.uid.value}.ics")
                 collection.items[idx] = item
             collection.save()
-            item = Item(self, href=href, etag=etag, text=text, item=vobject_item, uid=uid, name=name, component_name=tag)
+            item = Item(
+                self, href=href, etag=etag, text=text, item=vobject_item, uid=uid, name=name, component_name=tag
+            )
             return item
         else:
             contacts = Database.contact_model.find(item_id=href)
@@ -1099,57 +1101,57 @@ class Collection(BaseCollection):
             item.type = vobject_item.name
 
             for child in vobject_item.getChildren():
-                if child.name == 'N':
+                if child.name == "N":
                     item.givenname = vobject_item.n.value.given
                     item.familyname = vobject_item.n.value.family
 
-                elif child.name == 'BDAY':
-                    item.birthday = int(datetime.datetime.strptime(child.value, '%Y-%m-%d').timestamp())
+                elif child.name == "BDAY":
+                    item.birthday = int(datetime.datetime.strptime(child.value, "%Y-%m-%d").timestamp())
 
-                elif child.name == 'CALURI':
+                elif child.name == "CALURI":
                     item.calendar_url = child.value
 
-                elif child.name == 'CATEGORIES':
+                elif child.name == "CATEGORIES":
                     item.categories = child.value
 
-                elif child.name == 'NICKNAME':
+                elif child.name == "NICKNAME":
                     item.nickname = child.value
 
-                elif child.name == 'X-EVOLUTION-VIDEO-URL':
+                elif child.name == "X-EVOLUTION-VIDEO-URL":
                     item.videchat = child.value
 
-                elif child.name == 'X-EVOLUTION-VIDEO-URL':
+                elif child.name == "X-EVOLUTION-VIDEO-URL":
                     item.videchat = child.value
 
-                elif child.name == 'X-EVOLUTION-BLOG-URL':
+                elif child.name == "X-EVOLUTION-BLOG-URL":
                     item.blog = child.value
 
-                elif child.name == 'FBURL':
+                elif child.name == "FBURL":
                     item.facebook = child.value
 
-                elif child.name == 'X-EVOLUTION-ANNIVERSARY':
-                    item.anniversary = int(datetime.datetime.strptime(child.value, '%Y-%m-%d').timestamp())
+                elif child.name == "X-EVOLUTION-ANNIVERSARY":
+                    item.anniversary = int(datetime.datetime.strptime(child.value, "%Y-%m-%d").timestamp())
 
-                elif child.name == 'NOTE':
+                elif child.name == "NOTE":
                     item.notes = child.value
 
-                elif child.name == 'EMAIL':
+                elif child.name == "EMAIL":
                     item.emails = []
                     e = Database.email_model.new()
                     e.email = child.value
-                    e.type = child.params['TYPE'][0]
+                    e.type = child.params["TYPE"][0]
                     e.save()
                     item.emails.append(e)
 
-                elif child.name == 'TEL':
+                elif child.name == "TEL":
                     item.telephones = []
                     e = Database.telephone_model.new()
                     e.telephone = child.value
-                    e.type = child.params['TYPE'][0]
+                    e.type = child.params["TYPE"][0]
                     e.save()
                     item.telephones.append(e)
 
-                elif child.name == 'ADR':
+                elif child.name == "ADR":
                     item.mailaddresses = []
                     e = Database.mailaddress_model.new()
                     e.street = child.value.street
@@ -1158,34 +1160,34 @@ class Collection(BaseCollection):
                     e.code = child.value.code
                     e.region = child.value.region
                     e.box = child.value.box
-                    e.type = child.params['TYPE'][0]
+                    e.type = child.params["TYPE"][0]
                     e.save()
                     item.mailaddresses.append(e)
 
-                elif child.name == 'TITLE':
+                elif child.name == "TITLE":
                     item.job.title = child.value
 
-                elif child.name == 'X-EVOLUTION-MANAGER':
+                elif child.name == "X-EVOLUTION-MANAGER":
                     item.job.manager = child.value
 
-                elif child.name == 'X-EVOLUTION-ASSISTANT':
+                elif child.name == "X-EVOLUTION-ASSISTANT":
                     item.job.assistant = child.value
 
-                elif child.name == 'PRO':
+                elif child.name == "PRO":
                     item.job.profession = child.value
 
-                elif child.name == 'ORG':
-                    item.job.company =  child.value[0]
-                    if len(child.value) >=2 :
+                elif child.name == "ORG":
+                    item.job.company = child.value[0]
+                    if len(child.value) >= 2:
                         item.job.department = child.value[1]
-                    if len(child.value) ==3 :
+                    if len(child.value) == 3:
                         item.job.offic = child.value[2]
 
-                elif child.name in ['X-TWITTER', 'X-SKYPE']:
+                elif child.name in ["X-TWITTER", "X-SKYPE"]:
                     item.ims = []
                     im = Database.instantmessaging_model.new()
                     im.username = child.value
-                    im.type = child.name.replace('X-', '').capitalize()
+                    im.type = child.name.replace("X-", "").capitalize()
                     item.ims.append(im)
 
             item.save()
@@ -1196,7 +1198,9 @@ class Collection(BaseCollection):
                 idx = [i.contact_id for i in collection.items].index(vobject_item.uid.value)
                 collection.items[idx] = item
             collection.save()
-            item = Item(self, href=href, etag=etag, text=text, item=vobject_item, uid=uid, name=name, component_name=tag)
+            item = Item(
+                self, href=href, etag=etag, text=text, item=vobject_item, uid=uid, name=name, component_name=tag
+            )
             return item
 
     def delete(self, href=None):
