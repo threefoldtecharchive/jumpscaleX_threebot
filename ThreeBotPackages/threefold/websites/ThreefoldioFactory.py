@@ -9,7 +9,7 @@ class WebsitesFactory(j.baseclasses.object, j.baseclasses.testtools):
         """
         install website packages
         """
-        self.server = j.servers.threebot.get("threefold.io")
+        self.server = j.servers.threebot.get("default")
 
         # threefold.io
         threefold_io_package = j.tools.threebot_packages.get(
