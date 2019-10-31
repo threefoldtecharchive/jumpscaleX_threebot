@@ -213,8 +213,6 @@ class workload_manager(j.baseclasses.threebot_actor):
         if not reservation.data_reservation.expiration_reservation:
             raise j.exceptions.Value("expiration_reservation field is required")
 
-        self._validate_customer_signature(reservation)
-
     def reservation_register(self, reservation, schema_out, user_session):
         """
         ```in
@@ -249,7 +247,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```in
         node_id = (S)  # filter results by node id
         state = (S)  # filter results by next_action
-        cursor = (I)  # filter results which created after this epoch
+        cursor = (I)  # filter results which created after this reservation ID
         ```
 
         ```out
