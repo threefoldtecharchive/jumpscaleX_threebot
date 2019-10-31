@@ -10,7 +10,7 @@ Threebot is pluggable application server based on [openresty](https://openresty.
 - [Pastebin](./ThreeBotPackages/demo/pastebin/wiki/README.md)
 - [Package Manager](./ThreeBotPackages/zerobot/packages_manager/wiki/README.md)
 - [Webhooks](./ThreeBotPackages/zerobot/webhooks/wiki/README.md)
-- [BCDBFS](./ThreeBotPackages/zerobot/webinterface/wiki/README.md)
+- [BCDBFS](https://github.com/threefoldtech/jumpscaleX_core/blob/development/docs/BCDB/README.md)
 - [Gedis Server](./ThreeBotPackages/zerobot/webinterface/wiki/README.md)
 
 
@@ -312,7 +312,7 @@ Notice for chat package only cares about the `topic` not about the package name
 - Myjobs
 
   - [backend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/myjobs/README.md)
-  - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/myjobs/JobsVisualSvelte/README.md)
+  - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development_actors_improvement/ThreeBotPackages/zerobot/myjobs/jobvis/README.md)
 
 - Alerta - [backend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/alerta/README.md) - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/alerta/alerta/README.md)
 - Pastebin
