@@ -172,10 +172,14 @@ class workload_manager(j.baseclasses.threebot_actor):
         jsxobj.save()
         return jsxobj
 
-    def _filter_reservations(self, node_id, states, epoch):
+    def _filter_reservations(self, node_id, states, cursor):
         query = None
         if node_id:
             query = self.reservation_model.IndexTable.node_id == node_id
+        
+        if cursor:
+            cur_query = self.reservation_model.IndexTable.reservation_id > cursor
+            query = query and cur_query if query else cur_query
 
         result = self.reservation_model.IndexTable.select().where(query).execute()
         reservations_ids = set([item.reservation_id for item in result])
@@ -184,9 +188,6 @@ class workload_manager(j.baseclasses.threebot_actor):
         for reservation_id in reservations_ids:
             reservation = self._reservation_get(reservation_id)
             if states and reservation.next_action not in states:
-                continue
-
-            if epoch != INT_NULL_VALUE and epoch >= reservation.epoch:
                 continue
 
             reservations.append(reservation)
@@ -211,6 +212,8 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         if not reservation.data_reservation.expiration_reservation:
             raise j.exceptions.Value("expiration_reservation field is required")
+
+        self._validate_customer_signature(reservation)
 
     def reservation_register(self, reservation, schema_out, user_session):
         """
@@ -241,12 +244,12 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         return self._reservation_get(reservation_id)
 
-    def reservations_list(self, node_id, state, epoch, schema_out, user_session):
+    def reservations_list(self, node_id, state, cursor, schema_out, user_session):
         """
         ```in
         node_id = (S)  # filter results by node id
         state = (S)  # filter results by next_action
-        epoch = (I)  # filter results which created after this epoch
+        cursor = (I)  # filter results which created after this epoch
         ```
 
         ```out
@@ -255,18 +258,18 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         if state and not isinstance(state, list):
             state = [state]
-        reservations = self._filter_reservations(node_id, state, epoch)
+        reservations = self._filter_reservations(node_id, state, cursor)
 
         output = schema_out.new()
         output.reservations = reservations
 
         return output
 
-    def workloads_list(self, node_id, epoch, schema_out, user_session):
+    def workloads_list(self, node_id, cursor, schema_out, user_session):
         """
         ```in
         node_id = (S)  # filter results by node id
-        epoch = (I)  # filter results which created after this epoch
+        cursor = (I)  # filter results which created after this reservation ID
         ```
 
         ```out
@@ -274,7 +277,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
         """
         output = schema_out.new()
-        reservations = self._filter_reservations(node_id, ["deploy", "delete"], epoch)
+        reservations = self._filter_reservations(node_id, ["deploy", "delete"], cursor)
         for reservation in reservations:
             for _type, workload in j.threebot.package.workloadmanager.iterate_over_workloads(reservation):
                 if node_id:
