@@ -166,6 +166,30 @@ class nodes(j.baseclasses.threebot_actor):
         node.save()
         return True
 
+    def add_proof(self, node_id, proof, user_session=None):
+        """
+        ```in
+        node_id = (S)
+        proof = (O) !tfgrid.node.proof.1
+        ```
+        """
+        node = self._find(node_id)
+        if not node:
+            raise j.exceptions.NotFound("node %s not found" % id)
+
+        proof.hardware_hash = hash_proof(proof.hardware)
+        proof.disk_hash = hash_proof(proof.disks)
+        proof.created = j.data.time.epoch
+
+        # check if we already have this version of the proof
+        for p in node.proofs:
+            if p.hardware_hash == proof.hardware_hash and p.disk_hash == proof.disk_hash:
+                return True
+
+        node.proofs.append(proof)
+        node.save()
+        return True
+
     def publish_interfaces(self, node_id, ifaces, schema_out=None, user_session=None):
         """
         ```in
@@ -212,3 +236,11 @@ class nodes(j.baseclasses.threebot_actor):
         node.updated = j.data.time.epoch
         node.save()
         return True
+
+
+def hash_proof(proof):
+    #  we are trying to have always produce same hash for same content of proof
+    #  so we set sort_keys=True so the json generated is always the same
+    b = j.data.serializers.json.dumps(proof, sort_keys=True)
+    return j.data.hash.md5_string(b)
+
