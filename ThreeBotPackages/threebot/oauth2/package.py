@@ -19,14 +19,14 @@ class Package(j.baseclasses.threebot_package):
 
         app = j.threebot.package.oauth2.get_app()
         rack = j.servers.rack.get()
-        rack.bottle_server_add(name="oauth2", port=8523, app=app)
+        rack.bottle_server_add(name="oauth", port=8523, app=app)
         for port in (443, 80):
             website = server.get_from_port(port=port)
             locations = website.locations.get("main_oauth2")
 
             proxy_location = locations.locations_proxy.new()
-            proxy_location.name = "oauth2"
-            proxy_location.path_url = "/auth"
+            proxy_location.name = "oauth"
+            proxy_location.path_url = "/oauth"
             proxy_location.ipaddr_dest = "0.0.0.0"
             proxy_location.port_dest = 8523
             proxy_location.scheme = "http"
