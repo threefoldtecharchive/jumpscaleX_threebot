@@ -7,20 +7,11 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
     __jslocation__ = "j.threebot.package.threefold.registry"
     bcdb = j.data.bcdb.get("threebot_registery")
 
-    def client_get(self):
-        """
-        j.threebot.package.threefold.registry.client_get()
-        :return:
-        """
-        self.client = j.servers.threebot.local_start_default(web=True)
-
-        return self.client
-
     def test(self, name=""):
         """
         kosmos -p 'j.threebot.package.threefold.registry.test()'
         """
-        cl = self.client_get()
+        cl = self.start()
         cl.actors.package_manager.package_add(
             path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/registry"
         )

@@ -6,7 +6,7 @@ THREEBOT_DOMAIN = f"3bot.{TESTNET_DOMAIN}"
 EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
 
 
-class registration(j.baseclasses.object):
+class registration(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.server = kwargs["gedis_server"]
         self.format = "json"

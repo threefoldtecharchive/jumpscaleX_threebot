@@ -8,9 +8,3 @@ class Package(j.baseclasses.threebot_package):
     @property
     def bcdb(self):
         return self._package.threebot_server.bcdb_get("threebot_registry")
-
-    def prepare(self):
-        pass
-
-    def start(self):
-        pass
