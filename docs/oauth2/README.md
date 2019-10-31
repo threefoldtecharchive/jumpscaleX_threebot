@@ -7,7 +7,7 @@ to be able to host a central oauth server on your threebot you need to do the fo
 - Configuare the oauth2 provider such as (Google, Facebook, Github) using ```oauth_provider``` client 
 ```python
 # configure github 
-cl = j.clients.oauth_proxy.get(
+cl = j.clients.oauth_provider.get(
     name='github',
     client_id='<client id>', 
     client_secret= '<client secret>', 
