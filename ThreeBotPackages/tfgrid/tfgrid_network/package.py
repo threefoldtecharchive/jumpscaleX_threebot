@@ -11,8 +11,7 @@ class Package(j.baseclasses.threebot_package):
         is called at install time
         :return:
         """
-        self.bcdb.models_add(path=self.package_root + "/models")
-        self.gedis_server.actors_add(self.package_root + "/actors")
+        pass
 
     def start(self):
         """
