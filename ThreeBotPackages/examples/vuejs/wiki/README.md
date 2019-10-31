@@ -13,15 +13,15 @@ A vuejs example integrated with threebot server that has threepages:
 
 - main page (conains a route for the other two)
 
-![main_page](images/main.png)
+![main_page](./images/main.png)
 
 - Hello world (conatin an image to make sure assets works)
 
-![main_page](images/image.png)
+![main_page](./images/image.png)
 
 - Test Page (will get some stored data from threebotserver actor)
 
-![main_page](images/data_from_actor.png)
+![main_page](./images/data_from_actor.png)
 
 ## How to serve at different locations
 
