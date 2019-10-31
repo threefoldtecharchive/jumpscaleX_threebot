@@ -9,7 +9,7 @@ class TFPhonebookFactory(j.baseclasses.threebot_factory):
         """
         kosmos -p 'j.threebot.package.phonebook.test()'
         """
-        cl = self.client_get()
+        cl = self.start()
 
         print(name)
 
