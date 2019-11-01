@@ -7,6 +7,7 @@ EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
 
 MASTERIP = "192.168.99.254"
 
+
 def destroy(doublename):
     mainname = f"threebot-{doublename}"
     sshnames = [f"do_{mainname}", f"do_{mainname}_docker"]
@@ -24,7 +25,6 @@ def destroy(doublename):
     if redisclient.exists(f"/tcprouter/service/{doublename}.{THREEBOT_DOMAIN}"):
         redisclient.delete("/tcprouter/service/grim.reaper.3bot.grid.tf")
 
-
     bcdb = j.data.bcdb.get("threebot_phonebook")
     phonebook_model = bcdb.model_get(url="threebot.phonebook.user.1")
     for result in phonebook_model.find(name=doublename):
@@ -35,12 +35,12 @@ def destroy(doublename):
         cl.actors.gridnetwork.network_peer_remove("3botnetwork", doublename)
     except j.exceptions.RemoteException:
         pass
-    
-                                                                
-                                                                
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("-n", '--doublename')
+    parser.add_argument("-n", "--doublename")
     options = parser.parse_args()
     destroy(options.doublename)

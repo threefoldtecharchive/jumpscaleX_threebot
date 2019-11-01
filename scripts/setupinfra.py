@@ -198,7 +198,6 @@ rediscli = j.clients.redis.get(MASTERIP, port=6378)
 tfgateway = j.tools.tf_gateway.get(rediscli)
 
 
-
 for x, region in enumerate(regions):
     name = f"router{x+1}"
     sshname = f"do_{name}"
