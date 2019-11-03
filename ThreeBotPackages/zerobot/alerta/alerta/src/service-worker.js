@@ -1,4 +1,4 @@
-import { timestamp, files, shell, routes } from '@sapper/service-worker';
+import { timestamp, files, shell } from '@sapper/service-worker';
 
 const ASSETS = `cache${timestamp}`;
 
@@ -48,16 +48,6 @@ self.addEventListener('fetch', event => {
 		return;
 	}
 
-	// for pages, you might want to serve a shell `service-worker-index.html` file,
-	// which Sapper has generated for you. It's not right for every
-	// app, but if it's right for yours then uncomment this section
-	/*
-	if (url.origin === self.origin && routes.find(route => route.pattern.test(url.pathname))) {
-		event.respondWith(caches.match('/service-worker-index.html'));
-		return;
-	}
-	*/
-
 	if (event.request.cache === 'only-if-cached') return;
 
 	// for everything else, try the network first, falling back to
@@ -65,10 +55,14 @@ self.addEventListener('fetch', event => {
 	// might prefer a cache-first approach to a network-first one.)
 	event.respondWith(
 		caches
-			.open(`offline${timestamp}`)
+			.open(ASSETS)
 			.then(async cache => {
 				try {
 					const response = await fetch(event.request);
+					if(!response || response.status !== 200 || response.type !== 'basic') {
+					    return response;
+					}
+
 					cache.put(event.request, response.clone());
 					return response;
 				} catch(err) {

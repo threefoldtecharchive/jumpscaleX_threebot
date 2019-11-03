@@ -4,8 +4,6 @@ from Jumpscale import j
 import vobject
 
 
-
-
 class addressbook(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.base_url = "http://{}:{}@127.0.0.1:8851"
@@ -21,109 +19,109 @@ class addressbook(j.baseclasses.threebot_actor):
         uid_ = str(uuid.uuid4())
 
         # uid
-        vcard.add('uid')
+        vcard.add("uid")
         vcard.uid.value = uid_
 
         # names
-        vcard.add('n')
+        vcard.add("n")
         vcard.n.value = vobject.vcard.Name(family=contact.familyname, given=contact.givenname)
 
         # full name
-        vcard.add('fn')
-        vcard.fn.value = contact.givenname + ' ' + contact.familyname
+        vcard.add("fn")
+        vcard.fn.value = contact.givenname + " " + contact.familyname
 
         # notes
         if contact.notes:
-            vcard.add('NOTE')
+            vcard.add("NOTE")
             vcard.note.value = contact.notes
 
         # spouse
         if contact.spouse:
-            spouse = vcard.add('X-EVOLUTION-SPOUSE')
+            spouse = vcard.add("X-EVOLUTION-SPOUSE")
             spouse.value = contact.spouse
 
         # birthday
         if contact.birthday:
-            bd = vcard.add('bday')
-            bd.value = datetime.datetime.fromtimestamp(contact.birthday).date().strftime('%Y-%m-%d')
+            bd = vcard.add("bday")
+            bd.value = datetime.datetime.fromtimestamp(contact.birthday).date().strftime("%Y-%m-%d")
 
         # anniversary
         if contact.anniversary:
-            an = vcard.add('X-EVOLUTION-ANNIVERSARY')
-            an.value = datetime.datetime.fromtimestamp(contact.anniversary).date().strftime('%Y-%m-%d')
+            an = vcard.add("X-EVOLUTION-ANNIVERSARY")
+            an.value = datetime.datetime.fromtimestamp(contact.anniversary).date().strftime("%Y-%m-%d")
 
         # nickname
         if contact.nickname:
-            nm = vcard.add('NICKNAME')
+            nm = vcard.add("NICKNAME")
             nm.value = contact.nickname
 
         # categories
         if contact.categories:
-            cats = vcard.add('CATEGORIES')
+            cats = vcard.add("CATEGORIES")
             cats.value = contact.categories
 
         # calendar
         if contact.calendar_url:
-            cal = vcard.add('CALURI')
+            cal = vcard.add("CALURI")
             cal.value = contact.calendar_url
 
         # facebook
         if contact.facebook:
-            fb = vcard.add('FBURL')
+            fb = vcard.add("FBURL")
             fb.value = contact.facebook
 
         # job
 
-        org = vcard.add('org')
+        org = vcard.add("org")
         org.value = [contact.job.company, contact.job.department, contact.job.office]
 
         # title
         if contact.job.title:
-            t = vcard.add('title')
+            t = vcard.add("title")
             t.value = contact.job.title
 
         if contact.job.profession:
-            profession = vcard.add('pro')
+            profession = vcard.add("pro")
             profession.value = contact.job.profession
 
         if contact.job.profession:
-            role = vcard.add('role')
+            role = vcard.add("role")
             role.value = contact.job.profession
 
         if contact.job.assistant:
-            assistant = vcard.add('X-EVOLUTION-ASSISTANT')
+            assistant = vcard.add("X-EVOLUTION-ASSISTANT")
             assistant.value = contact.job.assistant
 
         if contact.job.manager:
-            man = vcard.add('X-EVOLUTION-MANAGER')
+            man = vcard.add("X-EVOLUTION-MANAGER")
             man.value = contact.job.manager
 
         # homepage
         if contact.homepage:
-            hp = vcard.add('URL')
+            hp = vcard.add("URL")
             hp.value = contact.homepage
 
         # blog
         if contact.blog:
-            b = vcard.add('x-evolution-blog-url')
+            b = vcard.add("x-evolution-blog-url")
             b.value = contact.blog
 
         # video chat
         if contact.videchat:
-            vc = vcard.add('x-evolution-video-url')
+            vc = vcard.add("x-evolution-video-url")
             vc.value = contact.videchat
 
         # emails
         for email in contact.emails:
-            e = vcard.add('email')
+            e = vcard.add("email")
             e.value = email.email
             e.type_param = email.type
 
         # telephones
         for telephone in contact.telephones:
-            t = vcard.add('tel')
+            t = vcard.add("tel")
             t.value = telephone.telephone
-            t.type_param = [telephone.type, 'VOICE']
+            t.type_param = [telephone.type, "VOICE"]
 
         # Instant messaging
         for im in contact.ims:
@@ -131,7 +129,7 @@ class addressbook(j.baseclasses.threebot_actor):
             i.value = im.username
 
         for ma in contact.mailaddresses:
-            a = vcard.add('ADR')
+            a = vcard.add("ADR")
             a.type_param = ma.type
             a.value = vobject.vcard.Address(
                 street=ma.street,
@@ -140,7 +138,7 @@ class addressbook(j.baseclasses.threebot_actor):
                 code=ma.code,
                 country=ma.country,
                 box=ma.box,
-                extended=ma.extended
+                extended=ma.extended,
             )
 
         return vcard
@@ -179,7 +177,7 @@ class addressbook(j.baseclasses.threebot_actor):
         a.description = addressbook.description
         a.display_name = addressbook.display_name
         props = j.data.serializers.json.loads(a.props)
-        props['CR:addressbook-description'] = addressbook.description
+        props["CR:addressbook-description"] = addressbook.description
         props["displayname"] = addressbook.display_name
         props["{http://inf-it.com/ns/ab/}addressbook-color"] = addressbook.color
         a.props = j.data.serializers.json.dumps(props)
@@ -213,7 +211,7 @@ class addressbook(j.baseclasses.threebot_actor):
         self._verify_client()
         addressbooks = self.book_model.find(addressbook_id=addressbook_id)
         if addressbooks:
-            self.client.delete_abook(f'/{self.user}/{addressbook_id}')
+            self.client.delete_abook(f"/{self.user}/{addressbook_id}")
 
     def list(self, schema_out=None, user_session=None):
         """
@@ -239,9 +237,9 @@ class addressbook(j.baseclasses.threebot_actor):
 
         vcard = self._get_vcard_from_contact(contact)
         uid_ = vcard.uid.value
-        res = self.client.upload_new_card(vcard.serialize(), f'/{self.user}/{contact.addressbook_id}/{uid_}')
+        res = self.client.upload_new_card(vcard.serialize(), f"/{self.user}/{contact.addressbook_id}/{uid_}")
 
-        item_id = res[0].split('/')[-1]
+        item_id = res[0].split("/")[-1]
 
         return self.contact_model.find(item_id=item_id)[0]
 
@@ -271,7 +269,7 @@ class addressbook(j.baseclasses.threebot_actor):
         if not contacts:
             raise j.exceptions.NotFound(f"Couldn't find contact with id: {contact_id}")
         contact = contacts[0]
-        self.client.delete_vcard(f'/{self.user}/{contact.addressbook_id}/{contact.item_id}', None)
+        self.client.delete_vcard(f"/{self.user}/{contact.addressbook_id}/{contact.item_id}", None)
 
     def list_contacts(self, contact, schema_out=None, user_session=None):
         """
@@ -352,17 +350,17 @@ class addressbook(j.baseclasses.threebot_actor):
 
             if contact.job.manager and contact.job.manager != item.job.manager:
                 continue
-            if contact.job.profession and contact.job.profession !=  item.job.profession:
+            if contact.job.profession and contact.job.profession != item.job.profession:
                 continue
             if contact.job.company and contact.job.company != item.job.company:
                 continue
-            if contact.job.office and contact.job.office !=  item.job.office:
+            if contact.job.office and contact.job.office != item.job.office:
                 continue
-            if contact.job.assistant and contact.job.assistant !=  item.job.assistant:
+            if contact.job.assistant and contact.job.assistant != item.job.assistant:
                 continue
-            if contact.job.title and contact.job.title !=  item.job.title:
+            if contact.job.title and contact.job.title != item.job.title:
                 continue
-            if contact.job.department and contact.job.department !=  item.job.department:
+            if contact.job.department and contact.job.department != item.job.department:
                 continue
 
             if contact.mailaddresses:
@@ -408,5 +406,5 @@ class addressbook(j.baseclasses.threebot_actor):
         vcard = self._get_vcard_from_contact(contact)
         # restore old UID
         vcard.uid.value = uid_
-        self.client.update_vcard(vcard.serialize(), f'/{self.user}/{c.addressbook_id}/{c.item_id}', None)
+        self.client.update_vcard(vcard.serialize(), f"/{self.user}/{c.addressbook_id}/{c.item_id}", None)
         return self.contact_model.find(item_id=c.item_id)[0]

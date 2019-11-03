@@ -14,7 +14,7 @@ def chat(bot):
   aria-valuemin="0" aria-valuemax="100" style="width:{0}%">
     {0}%
   </div>
-</div> 
+</div>
 """
     explorer = j.clients.gedis.get(name="explorer", port=8901, host="explorer.testnet.grid.tf")
     token = j.clients.digitalocean.provisioning.token_
@@ -27,7 +27,7 @@ def chat(bot):
             continue
         try:
             explorer.actors.phonebook.get(name=name)
-            remark = "(Doublename is alreayd in use)"
+            remark = "(Doublename is already in use)"
         except:
             break
 
