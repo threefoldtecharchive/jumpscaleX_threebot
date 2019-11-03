@@ -5,7 +5,7 @@
 
 <span class="li-social">
     {% for provider in providers%}
-    <a href="/chat/login?provider=github"><i class="fa fa-{{provider}}" style="font-size: 33px"></i></a>
+    <a href="/chat/login?provider={{provider}}"><i class="fa fa-{{provider}}" style="font-size: 33px"></i></a>
     {% endfor %}
 </span>
 {% endblock %}
