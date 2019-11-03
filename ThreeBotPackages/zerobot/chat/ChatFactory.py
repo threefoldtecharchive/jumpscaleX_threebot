@@ -10,16 +10,13 @@ except (ModuleNotFoundError, ImportError):
     from beaker.middleware import SessionMiddleware
 
 
-OAUTH_SERVER = "https://oauth2.3bot.testnet.grid.tf/auth"
-
-
 templates_path = j.sal.fs.joinPaths(j.sal.fs.getDirName(__file__), "templates")
-
 env = Environment(loader=FileSystemLoader(templates_path), autoescape=select_autoescape(["html", "xml"]))
 
 app = Bottle()
-
-PROVIDERS = ["github"]
+client = j.clients.oauth_proxy.get("main")
+oauth_app = j.tools.oauth_proxy.get(app, client, "/chat/login")
+PROVIDERS = list(client.providers_list())
 
 
 def enable_cors(fn):
@@ -36,20 +33,6 @@ def enable_cors(fn):
             return fn(*args, **kwargs)
 
     return _enable_cors
-
-
-def auth(fn):
-    def _auth(*args, **kwargs):
-        session = request.environ.get("beaker.session")
-        if "username" not in session:
-            if j.data.types.ipaddr.check(request.headers["HOST"]):
-                session["username"] = "Guest"
-            else:
-                session["next-url"] = request.path
-                redirect("/chat/login")
-        return fn(*args, **kwargs)
-
-    return _auth
 
 
 def get_ws_url():
@@ -73,45 +56,36 @@ def _get_chatflows():
 
 @app.route("/chat/login")
 def login():
-    session = request.environ.get("beaker.session")
-    session_uid = j.data.idgenerator.generateGUID()
-    session["uid"] = session_uid
-    server_domain = "https://" + request.headers["HOST"]
-    query_params = f"uid={session_uid}&redirect_url={server_domain}/chat/authorize"
-    return env.get_template("chat/login.html").render(
-        oauth_server=OAUTH_SERVER, query=query_params, providers=PROVIDERS
-    )
+    provider = request.query.get("provider")
+    if provider:
+        redirect_url = f"https://{request.headers['HOST']}/chat/authorize"
+        return oauth_app.login(provider, redirect_url=redirect_url)
+
+    return env.get_template("chat/login.html").render(providers=PROVIDERS)
 
 
 @app.route("/chat/authorize")
 def chat_authorize():
-    data = request.query
-    session = request.environ.get("beaker.session")
-    if data.get("uid") and data["uid"] == session.get("uid"):
-        session["username"] = data["username"]
-        next_url = session.get("next-url", "/chat")
-        redirect(next_url)
-    else:
-        response.status = 401
-        error = f"Couldn't authorize user"
-        return env.get_template("chat/error.html").render(error=error)
+    user_info = oauth_app.callback()
+    oauth_app.session["email"] = user_info["email"]
+    return redirect(oauth_app.next_url)
 
 
 @app.route("/chat")
-@auth
+@oauth_app.login_required
 def home_handler():
-    session = request.environ.get("beaker.session")
+    session = oauth_app.session
     chatflows = _get_chatflows()
     data = [(chatflow, chatflow.capitalize().replace("_", " ")) for chatflow in chatflows]
-    return env.get_template("chat/home.html").render(chatflows=data, username=session["username"])
+    return env.get_template("chat/home.html").render(chatflows=data, email=session["email"])
 
 
 @app.route("/chat/session/<topic>", method="get")
 @enable_cors
-@auth
+@oauth_app.login_required
 def topic_handler(topic):
+    session = oauth_app.session
     query = request.urlparts.query
-    session = request.environ.get("beaker.session")
     if query:
         query = query.split("&")
         query_params = {}
@@ -122,19 +96,17 @@ def topic_handler(topic):
         session["kwargs"] = query_params
     else:
         session["kwargs"] = {}
-    session = request.environ.get("beaker.session")
     if topic not in _get_chatflows():
         response.status = 404
         error = f"Specified chatflow {topic} is not registered on the system"
-        return env.get_template("chat/error.html").render(error=error, username=session["username"])
+        return env.get_template("chat/error.html").render(error=error, email=session["email"])
     ws_url = get_ws_url()
     return env.get_template("chat/index.html").render(
-        topic=topic, url=ws_url, username=session["username"], qs=session["kwargs"]
+        topic=topic, url=ws_url, email=session["email"], qs=session["kwargs"]
     )
 
 
-session_opts = {"session.type": "file", "session.data_dir": "./data", "session.auto": True}
-app = SessionMiddleware(app, session_opts)
+app = oauth_app.app
 
 
 class ChatFactory(j.baseclasses.threebot_factory):

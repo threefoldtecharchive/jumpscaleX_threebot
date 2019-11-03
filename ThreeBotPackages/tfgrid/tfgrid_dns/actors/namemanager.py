@@ -1,4 +1,5 @@
 from Jumpscale import j
+
 TESTNET_DOMAIN = "testnet.grid.tf"
 THREEBOT_DOMAIN = f"3bot.{TESTNET_DOMAIN}"
 THREEBOT_PRIVATE_DOMAIN = "3bot"
