@@ -8,4 +8,4 @@
 * [Slides version2](test_presentation_v2.md)
 * [Markdown](test_markdown.md)
 * [Inline html](test_html.md)
-* [Markdown_test_remote_reload_with actors)](test_markdown.md)
+* [Markdown_test_remote_reload_with_actors)](test_markdown.md)
