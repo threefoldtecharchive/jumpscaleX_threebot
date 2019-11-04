@@ -157,15 +157,12 @@ class Blog(BaseTest):
     @parameterized.expand(["facebook", "twitter", "github", "instagram"])
     def test06_categories_pages(self, icon):
         """
-        * Test categories pages [ facebook, instagram, github,twirtter]. *
+        * Test categories pages [ facebook, instagram, github,twitter]. *
         
         - Get one of blogs posts .
         - Click on one of icons check it redirect to right page.
         """
-        import ipdb
-
-        ipdb.set_trace()
-        if icon == "instagram":
+        if icon == "twitter":
             self.skipTest("https://github.com/threefoldtech/jumpscaleX_threebot/issues/179")
         self.info("oprn one of blogs posts")
         self.open_random_blog()
