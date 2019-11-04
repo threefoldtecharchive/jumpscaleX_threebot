@@ -60,3 +60,6 @@ body {
     display: block;
     margin: 0 auto;
 }
+.bot:before{
+    content:url("/chatstatic/home/img/3botlogin.png");
+    }
