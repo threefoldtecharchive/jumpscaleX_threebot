@@ -178,7 +178,7 @@ class workload_manager(j.baseclasses.threebot_actor):
             query = self.reservation_model.IndexTable.node_id == node_id
 
         if cursor:
-            cur_query = self.reservation_model.IndexTable.reservation_id > cursor
+            cur_query = self.reservation_model.IndexTable.reservation_id >= cursor
             query = query and cur_query if query else cur_query
 
         result = self.reservation_model.IndexTable.select().where(query).execute()
@@ -250,7 +250,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```in
         node_id = (S)  # filter results by node id
         state = (S)  # filter results by next_action
-        cursor = (I)  # filter results which created after this reservation ID
+        cursor = (I)  # filter results which ID starts from the cursor value
         ```
 
         ```out
@@ -270,7 +270,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         ```in
         node_id = (S)  # filter results by node id
-        cursor = (I)  # filter results which created after this reservation ID
+        cursor = (I)  # filter results which ID starts from the cursor value
         ```
 
         ```out
