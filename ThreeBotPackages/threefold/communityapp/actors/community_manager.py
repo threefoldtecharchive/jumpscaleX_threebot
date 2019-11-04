@@ -5,16 +5,16 @@ class community_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.bcdb = j.data.bcdb.get("tf_community_app")
         self.model = self.bcdb.model_get(url="threefold.community.user.1")
-        self.current_user = "community_user"  # temporary hack
+        self.current_user = None
 
     def community_join(self, user_name, community_name, user_session=None):
         """
-        ask FFP client to join to this space 
+        ask FFP client to join to this space
         """
         return user_name
 
     def set_current_user(self, user, schema_out=None, user_session=None):
-        self.current_user = "dylan_verstraete_1"
+        self.current_user = user.decode()
 
     def info_get_current_user(self, schema_out=None, user_session=None):
         """
@@ -26,7 +26,7 @@ class community_manager(j.baseclasses.threebot_actor):
         :return:
         """
         cl = j.clients.freeflowpages.get()
-        user_id = cl.users.get_by_username(self.current_user)["id"]
+        user_id = cl.users.get_by_email(self.current_user)["id"]
         spaces = cl.users.spaces(user_id)
         out = schema_out.new()
         # TODO: improve html styling in the template
@@ -78,7 +78,7 @@ class community_manager(j.baseclasses.threebot_actor):
         :return:
         """
         cl = j.clients.freeflowpages.get()
-        user_id = cl.users.get_by_username(name)["id"]
+        user_id = cl.users.get_by_email(name)["id"]
         spaces = cl.users.spaces(user_id)
         out = schema_out.new()
         # TODO: improve html styling in the template

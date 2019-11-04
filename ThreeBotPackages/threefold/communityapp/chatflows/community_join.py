@@ -11,16 +11,14 @@ def chat(bot):
     html = bot.html_show("community")
     bot.md_show_update(html.format(100, "community"))
 
-    # TODO: change it to get email not user_name after fixing outh
-    user_info = bot.user_info()
-    user_name = user_info
-    user_email = user_info  # still being added to the oauth user info
+    user_email = bot.user_info()
+
     gedis_client = j.clients.gedis.get(port=8901)
     invited = gedis_client.actors.community_manager.check_referral(
-        email=user_email, name=user_name, referral=bot.kwargs.get("referral")
+        email=user_email, referral=bot.kwargs.get("referral")
     )
 
-    gedis_client.actors.community_manager.set_current_user(user=user_name)
+    gedis_client.actors.community_manager.set_current_user(user=user_email)
 
     bot.single_choice(
         "Welcome to our ThreeFold World! Our dream is a complemetary responsible Internet, everywhere and owned by everyone, \n without borders \
@@ -34,16 +32,16 @@ def chat(bot):
             "Choose your interests: ", ["TF Tokens", "ThreeFold Foundation", "Veda-egypt", "BetterToken"]
         )
         res = """
-        # You will join {{interests}}: 
-        - Email : {{user_email}} 
-        ### Click next 
+        # You will join {{interests}}:
+        - Email : {{user_email}}
+        ### Click next
         for the final step which will redirect you to dynamic macro
         """
     else:
         bot.single_choice("We'll send you an email with invitation soon! Stay tuned", ["OK"])
         res = """
-        ### Click next 
-        for the final step which will redirect you to dynamic macro 
+        ### Click next
+        for the final step which will redirect you to dynamic macro
         """
 
     res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
