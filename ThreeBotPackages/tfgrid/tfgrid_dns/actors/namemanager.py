@@ -78,5 +78,5 @@ class namemanager(j.baseclasses.threebot_actor):
         self.tfgateway.tcpservice_register(fqdn, fqdn, privateip)
 
         doublenamefqdn = f"{doublename}.{THREEBOT_DOMAIN}"
-        self.tfgateway.domain_register_cname("@", doublenamefqdn, f"gateway.{THREEBOT_DOMAIN}")
-        self.tfgateway.domain_register_cname(subdomain, doublenamefqdn, f"gateway.{THREEBOT_DOMAIN}")
+        self.tfgateway.domain_register_cname("@", doublenamefqdn, THREEBOT_DOMAIN)
+        self.tfgateway.domain_register_cname(subdomain, doublenamefqdn, THREEBOT_DOMAIN)
