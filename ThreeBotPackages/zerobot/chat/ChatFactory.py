@@ -63,7 +63,7 @@ def login():
     provider = request.query.get("provider")
     if provider:
         if provider == "3bot":
-            return bot_app.login("/chat/bot_callback")
+            return bot_app.login(request.headers["HOST"], "/chat/3botlogin")
 
         redirect_url = f"https://{request.headers['HOST']}/chat/authorize"
         return oauth_app.login(provider, redirect_url=redirect_url)
@@ -71,7 +71,7 @@ def login():
     return env.get_template("chat/login.html").render(providers=PROVIDERS)
 
 
-@app.route("/chat/bot_callback")
+@app.route("/chat/3botlogin")
 def chat_botcallback():
     bot_app.callback()
 
@@ -81,6 +81,7 @@ def chat_authorize():
     user_info = oauth_app.callback()
     oauth_app.session["email"] = user_info["email"]
     return redirect(oauth_app.next_url)
+
 
 @app.route("/chat")
 @oauth_app.login_required
