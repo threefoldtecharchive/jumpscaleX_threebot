@@ -270,7 +270,7 @@ var generateSlide = function (message) {
         }
     }
     if (res['cat'] === "user_info") {
-        next(JSON.stringify({"username": USERNAME, "email": EMAIL}), true);
+        next(EMAIL, true);
     }
     contents = `
         <fieldset>
