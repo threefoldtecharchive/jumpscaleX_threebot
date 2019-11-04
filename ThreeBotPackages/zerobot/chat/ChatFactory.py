@@ -1,5 +1,7 @@
 import traceback
 from Jumpscale import j
+from urllib.parse import urlencode
+
 from bottle import abort, response, request, Bottle, redirect
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -16,6 +18,8 @@ env = Environment(loader=FileSystemLoader(templates_path), autoescape=select_aut
 app = Bottle()
 client = j.clients.oauth_proxy.get("main")
 oauth_app = j.tools.oauth_proxy.get(app, client, "/chat/login")
+bot_app = j.tools.threebotlogin_proxy.get(app)
+
 PROVIDERS = list(client.providers_list())
 
 
@@ -58,10 +62,18 @@ def _get_chatflows():
 def login():
     provider = request.query.get("provider")
     if provider:
+        if provider == "3bot":
+            return bot_app.login("/chat/bot_callback")
+
         redirect_url = f"https://{request.headers['HOST']}/chat/authorize"
         return oauth_app.login(provider, redirect_url=redirect_url)
 
     return env.get_template("chat/login.html").render(providers=PROVIDERS)
+
+
+@app.route("/chat/bot_callback")
+def chat_botcallback():
+    bot_app.callback()
 
 
 @app.route("/chat/authorize")
@@ -69,7 +81,6 @@ def chat_authorize():
     user_info = oauth_app.callback()
     oauth_app.session["email"] = user_info["email"]
     return redirect(oauth_app.next_url)
-
 
 @app.route("/chat")
 @oauth_app.login_required
