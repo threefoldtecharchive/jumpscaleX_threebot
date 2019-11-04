@@ -44,9 +44,6 @@ class Package(j.baseclasses.threebot_package):
             modrewrite_chat.name = "chatrewrite"
             modrewrite_chat.config = """rewrite ^/(.*)/chatflow/(.*)$ /chat/session/$2;"""
 
-
-
-
             locations.configure()
             website.configure()
 
