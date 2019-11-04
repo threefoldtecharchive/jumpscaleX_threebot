@@ -21,7 +21,7 @@ class CalenderActorsTests(BaseTest):
         j.data.bcdb.destroy_all()
 
     def setUp(self):
-        self.setUp()
+        super().setUp()
         self.info("test case : {}".format(self._testMethodName))
         print('\n')
 
