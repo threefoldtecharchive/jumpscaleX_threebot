@@ -11,7 +11,7 @@ Central monitoring system built using sapper and gedis actors (with jumpscale al
 - install frontend dependencies `cd alerta && npm install`
 - build frontend `./build_frontend.sh`
 - execute `kosmos -p 'j.threebot.package.alerta.start()'`
-- server will start at `172.17.0.2`
+- server will start at `172.17.0.2/alerta`
 
 ## The package file
 
