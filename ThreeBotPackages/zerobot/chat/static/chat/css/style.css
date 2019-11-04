@@ -73,7 +73,7 @@ ul.navbar-nav {
 	font-size: 28px;
 	vertical-align: middle;
 }
-.navbar-inverse ul.navbar-nav li .li-social a:hover, 
+.navbar-inverse ul.navbar-nav li .li-social a:hover,
 .navbar-inverse ul.navbar-nav li .li-social a:focus { border: 0; color: #f35b3f; }
 
 .navbar-brand {
@@ -92,7 +92,7 @@ ul.navbar-nav {
 .top-content .description { margin: 20px 0 10px 0; }
 .top-content .description p { opacity: 0.8; }
 .top-content .description a { color: #fff; }
-.top-content .description a:hover, 
+.top-content .description a:hover,
 .top-content .description a:focus { border-bottom: 1px dotted #fff; }
 
 .form-box { padding-top: 40px; display: none;}
@@ -138,21 +138,21 @@ ul.navbar-nav {
 @media (min-width: 768px) and (max-width: 991px) {}
 
 @media (max-width: 767px) {
-	
+
 	.navbar { padding-top: 0; }
 	.navbar.navbar-no-bg { background: #333; background: rgba(51, 51, 51, 0.9); }
 	.navbar-brand { height: 60px; margin-left: 15px; }
 	.navbar-collapse { border: 0; }
 	.navbar-toggle { margin-top: 12px; }
-	
+
 	.top-content { padding: 40px 0 110px 0; }
 
 }
 
 @media (max-width: 415px) {
-	
+
 	h1, h2 { font-size: 32px; }
-	
+
 	.f1 { padding-bottom: 20px; }
 	.f1-buttons button { margin-bottom: 5px; }
 
@@ -168,12 +168,12 @@ only screen and (     -o-min-device-pixel-ratio: 2/1),
 only screen and (        min-device-pixel-ratio: 2),
 only screen and (                min-resolution: 192dpi),
 only screen and (                min-resolution: 2dppx) {
-	
+
 	/* logo */
     .navbar-brand {
     	background-image: url(../img/logo@2x.png) !important; background-repeat: no-repeat !important; background-size: 162px 36px !important;
     }
-	
+
 }
 
 .loader {
@@ -228,19 +228,19 @@ only screen and (                min-resolution: 2dppx) {
 	clear: both;
 	/* overflow: hidden; */
   }
-  
+
   .funkyradio label {
 	width: 100%;
 	border-radius: 3px;
 	border: 1px solid #D1D3D4;
 	font-weight: normal;
   }
-  
+
   .funkyradio input[type="radio"]:empty,
   .funkyradio input[type="checkbox"]:empty {
 	display: none;
   }
-  
+
   .funkyradio input[type="radio"]:empty ~ label,
   .funkyradio input[type="checkbox"]:empty ~ label {
 	position: relative;
@@ -253,7 +253,7 @@ only screen and (                min-resolution: 2dppx) {
 		-ms-user-select: none;
 			user-select: none;
   }
-  
+
   .funkyradio input[type="radio"]:empty ~ label:before,
   .funkyradio input[type="checkbox"]:empty ~ label:before {
 	position: absolute;
@@ -266,24 +266,24 @@ only screen and (                min-resolution: 2dppx) {
 	background: #D1D3D4;
 	border-radius: 3px 0 0 3px;
   }
-  
+
   .funkyradio input[type="radio"]:hover:not(:checked) ~ label,
   .funkyradio input[type="checkbox"]:hover:not(:checked) ~ label {
 	color: #888;
   }
-  
+
   .funkyradio input[type="radio"]:hover:not(:checked) ~ label:before,
   .funkyradio input[type="checkbox"]:hover:not(:checked) ~ label:before {
 	content: '\2714';
 	text-indent: .9em;
 	color: #C2C2C2;
   }
-  
+
   .funkyradio input[type="radio"]:checked ~ label,
   .funkyradio input[type="checkbox"]:checked ~ label {
 	color: #777;
   }
-  
+
   .funkyradio input[type="radio"]:checked ~ label:before,
   .funkyradio input[type="checkbox"]:checked ~ label:before {
 	content: '\2714';
@@ -291,42 +291,42 @@ only screen and (                min-resolution: 2dppx) {
 	color: #333;
 	background-color: #ccc;
   }
-  
+
   .funkyradio input[type="radio"]:focus ~ label:before,
   .funkyradio input[type="checkbox"]:focus ~ label:before {
 	box-shadow: 0 0 0 3px #999;
   }
-  
+
   .funkyradio-default input[type="radio"]:checked ~ label:before,
   .funkyradio-default input[type="checkbox"]:checked ~ label:before {
 	color: #333;
 	background-color: #ccc;
   }
-  
+
   .funkyradio-primary input[type="radio"]:checked ~ label:before,
   .funkyradio-primary input[type="checkbox"]:checked ~ label:before {
 	color: #fff;
 	background-color: #337ab7;
   }
-  
+
   .funkyradio-success input[type="radio"]:checked ~ label:before,
   .funkyradio-success input[type="checkbox"]:checked ~ label:before {
 	color: #fff;
 	background-color: #5cb85c;
   }
-  
+
   .funkyradio-danger input[type="radio"]:checked ~ label:before,
   .funkyradio-danger input[type="checkbox"]:checked ~ label:before {
 	color: #fff;
 	background-color: #d9534f;
   }
-  
+
   .funkyradio-warning input[type="radio"]:checked ~ label:before,
   .funkyradio-warning input[type="checkbox"]:checked ~ label:before {
 	color: #fff;
 	background-color: #f0ad4e;
   }
-  
+
   .funkyradio-info input[type="radio"]:checked ~ label:before,
   .funkyradio-info input[type="checkbox"]:checked ~ label:before {
 	color: #fff;
