@@ -41,19 +41,19 @@ hello/
 
 
 ## Starting threebot with registered packages
-- the recommended way is `j.servers.threebot.local_start_default()`.
+- start threebot server `j.servers.threebot.local_start_default()`.
 
 - to simplify the development workflow you can start packages directly using their factories, for example:
     * `kosmos -p "j.threebot.package.alerta.start()"`
 
-## Registering package (using package manager)
+## Registering package (using package manager), the recommended way is
 After starting the server with recommended way, you can use the returned client to access package manager actor and add your package, for an example starting alerta package:
 
 
 ```
 kosmos -p
 JSX> cl = j.servers.threebot.local_start_default(web=True)
-JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta')
+JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/alerta')
 ```
 
 **Note** you can pass timeout=`yourtime` to control your starting server timeout, in case if you have a slow machine or your package takes longer to start
