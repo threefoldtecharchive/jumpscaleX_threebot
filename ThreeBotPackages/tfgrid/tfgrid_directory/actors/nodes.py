@@ -243,4 +243,3 @@ def hash_proof(proof):
     #  so we set sort_keys=True so the json generated is always the same
     b = j.data.serializers.json.dumps(proof, sort_keys=True)
     return j.data.hash.md5_string(b)
-
