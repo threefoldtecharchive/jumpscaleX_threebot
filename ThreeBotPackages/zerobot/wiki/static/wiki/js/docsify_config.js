@@ -2,7 +2,7 @@
 mermaid.initialize({ startOnLoad: false });
 
 function docsifyConfig(name, repo) {
-  basePath = location.protocol + "//" + location.hostname + "/web/bcdbfs/docsites/" + name;
+  basePath = location.protocol + "//" + location.hostname + "/docsites/" + name;
   imagesPath = location.protocol + "//" + location.hostname + "/web/bcdbfs/";
   TeamWidget.avatarPrefix = basePath;
 
