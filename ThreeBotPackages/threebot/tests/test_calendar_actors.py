@@ -3,6 +3,7 @@ from Jumpscale import j
 from time import sleep
 import requests
 import json
+from unittest import skip
 
 
 class CalenderActorsTests(BaseTest):
@@ -24,6 +25,7 @@ class CalenderActorsTests(BaseTest):
         self.info("test case : {}".format(self._testMethodName))
         print('\n')
 
+    @skip('https://github.com/threefoldtech/jumpscaleX_threebot/issues/193')
     def test001_add_calendar(self):
         name = self.generate_random_str()
         description = self.generate_random_str()
