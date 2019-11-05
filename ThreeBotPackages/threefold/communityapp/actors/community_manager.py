@@ -26,6 +26,7 @@ class community_manager(j.baseclasses.threebot_actor):
         :param user_name:
         :return:
         """
+        latestNews = {}
         error_message = ""
         join_message = ""
         cl = j.clients.freeflowpages.get()
@@ -37,10 +38,18 @@ class community_manager(j.baseclasses.threebot_actor):
         else:
             user_id = user.get("id")
             spaces = cl.users.spaces(user_id)
+        for space in spaces:
+            posts = cl.posts.list(space_id=space["id"])
+            latestNews[space["id"]] = [post["message"] for post in posts["results"]]
         out = schema_out.new()
         # TODO: improve html styling in the template
         out.content = j.tools.jinja2.template_get(self._dirpath + "/info_template.html").render(
-            username=self.current_user, spaces=spaces, notfound=error_message, url=self.FFP, join=join_message
+            username=self.current_user,
+            spaces=spaces,
+            notfound=error_message,
+            url=self.FFP,
+            join=join_message,
+            latestnews=latestNews,
         )
         return out
 
