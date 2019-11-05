@@ -1,6 +1,8 @@
 import gevent
 from gevent import monkey
 
+import pytest
+
 monkey.patch_all(thread=False)
 import logging
 from nacl import signing
@@ -126,7 +128,10 @@ def main(self):
     reservations = cl.actors.workload_manager.reservations_list(node_id="3").reservations
     assert len(reservations) == 1
 
-    reservations = cl.actors.workload_manager.reservations_list(epoch=j.data.time.epoch + 1000).reservations
+    reservations = cl.actors.workload_manager.reservations_list(cursor=reservation.id).reservations
+    assert len(reservations) == 1
+
+    reservations = cl.actors.workload_manager.reservations_list(cursor=reservation.id + 1).reservations
     assert len(reservations) == 0
 
     # TEST04: SIGN RESERVATION
@@ -190,15 +195,15 @@ def main(self):
     reservation_data = reservation._ddict
 
     # register reservation
-    reservation = cl.actors.workload_manager.reservation_register(reservation_data)
-    assert reservation.next_action == "CREATE"
-
-    # add a customer signature
-    cl.actors.workload_manager.sign_customer(reservation.id, "signature")
-    reservation = cl.actors.workload_manager.reservation_get(reservation.id)
-    assert reservation.next_action == "INVALID"
+    with pytest.raises(j.exceptions.RemoteException):
+        reservation = cl.actors.workload_manager.reservation_register(reservation_data)
 
     # TEST10: CREATE RESERVATION WITH SINGLE API CALL
+    container = container_model.new()
+    container.node_id = "1"
+    container.workload_id = 1
+    container.farmer_tid = tbots["farmer"].id
+
     reservation = reservation_model.new()
     reservation.customer_tid = tbots["customer"].id
     reservation.data_reservation.containers.append(container)

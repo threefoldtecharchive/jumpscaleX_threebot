@@ -213,7 +213,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         if not reservation.data_reservation.expiration_reservation:
             raise j.exceptions.Value("expiration_reservation field is required")
 
-        if not self.user_model.get(reservation.customer_tid):
+        if not self.user_model.find(id=reservation.customer_tid):
             raise j.exceptions.Value("customer_tid is invalid, or user does not exist")
 
     def reservation_register(self, reservation, schema_out, user_session):
@@ -250,7 +250,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```in
         node_id = (S)  # filter results by node id
         state = (S)  # filter results by next_action
-        cursor = (I)  # filter results which ID starts from the cursor value
+        cursor = 0 (I)  # filter results which ID starts from the cursor value
         ```
 
         ```out
@@ -270,7 +270,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         ```in
         node_id = (S)  # filter results by node id
-        cursor = (I)  # filter results which ID starts from the cursor value
+        cursor = 0 (I)  # filter results which ID starts from the cursor value
         ```
 
         ```out
