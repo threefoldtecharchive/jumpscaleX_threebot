@@ -91,9 +91,21 @@ class registry(j.baseclasses.threebot_actor):
         res = !threebot.registry.entry.data.1
         ```
         """
-        # TODO: tune working for encrypted data
         res = self.threebot_data_model.get(obj_id=data_id)
-        return res
+        # verify if  encrypted data or not
+        if not res.registered_info:
+            if tid in res.readers or tid in res.authors:
+                encrypted_data_list = []
+                decrypted_data_list = res.registered_info_encrypted
+                for data in decrypted_data_list:
+                    encrypted_data = self.__decrypt_data(res.registered_info_format, data.data_)
+                    encrypted_data_list.append(encrypted_data)
+                return encrypted_data_list
+            else:
+                raise Exception("You are not authorized to few this data")
+        else:
+            encrypted_data = self.__decrypt_data(res.registered_info_format, res.registered_info)
+            return encrypted_data
 
     def schema_register(self, schema_url=None, schema_text=None, schema_out=None, user_session=None):
         """
@@ -246,6 +258,21 @@ class registry(j.baseclasses.threebot_actor):
             raise j.exceptions.Input("Can not return results is > 50")
 
         return res
+
+    def __decrypt_data(self, serializer_type, decrypted_data):
+        if serializer_type == "JSXSCHEMA":
+            encrypted_data = j.data.serializers.jsxdata.loads(decrypted_data)
+
+        if serializer_type == "YAML":
+            encrypted_data = j.data.serializers.yaml.loads(decrypted_data)
+
+        if serializer_type == "JSON":
+            encrypted_data = j.data.serializers.json.loads(decrypted_data)
+
+        if serializer_type == "msgpack":
+            encrypted_data = j.data.serializers.msgpack.loads(decrypted_data)
+
+        return encrypted_data
 
     def validate_signature(
         self, tid=None, verifykey=None, payload=None, signature=None, schema_out=None, user_session=None
