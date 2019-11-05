@@ -13,8 +13,8 @@ def chat(bot):
 
     # TODO: change it to get email not user_name after fixing outh
     user_info = bot.user_info()
-    user_name = user_info
-    user_email = user_info  # still being added to the oauth user info
+    user_name = user_info["username"]
+    user_email = user_info["email"]  # still being added to the oauth user info
     gedis_client = j.clients.gedis.get(port=8901)
     invited = gedis_client.actors.community_manager.check_referral(
         email=user_email, name=user_name, referral=bot.kwargs.get("referral")
@@ -34,16 +34,16 @@ def chat(bot):
             "Choose your interests: ", ["TF Tokens", "ThreeFold Foundation", "Veda-egypt", "BetterToken"]
         )
         res = """
-        # You will join {{interests}}: 
-        - Email : {{user_email}} 
-        ### Click next 
+        # You will join {{interests}}:
+        - Email : {{user_email}}
+        ### Click next
         for the final step which will redirect you to dynamic macro
         """
     else:
         bot.single_choice("We'll send you an email with invitation soon! Stay tuned", ["OK"])
         res = """
-        ### Click next 
-        for the final step which will redirect you to dynamic macro 
+        ### Click next
+        for the final step which will redirect you to dynamic macro
         """
 
     res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())

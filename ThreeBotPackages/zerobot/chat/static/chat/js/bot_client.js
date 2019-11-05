@@ -270,7 +270,7 @@ var generateSlide = function (message) {
         }
     }
     if (res['cat'] === "user_info") {
-        next(USERNAME, true);
+        next(JSON.stringify({"username": USERNAME, "email": EMAIL}), true);
     }
     contents = `
         <fieldset>
@@ -331,7 +331,8 @@ EXEC_OBJ["command"] = "session_new";
 // TOPIC is set through etlua template
 EXEC_OBJ["args"] = {
     "topic": TOPIC,
-    "query_params": QS
+    "query_params": QS,
+    // "username": USERNAME,
 
 };
 GEDIS_CLIENT.execute(EXEC_OBJ).then(function (res) {
