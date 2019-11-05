@@ -20,7 +20,7 @@ class BaseTest(TestCase):
         return str(uuid4()).replace("-", "")[:10]
 
     def setUp(self):
-        self.base_url = "https://{}/web/gedis/http".format(config['url']['ip'])
+        self.base_url = "https://{}/web/gedis/http".format(config['server']['ip'])
         self.info('connect to {}'.format(self.base_url))
         self.info('login as admin:admin')
         self.login()
@@ -28,7 +28,7 @@ class BaseTest(TestCase):
     def url_contractor(self, data):
         base_url = "{}/calendar".format(self.base_url)
         for item in data:
-            base_url = "{}/".format(base_url, item)
+            base_url = "{}/{}".format(base_url, item)
         return base_url
 
     @staticmethod

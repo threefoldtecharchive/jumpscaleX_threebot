@@ -1,4 +1,4 @@
-from base_test import BaseTest
+from tests.base_test import BaseTest
 from Jumpscale import j
 from time import sleep
 import requests
