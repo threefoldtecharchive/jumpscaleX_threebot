@@ -21,7 +21,10 @@ class {{model.schema.key}}_model(j.baseclasses.threebot_crud_actor):
         """
         ```in
         object_id = 0
-        {{fields_schema}}
+        values = (dict)
+        ```
+        ```out
+        res = (O) !{{model.schema.url}}
         ```
         """
         return super().set(**kwargs)
@@ -66,3 +69,6 @@ class {{model.schema.key}}_model(j.baseclasses.threebot_crud_actor):
         ```
         """
         return super().delete(**kwargs)
+
+    def destroy(self, **kwargs):
+        return super().destroy(**kwargs)
