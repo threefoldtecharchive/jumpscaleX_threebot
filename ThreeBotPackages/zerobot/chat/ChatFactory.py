@@ -113,7 +113,7 @@ def topic_handler(topic):
         return env.get_template("chat/error.html").render(error=error, email=session["email"])
     ws_url = get_ws_url()
     return env.get_template("chat/index.html").render(
-        topic=topic, url=ws_url, email=session["email"], qs=session["kwargs"]
+        topic=topic, url=ws_url, email=session["email"], qs=session["kwargs"], username=session.get("username")
     )
 
 
