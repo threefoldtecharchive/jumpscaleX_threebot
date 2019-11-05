@@ -86,12 +86,22 @@ class community_manager(j.baseclasses.threebot_actor):
         :param user_name:
         :return:
         """
+
+        error_message = ""
+        join_message = ""
         cl = j.clients.freeflowpages.get()
-        user_id = cl.users.get_by_email(name)["id"]
-        spaces = cl.users.spaces(user_id)
+        self.current_user = name
+        user = cl.users.get_by_email(self.current_user)
+        if not user.get("id"):
+            error_message = "sorry ,you are not a member of FreeFlow pages.."
+            join_message = "PLEASE JOIN"
+            spaces = []
+        else:
+            user_id = user.get("id")
+            spaces = cl.users.spaces(user_id)
         out = schema_out.new()
         # TODO: improve html styling in the template
         out.content = j.tools.jinja2.template_get(self._dirpath + "/info_template.html").render(
-            username=name, spaces=spaces
+            username=self.current_user, spaces=spaces, notfound=error_message, url=self.FFP, join=join_message
         )
         return out
