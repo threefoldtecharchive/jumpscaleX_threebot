@@ -1,6 +1,6 @@
 # Team
 
-This macro can be used to generate the data required for our [docify plugin](https://github.com/threefoldtech/jumpscale_weblibs/tree/master/static/team) for listing of team members.
+This macro can be used to generate the data required for our [docify plugin](https://github.com/threefoldtech/jumpscaleX_weblibs/tree/master/static/team) for listing of team members.
 
 ### Syntax:
 
