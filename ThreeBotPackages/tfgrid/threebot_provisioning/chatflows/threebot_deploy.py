@@ -18,27 +18,19 @@ def chat(bot):
 """
     explorer = j.clients.gedis.get(name="explorer", port=8901, host="explorer.testnet.grid.tf")
     token = j.clients.digitalocean.provisioning.token_
-    question = "Please enter your 3BOT doublename: {}"
-    remark = ""
-    while True:
-        name = bot.string_ask(question.format(remark))
-        if name.count(".") != 1:
-            remark = "(Doublename should have atleast one dot)"
-            continue
-        try:
-            explorer.actors.phonebook.get(name=name)
-            remark = "(Doublename is already in use)"
-        except:
-            break
+    user_info = bot.user_info()
+    name = user_info["username"]
+    email = user_info["email"]
 
-    question = "Please enter your email: {}"
-    remark = ""
-    while True:
-        email = bot.string_ask(question.format(remark))
-        if not j.data.types.email.check(email):
-            remark = "(Invalid email)"
-            continue
-        break
+    if not name or not email:
+        bot.md_show("Username or email not found in session. Please log in properly")
+
+    try:
+        explorer.actors.phonebook.get(name=name)
+        bot.md_show(f"Doublename {name} is already in use")
+    except:
+        pass
+
     question = "Please enter a description for your 3BOT:"
     description = bot.string_ask(question)
     bot.md_show("Deployment will start this might take several minutes")
