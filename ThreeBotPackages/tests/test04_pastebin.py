@@ -121,7 +121,7 @@ class Pastebin(BaseTest):
         - Click on submit button.
         - Click on download button .
         - Check downloaded file has right info.
-        
+
         """
         self.info("Add Python code to code input.")
         code_input = self.find_element("code_input")
@@ -168,4 +168,3 @@ class Pastebin(BaseTest):
         self.info(" Check that code copied successfully.")
         copied_code = pyperclip.paste()
         self.assertIn(CODE_FIRST_LINE, copied_code)
-
