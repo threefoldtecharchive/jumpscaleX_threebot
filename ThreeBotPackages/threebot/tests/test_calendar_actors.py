@@ -32,7 +32,7 @@ class CalenderActorsTests(BaseTest):
         self.assertEqual(response.status_code, 200)
 
         self.info('assert name is matching with {}'.format(name))
-        self.assertEqual(response.json()['display_name'], name)
+        self.assertEqual(response.json()['calendar']['display_name'], name)
 
         self.info('assert description is matching with {}'.format(description))
         self.assertEqual(response.json()['calendar']['description'], description)
