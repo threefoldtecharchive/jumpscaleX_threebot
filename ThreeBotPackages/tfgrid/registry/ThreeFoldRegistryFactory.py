@@ -7,11 +7,20 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
     __jslocation__ = "j.threebot.package.threefold.registry"
     bcdb = j.data.bcdb.get("threebot_registery")
 
+    def client_get(self):
+        """
+        j.threebot.package.threefold.registry.client_get()
+        :return:
+        """
+        self.client = j.servers.threebot.local_start_default(web=True)
+
+        return self.client
+
     def test(self, name=""):
         """
         kosmos -p 'j.threebot.package.threefold.registry.test()'
         """
-        cl = self.start()
+        cl = self.client_get()
         cl.actors.package_manager.package_add(
             path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/registry"
         )
@@ -41,10 +50,6 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
 
         second_author = j.tools.threebot.me.get("second_id", tid=3, email="test@test.com", tname="second")
 
-        j.data.schema.add_from_path(
-            path=self._dirpath + "/models"
-        )  # this will make sure the schema is known if this package
-
         # we should create 2 examples, one where we encrypt for multiple threebot identities (j.tools.threebot...)
         # non-encrypted example
         scm1 = j.data.schema.get_from_url(url="threebot.registry.entry.data.1")
@@ -61,9 +66,8 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         signingkey = first_author.nacl.signing_key.encode()
         verifykey = first_author.nacl.verify_key.encode()
         signed_data = first_author.nacl.sign(dataobj._data)
-
         post_id1 = cl.actors.registry.register(
-            author=first_author.tid, verifykey=verifykey, input_object=dataobj, signature_hex=signed_data.hex()
+            authors=[first_author.tid], verifykey=verifykey, input_object=dataobj, signature_hex=signed_data.hex()
         )
         if not post_id1:
             raise j.exceptions.Input("Failed to register your content")
@@ -85,7 +89,7 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         signed_data = first_author.nacl.sign(dataobj2._data)
 
         post_id2 = cl.actors.registry.register(
-            author=first_author.tid, verifykey=verifykey, input_object=dataobj2, signature_hex=signed_data.hex()
+            authors=[first_author.tid], verifykey=verifykey, input_object=dataobj2, signature_hex=signed_data.hex()
         )
         if not post_id2:
             raise j.exceptions.Input("Failed to register your content")
