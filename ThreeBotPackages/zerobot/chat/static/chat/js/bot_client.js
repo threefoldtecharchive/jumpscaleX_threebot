@@ -332,7 +332,6 @@ EXEC_OBJ["command"] = "session_new";
 EXEC_OBJ["args"] = {
     "topic": TOPIC,
     "query_params": QS,
-    // "username": USERNAME,
 
 };
 GEDIS_CLIENT.execute(EXEC_OBJ).then(function (res) {
