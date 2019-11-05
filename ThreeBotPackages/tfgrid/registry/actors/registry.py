@@ -13,7 +13,7 @@ class registry(j.baseclasses.threebot_actor):
         self.threebot_data_model = self.bcdb.model_get(url="threebot.registry.entry.data.1")
 
     def register(
-        self, author=0, verifykey=None, input_object=None, signature_hex=None, schema_out=None, user_session=None
+        self, authors=[], verifykey=None, input_object=None, signature_hex=None, schema_out=None, user_session=None
     ):
         """
         register an object of the type threebot.registry.entry.data.1
@@ -22,7 +22,7 @@ class registry(j.baseclasses.threebot_actor):
         signature hex is done on the capnp output of the object
 
         ```in
-        author = (I)  #tid of the author
+        authors = (LI)  #tid of the author
         input_object = (O)  !threebot.registry.entry.data.1
         signature_hex = "" (S)
         verifykey = (BIN)
@@ -33,11 +33,10 @@ class registry(j.baseclasses.threebot_actor):
         # verify author id is correct
         if user_session.threebot_id:
             threebot_id = user_session.threebot_id
+            # adding the threebot_id in the session in the authors list
+            authors.append(threebot_id)
 
-        if author != 0:
-            threebot_id = author
-
-        if not threebot_id in input_object.authors:
+        if not all(author in input_object.authors for author in authors):
             raise j.exceptions.Input("Error data wasn't authored by the author")
 
         # need to verify if author is correct (use user_session tid or author if specified)
@@ -45,8 +44,9 @@ class registry(j.baseclasses.threebot_actor):
 
         # verifiy the  data is signed with the input signatures
         signature_hex = binascii.a2b_hex(signature_hex)
+        # TODO update the tid to be the threebot_id that we got from the session when it is ready
         verifiy_data = self.validate_signature(
-            tid=author, verifykey=verifykey, payload=input_object._data, signature=signature_hex
+            tid=authors[0], verifykey=verifykey, payload=input_object._data, signature=signature_hex
         )
 
         if not verifiy_data:
@@ -259,7 +259,7 @@ class registry(j.baseclasses.threebot_actor):
         signature = (BIN)
         verifykey = (BIN)
         ```
-        
+
         ```out
         is_valid = (B)
         ```
