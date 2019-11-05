@@ -878,7 +878,7 @@ class Collection(BaseCollection):
 
         if collection:
             if props.get("tag") == "VCALENDAR":
-                collection, = collection
+                (collection,) = collection
                 items = []
                 for content in ("vevent", "vtodo", "vjournal"):
                     items.extend(getattr(collection, "%s_list" % content, []))
