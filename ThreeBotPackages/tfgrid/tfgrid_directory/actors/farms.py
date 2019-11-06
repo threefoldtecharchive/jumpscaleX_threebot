@@ -52,7 +52,7 @@ class farms(j.baseclasses.threebot_actor):
     def get(self, farm_id, schema_out=None, user_session=None):
         """
         ```in
-        farm_id = (I)
+        farm_id = 0 (I)
         ```
 
         ```out
@@ -80,3 +80,17 @@ class farms(j.baseclasses.threebot_actor):
                 continue
             out.farms.append(farm)
         return out
+
+    def owned_by(self, threebot_id, schema_out=None, user_session=None):
+        """
+        ```in
+        threebot_id = 0 (I)
+        ```
+
+        ```out
+        farms = (LO) !tfgrid.farm.1
+        ```
+        """
+        output = schema_out.new()
+        output.farms = self.farm_model.find(threebot_id=threebot_id)
+        return output
