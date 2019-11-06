@@ -6,6 +6,7 @@ import './packages/legacy/fontawesome-pro/js/all.js'
 import config from './config/index.js'
 import store from './store/index.js'
 import userService from './services/userService.js'
+import initializeService from './services/initializeService.js'
 
 Vue.prototype.$rules = {
   required: v => !!v || 'This is required',
@@ -15,6 +16,7 @@ Vue.prototype.$rules = {
 
 window.config = config
 window.userService = userService
+window.initializeService = initializeService
 
 const router = new VueRouter({
   routes: [{

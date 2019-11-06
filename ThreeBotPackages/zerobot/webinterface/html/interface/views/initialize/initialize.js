@@ -270,6 +270,7 @@ module.exports = {
           const walletMnemonicSeed = that.generateMnemonicFromSeed(result)
           console.log('walletMnemonicSeed :', walletMnemonicSeed)
           console.log('generateKeys(walletMnemonicSeed) :', await that.generateKeys(walletMnemonicSeed))
+          console.log(`initializeService`, (await window.initializeService.getName()).data.name)
         })
       }
     },

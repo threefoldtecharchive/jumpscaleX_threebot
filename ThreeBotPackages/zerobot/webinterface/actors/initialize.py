@@ -35,6 +35,18 @@ class initialize(j.baseclasses.threebot_actor):
             out.users.append(user)
         return out
 
+    def name(self, schema_out=None, user_session=None):
+        """
+        ```out
+        name  = ""
+        ```
+        """
+
+        out = schema_out.new()
+        out.name = j.tools.threebot.me.default.tname
+
+        return out
+
     def add(self, user, schema_out=None, user_session=None):
         """
         ```in

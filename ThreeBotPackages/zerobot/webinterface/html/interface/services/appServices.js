@@ -10,8 +10,6 @@ export default ({
       }
     })
     return frontendPackages
-    // Checking wether the packages
-    // console.log('frontendPackages: ', frontendPackages)
   },
   checkPathForFile (path) {
     return Axios.get(path)

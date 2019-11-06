@@ -2,11 +2,10 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-
     @property
     def bcdb(self):
         return self.threebot_server.bcdb_get("users")
-        
+
     def prepare(self):
         """
 
@@ -73,7 +72,6 @@ class Package(j.baseclasses.threebot_package):
         locations.configure()
         website.configure()
         website.save()
-
 
     def stop(self):
         pass
