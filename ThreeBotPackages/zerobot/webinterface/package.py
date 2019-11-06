@@ -2,6 +2,11 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
+
+    @property
+    def bcdb(self):
+        return self.threebot_server.bcdb_get("users")
+        
     def prepare(self):
         """
 
@@ -48,7 +53,11 @@ class Package(j.baseclasses.threebot_package):
             website.configure()
 
     def start(self):
-        # self.prepare()
+        self.prepare()
+
+        self.bcdb.models_add(path=self.package_root + "/models")
+        self.gedis_server.actors_add(path=self.package_root + "/actors")
+
         server = self.openresty
         server.install(reset=False)
         server.configure()
