@@ -59,5 +59,5 @@ def chat(bot):
         """
         bot.md_show(res)
     except:
-        machine.destory_container(name)
+        machine.destroy_container(name)
         raise
