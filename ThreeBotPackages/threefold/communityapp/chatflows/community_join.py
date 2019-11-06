@@ -20,7 +20,7 @@ def chat(bot):
         email=user_email, name=user_name, referral=bot.kwargs.get("referral")
     )
 
-    gedis_client.actors.community_manager.set_current_user(user=user_name)
+    gedis_client.actors.community_manager.set_current_user(user=user_email)
 
     bot.single_choice(
         "Welcome to our ThreeFold World! Our dream is a complemetary responsible Internet, everywhere and owned by everyone, \n without borders \
