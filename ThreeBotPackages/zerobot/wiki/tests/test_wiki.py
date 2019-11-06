@@ -15,11 +15,12 @@ class Wiki(TestCase):
         LOGGER.info(message)
 
     def setUp(self):
-        self.gedis = j.servers.threebot.local_start_default(timeout=300)
+        self.gedis = j.servers.threebot.local_start_default(timeout=1200)
 
     @classmethod
     def tearDownClass(cls):
         j.servers.threebot.default.stop()
+        j.sal.process.killall("tmux")
 
     def test001_check_threebot_ports(self):
         """
