@@ -27,6 +27,7 @@ class CalenderActorsTests(BaseTest):
         self.name_calc = self.generate_random_str()
         self.description_calc = self.generate_random_str()
         self.response_calc = self.add_calendar(name=self.name_calc, description=self.description_calc)
+        self.response_event = self.add_event(calendar_id=self.response_calc.json()['calendar']['calendar_id'])
 
     @skip('https://github.com/threefoldtech/jumpscaleX_threebot/issues/193')
     def test001_add_calendar(self):
@@ -55,13 +56,16 @@ class CalenderActorsTests(BaseTest):
         self.info('assert status code is 200')
         self.assertEqual(self.response_calc.status_code, 200)
 
-        response = self.get_calendar(calendar_id=self.response_calc['calendar']['calendar_id'])
+        response = self.get_calendar(calendar_id=self.response_calc.json()['calendar']['calendar_id'])
+        self.info('assert status code is 200')
+        self.assertEqual(response.status_code, 200)
         self.info('assert the new calendar is existing in the list')
         self.assertEqual(response.json()['calendar_id'], self.response_calc.json()['calendar']['calendar_id'])
 
+    @skip('https://github.com/threefoldtech/jumpscaleX_threebot/issues/197')
     def test004_get_not_existing_calendar(self):
         self.info('get not existing calendar')
-        response = self.get_calendar(calendar_id=self.response_calc['calendar']['calendar_id'].replace('1', '0'))
+        response = self.get_calendar(calendar_id=self.response_calc.json()['calendar']['calendar_id'].replace('1', '0'))
         self.info('assert tit retunrs 404')
         self.assertEqual(response.status_code, 404)
 
@@ -69,9 +73,72 @@ class CalenderActorsTests(BaseTest):
         self.info('assert status code is 200')
         self.assertEqual(self.response_calc.status_code, 200)
 
-        response = self.delete_calendar(calendar_id=self.response_calc['calendar']['calendar_id'])
-        self.info('assert the new calendar is existing in the list')
+        response = self.delete_calendar(calendar_id=self.response_calc.json()['calendar']['calendar_id'])
+        self.info('assert status code is 200')
+        self.assertEqual(response.status_code, 200)
+
+    def test006_add_event(self):
+        self.info('assert status code is 200')
+        self.assertEqual(self.response_calc.status_code, 200)
+
+        self.info('assert status code is 200')
+        self.assertEqual(self.response_event.status_code, 200)
+        self.info('assert the new event is related to the calendar')
+        self.assertEqual(self.response_event.json()['calendar_id'], self.response_calc.json()['calendar']['calendar_id'])
+
+    def test010_add_event_with_data(self):
+        self.info('assert status code is 200')
+        self.assertEqual(self.response_calc.status_code, 200)
+
+        args = {
+                "event": {
+                    "description": "0xdescription",
+                    "title": "0xtitle",
+                    "location": "0xlocas",
+                    "dtstart": 1571933731,
+                    "dtend": 1571933750,
+                    "calendar_id": self.response_calc.json()['calendar']['calendar_id']
+                }
+            }
+
+        response = self.add_event(calendar_id=self.response_calc.json()['calendar']['calendar_id'], args=args)
+        self.info('assert status code is 200')
+        self.assertEqual(response.status_code, 200)
+        self.info('assert the new event is related to the calendar')
         self.assertEqual(response.json()['calendar_id'], self.response_calc.json()['calendar']['calendar_id'])
+
+        self.info('assert the event title is matching with the created one.')
+        self.assertEqual(response.json()['title'], "0xtitle")
+
+        self.info('assert the event location is matching with the created one.')
+        self.assertEqual(response.json()['location'], "0xlocas")
+
+    @skip('https://github.com/threefoldtech/jumpscaleX_threebot/issues/198')
+    def test011_get_event(self):
+        response = self.get_event(event_id=self.response_event.json()['item_id'])
+        self.info('assert status code is 200')
+        self.assertEqual(response.status_code, 200)
+
+        self.info('assert the new calendar is existing in the list')
+        self.assertEqual(response.json()['item_id'], self.response_event.json()['item_id'])
+
+    @skip('https://github.com/threefoldtech/jumpscaleX_threebot/issues/198')
+    def test012_delete_event(self):
+        #TODO
+        pass
+
+    @skip('https://github.com/threefoldtech/jumpscaleX_threebot/issues/198')
+    def test013_edit_event(self):
+        #TODO
+        pass
+
+    def test014_list_events(self):
+        response = self.list_events(calendar_id=self.response_calc.json()['calendar']['calendar_id'])
+        self.info('assert status code is 200')
+        self.assertEqual(response.status_code, 200)
+
+        self.info('assert the new calendar is existing in the list')
+        self.assertEqual(response.json()['events'][0]['item_id'], self.response_event.json()['item_id'])
 
 
 
