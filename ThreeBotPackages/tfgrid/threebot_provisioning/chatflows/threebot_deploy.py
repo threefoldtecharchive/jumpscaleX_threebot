@@ -47,6 +47,7 @@ def chat(bot):
     bot.md_show_update(progress.format(90, "Registering 3Bot"))
     client = container.threebot_client
     client.actors.registration.register(name, email, description)
+    container.set_identity(name)
     bot.md_show_update(progress.format(100, "Registering 3Bot completed"))
 
     url = f"https://{name}.3bot.testnet.grid.tf"

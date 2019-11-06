@@ -26,7 +26,7 @@ class registration(j.baseclasses.threebot_actor):
         if email is None:
             raise j.exceptions.Value("email can not be empty")
 
-        nacl = j.data.nacl.get("nacl")
+        nacl = j.data.nacl.default
         explorer = j.clients.gedis.get(name="explorer", host=EXPLORER_DOMAIN, port=8901)
 
         # Request a new id from the public Phonebook
