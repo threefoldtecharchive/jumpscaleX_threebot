@@ -73,7 +73,7 @@ class BaseTest(TestCase):
 
     def list_calendars(self):
         self.info('list calendars')
-        return requests.get(self.url_contractor(['list']))
+        return self.get(self.url_contractor(['list']))
 
     def get_calendar(self, calendar_id):
         self.info('get calendar with id : {}'.format(calendar_id))
@@ -84,7 +84,7 @@ class BaseTest(TestCase):
 
             }
         }
-        return self.get(url, data)
+        return self.post(url, data)
 
     def delete_calendar(self, calendar_id):
         self.info('delete calendar with id : {}'.format(calendar_id))
