@@ -58,6 +58,6 @@ def chat(bot):
     # Your 3bot has been registered successfully you can find it here [{url}]({url})
         """
         bot.md_show(res)
-    except RuntimeError:
+    except:
         machine.destory_container(name)
         raise
