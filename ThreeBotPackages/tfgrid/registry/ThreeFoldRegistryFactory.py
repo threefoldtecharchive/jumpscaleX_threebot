@@ -71,7 +71,7 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         )
         if not post_id1:
             raise j.exceptions.Input("Failed to register your content")
-
+        # TODO: add the line
         # encrypted example
         scm2 = j.data.schema.get_from_url(url="threebot.registry.entry.data.1")
         dataobj2 = self.bcdb.model_get(url=scm2.url).new()
@@ -97,10 +97,9 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         # lets now verify if we can get the data and if we can decrypt (if encrypted)
         # check normal post
         res = cl.actors.registry.get(data_id=post_id1)
-        info = j.data.serializers.jsxdata.loads(res.registered_info)
         from pprint import pprint
 
-        pprint(f"{res._ddict_hr}\ninfo_data:{info._ddict_hr}")
+        pprint(f"{res._ddict_hr}\ninfo_data:{res._ddict_hr}")
         #  Find all encrypted data for specific user or you can use your search criteria
         res = cl.actors.registry.find_encrypted(tid=second_author.tid)
         for item in res:
