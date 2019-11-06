@@ -46,20 +46,18 @@ def chat(bot):
         container = machine.threebot_deploy(name, start=False)
         bot.md_show_update(progress.format(70, "Starting 3Bot"))
         container.threebot_start()
+        print("Finished installing threebot")
+        print("Start registering threebot")
+        bot.md_show_update(progress.format(90, "Registering 3Bot"))
+        client = container.threebot_client
+        client.actors.registration.register(name, email, description)
+        record = explorer.actors.phonebook.get(name=name)
+        container.set_identity(record)
+        bot.md_show_update(progress.format(100, "Registering 3Bot completed"))
+        res = f"""\
+    # Your 3bot has been registered successfully you can find it here [{url}]({url})
+        """
+        bot.md_show(res)
     except RuntimeError:
         machine.destory_container(name)
         raise
-
-    print("Finished installing threebot")
-    print("Start registering threebot")
-    bot.md_show_update(progress.format(90, "Registering 3Bot"))
-    client = container.threebot_client
-    client.actors.registration.register(name, email, description)
-    record = explorer.actors.phonebook.get(name=name)
-    container.set_identity(record)
-    bot.md_show_update(progress.format(100, "Registering 3Bot completed"))
-
-    res = f"""\
-# Your 3bot has been registered successfully you can find it here [{url}]({url})
-    """
-    bot.md_show(res)
