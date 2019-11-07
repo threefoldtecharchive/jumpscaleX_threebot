@@ -52,7 +52,7 @@ def chat(bot):
         client = container.threebot_client
         client.actors.registration.register(name, email, description)
         record = explorer.actors.phonebook.get(name=name)
-        container.set_identity(record)
+        client.actors.registration.set_identity(record.id, record.name, record.email, record.pubkey)
         bot.md_show_update(progress.format(100, "Registering 3Bot completed"))
         res = f"""\
     # Your 3bot has been registered successfully you can find it here [{url}]({url})
