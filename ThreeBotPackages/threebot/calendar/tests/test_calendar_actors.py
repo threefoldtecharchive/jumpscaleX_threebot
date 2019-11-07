@@ -1,4 +1,4 @@
-from base_test import BaseTest
+from ThreeBotPackages.threebot.calendar.tests.base_test import BaseTest
 from Jumpscale import j
 from time import sleep
 import requests
@@ -28,6 +28,7 @@ class CalenderActorsTests(BaseTest):
         self.description_calc = self.generate_random_str()
         self.response_calc = self.add_calendar(name=self.name_calc, description=self.description_calc)
         self.response_event = self.add_event(calendar_id=self.response_calc.json()['calendar']['calendar_id'])
+        self.response_addressbook = self.add_addressbook()
 
     @skip('https://github.com/threefoldtech/jumpscaleX_threebot/issues/193')
     def test001_add_calendar(self):
@@ -50,7 +51,7 @@ class CalenderActorsTests(BaseTest):
         self.assertEqual(response.status_code, 200)
 
         self.info('assert the new calendar is existing in the list')
-        self.assertEqual(response.json()['calendars'][-1]['calendar_id'], self.response_calc.json()['calendar']['calendar_id'])
+        self.assertEqual(response.json()['calendars'][0]['calendar_id'], self.response_calc.json()['calendar']['calendar_id'])
 
     def test003_get_calendar(self):
         self.info('assert status code is 200')
@@ -76,6 +77,10 @@ class CalenderActorsTests(BaseTest):
         response = self.delete_calendar(calendar_id=self.response_calc.json()['calendar']['calendar_id'])
         self.info('assert status code is 200')
         self.assertEqual(response.status_code, 200)
+
+        response = self.list_calendars().json()['calendars']
+        self.assertNotIn(self.response_calc.json()['calendars']['calendar_id'],
+                         [calendar['calendar_id'] for calendar in response])
 
     def test006_add_event(self):
         self.info('assert status code is 200')
@@ -140,6 +145,89 @@ class CalenderActorsTests(BaseTest):
         self.info('assert the new calendar is existing in the list')
         self.assertEqual(response.json()['events'][0]['item_id'], self.response_event.json()['item_id'])
 
+    def test015_add_addressbook(self):
+        name = self.generate_random_str()
+        description = self.generate_random_str()
+        response = self.add_addressbook(name=name, description=description)
+        self.info('assert status code is 200')
+        self.assertEqual(response.status_code, 200)
+
+        self.info('assert name is matching with {}'.format(name))
+        self.assertEqual(response.json()['addressbook']['display_name'], name)
+
+        self.info('assert description is matching with {}'.format(description))
+        self.assertEqual(self.response_calc.json()['addressbook']['description'], description)
+
+    def test016_get_addressbook(self):
+        self.info('assert status code is 200')
+        self.assertEqual(self.response_addressbook.status_code, 200)
+
+        response = self.get_addressbook(self.response_addressbook.json()['calendar']['calendar_id'])
+        self.info('assert status code is 200')
+        self.assertEqual(response.status_code, 200)
+        self.info('assert the new calendar is existing in the list')
+        self.assertEqual(response.json()['addressbook_id'], self.response_addressbook.json()['addressbook']['addressbook_id'])
+
+    @skip('https://github.com/threefoldtech/jumpscaleX_threebot/issues/198')
+    def test017_get_not_exising_addressbook(self):
+        self.info('assert status code is 200')
+        self.assertEqual(self.response_addressbook.status_code, 200)
+
+        response = self.get_addressbook(self.response_addressbook.json()['calendar']['calendar_id'].replace('1', '0'))
+        self.info('assert status code is 404')
+        self.assertEqual(response.status_code, 404)
+
+    def test018_list_addressbook(self):
+        self.info('list all addressbook')
+        response = self.list_addressbook()
+        self.info('assert status code is 200')
+        self.assertEqual(response.status_code, 200)
+
+        self.info('assert the new addressbook is existing in the list')
+        self.assertEqual(response.json()['addressbooks'][0]['addressbook_id'], self.response_calc.json()['addressbook']['addressbook_id'])
+
+    def test019_delete_addressbook(self):
+        response = self.delete_addressbook(self.response_addressbook.json()['addressbook']['addressbook_id'])
+        self.info('assert status code is 200')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.list_addressbook().json()['addressbooks']
+        self.assertNotIn(self.response_addressbook.json()['addressbook']['addressbook_id'], [addressbook['addressbook_id'] for addressbook in response])
+
+    def test020_add_contact(self):
+        response = self.add_contact(self.response_addressbook.json()['addressbook']['addressbook_id'])
+        self.info('assert status code is 200')
+        self.assertEqual(response.status_code, 200)
+
+        self.info('assert that addressbook is the same')
+        self.assertEqual(response.json()['addressbook_id'], self.response_addressbook.json()['addressbook']['addressbook_id'])
+
+    @skip('https://github.com/threefoldtech/jumpscaleX_threebot/issues/198')
+    def test021_get_contact(self):
+        response = self.add_contact(self.response_addressbook.json()['addressbook']['addressbook_id'])
+        self.info('assert status code is 200')
+        self.assertEqual(response.status_code, 200)
+        contact_id = response.json()['item_id']
+
+        response = self.get_contact(contact_id)
+        self.info('assert status code is 200')
+        self.assertEqual(response.status_code, 200)
+
+        self.info('assert that the contact id is matching')
+        self.assertEqual(response.json()['contact_id'], contact_id)
+
+    def test022_list_contacts(self):
+        response = self.add_contact(self.response_addressbook.json()['addressbook']['addressbook_id'])
+        self.info('assert status code is 200')
+        self.assertEqual(response.status_code, 200)
+        contact_id = response.json()['item_id']
+
+        response = self.list_contacts(self.response_addressbook.json()['addressbook']['addressbook_id'])
+        self.info('assert status code is 200')
+        self.assertEqual(response.status_code, 200)
+
+        self.info('assert that the contact id is existing inside the list')
+        self.assertIn(contact_id, [contact['contact_id'] for contact in response.json()['contacts']])
 
 
 
