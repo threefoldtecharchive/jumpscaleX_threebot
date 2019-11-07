@@ -101,12 +101,17 @@ class community_manager(j.baseclasses.threebot_actor):
             if not users:
                 user = self.model.new()
                 user.email = email
+                user.name = name
+                user.referral_code = j.data.idgenerator.generateGUID().replace("-", "")
+                user.save()
             else:
                 user = users[0]
-            user.referral_codes.append(referral)
-            user.name = name
-            user.save()
-            return True
+
+            user_invitation = self.model.find(referral_code=referral)
+            if user_invitation:
+                user.invited_by = user_invitation[0].id
+                user.save()
+                return user_invitation[0].email
         return False
 
     def unsubscribe_space(self, space, user, user_session=None):
@@ -114,6 +119,26 @@ class community_manager(j.baseclasses.threebot_actor):
         unsubscribe from any community just take space name
         """
         pass
+
+    def get_invitation_code(self, email, user_name, user_session=None):
+        """
+        ```in
+        email = (S)
+        user_name = (S)
+        ```
+        get invation code of user
+        """
+        users = self.model.find(email=email)
+        if not users:
+            user = self.model.new()
+            user.email = email
+            user.name = user_name
+            user.referral_code = j.data.idgenerator.generateGUID().replace("-", "")
+
+            user.save()
+        else:
+            user = users[0]
+        return user.referral_code
 
     def info_get(self, name, schema_out=None, user_session=None):
         """
