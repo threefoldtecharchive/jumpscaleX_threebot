@@ -4,11 +4,16 @@ bot_name** = ""
 public_key** = ""
 referrer** = ""
 location = (O) !user.location.1
-wallet_keys = (LO) !user.wallet.1
+threebot_keys = (LO) !user.threebot_keys.1
+wallet_keys = (LO) !user.wallet_keys.1
 
 @url = user.location.1
 country = ""
 
-@url = user.wallet.1
+@url = user.threebot_keys.1
+public_key = ""
+secret_key = ""
+
+@url = user.wallet_keys.1
 public_key = ""
 secret_key = ""

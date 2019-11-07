@@ -11,7 +11,7 @@ class initialize(j.baseclasses.threebot_actor):
             if not getattr(user, field):
                 raise j.exceptions.Value("%s is required" % field)
 
-    def list(self, bot_name, public_key, referrer, schema_out=None, user_session=None):
+    def get(self, bot_name, public_key, referrer, schema_out=None, user_session=None):
         """
         ```in
         bot_name = (S)
@@ -58,11 +58,19 @@ class initialize(j.baseclasses.threebot_actor):
         ```
         """
 
-        self._validate_user(user)
+        try:
+            length = len(self.user_model.find())
+        except j.exceptions.NotFound:
+            raise j.exceptions.NotFound("Could not found user_model")
 
-        user = self.user_model.new(user)
-        user.save()
+        if length == 0:
+            self._validate_user(user)
 
-        res = schema_out.new()
-        res.user = user
-        return res
+            user = self.user_model.new(user)
+            user.save()
+
+            res = schema_out.new()
+            res.user = user
+            return res
+        else:
+            raise Exception("Already initialized.")
