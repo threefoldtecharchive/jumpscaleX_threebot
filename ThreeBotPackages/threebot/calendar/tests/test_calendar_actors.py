@@ -48,7 +48,8 @@ class CalenderActorsTests(BaseTest):
         self.assertEqual(response.status_code, 200)
 
         self.info('assert the new calendar is existing in the list')
-        self.assertEqual(response.json()['calendars'][0]['calendar_id'], self.response_calc.json()['calendar']['calendar_id'])
+        calender_id = self.response_calc.json()['calendar']['calendar_id']
+        self.assertIn(calender_id, [calendar['calendar_id'] for calendar in response.json()['calendars']])
 
     def test003_get_calendar(self):
         self.info('assert status code is 200')
@@ -145,7 +146,16 @@ class CalenderActorsTests(BaseTest):
     def test015_add_addressbook(self):
         name = self.generate_random_str()
         description = self.generate_random_str()
-        response = self.add_addressbook(name=name, description=description)
+        args = {
+            "args": {
+                "addressbook": {
+                    "description": description,
+                    "color": "#123abc",
+                    "display_name": name
+                }
+            }
+        }
+        response = self.add_addressbook(name=name, args=args)
         self.info('assert status code is 200')
         self.assertEqual(response.status_code, 200)
 
