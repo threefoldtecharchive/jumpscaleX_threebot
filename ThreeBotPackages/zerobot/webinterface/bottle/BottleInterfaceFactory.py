@@ -15,7 +15,7 @@ def enable_cors(fn):
     def _enable_cors(*args, **kwargs):
         # set CORS headers
         response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, OPTIONS"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
         response.headers[
             "Access-Control-Allow-Headers"
         ] = "Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token"
@@ -66,7 +66,7 @@ def gedis_websocket(ws):
 #######################################
 ######## GEDIS HTTP ROUTES ############
 #######################################
-@app.route("/gedis/http/<name>/<cmd>", method=["post", "get"])
+@app.route("/gedis/http/<name>/<cmd>", method=["post", "get", "options"])
 @enable_cors
 def gedis_http(name, cmd):
     client = j.clients.gedis.get(name="main_gedis_threebot", port=8901)
