@@ -15,7 +15,7 @@ body,
 .v-menu__content,
 .v-card {
   border-radius: 10px !important;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 .v-card__title {
   font-size: 18px !important;
