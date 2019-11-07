@@ -10,3 +10,11 @@ Features
 - info can be encrypted or not
 - in encrypted then the readers will have to be known (individual)
 
+
+Todo document the signing using  nacl
+Todo add link to the client when it moved to the right branch
+
+* This package is exposed using ```TFGridRegistryClient``` client
+```
+j.clients.tfgrid_registry
+```
