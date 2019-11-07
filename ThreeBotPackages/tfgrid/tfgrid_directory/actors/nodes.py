@@ -48,7 +48,7 @@ class nodes(j.baseclasses.threebot_actor):
     def list(self, farm_id, country, city, cru, sru, mru, hru, proofs, schema_out=None, user_session=None):
         """
         ```in
-        farm_id = (S)
+        farm_id = (I)
         country = (S)
         city = (S)
         cru = -1 (I)
@@ -67,20 +67,20 @@ class nodes(j.baseclasses.threebot_actor):
         fields = ["id"]
         values = []
         statements = []
-        stringfields = {"farm_id": farm_id, "location_country": country, "location_city": city}
-        for field, value in stringfields.items():
+        eq_fields = {"farm_id": farm_id, "location_country": country, "location_city": city}
+        for field, value in eq_fields.items():
             if value:
                 fields.append(field)
                 statements.append(f"{field} = ?")
                 values.append(value)
 
-        intfields = {
+        lt_fields = {
             "total_resources_cru": cru,
             "total_resources_mru": mru,
             "total_resources_sru": sru,
             "total_resources_hru": hru,
         }
-        for field, value in intfields.items():
+        for field, value in lt_fields.items():
             if value > -1:
                 fields.append(field)
                 statements.append(f"{field} > ?")
