@@ -11,3 +11,6 @@ class Package(j.baseclasses.threebot_package):
         server = self.openresty
         server.install(reset=False)
         server.configure()
+
+        # setup alert handler to intercept errors
+        j.tools.alerthandler.setup()
