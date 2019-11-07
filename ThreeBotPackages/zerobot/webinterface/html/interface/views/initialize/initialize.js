@@ -206,15 +206,18 @@ module.exports = {
     referredByError: [],
     countryError: [],
     seedError: [],
+    keys: {},
+    walletKeys: {},
+    threebotKeys: {},
     doubleName: ""
   }),
-  async mounted () {
+  async mounted() {
     this.doubleName = (await window.initializeService.getName()).data.name
     this.doubleName = !this.doubleName.endsWith(".3bot") ? (this.doubleName + ".3bot") : this.doubleName
     console.log(`User: `, this.doubleName)
   },
   methods: {
-    async initialize3Bot () {
+    async initialize3Bot() {
       if (!this.country) {
         this.countryError.push('Please select a country.')
         return
@@ -242,14 +245,13 @@ module.exports = {
         }
       }
 
-      var userDataKeys
       if (this.seed) {
         try {
           console.log(`* Generating keys from user his mnemonic seed`)
           this.seed = this.seed.replace(/[^a-zA-Z ]/g, '').toLowerCase().trim().replace(/\s\s+/g, ' ')
-          userDataKeys = await this.generateKeys(this.seed)
-          console.log(` -> private key: `, userDataKeys.privateKey)
-          console.log(` -> public key: `, userDataKeys.publicKey)
+          this.keys = await this.generateKeys(this.seed)
+          console.log(` -> private key: `, this.keys.privateKey)
+          console.log(` -> public key: `, this.keys.publicKey)
         } catch (error) {
           this.seedError.push('Your seed phrase is invalid.')
           return
@@ -260,27 +262,27 @@ module.exports = {
       }
 
       console.log(`* Checking if the public key from the seed matches the public key in our database.`)
-      if (userDataResponse.data.publicKey === userDataKeys.publicKey) {
+      if (userDataResponse.data.publicKey === this.keys.publicKey) {
         console.log(` -> Keys match`)
 
         console.log(`* Generating wallet keys`)
-        pbkdf2(userDataKeys.privateKey, 'wallet.threefold.me', 1000, 32, 'sha256', async (_error, result) => {
+        pbkdf2(this.keys.privateKey, 'wallet.threefold.me', 1000, 32, 'sha256', async (_error, result) => {
           var b64encoded = nacl.util.encodeBase64(result)
           var walletMnemonicSeed = this.generateMnemonicFromSeed(result)
-          var keys = await this.generateKeys(walletMnemonicSeed)
+          this.walletKeys = await this.generateKeys(walletMnemonicSeed)
 
           console.log(' -> Wallet URL: ', 'https://wallet.threefold.me/login#username=' + this.doubleName + '&derivedSeed=' + encodeURIComponent(b64encoded))
-          
-          console.log(` -> seed phrase: `, keys.phrase)
-          console.log(` -> private key: `, keys.privateKey)
-          console.log(` -> public key: `, keys.publicKey)
+
+          console.log(` -> seed phrase: `, this.walletKeys.phrase)
+          console.log(` -> private key: `, this.walletKeys.privateKey)
+          console.log(` -> public key: `, this.walletKeys.publicKey)
 
           this.generateDerivedKeypair(result, window.location.hostname)
         })
       }
     },
 
-    generateKeys (phrase) {
+    generateKeys(phrase) {
       return new Promise((resolve, reject) => {
         try {
           var entropy = bip39.mnemonicToEntropy(phrase)
@@ -298,23 +300,39 @@ module.exports = {
       })
     },
 
-    generateDerivedKeypair (privateKey, appId) {
+    generateDerivedKeypair(privateKey, appId) {
       console.log(`* Generating threebot keys using appId `, appId)
       pbkdf2(privateKey, appId, 1000, 32, 'sha256', async (_error, result) => {
         const mnemonicSeed = this.generateMnemonicFromSeed(result)
-        const keys = await this.generateKeys(mnemonicSeed)
-        
-        console.log(` -> seed phrase: `, keys.phrase)
-        console.log(` -> private key: `, keys.privateKey)
-        console.log(` -> public key: `, keys.publicKey)
+        this.threebotKeys = await this.generateKeys(mnemonicSeed)
+
+        console.log(` -> seed phrase: `, this.threebotKeys.phrase)
+        console.log(` -> private key: `, this.threebotKeys.privateKey)
+        console.log(` -> public key: `, this.threebotKeys.publicKey)
+
+        try {
+          console.log(`Adding initialization data`)
+          var response = (await window.initializeService.addInitializationData(this.doubleName, this.keys.publicKey, this.referredBy, this.country, this.threebotKeys, this.walletKeys))
+          console.log(response)
+        } catch (e) {
+          console.log(`Already initialized / or something else went wrong.`)
+        }
+
+        try {
+          var responseGet = (await window.initializeService.getInitializationData())
+          console.log(responseGet)
+        } catch (error) {
+          console.log(`Something else went wrong.`)
+        }
+
       })
     },
 
-    generateMnemonicFromSeed (seed) {
+    generateMnemonicFromSeed(seed) {
       return bip39.entropyToMnemonic(seed)
     },
 
-    generateSeedFromMnemonic (mnemonic) {
+    generateSeedFromMnemonic(mnemonic) {
       return bip39.mnemonicToEntropy(mnemonic)
     }
   }
