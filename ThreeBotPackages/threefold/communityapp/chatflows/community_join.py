@@ -21,19 +21,29 @@ def chat(bot):
 
     gedis_client.actors.community_manager.set_current_user(user=user_email)
 
-    bot.single_choice(
+    choice = bot.single_choice(
         f"Welcome {user_name} ...  to our ThreeFold World! Our dream is a complemetary responsible Internet, everywhere and owned by everyone, \n without borders \
     nor geographical discrimination. We envision a future where all humans are given an equal opportunity \
     to partake, learn, and succeed.",
-        ["YES! Count me in!!!"],
+        ["Count me in", "get invitation url"],
     )
+
+    if choice == "get invitation url":
+        code_id = gedis_client.actors.community_manager.get_invitation_code(email=user_email, user_name=user_name)
+        md = f"""
+            # please copy this url and send it to your friends
+            - https://community.app.3bot.testnet.grid.tf/chat/session/community_join?referral={code_id.decode()}
+            """
+        res = j.tools.jinja2.template_render(text=j.core.text.strip(md), **locals())
+        bot.md_show(res)
 
     if invited:
         spaces = gedis_client.actors.community_manager.spaces_list()
         interests = bot.multi_choice("Choose your interests: ", [space.decode() for space in spaces])
         result = gedis_client.actors.community_manager.community_join(user_email=user_email, spaces=interests)
         if not result:
-            res = """
+            res = f"""
+                ## You invited by {invited.decode()}
                 # Sorry you can't joined to those spaces because:
                 - you don't have account in Freeflowpages
                 - or we have problem in FFP server
@@ -42,9 +52,10 @@ def chat(bot):
                 """
 
         else:
-            res = """
-            # You joined {{interests}}:
-            - Email : {{user_email}}
+            res = f"""
+            ## You invited by {invited.decode()}
+            # You joined {interests}:
+            - Email : {user_email}
             ### Click next
             for the final step which will redirect you to dynamic macro
             """
