@@ -73,24 +73,22 @@ module.exports = {
       for (let appIndex = 0; appIndex < val.length; appIndex++) {
         const app = val[appIndex]
         const storeName = `${app.name.toLowerCase()}Store`
+
         if (!this.alreadyAddedStores.some(x => x === storeName)) {
           this.alreadyAddedStores.push(storeName)
+
           import(app.store).then((store) => {
-            // console.log(`Registering store ${storeName}`)
             this.$store.registerModule(storeName, store)
             this.getAllRoutes(app).forEach(route => {
-              // console.log(`Checking route ${route.name}`)
               if (!this.routes.some(r => r.name === route.name)) {
-                // console.log(`Registering route ${route.name}`)
                 this.addRoute(route)
                 this.$router.addRoutes([route])
               }
             })
           })
+          
         }
       }
-
-      console.log(`val`, val)
     }
   }
 }

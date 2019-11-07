@@ -7,9 +7,15 @@ export default ({
     getApps: (context) => {
       var tmpApps = []
 
-      // context.dispatch('wait/start', 'getApps', { root: true })
+      context.dispatch('wait/start', 'getApps', {
+        root: true
+      })
+
       appService.getVueApps().then(response => {
-        // context.dispatch('wait/end', 'getApps', { root: true })
+        context.dispatch('wait/end', 'getApps', {
+          root: true
+        })
+        
         response.data.packages.forEach(function (item, index) {
           if (item.name !== 'interface') {
             appService.checkPathForFile(`${window.location.origin}/${item.name}/router.json`).then(r => {
@@ -22,29 +28,40 @@ export default ({
           }
         })
       }).catch(e => {
-        // context.dispatch('wait/end', 'getApps', { root: true })
+        context.dispatch('wait/end', 'getApps', {
+          root: true
+        })
       })
 
-      console.log("Called getApps")
       context.commit('setApps', tmpApps)
     },
     installApp: (context, app) => {
-      context.dispatch('wait/start', 'installApp', { root: true })
+      context.dispatch('wait/start', 'installApp', {
+        root: true
+      })
       appService.installApp(app).then(response => {
-        context.dispatch('wait/end', 'installApp', { root: true })
+        context.dispatch('wait/end', 'installApp', {
+          root: true
+        })
         context.dispatch('getApps')
       })
     },
     uninstallApp: (context, app) => {
-      context.dispatch('wait/start', 'uninstallApp', { root: true })
+      context.dispatch('wait/start', 'uninstallApp', {
+        root: true
+      })
       appService.uninstallApp(app).then(response => {
-        context.dispatch('wait/end', 'uninstallApp', { root: true })
+        context.dispatch('wait/end', 'uninstallApp', {
+          root: true
+        })
         context.dispatch('getApps')
       })
     }
   },
   mutations: {
-    setApps: (state, app) => { state.apps = app },
+    setApps: (state, app) => {
+      state.apps = app
+    },
     updateApp: (state, app) => {
       state.apps.find(x => x.name === app.name).installed = app.installed
     }
