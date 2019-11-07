@@ -17,7 +17,7 @@ class Package(j.baseclasses.threebot_package):
             website_location.name = "packages"
             website_location.path_url = "/packages"
             website_location.use_jumpscale_weblibs = True
-            fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
+            fullpath = j.sal.fs.joinPaths(self.package_root, "frontend/")
             website_location.path_location = fullpath
             locations.configure()
             website.configure()
