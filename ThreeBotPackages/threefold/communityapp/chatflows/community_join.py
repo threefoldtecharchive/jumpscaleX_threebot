@@ -19,7 +19,6 @@ def chat(bot):
         email=user_email, name=user_name, referral=bot.kwargs.get("referral")
     )
 
-    gedis_client.actors.community_manager.set_current_user(user=user_email)
 
     main_page = bot.single_choice(
         "<h3>Welcome to ThreeFold</h3> <br /> Are you registerd or not?", ["Registerd", "Not Registerd"]

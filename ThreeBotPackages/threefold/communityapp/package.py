@@ -24,7 +24,7 @@ class Package(j.baseclasses.threebot_package):
         server.install(reset=False)
         server.configure()
 
-        website = server.get_from_port(443)
+        website = server.get_from_port(80)
 
         locations = website.locations.get("community_location")
 
@@ -34,6 +34,14 @@ class Package(j.baseclasses.threebot_package):
         website_location.use_jumpscale_weblibs = False
         fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
         website_location.path_location = fullpath
+        
+        proxy_location = locations.locations_proxy.new()
+        proxy_location.name = "connect"
+        proxy_location.path_url = "/connect"
+        proxy_location.ipaddr_dest = "0.0.0.0"
+        proxy_location.port_dest = 80
+        proxy_location.path_dest = "/chat/session/community_join"
+        proxy_location.scheme = "http"
 
         locations.configure()
         website.configure()
