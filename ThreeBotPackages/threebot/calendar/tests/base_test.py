@@ -2,7 +2,7 @@ from unittest import TestCase
 from loguru import logger
 from uuid import uuid4
 from testconfig import config
-import requests
+import requests, subprocess
 
 
 class BaseTest(TestCase):
@@ -18,6 +18,12 @@ class BaseTest(TestCase):
     @staticmethod
     def generate_random_str():
         return str(uuid4()).replace("-", "")[:10]
+
+    @staticmethod
+    def execute_local_command(cmd):
+        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        output, error = process.communicate()
+        return output, error
 
     def setUp(self):
         self.base_url = "https://{}/web/gedis/http".format(config['server']['ip'])

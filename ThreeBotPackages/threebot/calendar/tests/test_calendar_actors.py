@@ -1,8 +1,5 @@
-from ThreeBotPackages.threebot.calendar.tests.base_test import BaseTest
+from tests.base_test import BaseTest
 from Jumpscale import j
-from time import sleep
-import requests
-import json
 from unittest import skip
 
 
@@ -17,8 +14,8 @@ class CalenderActorsTests(BaseTest):
 
     @classmethod
     def tearDownClass(cls):
-        cls.info("Destroy the bcdb")
-        j.data.bcdb.destroy_all()
+        cls.info("Destroy the running servers")
+        cls.execute_local_command('tmux kill-session')
 
     def setUp(self):
         super().setUp()
@@ -156,7 +153,7 @@ class CalenderActorsTests(BaseTest):
         self.assertEqual(response.json()['addressbook']['display_name'], name)
 
         self.info('assert description is matching with {}'.format(description))
-        self.assertEqual(self.response_addressbook.json()['addressbook']['description'], description)
+        self.assertEqual(response.json()['addressbook']['description'], description)
 
     def test016_get_addressbook(self):
         self.info('assert status code is 200')
