@@ -79,7 +79,7 @@ class CalenderActorsTests(BaseTest):
         self.assertEqual(response.status_code, 200)
 
         response = self.list_calendars().json()['calendars']
-        self.assertNotIn(self.response_calc.json()['calendars']['calendar_id'],
+        self.assertNotIn(self.response_calc.json()['calendar']['calendar_id'],
                          [calendar['calendar_id'] for calendar in response])
 
     def test006_add_event(self):
@@ -156,13 +156,13 @@ class CalenderActorsTests(BaseTest):
         self.assertEqual(response.json()['addressbook']['display_name'], name)
 
         self.info('assert description is matching with {}'.format(description))
-        self.assertEqual(self.response_calc.json()['addressbook']['description'], description)
+        self.assertEqual(self.response_addressbook.json()['addressbook']['description'], description)
 
     def test016_get_addressbook(self):
         self.info('assert status code is 200')
         self.assertEqual(self.response_addressbook.status_code, 200)
 
-        response = self.get_addressbook(self.response_addressbook.json()['calendar']['calendar_id'])
+        response = self.get_addressbook(self.response_addressbook.json()['addressbook']['addressbook_id'])
         self.info('assert status code is 200')
         self.assertEqual(response.status_code, 200)
         self.info('assert the new calendar is existing in the list')
@@ -184,7 +184,7 @@ class CalenderActorsTests(BaseTest):
         self.assertEqual(response.status_code, 200)
 
         self.info('assert the new addressbook is existing in the list')
-        self.assertEqual(response.json()['addressbooks'][0]['addressbook_id'], self.response_calc.json()['addressbook']['addressbook_id'])
+        self.assertEqual(response.json()['addressbooks'][0]['addressbook_id'], self.response_addressbook.json()['addressbook']['addressbook_id'])
 
     def test019_delete_addressbook(self):
         response = self.delete_addressbook(self.response_addressbook.json()['addressbook']['addressbook_id'])
@@ -216,6 +216,7 @@ class CalenderActorsTests(BaseTest):
         self.info('assert that the contact id is matching')
         self.assertEqual(response.json()['contact_id'], contact_id)
 
+    @skip('https://github.com/threefoldtech/jumpscaleX_threebot/issues/198')
     def test022_list_contacts(self):
         response = self.add_contact(self.response_addressbook.json()['addressbook']['addressbook_id'])
         self.info('assert status code is 200')
