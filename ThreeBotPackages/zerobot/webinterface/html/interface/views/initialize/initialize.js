@@ -206,9 +206,13 @@ module.exports = {
     referredByError: [],
     countryError: [],
     seedError: [],
-    doubleName: 'mdw95.3bot'
+    doubleName: ""
   }),
-
+  async mounted () {
+    this.doubleName = (await window.initializeService.getName()).data.name
+    this.doubleName = !this.doubleName.endsWith(".3bot") ? (this.doubleName + ".3bot") : this.doubleName
+    console.log(`User: `, this.doubleName)
+  },
   methods: {
     async initialize3Bot () {
       if (!this.country) {
@@ -217,35 +221,36 @@ module.exports = {
       }
 
       var userDataResponse
-
       try {
+        console.log(`* Retrieving public key for ${this.doubleName}`)
         userDataResponse = (await window.userService.getUserData(this.doubleName))
+        console.log(` -> ${this.doubleName} has public key ${userDataResponse.data.publicKey}`)
       } catch (error) {
-        console.log(error)
-        // Handle the error that the use cannot be found.
         return
       }
 
       var referredUserDataResponse
-
       if (this.referredBy) {
         try {
+          console.log(`* Retrieving public key for ${this.referredBy}`)
+          this.referredBy = !this.referredBy.endsWith(".3bot") ? (this.referredBy + ".3bot") : this.referredBy
           referredUserDataResponse = (await window.userService.getUserData(this.referredBy))
+          console.log(` -> ${this.referredBy} has public key ${referredUserDataResponse.data.publicKey}`)
         } catch (error) {
-          console.log(error)
-          this.referredByError.push('Could not find referred name.')
+          this.referredByError.push('Could not find referred name, please enter a valid name.')
           return
         }
       }
 
       var userDataKeys
-
       if (this.seed) {
         try {
+          console.log(`* Generating keys from user his mnemonic seed`)
           this.seed = this.seed.replace(/[^a-zA-Z ]/g, '').toLowerCase().trim().replace(/\s\s+/g, ' ')
           userDataKeys = await this.generateKeys(this.seed)
+          console.log(` -> private key: `, userDataKeys.privateKey)
+          console.log(` -> public key: `, userDataKeys.publicKey)
         } catch (error) {
-          console.log(error)
           this.seedError.push('Your seed phrase is invalid.')
           return
         }
@@ -254,23 +259,23 @@ module.exports = {
         return
       }
 
+      console.log(`* Checking if the public key from the seed matches the public key in our database.`)
       if (userDataResponse.data.publicKey === userDataKeys.publicKey) {
-        console.log('We can now initialize ... ')
+        console.log(` -> Keys match`)
 
-        console.log('Calculating wallet keys from main key ... ')
-
-        const that = this
-        pbkdf2(userDataKeys.privateKey, 'wallet.threefold.me', 1000, 32, 'sha256', async function (_error, result) {
-          console.log(result)
+        console.log(`* Generating wallet keys`)
+        pbkdf2(userDataKeys.privateKey, 'wallet.threefold.me', 1000, 32, 'sha256', async (_error, result) => {
           var b64encoded = nacl.util.encodeBase64(result)
-          console.log(referredUserDataResponse)
+          var walletMnemonicSeed = this.generateMnemonicFromSeed(result)
+          var keys = await this.generateKeys(walletMnemonicSeed)
 
-          console.log('pbkdf2 Seed: ', b64encoded)
-          console.log('Wallet URL: ', 'https://wallet.threefold.me/login#username=' + that.doubleName + '&derivedSeed=' + encodeURIComponent(b64encoded))
-          const walletMnemonicSeed = that.generateMnemonicFromSeed(result)
-          console.log('walletMnemonicSeed :', walletMnemonicSeed)
-          console.log('generateKeys(walletMnemonicSeed) :', await that.generateKeys(walletMnemonicSeed))
-          console.log(`initializeService`, (await window.initializeService.getName()).data.name)
+          console.log(' -> Wallet URL: ', 'https://wallet.threefold.me/login#username=' + this.doubleName + '&derivedSeed=' + encodeURIComponent(b64encoded))
+          
+          console.log(` -> seed phrase: `, keys.phrase)
+          console.log(` -> private key: `, keys.privateKey)
+          console.log(` -> public key: `, keys.publicKey)
+
+          this.generateDerivedKeypair(result, window.location.hostname)
         })
       }
     },
@@ -290,6 +295,18 @@ module.exports = {
         } catch (error) {
           reject(error)
         }
+      })
+    },
+
+    generateDerivedKeypair (privateKey, appId) {
+      console.log(`* Generating threebot keys using appId `, appId)
+      pbkdf2(privateKey, appId, 1000, 32, 'sha256', async (_error, result) => {
+        const mnemonicSeed = this.generateMnemonicFromSeed(result)
+        const keys = await this.generateKeys(mnemonicSeed)
+        
+        console.log(` -> seed phrase: `, keys.phrase)
+        console.log(` -> private key: `, keys.privateKey)
+        console.log(` -> public key: `, keys.publicKey)
       })
     },
 
