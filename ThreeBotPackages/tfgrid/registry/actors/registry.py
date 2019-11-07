@@ -166,9 +166,11 @@ class registry(j.baseclasses.threebot_actor):
         for item in results:
             model = self.threebot_data_model.get(obj_id=item[0])
             if model.registered_info_encrypted:
-                if tid in model.readers:
-                    if not model in res:
-                        res.append(model)
+                if tid in model.readers or tid in model.authors:
+                    for item in model.registered_info_encrypted:
+                        decrypted_data = self.__decrypt_data(model.registered_info_format, item.data_)
+                        if not decrypted_data in res:
+                            res.append(decrypted_data)
 
         if len(res) > 50:
             raise j.exceptions.Input("Can not return results is > 50")
@@ -232,7 +234,9 @@ class registry(j.baseclasses.threebot_actor):
         topic = "travel,food,it,spirituality,health,education,finance,varia" (E)
         description = ""
         ```
-
+        ```out
+        res = (S)
+        ```
         only return if < 50 results
 
         :param schema_url:
@@ -273,31 +277,23 @@ class registry(j.baseclasses.threebot_actor):
             output = None
             model = self.threebot_data_model.get(obj_id=item[0])
             if model.registered_info:
-                # if model.registered_info_format == "JSXSCHEMA":
-                #     jsxobject = self.bcdb.model_get(url="threebot.registry.entry.data.1").new()
-                #     jsxobject = j.data.serializers.jsxdata.loads(model.registered_info)
-                #     output = jsxobject._data
-
-                # if model.registered_info_format == "YAML":
-                #     data = j.data.serializers.yaml.loads(model.registered_info)
-                #     output = j.data.serializers.yaml.dumps(data)
-
-                # if model.registered_info_format == "JSON":
-                #     data = j.data.serializers.json.loads(model.registered_info)
-                #     output = j.data.serializers.json.dumps(data)
-
-                # if model.registered_info_format == "msgpack":
-                #     data = j.data.serializers.msgpack.loads(model.registered_info)
-                #     output = j.data.serializers.msgpack.dumps(data)
+                encry_data = None
                 decry_data = self.__decrypt_data(str(model.registered_info_format), model.registered_info)
-                output = self.__encrypt_data(registered_info_format, decry_data._ddict)
+                if registered_info_format == "JSXSCHEMA":
+                    encry_data = self.__encrypt_data(registered_info_format, decry_data)
+                    output = str(self.__decrypt_data(registered_info_format, encry_data))
+                else:
+                    output = self.__encrypt_data(registered_info_format, decry_data._ddict)
+
                 if not output in res:
                     res.append(output)
 
         if len(res) > 50:
             raise j.exceptions.Input("Can not return results is > 50")
 
-        return res
+        out = schema_out.new()
+        out.res = res
+        return out
 
     def validate_signature(
         self, tid=None, verifykey=None, payload=None, signature=None, schema_out=None, user_session=None
