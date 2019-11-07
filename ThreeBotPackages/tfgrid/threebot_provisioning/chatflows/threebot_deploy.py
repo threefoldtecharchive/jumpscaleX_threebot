@@ -55,7 +55,7 @@ def chat(bot):
         record = explorer.actors.phonebook.get(name=name)
         client.actors.registration.set_identity(record.id, record.name, record.email, record.pubkey)
         bot.md_show_update(progress.format(100, "Registering 3Bot completed"))
-        bot.md_show("# Your 3bot has been registered successfully you can find it here [{url}]({url})")
+        bot.md_show(f"# Your 3bot has been registered successfully you can find it here [{url}]({url})")
     except:
         machine.destroy_container(name)
         raise
