@@ -1,6 +1,6 @@
 #is the location, 1 specific farm
 @url = tfgrid.farm.1
-threebot_id** = (S)
+threebot_id** = (I)
 iyo_organization** = (S) # for backward compatibility
 name** = (S)
 wallet_addresses = (LS)
