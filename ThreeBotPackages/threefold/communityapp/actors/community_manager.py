@@ -18,6 +18,7 @@ class community_manager(j.baseclasses.threebot_actor):
 
         ask FFP client to join to this space
         """
+        return
         spaces_joined = []
         user_id = self.freeflow_client.users.get_by_email(user_email).get("id")
         spaces_list = self.freeflow_client.spaces.list()

@@ -26,12 +26,7 @@ OAUTH_SERVER = ""
 def auth(fn):
     def _auth(*args, **kwargs):
         session = request.environ.get("beaker.session")
-        if "username" not in session:
-            if j.data.types.ipaddr.check(request.headers["HOST"]):
-                session["username"] = "Guest"
-            else:
-                session["next-url"] = request.path
-                redirect("/chat/login")
+        session["username"] = "Guest"
         return fn(*args, **kwargs)
 
     return _auth
@@ -114,7 +109,6 @@ def home_handler():
 
 @app.route("/chat/session/<topic>", method="get")
 @enable_cors
-@auth
 def topic_handler(topic):
     session = request.environ.get("beaker.session")
     query = request.urlparts.query
