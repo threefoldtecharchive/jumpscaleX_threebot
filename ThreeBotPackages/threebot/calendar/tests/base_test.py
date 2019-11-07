@@ -220,7 +220,7 @@ class BaseTest(TestCase):
 
     def list_addressbook(self):
         self.info('list addressbook')
-        return self.get(self.url_contractor(['list']), end_point='addressbook')
+        return self.get(self.url_contractor(['list'], end_point='addressbook'))
 
     def delete_addressbook(self, addressbook_id):
         self.info('delete addressbook with id : {}'.format(addressbook_id))

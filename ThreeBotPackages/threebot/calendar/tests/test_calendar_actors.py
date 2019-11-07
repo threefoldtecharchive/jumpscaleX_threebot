@@ -184,7 +184,8 @@ class CalenderActorsTests(BaseTest):
         self.assertEqual(response.status_code, 200)
 
         self.info('assert the new addressbook is existing in the list')
-        self.assertEqual(response.json()['addressbooks'][0]['addressbook_id'], self.response_addressbook.json()['addressbook']['addressbook_id'])
+        addressbook_id = self.response_addressbook.json()['addressbook']['addressbook_id']
+        self.assertIn(addressbook_id, [addressbook['addressbook_id'] for addressbook in response.json()['addressbooks']])
 
     def test019_delete_addressbook(self):
         response = self.delete_addressbook(self.response_addressbook.json()['addressbook']['addressbook_id'])
