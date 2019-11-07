@@ -7,9 +7,12 @@
                 </v-card-title>
 
                 <v-form>
-                    <v-select v-model="country" menu-props="auto" :items="countries" label="Country" :error-messages="countryError" @input="countryError = []"></v-select>
-                    <v-text-field v-model="referredBy" label="Referred by (name)" required :error-messages="referredByError" @input="referredByError = []"></v-text-field>
-                    <v-textarea v-model="seed" label="Seed phrase" required :error-messages="seedError" @input="seedError = []"></v-textarea>
+                    <v-select v-model="country" menu-props="auto" :items="countries" label="Country"
+                        :error-messages="countryError" @input="countryError = []"></v-select>
+                    <v-text-field v-model="referredBy" label="Referred by (name)" required
+                        :error-messages="referredByError" @input="referredByError = []"></v-text-field>
+                    <v-textarea v-model="seed" label="Seed phrase" required :error-messages="seedError"
+                        @input="seedError = []"></v-textarea>
                     <v-btn color="success" class="mr-4 float-right" @click="initialize3Bot">
                         Initialize 3bot
                     </v-btn>
