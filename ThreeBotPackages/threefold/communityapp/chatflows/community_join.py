@@ -60,12 +60,11 @@ def chat(bot):
         threebot_doublename_ref_person = bot.kwargs.get("referral")
         bot.single_choice(
             f"""
-        <h3>Welcome to ThreeFold</h3> <br />
+        <h3>Welcome to ThreeFold Connect</h3> <br />
         Hi there! <br />
-        Welcome to ThreeFold Connect. <br />
         You're about to enter to a new digital world, where your data will be only yours.
         The connect process, will allow us to better understand you and tailor our futur connect services.
-        You are 2 minutes away from getting your digital freedom back. <br />
+        You are 2 minutes away from getting your digital freedom. <br />
         Looking forward to build this digital world together. <br />
         The ThreeFold Team <br /><br />
 
