@@ -116,8 +116,11 @@ def topic_handler(topic):
         query = query.split("&")
         query_params = {}
         for q in query:
-            k, v = q.split("=")
-            query_params[k] = v
+            try:
+                k, v = q.split("=")
+                query_params[k] = v
+            except:
+                query_params["referral"] = q
 
         session["kwargs"] = query_params
     else:
