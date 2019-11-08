@@ -134,11 +134,12 @@ class community_manager(j.baseclasses.threebot_actor):
             user = self.model.new()
             user.email = email
             user.name = user_name
-            user.referral_code = j.data.idgenerator.generateGUID().replace("-", "")
+            user.referral_code = user_name
 
             user.save()
         else:
             user = users[0]
+
         return user.referral_code
 
     def info_get(self, name, schema_out=None, user_session=None):
