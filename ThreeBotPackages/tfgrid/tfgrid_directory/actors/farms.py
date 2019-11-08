@@ -35,7 +35,7 @@ class farms(j.baseclasses.threebot_actor):
         if self.farm_model.find(name=farm.name):
             raise j.exceptions.Value("Farm with name %s is already exist" % farm.name)
 
-        if not _re_name(farm.name):
+        if not _re_name.match(farm.name):
             raise j.exceptions.Value(
                 "Farm name is not valide. Name can only contain alphanumeric characters dash (-) or underscore (_)"
             )
