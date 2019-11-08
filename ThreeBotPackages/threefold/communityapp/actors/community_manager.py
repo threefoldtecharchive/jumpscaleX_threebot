@@ -103,7 +103,7 @@ class community_manager(j.baseclasses.threebot_actor):
                 user = self.model.new()
                 user.email = email
                 user.name = name
-                user.referral_code = j.data.idgenerator.generateGUID().replace("-", "")
+                user.referral_code = name
                 user.save()
             else:
                 user = users[0]
@@ -120,6 +120,76 @@ class community_manager(j.baseclasses.threebot_actor):
         unsubscribe from any community just take space name
         """
         pass
+
+    def get_all_data(self, email=None, schema_out=None, user_session=None):
+        """
+        ```in
+        email = (S)
+        ```
+        """
+        users = []
+        res = []
+        if email:
+            users = self.model.find(email=email)
+        else:
+            users = self.model.find()
+
+        for item in users:
+            res.append(item._ddict_hr)
+
+        return res
+
+    def get_threebots(self, threebot_name, user_session=None):
+        """
+        ```in
+        threebot_name = (S)
+        ```
+        """
+        users = []
+        users = self.model.find()
+        found = False
+        for item in users:
+            if item.remark_threefold == threebot_name:
+                found = True
+
+        return found
+
+    def user_add(
+        self,
+        name=None,
+        email=None,
+        country=None,
+        company=None,
+        threebot_name=None,
+        spaces=None,
+        secret=None,
+        user_session=None,
+    ):
+        """
+        ```in
+        email = (S)
+        name = (S)
+        country = (S)
+        company = (S)
+        threebot_name = (S)
+        spaces = (S)
+        secret = (S)
+        ```
+        """
+        users = self.model.find(email=email)
+        if not users:
+            user = self.model.new()
+            user.email = email
+            user.name = name
+            user.country = country
+            user.company = company
+            # TODO: CHANGE ME: will register threebotname in this field to avoid changing the schema
+            user.remark_threefold = threebot_name
+            # TODO: CHANGE ME: will register userspaces in this field to avoid changing the schema
+            user.remark_member = spaces
+
+            user.referral_code = secret
+            user.save()
 
     def get_invitation_code(self, email, user_name, user_session=None):
         """

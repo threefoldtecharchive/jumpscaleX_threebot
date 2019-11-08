@@ -20,32 +20,31 @@ def chat(bot):
     invited = gedis_client.actors.community_manager.check_referral(
         email=user_email, name=user_name, referral=bot.kwargs.get("referral")
     )
-    # welcome_message = """
-    # Hi there! <br /><br />
-    # Welcome to ThreeFold Connect. <br /><br />
-    # You're about to enter to a new digital world, where your data will be only yours. <br /><br />
-    # The connect process, will allow us to better understand you and tailor our futur connect services. <br /><br />
-    # You are 2 minutes away from getting your digital freedom back. <br /><br />
-    # Looking forward to build this digital world together. <br /><br />
-    # The ThreeFold Team <br />
-    # """
-    # go_to_main = bot.single_choice(f"{welcome_message}", ["OK"])
 
-    # if no ref code acquired
+    # First page: if no ref code acquired
     form = bot.new_form()
     threebot_doublename_ref_person = form.string_ask(
         """
     <h3>Welcome to ThreeFold</h3> <br />
+    Hi there! <br />
+    Welcome to ThreeFold Connect. <br />
+    You're about to enter to a new digital world, where your data will be only yours.
+    The connect process, will allow us to better understand you and tailor our futur connect services.
+    You are 2 minutes away from getting your digital freedom back. <br />
+    Looking forward to build this digital world together. <br />
+    The ThreeFold Team <br /><br />
+
     Please give the 3Bot double name of the person who referred you, if you don’t have, Please leave it empty
     """
     )
     form.ask()
 
+    # If referral 3Bot is not empty
     if threebot_doublename_ref_person.value:
         threebot_doublename_ref_person = threebot_doublename_ref_person.value.lower()
-        valid_name = validate_threebot_name(threebot_doublename_ref_person)
+        is_valid_threebot = validate_threebot_name(threebot_doublename_ref_person)
         # TODO: check 3bot existed
-        while not valid_name:
+        while not is_valid_threebot:
             form = bot.new_form()
             threebot_doublename_ref_person = form.string_ask(
                 """
@@ -55,7 +54,7 @@ def chat(bot):
             )
             form.ask()
             threebot_doublename_ref_person = threebot_doublename_ref_person.value.lower()
-            valid_name = validate_threebot_name(threebot_doublename_ref_person)
+            is_valid_threebot = validate_threebot_name(threebot_doublename_ref_person)
 
         form = bot.new_form()
         name = form.string_ask("<h3>Please fill in the following</h3> <br /> Name: ")
@@ -64,11 +63,11 @@ def chat(bot):
         country = form.string_ask("Country: ")
         secret = uuid.uuid4().hex
         form.ask()
+        # give user his secret url
         bot.single_choice(
             f"Your secret link is: <a>https://threefold.io/connect?secret={secret} </a> <br />This is used to change your information, Please keep it safe",
             ["OK"],
         )
-
         spaces = [
             "ThreeFold Network User",
             "ThreeFold Network Farmer",
@@ -83,13 +82,11 @@ def chat(bot):
         interests = bot.multi_choice(
             "Please mention which topics of ThreeFold you would like to be informed of", [space for space in spaces]
         )
-
         subscribe_to_mail = bot.single_choice(
             """Please confirm it's ok we inform you about news in the chosen topics.<br / >
         You can always unsubscribe later. If not you will not receive email notifications.""",
             ["OK"],
         )
-
         form = bot.new_form()
         threebot_given_name = form.string_ask(
             """Choose your own 3Bot name.<br / >
@@ -98,22 +95,41 @@ def chat(bot):
         )
         form.ask()
         threebot_given_name = threebot_given_name.value.lower()
-        valid_name = validate_threebot_name(threebot_given_name)
-        # TODO: check 3bot existed
-        while not valid_name:
+        is_valid_threebot = validate_threebot_name(threebot_given_name)
+        is_unique_threebot = gedis_client.actors.community_manager.get_threebots(threebot_name=threebot_given_name)
+
+        # check threebot is unique and valid
+        while is_unique_threebot == 1 or not is_valid_threebot:
             form = bot.new_form()
-            threebot_given_name = form.string_ask(
+
+            if not is_valid_threebot:
+                threebot_given_name = form.string_ask(
+                    """
+                <a>You have entered invalid name</a><br />
+                Please make sure it's in the correct format, it's two parts each is 5 characters or more, example: kristof.eagle
                 """
-            <a>You have entered invalid name</a><br />
-            Please make sure it's in the correct format, it's two parts each is 5 characters or more, example: kristof.eagle
-            """
-            )
+                )
+            if is_unique_threebot == 1:
+                threebot_given_name = form.string_ask(
+                    """
+                <a>This name already exists</a><br />
+                Please choose another one, it's two parts each is 5 characters or more, example: kristof.eagle
+                """
+                )
             form.ask()
             threebot_given_name = threebot_given_name.value.lower()
-            valid_name = validate_threebot_name(threebot_given_name)
+            is_valid_threebot = validate_threebot_name(threebot_given_name)
+            is_unique_threebot = gedis_client.actors.community_manager.get_threebots(threebot_name=threebot_given_name)
 
         # finishing
-        # TODO: save threebot name
+        save = gedis_client.actors.community_manager.user_add(
+            name=name.value,
+            email=email.value,
+            country=country.value,
+            company=company.value,
+            spaces=interests,
+            threebot_name=threebot_given_name,
+        )
         # result = gedis_client.actors.community_manager.community_join(user_email=email, spaces=interests)
         # code_id = gedis_client.actors.community_manager.get_invitation_code(
         #     email=email.value, user_name=threebot_given_name
@@ -138,12 +154,13 @@ def chat(bot):
         company = form.string_ask("Company: ")
         country = form.string_ask("Country: ")
         form.ask()
-
-        # TODO: Save guest data
-        # new_guest = gedis_client.actors.community_manager.guest_add()
+        # save data in bcdb
+        save = gedis_client.actors.community_manager.user_add(
+            name=name.value, email=email.value, country=country.value, company=company.value, threebot_name="guest"
+        )
         bot.single_choice(
-            f"""We will find you the right ThreeFold Ambassador to help you further, stay tuned, <br />
-            instructions will follow over email.""",
+            f"""Great you’re done. <br />
+            We will put you in touch with one of our ambassadors shortly. You’re soon about to get your digital freedom. 🙌🏻""",
             ["OK"],
         )
         gevent.sleep(1)
@@ -163,6 +180,7 @@ def validate_threebot_name(name):
             valid = True
 
     return valid
+
     # else:
     #     choice = bot.single_choice(
     #         f"Welcome {user_name} ...  to our ThreeFold World! Our dream is a complemetary responsible Internet, everywhere and owned by everyone, \n without borders \
