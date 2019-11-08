@@ -106,6 +106,21 @@ class community_manager(j.baseclasses.threebot_actor):
 
         return found
 
+    def get_by_secret(self, secret, schema_out=None, user_session=None):
+        """
+        ```in
+        secret = (S)
+        ```
+        """
+        users = []
+        users = self.model.find()
+        threebot_name = ""
+        for item in users:
+            if item.referral_code == secret:
+                threebot_name = item.remark_threefold
+
+        return threebot_name
+
     def get_referral_name(self, referral, schema_out=None, user_session=None):
         """
         ```in
@@ -185,7 +200,8 @@ class community_manager(j.baseclasses.threebot_actor):
         secret = (S)
         ```
         """
-        users = self.model.find(email=email)
+        users = self.model.find(name=name)
+        current_user = ""
         if not users:
             user = self.model.new()
             user.email = email
@@ -199,6 +215,16 @@ class community_manager(j.baseclasses.threebot_actor):
 
             user.referral_code = secret
             user.save()
+        else:
+            for item in users:
+                if item.remark_threefold == threebot_name:
+                    current_user = item
+                    break
+            if current_user:
+                user.email = email
+                user.name = name
+                user.country = country
+                user.company = company
 
     def get_invitation_code(self, email, user_name, user_session=None):
         """
