@@ -20,16 +20,16 @@ def chat(bot):
     invited = gedis_client.actors.community_manager.check_referral(
         email=user_email, name=user_name, referral=bot.kwargs.get("referral")
     )
-    welcome_message = """
-    Hi there! <br /><br />
-    Welcome to ThreeFold Connect. <br /><br />
-    You're about to enter to a new digital world, where your data will be only yours. <br /><br />
-    The connect process, will allow us to better understand you and tailor our futur connect services. <br /><br />
-    You are 2 minutes away from getting your digital freedom back. <br /><br />
-    Looking forward to build this digital world together. <br /><br />
-    The ThreeFold Team <br />
-    """
-    go_to_main = bot.single_choice(f"{welcome_message}", ["OK"])
+    # welcome_message = """
+    # Hi there! <br /><br />
+    # Welcome to ThreeFold Connect. <br /><br />
+    # You're about to enter to a new digital world, where your data will be only yours. <br /><br />
+    # The connect process, will allow us to better understand you and tailor our futur connect services. <br /><br />
+    # You are 2 minutes away from getting your digital freedom back. <br /><br />
+    # Looking forward to build this digital world together. <br /><br />
+    # The ThreeFold Team <br />
+    # """
+    # go_to_main = bot.single_choice(f"{welcome_message}", ["OK"])
 
     # if no ref code acquired
     form = bot.new_form()
