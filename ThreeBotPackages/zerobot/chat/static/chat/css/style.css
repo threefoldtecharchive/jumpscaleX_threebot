@@ -214,8 +214,8 @@ only screen and (                min-resolution: 2dppx) {
 .checkbox-container {margin:20px 0 20px 0}
 .checkbox-container label.btn-default.active{background-color:#f35b3f;color:#FFF}
 .checkbox-container label.btn-default{width:90%;border:1px solid #efefef;margin:5px;}
-.checkbox-container label .bizcontent{width:100%;}
-.checkbox-container .btn-group{width:90%}
+.checkbox-container label .bizcontent{width:100%;white-space: normal;}
+.checkbox-container .btn-group{width:90%;white-space: normal;}
 .checkbox-container .btn span.glyphicon{
     opacity: 0;
 }
