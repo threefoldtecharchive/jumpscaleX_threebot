@@ -97,23 +97,32 @@ class community_manager(j.baseclasses.threebot_actor):
         if correct send his username to community_join
         else: send message this inviation is wrong
         """
-        if referral:
-            users = self.model.find(email=email)
-            if not users:
-                user = self.model.new()
-                user.email = email
-                user.name = name
-                user.referral_code = name
-                user.save()
-            else:
-                user = users[0]
+        users = []
+        users = self.model.find()
+        found = False
+        for item in users:
+            if item.remark_threefold == referral:
+                found = True
 
-            user_invitation = self.model.find(referral_code=referral)
-            if user_invitation:
-                user.invited_by = user_invitation[0].id
-                user.save()
-                return user_invitation[0].email
-        return False
+        return found
+
+    def get_referral_name(self, referral, schema_out=None, user_session=None):
+        """
+        ```in
+        referral = (S)
+        ```
+        check the referral is correct or not
+        if correct send his username to community_join
+        else: send message this inviation is wrong
+        """
+        users = []
+        users = self.model.find()
+        name = ""
+        for item in users:
+            if item.remark_threefold == referral:
+                name = item.name
+
+        return name
 
     def unsubscribe_space(self, space, user, user_session=None):
         """
