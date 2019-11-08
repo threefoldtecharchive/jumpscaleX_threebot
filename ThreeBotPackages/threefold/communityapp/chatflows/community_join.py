@@ -129,6 +129,7 @@ def chat(bot):
         please copy this url and send it to your friends <br /><br />
         """
         bot.single_choice(f"{goodbye_message}", ["OK"])
+        gevent.sleep(1)
         bot.redirect("https://threefold.io/")
     else:
         form = bot.new_form()
