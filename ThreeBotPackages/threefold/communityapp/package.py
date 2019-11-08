@@ -43,5 +43,21 @@ class Package(j.baseclasses.threebot_package):
         proxy_location.path_dest = "/chat/session/community_join"
         proxy_location.scheme = "http"
 
+        proxy_location = locations.locations_proxy.new()
+        proxy_location.name = "register"
+        proxy_location.path_url = "/register"
+        proxy_location.ipaddr_dest = "0.0.0.0"
+        proxy_location.port_dest = 80
+        proxy_location.path_dest = "/chat/session/community_join"
+        proxy_location.scheme = "http"
+
+        proxy_location = locations.locations_proxy.new()
+        proxy_location.name = "join"
+        proxy_location.path_url = "/join"
+        proxy_location.ipaddr_dest = "0.0.0.0"
+        proxy_location.port_dest = 80
+        proxy_location.path_dest = "/chat/session/community_join"
+        proxy_location.scheme = "http"
+
         locations.configure()
         website.configure()
