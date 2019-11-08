@@ -18,6 +18,34 @@ def chat(bot):
     user_email = user_info["email"]  # still being added to the oauth user info
     gedis_client = j.clients.gedis.get(port=8901)
     invited = ""
+
+    if bot.kwargs.get("secret"):
+        threebot_name = gedis_client.actors.community_manager.get_by_secret(secret=bot.kwargs.get("secret")).decode()
+        if threebot_name:
+            form = bot.new_form()
+            name = form.string_ask(
+                f"<h3>Hello, 3Bot: {threebot_name} <br />Please fill in the following to change your data</h3> <br /> Name: "
+            )
+            email = form.string_ask("Email: ")
+            company = form.string_ask("Company: ")
+            country = form.string_ask("Country: ")
+            form.ask()
+            bot.single_choice(f"Saving data, Are you sure ?", ["OK"])
+            save = gedis_client.actors.community_manager.user_add(
+                name=name.value,
+                email=email.value,
+                country=country.value,
+                company=company.value,
+                threebot_name=threebot_name,
+            )
+            bot.single_choice(f"Data saved you can continue surfing now", ["OK"])
+            gevent.sleep(1)
+            bot.redirect("https://threefold.io/")
+            return
+        else:
+            bot.single_choice(f"Secret is wrong please check and try again.", ["OK"])
+            return
+
     if bot.kwargs.get("referral"):
         invited = gedis_client.actors.community_manager.check_referral(
             email=user_email, name=user_name, referral=bot.kwargs.get("referral")
@@ -155,6 +183,7 @@ def chat(bot):
             company=company.value,
             spaces=interests,
             threebot_name=threebot_given_name,
+            secret=secret,
         )
         # result = gedis_client.actors.community_manager.community_join(user_email=email, spaces=interests)
         # code_id = gedis_client.actors.community_manager.get_invitation_code(
