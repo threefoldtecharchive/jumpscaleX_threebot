@@ -63,10 +63,11 @@ def chat(bot):
         """
         )
         form.ask()
+        threebot_doublename_ref_person = threebot_doublename_ref_person.value
 
     # If referral 3Bot is not empty
-    if threebot_doublename_ref_person.value:
-        threebot_doublename_ref_person = threebot_doublename_ref_person.value.lower()
+    if threebot_doublename_ref_person:
+        threebot_doublename_ref_person = threebot_doublename_ref_person.lower()
         is_valid_threebot = validate_threebot_name(threebot_doublename_ref_person)
         # TODO: check 3bot existed
         while not is_valid_threebot:
