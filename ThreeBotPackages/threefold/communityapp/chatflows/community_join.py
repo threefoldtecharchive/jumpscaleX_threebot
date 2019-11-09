@@ -182,6 +182,7 @@ def chat(bot):
             spaces=interests,
             threebot_name=threebot_given_name,
             secret=secret,
+            invited_by=threebot_doublename_ref_person,
         )
         # result = gedis_client.actors.community_manager.community_join(user_email=email, spaces=interests)
         # code_id = gedis_client.actors.community_manager.get_invitation_code(
