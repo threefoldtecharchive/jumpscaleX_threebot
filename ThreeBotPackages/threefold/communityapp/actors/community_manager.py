@@ -139,6 +139,21 @@ class community_manager(j.baseclasses.threebot_actor):
 
         return name
 
+    def get_referral_id(self, referral, schema_out=None, user_session=None):
+        """
+        ```in
+        referral = (S)
+        ```
+        """
+        users = []
+        users = self.model.find()
+        ref_id = 0
+        for item in users:
+            if item.remark_threefold == referral:
+                ref_id = item.id
+
+        return ref_id
+
     def unsubscribe_space(self, space, user, user_session=None):
         """
         unsubscribe from any community just take space name
@@ -187,6 +202,7 @@ class community_manager(j.baseclasses.threebot_actor):
         threebot_name=None,
         spaces=None,
         secret=None,
+        invited_by=None,
         user_session=None,
     ):
         """
@@ -198,6 +214,7 @@ class community_manager(j.baseclasses.threebot_actor):
         threebot_name = (S)
         spaces = (S)
         secret = (S)
+        invited_by= (S)
         ```
         """
         users = self.model.find(name=name)
@@ -212,8 +229,8 @@ class community_manager(j.baseclasses.threebot_actor):
             user.remark_threefold = threebot_name
             # TODO: CHANGE ME: will register userspaces in this field to avoid changing the schema
             user.remark_member = spaces
-
             user.referral_code = secret
+            user.invited_by = self.get_referral_id(invited_by)
             user.save()
         else:
             for item in users:
@@ -225,6 +242,7 @@ class community_manager(j.baseclasses.threebot_actor):
                 user.name = name
                 user.country = country
                 user.company = company
+                user.save()
 
     def get_invitation_code(self, email, user_name, user_session=None):
         """
