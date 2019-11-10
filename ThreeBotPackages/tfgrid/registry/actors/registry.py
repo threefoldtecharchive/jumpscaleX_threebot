@@ -13,7 +13,7 @@ class registry(j.baseclasses.threebot_actor):
         self.threebot_data_model = self.bcdb.model_get(url="threebot.registry.entry.data.1")
 
     def register(
-        self, authors=[], verifykey=None, input_object=None, signature_hex=None, schema_out=None, user_session=None
+        self, authors=None, verifykey=None, input_object=None, signature_hex=None, schema_out=None, user_session=None
     ):
         """
         register an object of the type threebot.registry.entry.data.1
@@ -31,6 +31,9 @@ class registry(j.baseclasses.threebot_actor):
         :return: return the id of the object
         """
         # verify author id is correct
+        if not authors:
+            authors = []
+
         if user_session.threebot_id:
             threebot_id = user_session.threebot_id
             # adding the threebot_id in the session in the authors list

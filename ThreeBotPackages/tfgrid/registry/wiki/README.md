@@ -10,7 +10,7 @@ We can call it "BCDB public interface".
 - Register any type of information (website, blog, wiki, doc, solutionpackage, threebotpackage).
 - Registered info could be encrypted or public.
 - If data is encrypted only authors and readers can access it.
-- Data is signed using `NACL` by the 3Bot's private key signature and verified with his verify key.
+- Data is signed using `NACL` by the 3Bot's private key signature and verified with its verify key.
 - Find any piece of information you want by many filters (country_code, format, category, topic)
 - If data is public you can return it in the format you want.
 
@@ -18,7 +18,7 @@ We can call it "BCDB public interface".
 
 - Run `kosmos -p 'j.threebot.package.threefold.registry.test()'`
 
-This will save some data public and encrypted and return them again
+This will save some public and encrypted data, and return them again
 
 ## Models
 
@@ -27,15 +27,14 @@ This will save some data public and encrypted and return them again
 ## Actor Methods
 
 - Register
+Register an object of the type threebot.registry.entry.data.1
+Can be given in multiple formats
 
 ```python
 def register(
-    self, authors=[], verifykey=None, input_object=None, signature_hex=None, schema_out=None, user_session=None
+    self, authors=None, verifykey=None, input_object=None, signature_hex=None, schema_out=None, user_session=None
 ):
     """
-    register an object of the type threebot.registry.entry.data.1
-    can be given in multiple formats
-
     signature hex is done on the capnp output of the object
 
     ```in
@@ -51,11 +50,12 @@ def register(
 
 - Get
 
+Get the data by id
+if it's encrypted you have to pass an authorized tid
+
 ```python
 def get(self, tid=None, data_id=None, schema_out=None, user_session=None):
     """
-    Get the data by id
-    if it's encrypted you have to pass an authorized tid
     ```in
     tid = (I)
     data_id = (I)
@@ -69,11 +69,11 @@ def get(self, tid=None, data_id=None, schema_out=None, user_session=None):
 
 - Schema_register
 
+Make sure the registrar knows about the schema's used
+
 ```python
 def schema_register(self, schema_url=None, schema_text=None, schema_out=None, user_session=None):
     """
-
-    make sure the registrar knows about the schema's used
     return: md5 of the schema
 
     ```in
@@ -124,6 +124,10 @@ def find_encrypted(
 
 - Find formatted
 
+  - Only works for non encrypted
+  - Will return the data as requested
+  - Find data by filters
+
 ```python
 def find_formatted(
         self,
@@ -138,10 +142,6 @@ def find_formatted(
         user_session=None,
     ):
         """
-
-        only works for non encrypted
-        will return the data as requested
-        find data by filters
 
         ```in
         registered_info_format = "jsxschema,yaml,json,msgpack,unstructured" (E)
