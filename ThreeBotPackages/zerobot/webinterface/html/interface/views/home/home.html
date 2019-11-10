@@ -12,7 +12,7 @@
                 <div v-for="(route, i) in routes.filter(r => r.meta && r.meta.app)" :key="i" class="text-center px-5">
                     <span @click="$router.push(route)" style="cursor: pointer">
                         <v-avatar size="50" class="ma-3 primary">
-                            <v-icon size="25" class="white--text">{{route.meta.icon}}</v-icon>
+                            <v-icon style="height: 25px;" class="white--text">{{route.meta.icon}}</v-icon>
                         </v-avatar>
                         <p class="text-capitalize">{{route.meta.displayName || route.name}}</p>
                     </span>
