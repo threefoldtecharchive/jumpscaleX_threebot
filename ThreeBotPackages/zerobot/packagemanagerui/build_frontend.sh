@@ -1,2 +1,2 @@
-cd packages_manager && npm run export
+cd packagemanagerui && npm run export
 cp __sapper__/export/packages/* ../html/ -R
