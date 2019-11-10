@@ -3,11 +3,11 @@
 ## Goal
 
 Anyone can register any piece of information, structured or not. encrypted or not.
-We can call it "bcdb public interface".
+We can call it "BCDB public interface".
 
 ## Features
 
-- Register anytype of information (website, blog, wiki, doc, solutionpackage, threebotpackage).
+- Register any type of information (website, blog, wiki, doc, solutionpackage, threebotpackage).
 - Registered info could be encrypted or public.
 - If data is encrypted only authors and readers can access it.
 - Data is signed using `NACL` by the 3Bot's private key signature and verified with his verify key.
