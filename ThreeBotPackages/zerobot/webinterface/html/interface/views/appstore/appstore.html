@@ -2,7 +2,7 @@
   <v-col>
     <h2 class="headline">AD Apps</h2>
     <v-row wrap>
-      <v-flex d-flex v-for="(app, i) in apps" :key="i" xs3 class="pa-2">
+      <v-col d-flex v-for="(app, i) in apps" :key="i" cols="3">
         <v-card style="width: 100%;">
           <v-sheet class="primary py-5">
             <v-row class="fill-height" align="center" justify="center">
@@ -14,7 +14,7 @@
             {{app.description}}
           </v-card-text>
         </v-card>
-      </v-flex>
+      </v-col>
     </v-row>
   </v-col>
   <v-dialog :value="!!selectedApp" v-if="!!selectedApp" max-width="500px" @click:outside="closeDialog(false)">

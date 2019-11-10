@@ -15,17 +15,15 @@ export default ({
         context.dispatch('wait/end', 'getApps', {
           root: true
         })
-        
+
         response.data.packages.forEach(function (item, index) {
-          if (item.name !== 'interface') {
-            appService.checkPathForFile(`${window.location.origin}/${item.name}/router.json`).then(r => {
-              if (r.status === 200) {
-                item.routes = r.data
-                item.store = `/${item.name}/store.js`
-              }
-              tmpApps.push(item)
-            })
-          }
+          appService.checkPathForFile(`${window.location.origin}/${item.name}/router.json`).then(r => {
+            if (r.status === 200) {
+              item.routes = r.data
+              item.store = `/${item.name}/store.js`
+            }
+            tmpApps.push(item)
+          })
         })
       }).catch(e => {
         context.dispatch('wait/end', 'getApps', {
