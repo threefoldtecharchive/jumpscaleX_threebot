@@ -71,7 +71,6 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         )
         if not post_id1:
             raise j.exceptions.Input("Failed to register your content")
-        # TODO: add the line
         # encrypted example
         scm2 = j.data.schema.get_from_url(url="threebot.registry.entry.data.1")
         dataobj2 = self.bcdb.model_get(url=scm2.url).new()
@@ -107,7 +106,6 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
 
         # find formatted in jsxschema
         res = cl.actors.registry.find_formatted(registered_info_format="JSXSCHEMA")
-        for item in res:
-            res = j.data.serializers.jsxdata.loads(item)
-            pprint(f"{res._ddict_hr}")
+
+        pprint(f"{res}")
         return "OK"
