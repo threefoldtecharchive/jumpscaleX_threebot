@@ -20,6 +20,9 @@ arg1 = ...
 ```
 ````
 
+#### Other options
+
+- `markdown`: if set to `True`, it will render the returned content as markdown instead of `html`.
 
 ### Examples
 
@@ -46,6 +49,22 @@ class html_test(j.baseclasses.threebot_actor):
         out = schema_out.new()
         out.content = f"Hello <h3>{name}</h3>"
         return out
+
+    def hello_markdown(self, name, user_session, schema_out=None):
+        """
+        :param name: name to say hello to
+
+        ```in
+        name = (S)
+        ```
+
+        ```out
+        content = (S)
+        ```
+        """
+        out = schema_out.new()
+        out.content = f"_markdown test_ Hello `{name}`"
+        return out
 ```
 
 We can call hello every time the page/document gets loaded as follows:
@@ -65,3 +84,16 @@ The output will be as follows inside the document:
 ```html
 Hello <h3>John doe</h3>
 ```
+
+
+To render returned content as **markdown**, use `markdown` option:
+
+````
+```
+!!!dynamic_content
+actor = "html_test"
+method = "hello_markdown"
+name = "John doe"
+markdown = True
+```
+````
