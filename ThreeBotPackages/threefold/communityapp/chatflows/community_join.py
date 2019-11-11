@@ -115,11 +115,7 @@ def chat(bot):
         country = form.string_ask("Country: ")
         secret = uuid.uuid4().hex
         form.ask()
-        # give user his secret url
-        bot.single_choice(
-            f"Your secret link is: <a>https://threefold.io/connect?secret={secret} </a> <br />This is used to change your information, Please keep it safe",
-            ["OK"],
-        )
+
         spaces = [
             "ThreeFold Network User",
             "ThreeFold Network Farmer",
