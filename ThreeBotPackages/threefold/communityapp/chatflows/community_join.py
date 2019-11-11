@@ -63,7 +63,7 @@ def chat(bot):
         <h3>Welcome to ThreeFold Connect</h3> <br />
         Hi there! <br />
         You're about to enter to a new digital world, where your data will be only yours.
-        The connect process, will allow us to better understand you and tailor our futur connect services.
+        The connect process, will allow us to better understand you and tailor our future connect services.
         You are 2 minutes away from getting your digital freedom. <br />
         Looking forward to build this digital world together. <br />
         The ThreeFold Team <br /><br />
@@ -80,7 +80,7 @@ def chat(bot):
         <h3>Welcome to ThreeFold Connect</h3> <br />
         Hi there! <br />
         You're about to enter to a new digital world, where your data will be only yours.
-        The connect process, will allow us to better understand you and tailor our futur connect services.
+        The connect process, will allow us to better understand you and tailor our future connect services.
         You are 2 minutes away from getting your digital freedom. <br />
         Looking forward to build this digital world together. <br />
         The ThreeFold Team <br /><br />
@@ -109,10 +109,12 @@ def chat(bot):
             is_valid_threebot = validate_threebot_name(threebot_doublename_ref_person)
 
         form = bot.new_form()
-        name = form.string_ask("<h3>Please fill in the following</h3> <br /> Name: ")
-        email = form.string_ask("Email: ")
-        company = form.string_ask("Company: ")
-        country = form.string_ask("Country: ")
+        name = form.string_ask(
+            "<h3>Please fill in the following</h3> <br /> <h4>Name: </h4>", validate={"required": True}
+        )
+        email = form.string_ask("Email: ", validate={"required": True, "email": True})
+        company = form.string_ask("Company: ", validate={"required": True})
+        country = form.string_ask("Country: ", validate={"required": True})
         secret = uuid.uuid4().hex
         form.ask()
 
@@ -184,35 +186,89 @@ def chat(bot):
         # code_id = gedis_client.actors.community_manager.get_invitation_code(
         #     email=email.value, user_name=threebot_given_name
         # )
-        goodbye_message = f"""
-        Congrats you have registerd your unique 3Bot name.<br />
-        We will send you an E-mail <br />
-        Your secret link is: <a>https://threefold.io/connect?secret={secret} </a><br />
-        This link will let you change your information, Please DON'T share it with other people.<br />
+        # send an email
 
-        This is your referral link to let you invite your friends<br />
-        <a>https://threefold.io/join?{threebot_given_name} </a><br />
-        please copy this url and send it to your friends <br /><br />
+        email_message = f"""
+        Dear {name.value},
+
+        Welcome to the ThreeFold community!
+
+        This is a simple confirmation that you have successfully registered your 3Bot and you are now officially on the ThreeFold Network.
+
+        You will also find below your referral link and secret link.
+
+        Your referral link will enable you to invite new people to the ThreeFold Network. The greater the referrals, the greater the rewards. So without waiting, invite your circles to the Network.
+
+        https://threefold.io/join?{threebot_given_name}
+
+        Your secret link is a unique security access to your 3Bot details. Keep it safe.
+
+        https://threefold.io/connect?secret={secret}
+
+        Keep calm, and let’s connect the world consciously together
+
+        Warm regards,
+
+        ThreeFold Team
+        """
+        gedis_client.actors.community_manager.send_mail(
+            name=name.value, receiver=email.value, content=email_message, subject="Welcome to the ThreeFold Network"
+        )
+
+        goodbye_message = f"""
+        Congratulations you have successfully registered your unique 3Bot name. <br/>
+
+        We will send you an E-mail shortly with your referral link and secret link.
         """
         bot.single_choice(f"{goodbye_message}", ["OK"])
         gevent.sleep(1)
         bot.redirect("https://threefold.io/")
     else:
         form = bot.new_form()
-        name = form.string_ask("<h3>Please fill in the following</h3> <br /> Name: ")
-        email = form.string_ask("Email: ")
-        company = form.string_ask("Company: ")
-        country = form.string_ask("Country: ")
+        name = form.string_ask(
+            "<h3>Please fill in the following</h3> <br /> <h4>Name: </h4>", validate={"required": True}
+        )
+        email = form.string_ask("Email: ", validate={"required": True, "email": True})
+        company = form.string_ask("Company: ", validate={"required": True})
+        country = form.string_ask("Country: ", validate={"required": True})
         form.ask()
         # save data in bcdb
         save = gedis_client.actors.community_manager.user_add(
             name=name.value, email=email.value, country=country.value, company=company.value, threebot_name="guest"
         )
+
+        email_message = f"""
+        Dear {name.value},
+
+        Welcome to the ThreeFold community!
+
+        This is a simple confirmation that you have successfully registered your details with us. We will put you in touch with one of our ambassadors very soon, who will assist you throughout your 3Bot registration.
+
+        We will only reach out when it's important, so keep an eye on your inbox for messages from us.
+
+        You’re about to become part of the ThreeFold Community, where we together are growing a conscious Internet for everyone.
+
+        Looking forward to having you with us!
+
+        Warm regards,
+
+        ThreeFold Team
+        """
+        gedis_client.actors.community_manager.send_mail(
+            name=name.value,
+            receiver=email.value,
+            content=email_message,
+            subject="Your registration was successful, stay tuned!",
+        )
         bot.single_choice(
-            f"""Great you’re done. <br />
-            We will put you in touch with one of our ambassadors shortly. You’re soon about to get your digital freedom. 🙌🏻""",
+            f"""Congratulations you have successfully registered your details. <br/>
+
+            We shall get in touch with you by e-mail shortly where we will explain you the next steps. <br/>
+
+            ThreeFold Team""",
             ["OK"],
         )
+
         gevent.sleep(1)
         bot.redirect("https://threefold.io/")
 
