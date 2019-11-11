@@ -14,6 +14,19 @@ We can call it "BCDB public interface".
 - Find any piece of information you want by many filters (country_code, format, category, topic)
 - If data is public you can return it in the format you want.
 
+## Start the package
+
+using komsos -p
+
+```python
+# start threebot server
+cl = j.servers.threebot.local_start_default(web=True)
+# add the package
+cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/registry/')
+# reload the client to use actors
+cl.reload()
+```
+
 ## Testing
 
 - Run `kosmos -p 'j.threebot.package.threefold.registry.test()'`
