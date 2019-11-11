@@ -10,7 +10,9 @@ You need to enable and download credentials files using  or go to [Python Quicks
 
 click on link to service account (not easy to see), then copy this file to `/sandbox/var/cred.json`
 
-## Screenshots describing how to get credentials for slides api
+It's better to enable drive, slide, sheets and doc apis too, you can find and enable differnt google apis in [this library](https://console.developers.google.com/apis/library). 
+
+### Screenshots describing how to get credentials for slides api
 
 Using [Google console](https://console.developers.google.com/flows/enableapi?apiid=slides.googleapis.com)
 
@@ -33,7 +35,7 @@ select json
 will be automatically downloaded, then copy it to `/sandbox/var/cred.json`
 
 
-## Accessing private files using service accounts
+### Accessing private files using service accounts
 
 By default, service accounts won't be able to access your private files or documents, either you share them with service account email (you can get it from console or from credential file `client_email` field), or ask your domain admin to enable domain-wide delegation of authority to your service account, more info can be found [here](https://developers.google.com/drive/api/v3/about-auth#perform_g_suite_domain-wide_delegation_of_authority), and full steps are [here](https://developers.google.com/identity/protocols/OAuth2ServiceAccount#delegatingauthority).
 
