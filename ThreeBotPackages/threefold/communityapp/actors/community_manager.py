@@ -106,6 +106,25 @@ class community_manager(j.baseclasses.threebot_actor):
 
         return found
 
+    def send_mail(self, name=None, receiver=None, content=None, subject=None, user_session=None):
+        """
+        ```in
+        name = (S)
+        receiver = (S)
+        content = (S)
+        subject = (S)
+        ```
+        send email to user
+        """
+        email_to = []
+        if receiver:
+            email_to.append(receiver)
+        ecl = j.clients.sendgrid.get("send_grid")
+        try:
+            ecl.send("register@threefold.io", subject, content, email_to)
+        except:
+            print("Wrong Mail")
+
     def get_by_secret(self, secret, schema_out=None, user_session=None):
         """
         ```in
@@ -238,6 +257,7 @@ class community_manager(j.baseclasses.threebot_actor):
                     current_user = item
                     break
             if current_user:
+                user = current_user
                 user.email = email
                 user.name = name
                 user.country = country
