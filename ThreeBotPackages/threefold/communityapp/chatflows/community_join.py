@@ -145,7 +145,7 @@ def chat(bot):
             "Please select the ThreeFold Circles you’d like to be informed of.", [space for space in spaces]
         )
         subscribe_to_mail = bot.single_choice(
-            """Please confirm that you want to us to keep you updated about the ThreeFold Circles you selected. You can always unsubscribe later.""",
+            """Please confirm that you want us to keep you updated about the ThreeFold Circles you selected. You can always unsubscribe later.""",
             ["OK"],
         )
         form = bot.new_form()
