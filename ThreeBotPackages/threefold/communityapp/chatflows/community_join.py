@@ -24,7 +24,7 @@ def chat(bot):
         if threebot_name:
             form = bot.new_form()
             name = form.string_ask(
-                f"<h3>Hello, 3Bot: {threebot_name} <br />Please fill in the following to change your data</h3> <br /> Name: "
+                f"<h3>Hello, 3Bot: {threebot_name} <br />Please fill in your details below. to change your data</h3> <br /> Name: "
             )
             email = form.string_ask("Email: ")
             company = form.string_ask("Company: ")
@@ -60,13 +60,12 @@ def chat(bot):
         threebot_doublename_ref_person = bot.kwargs.get("referral")
         bot.single_choice(
             f"""
-        <h3>Welcome to ThreeFold Connect</h3> <br />
-        Hi there! <br />
+        <h3>Welcome to ThreeFold Connect</h3> <br/>
+        Hi there! <br/>
         You're about to enter to a new digital world, where your data will be only yours.
-        The connect process, will allow us to better understand you and tailor our future connect services.
-        You are 2 minutes away from getting your digital freedom. <br />
-        Looking forward to build this digital world together. <br />
-        The ThreeFold Team <br /><br />
+        The connect process, will allow us to better understand you and tailor our future connect services. <br/>
+        Looking forward to build the conscious internet together.<br/>
+        The ThreeFold Team <br/><br/>
 
         You are invited by {threebot_referrer_name}
         """,
@@ -77,13 +76,12 @@ def chat(bot):
         form = bot.new_form()
         threebot_doublename_ref_person = form.string_ask(
             """
-        <h3>Welcome to ThreeFold Connect</h3> <br />
-        Hi there! <br />
+        <h3>Welcome to ThreeFold Connect</h3> <br/>
+        Hi there! <br/>
         You're about to enter to a new digital world, where your data will be only yours.
-        The connect process, will allow us to better understand you and tailor our future connect services.
-        You are 2 minutes away from getting your digital freedom. <br />
-        Looking forward to build this digital world together. <br />
-        The ThreeFold Team <br /><br />
+        The connect process, will allow us to better understand you and tailor our future connect services. <br/>
+        Looking forward to build the conscious internet together.<br/>
+        The ThreeFold Team <br/><br/>
 
         Please give the 3Bot double name of the person who referred you, if you don’t have, Please leave it empty
         """
@@ -111,7 +109,7 @@ def chat(bot):
         is_name_existed = False
         form = bot.new_form()
         name = form.string_ask(
-            "<h3>Please fill in the following</h3> <br /> <h4>Name: </h4>", validate={"required": True}
+            "<h3>Please fill in your details below.</h3> <br /> <h4>Name: </h4>", validate={"required": True}
         )
         email = form.string_ask("Email: ", validate={"required": True, "email": True})
         company = form.string_ask("Company: ", validate={"required": True})
@@ -122,7 +120,7 @@ def chat(bot):
         while is_name_existed:
             form = bot.new_form()
             name = form.string_ask(
-                "<h3>Please fill in the following</h3> <a>This name already exists, please try again</a> <br /> <h4>Name: </h4>",
+                "<h3>Please fill in your details below.</h3> <a>This name already exists, please try again</a> <br /> <h4>Name: </h4>",
                 validate={"required": True},
             )
             email = form.string_ask("Email: ", validate={"required": True, "email": True})
@@ -144,18 +142,17 @@ def chat(bot):
         ]
 
         interests = bot.multi_choice(
-            "Please mention which topics of ThreeFold you would like to be informed of", [space for space in spaces]
+            "Please select the ThreeFold Circles you’d like to be informed of.", [space for space in spaces]
         )
         subscribe_to_mail = bot.single_choice(
-            """Please confirm it's ok we inform you about news in the chosen topics.<br / >
-        You can always unsubscribe later. If not you will not receive email notifications.""",
+            """Please confirm that you want to us to keep you updated about the ThreeFold Circles you selected. You can always unsubscribe later.""",
             ["OK"],
         )
         form = bot.new_form()
         threebot_given_name = form.string_ask(
-            """Choose your own 3Bot name.<br / >
-        A 3Bot name consists out of 2 names minimum 5 characters. <br / >
-        Examples isabelle.belgium or red02.ghent<br />"""
+            """Now it’s time to choose your 3Bot name.<br/>
+            A 3Bot name needs 2 sets of minimum 5 characters.<br/>
+            Examples isabelle.belgium or red02.ghent"""
         )
         form.ask()
         threebot_given_name = threebot_given_name.value.lower()
@@ -241,7 +238,7 @@ def chat(bot):
         is_name_existed = False
         form = bot.new_form()
         name = form.string_ask(
-            "<h3>Please fill in the following</h3> <br /> <h4>Name: </h4>", validate={"required": True}
+            "<h3>Please fill in your details below.</h3> <br /> <h4>Name: </h4>", validate={"required": True}
         )
         email = form.string_ask("Email: ", validate={"required": True, "email": True})
         company = form.string_ask("Company: ", validate={"required": True})
@@ -251,7 +248,7 @@ def chat(bot):
         while is_name_existed:
             form = bot.new_form()
             name = form.string_ask(
-                "<h3>Please fill in the following</h3> <a>This name already exists, please try again</a> <br /> <h4>Name: </h4>",
+                "<h3>Please fill in your details below.</h3> <a>This name already exists, please try again</a> <br /> <h4>Name: </h4>",
                 validate={"required": True},
             )
             email = form.string_ask("Email: ", validate={"required": True, "email": True})
@@ -291,7 +288,7 @@ def chat(bot):
         bot.single_choice(
             f"""Congratulations you have successfully registered your details. <br/>
 
-            We shall get in touch with you by e-mail shortly where we will explain you the next steps. <br/>
+            We shall get in touch with you by e-mail shortly where we will explain you the next steps. <br/><br/>
 
             ThreeFold Team""",
             ["OK"],
