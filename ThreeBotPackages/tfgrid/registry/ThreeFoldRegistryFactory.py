@@ -1,5 +1,6 @@
 from Jumpscale import j
 import binascii
+import random
 
 
 class ThreeFoldRegistry(j.baseclasses.threebot_factory):
@@ -20,12 +21,21 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         """
         kosmos -p 'j.threebot.package.threefold.registry.test()'
         """
+        """
+        #. Start threebot server, add registery package, then reload the client.
+        #. Register user1's data as public, should succeed
+        #. Get user1 public data, should succeed
+        #. Register user1's data as private with giving access to user2, should succeed
+        #. Get data with user 2, should succeed
+        #. Get data with unauthorized data, should not be able to get the data
+        """
+
+        # . Start threebot server, add registery package, then reload the client.
         cl = self.client_get()
         cl.actors.package_manager.package_add(
             path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/registry"
         )
         cl.reload()
-
         print(name)
 
         # lets test for registration of a wiki page
@@ -46,9 +56,15 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
 
         cl.actors.registry.schema_register(scm.url, schema)
 
-        first_author = j.tools.threebot.me.get("first_id", tid=5, email="test@test.com", tname="first")
-
-        second_author = j.tools.threebot.me.get("second_id", tid=3, email="test@test.com", tname="second")
+        first_author = j.tools.threebot.me.get(
+            "first_id", tid=random.randint(100, 200), email="test@test.com", tname="first"
+        )
+        authorized_reader = j.tools.threebot.me.get(
+            "second_id", tid=random.randint(201, 300), email="test@test.com", tname="second"
+        )
+        unauthorized_reader = j.tools.threebot.me.get(
+            "third_id", tid=random.randint(301, 400), email="test@test.com", tname="third"
+        )
 
         # we should create 2 examples, one where we encrypt for multiple threebot identities (j.tools.threebot...)
         # non-encrypted example
@@ -61,9 +77,8 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         dataobj.description = "just a test"
         dataobj.save()
 
+        # . Register user1's data as public, should succeed
         # need to sign with private key of author, we sign the bin data from dataobj (_data)
-        pubkey = first_author.nacl.public_key.encode()
-        signingkey = first_author.nacl.signing_key.encode()
         verifykey = first_author.nacl.verify_key.encode()
         signed_data = first_author.nacl.sign(dataobj._data)
         post_id1 = cl.actors.registry.register(
@@ -71,11 +86,16 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         )
         if not post_id1:
             raise j.exceptions.Input("Failed to register your content")
+
+        # . Get user1 public data, should succeed
+        res = cl.actors.registry.get(data_id=post_id1)
+        assert model == res
+
         # encrypted example
         scm2 = j.data.schema.get_from_url(url="threebot.registry.entry.data.1")
         dataobj2 = self.bcdb.model_get(url=scm2.url).new()
         dataobj2.authors = [first_author.tid]
-        dataobj2.readers = [second_author.tid]
+        dataobj2.readers = [authorized_reader.tid]
         dataobj2.schema_url = scm.url
         dataobj2.format = dataobj2.format.WIKI
         dataobj2.description = "just a test"
@@ -87,25 +107,24 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
 
         signed_data = first_author.nacl.sign(dataobj2._data)
 
+        # . Register user1's data as private with giving access to user2, should succeed
         post_id2 = cl.actors.registry.register(
             authors=[first_author.tid], verifykey=verifykey, input_object=dataobj2, signature_hex=signed_data.hex()
         )
         if not post_id2:
             raise j.exceptions.Input("Failed to register your content")
 
-        # lets now verify if we can get the data and if we can decrypt (if encrypted)
-        # check normal post
-        res = cl.actors.registry.get(data_id=post_id1)
-        from pprint import pprint
-
-        pprint(f"{res._ddict_hr}\ninfo_data:{res._ddict_hr}")
         #  Find all encrypted data for specific user or you can use your search criteria
-        res = cl.actors.registry.find_encrypted(tid=second_author.tid)
-        for item in res:
-            pprint(f"{item._ddict_hr}")
+        # . Get data with user 2, should succeed
+        res = cl.actors.registry.find_encrypted(tid=authorized_reader.tid)
+        assert model == res[-1]
+
+        # . Get data with unauthorized data, should not be able to get the data
+        res = cl.actors.registry.find_encrypted(tid=unauthorized_reader.tid)
+        assert res == []
 
         # find formatted in jsxschema
         res = cl.actors.registry.find_formatted(registered_info_format="JSXSCHEMA")
+        print(res.res)
 
-        pprint(f"{res}")
-        return "OK"
+        print("OK")
