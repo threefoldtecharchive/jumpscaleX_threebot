@@ -108,6 +108,7 @@ def chat(bot):
             threebot_doublename_ref_person = threebot_doublename_ref_person.value.lower()
             is_valid_threebot = validate_threebot_name(threebot_doublename_ref_person)
 
+        is_name_existed = False
         form = bot.new_form()
         name = form.string_ask(
             "<h3>Please fill in the following</h3> <br /> <h4>Name: </h4>", validate={"required": True}
@@ -117,6 +118,19 @@ def chat(bot):
         country = form.string_ask("Country: ", validate={"required": True})
         secret = uuid.uuid4().hex
         form.ask()
+        is_name_existed = gedis_client.actors.community_manager.check_name_existance(name=name.value)
+        while is_name_existed:
+            form = bot.new_form()
+            name = form.string_ask(
+                "<h3>Please fill in the following</h3> <a>This name already exists, please try again</a> <br /> <h4>Name: </h4>",
+                validate={"required": True},
+            )
+            email = form.string_ask("Email: ", validate={"required": True, "email": True})
+            company = form.string_ask("Company: ", validate={"required": True})
+            country = form.string_ask("Country: ", validate={"required": True})
+            secret = uuid.uuid4().hex
+            form.ask()
+            is_name_existed = gedis_client.actors.community_manager.check_name_existance(name=name.value)
 
         spaces = [
             "ThreeFold Network User",
@@ -224,6 +238,7 @@ def chat(bot):
         gevent.sleep(1)
         bot.redirect("https://threefold.io/")
     else:
+        is_name_existed = False
         form = bot.new_form()
         name = form.string_ask(
             "<h3>Please fill in the following</h3> <br /> <h4>Name: </h4>", validate={"required": True}
@@ -232,6 +247,19 @@ def chat(bot):
         company = form.string_ask("Company: ", validate={"required": True})
         country = form.string_ask("Country: ", validate={"required": True})
         form.ask()
+        is_name_existed = gedis_client.actors.community_manager.check_name_existance(name=name.value)
+        while is_name_existed:
+            form = bot.new_form()
+            name = form.string_ask(
+                "<h3>Please fill in the following</h3> <a>This name already exists, please try again</a> <br /> <h4>Name: </h4>",
+                validate={"required": True},
+            )
+            email = form.string_ask("Email: ", validate={"required": True, "email": True})
+            company = form.string_ask("Company: ", validate={"required": True})
+            country = form.string_ask("Country: ", validate={"required": True})
+            form.ask()
+            is_name_existed = gedis_client.actors.community_manager.check_name_existance(name=name.value)
+
         # save data in bcdb
         save = gedis_client.actors.community_manager.user_add(
             name=name.value, email=email.value, country=country.value, company=company.value, threebot_name="guest"

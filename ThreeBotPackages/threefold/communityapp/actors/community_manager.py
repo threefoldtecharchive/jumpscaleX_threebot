@@ -251,18 +251,40 @@ class community_manager(j.baseclasses.threebot_actor):
             user.referral_code = secret
             user.invited_by = self.get_referral_id(invited_by)
             user.save()
+            return True
         else:
             for item in users:
-                if item.remark_threefold == threebot_name:
+                if item.remark_threefold == threebot_name or item.remark_threefold == "guest":
                     current_user = item
                     break
             if current_user:
-                user = current_user
-                user.email = email
-                user.name = name
-                user.country = country
-                user.company = company
-                user.save()
+                if current_user.remark_threefold == "guest":
+                    user = current_user
+                    user.email = email
+                    user.name = name
+                    user.country = country
+                    user.company = company
+                    # TODO: CHANGE ME: will register threebotname in this field to avoid changing the schema
+                    user.remark_threefold = threebot_name
+                    # TODO: CHANGE ME: will register userspaces in this field to avoid changing the schema
+                    user.referral_code = secret
+                    user.invited_by = self.get_referral_id(invited_by)
+                    user.save()
+                    return True
+            else:
+                return False
+
+    def check_name_existance(self, name, user_session=None):
+        """
+        ```in
+        name = (S)
+        ```
+        """
+        users = self.model.find(name=name)
+        if users:
+            return True
+        else:
+            return False
 
     def get_invitation_code(self, email, user_name, user_session=None):
         """
