@@ -213,8 +213,13 @@ module.exports = {
   }),
   async mounted() {
     this.doubleName = (await window.initializeService.getName()).data.name
-    this.doubleName = !this.doubleName.endsWith(".3bot") ? (this.doubleName + ".3bot") : this.doubleName
-    console.log(`User: `, this.doubleName)
+    if (this.doubleName) {
+      this.doubleName = !this.doubleName.endsWith(".3bot") ? (this.doubleName + ".3bot") : this.doubleName
+      console.log(`User: `, this.doubleName)
+    } else {
+      console.log("No name found, please register first!")
+    }
+
   },
   methods: {
     async initialize3Bot() {
@@ -323,11 +328,11 @@ module.exports = {
           console.log(`Attempting to get data`)
           var initializationData = await window.initializeService.getInitializationData()
           console.log(initializationData)
-          
+
           if (initializationData.status === 200) {
             var reseed = await window.initializeService.reseed(this.threebotKeys.phrase)
 
-            if(reseed.status === 200) {
+            if (reseed.status === 200) {
               console.log("Finished reseeding, we can continue!")
             }
           }

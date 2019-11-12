@@ -4,7 +4,7 @@ import config from '../config/index.js'
 
 export default ({
   getName () {
-    return Axios.post(`${config.jsApiUrl}initialize/name`)
+    return axios.post(`${config.jsApiUrl}initialize/name`)
   },
   addInitializationData (name, public_key, referrer, country, threebot_keys, wallet_keys) {
     var args = {
@@ -28,11 +28,11 @@ export default ({
       }
     }
 
-    return Axios.post(`${config.jsApiUrl}initialize/add`, args)
+    return axios.post(`${config.jsApiUrl}initialize/add`, args)
   },
   getInitializationData () {
     console.log(`${config.jsApiUrl}initialize/get`)
-    return Axios.post(`${config.jsApiUrl}initialize/get`)
+    return axios.post(`${config.jsApiUrl}initialize/get`)
   },
   reseed (seed) {
     var args = {
@@ -41,6 +41,6 @@ export default ({
       }
     }
 
-    return Axios.post(`${config.jsApiUrl}initialize/reseed`, args)
+    return axios.post(`${config.jsApiUrl}initialize/reseed`, args)
   }
 })

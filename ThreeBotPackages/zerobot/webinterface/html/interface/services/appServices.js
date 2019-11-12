@@ -4,7 +4,7 @@ import config from '../config/index.js'
 
 export default ({
   getVueApps () {
-    const frontendPackages = Axios.post(`${config.jsApiUrl}package_manager/packages_list`, {
+    const frontendPackages = axios.post(`${config.jsApiUrl}package_manager/packages_list`, {
       args: {
         frontend: true
       }
@@ -12,11 +12,11 @@ export default ({
     return frontendPackages
   },
   checkPathForFile (path) {
-    return Axios.get(path)
+    return axios.get(path)
   },
   installApp (app) {
     app.installed = true
-    return Axios.post(`${config.jsApiUrl}apps/put`, {
+    return axios.post(`${config.jsApiUrl}apps/put`, {
       args: {
         app
       }
@@ -24,7 +24,7 @@ export default ({
   },
   uninstallApp (app) {
     app.installed = false
-    return Axios.post(`${config.jsApiUrl}apps/put`, {
+    return axios.post(`${config.jsApiUrl}apps/put`, {
       args: {
         app
       }
