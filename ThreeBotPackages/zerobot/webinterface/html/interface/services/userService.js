@@ -4,6 +4,6 @@ import config from '/interface/config/index.js'
 
 export default ({
   getUserData (doubleName) {
-    return Axios.get(`${config.botBackend}/api/users/${doubleName}`)
+    return axios.get(`${config.botBackend}/api/users/${doubleName}`)
   }
 })

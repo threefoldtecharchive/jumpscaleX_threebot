@@ -209,14 +209,32 @@ module.exports = {
     keys: {},
     walletKeys: {},
     threebotKeys: {},
-    doubleName: ""
+    doubleName: "",
+    validated: 1
   }),
   async mounted() {
+    var initiazationData = await window.initializeService.getInitializationData()
+    if (initiazationData.data.users.length >= 1) {
+      // Redirect to initialize
+      this.$router.push({
+        name: 'home'
+      })
+    }
+
     this.doubleName = (await window.initializeService.getName()).data.name
-    this.doubleName = !this.doubleName.endsWith(".3bot") ? (this.doubleName + ".3bot") : this.doubleName
-    console.log(`User: `, this.doubleName)
+    if (this.doubleName) {
+      this.doubleName = !this.doubleName.endsWith(".3bot") ? (this.doubleName + ".3bot") : this.doubleName
+      console.log(`User: `, this.doubleName)
+    } else {
+      this.validated = 0
+      console.log("No name found, please register first!")
+    }
+
   },
   methods: {
+    reloadPage () {
+      window.location.reload()
+    },
     async initialize3Bot() {
       if (!this.country) {
         this.countryError.push('Please select a country.')
@@ -323,16 +341,19 @@ module.exports = {
           console.log(`Attempting to get data`)
           var initializationData = await window.initializeService.getInitializationData()
           console.log(initializationData)
-          
+
           if (initializationData.status === 200) {
             var reseed = await window.initializeService.reseed(this.threebotKeys.phrase)
 
-            if(reseed.status === 200) {
+            if (reseed.status === 200) {
               console.log("Finished reseeding, we can continue!")
             }
+
+            this.reloadPage()
           }
         } catch (error) {
           console.log(`Something else went wrong.`)
+          this.reloadPage()
         }
 
       })
