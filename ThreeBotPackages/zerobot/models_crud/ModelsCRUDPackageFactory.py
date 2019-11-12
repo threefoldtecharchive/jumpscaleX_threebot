@@ -2,8 +2,8 @@ import traceback
 from Jumpscale import j
 
 
-class ChatFactory(j.baseclasses.threebot_factory):
-    __jslocation__ = "j.threebot.package.bcdb"
+class ModelsCRUDPackageFactory(j.baseclasses.threebot_factory):
+    __jslocation__ = "j.threebot.package.models_crud"
 
     def test(self):
         test_schema = """

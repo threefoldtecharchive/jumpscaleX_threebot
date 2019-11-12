@@ -1,12 +1,12 @@
-# BCDB Package
+# Models CRUD Package
 
 this package generates CRUD actor for each model loaded in bcdb.
 
 ## For each model the following methods will be generated:
-**new**: creates new object from the model.  
-**get**: gets an object by id  
-**get_by_name**: gets an object by name  
-**find**: finds objects matching a given query (A query is a dict of keys and values to find with)  
+**new**: creates new object from the model.
+**get**: gets an object by id
+**get_by_name**: gets an object by name
+**find**: finds objects matching a given query (A query is a dict of keys and values to find with)
 **set**: sets values to an existing object
 
 #### usage example:
