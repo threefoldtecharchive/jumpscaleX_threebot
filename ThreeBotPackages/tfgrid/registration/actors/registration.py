@@ -75,3 +75,14 @@ class registration(j.baseclasses.threebot_actor):
         j.sal.fs.remove(exportpath)
         # restart myself
         gevent.spawn_later(5, j.sal.process.restart_program)
+
+    def set_identity(self, tid, tname, email, pubkey, user_session):
+        """
+        ```in
+        tid = (I)
+        tname = (S)
+        email = (S)
+        pubkey = (S)
+        ```
+        """
+        j.tools.threebot.me.get(name="default", tid=tid, tname=tname, email=email, pubkey=pubkey).save()
