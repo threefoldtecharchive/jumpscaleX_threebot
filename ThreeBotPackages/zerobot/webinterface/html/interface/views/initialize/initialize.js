@@ -347,11 +347,13 @@ module.exports = {
 
             if (reseed.status === 200) {
               console.log("Finished reseeding, we can continue!")
-              this.reloadPage()
             }
+
+            this.reloadPage()
           }
         } catch (error) {
           console.log(`Something else went wrong.`)
+          this.reloadPage()
         }
 
       })
