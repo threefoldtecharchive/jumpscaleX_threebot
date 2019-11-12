@@ -7,7 +7,7 @@ export default ({
     return Axios.post(`${config.jsApiUrl}initialize/name`)
   },
   addInitializationData (name, public_key, referrer, country, threebot_keys, wallet_keys) {
-    var tmp = {
+    var args = {
       args: {
         user: {
           bot_name: name,
@@ -28,9 +28,19 @@ export default ({
       }
     }
 
-    return Axios.post(`${config.jsApiUrl}initialize/add`, tmp)
+    return Axios.post(`${config.jsApiUrl}initialize/add`, args)
   },
   getInitializationData () {
+    console.log(`${config.jsApiUrl}initialize/get`)
     return Axios.post(`${config.jsApiUrl}initialize/get`)
+  },
+  reseed (seed) {
+    var args = {
+      args: {
+        newseed: seed
+      }
+    }
+
+    return Axios.post(`${config.jsApiUrl}initialize/reseed`, args)
   }
 })
