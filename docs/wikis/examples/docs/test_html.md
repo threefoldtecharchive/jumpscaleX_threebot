@@ -62,3 +62,16 @@ method = "hello"
 name = "John doe"
 
 ```
+
+
+## Dynamic macro with markdown
+
+#### html_test.hello
+
+```
+!!!dynamic_content
+actor = "html_test"
+method = "hello_markdown"
+name = "John doe"
+markdown = True
+```
