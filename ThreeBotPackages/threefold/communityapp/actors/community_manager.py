@@ -8,6 +8,9 @@ class community_manager(j.baseclasses.threebot_actor):
         self.current_user = ""
         self.FFP = "http://10.102.71.171:8280/"
         self.freeflow_client = j.clients.freeflowpages.get()
+        self.links = []
+        self.ids = []
+        self.start = True
 
     def community_join(self, user_email, spaces, user_session=None):
         """
@@ -49,6 +52,38 @@ class community_manager(j.baseclasses.threebot_actor):
         spaces = spaces["results"]
         return [space["name"] for space in spaces]
 
+    def get_node_structure(self, schema_out=None, user_session=None):
+        if not self.ids and not self.start:
+            user = self.model.find(email=self.current_user)
+            d = self.get_nodes(user[0].name)
+
+            return j.data.serializers.json.dumps(d)
+
+        elif not self.start:
+            user_id = self.ids.pop()
+            user = self.model.find(id=user_id)
+            users = self.model.find(invited_by=user_id)
+        else:
+            user = self.model.find(email=self.current_user)
+            users = self.model.find(invited_by=user[0].id)
+            self.start = False
+
+        for i in users:
+            self.ids.append(i.id)
+            self.links.append((user[0].name, i.name))
+        return self.get_node_structure()
+
+    def get_nodes(self, node):
+        d = {}
+        d["text"] = {"name": node}
+        children = self.get_children(node)
+        if children:
+            d["children"] = [self.get_nodes(child) for child in children]
+        return d
+
+    def get_children(self, node):
+        return [x[1] for x in self.links if x[0] == node]
+
     def info_get_current_user(self, schema_out=None, user_session=None):
         """
         ```out
@@ -83,6 +118,20 @@ class community_manager(j.baseclasses.threebot_actor):
             join=join_message,
             latestnews=latestNews,
         )
+        return out
+
+    def info_nodes(self, schema_out=None, user_session=None):
+        """
+        ```out
+        content = (S)
+        ```
+        gets parsed html representation of user info
+        :param user_name:
+        :return:
+        """
+        out = schema_out.new()
+        # TODO: improve html styling in the template
+        out.content = j.tools.jinja2.template_get(self._dirpath + "/index.html").render()
         return out
 
     def check_referral(self, email, referral, name, schema_out=None, user_session=None):
