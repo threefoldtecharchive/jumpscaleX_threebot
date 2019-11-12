@@ -213,6 +213,14 @@ module.exports = {
     validated: 1
   }),
   async mounted() {
+    var initiazationData = await window.initializeService.getInitializationData()
+    if (initiazationData.data.users.length >= 1) {
+      // Redirect to initialize
+      this.$router.push({
+        name: 'home'
+      })
+    }
+
     this.doubleName = (await window.initializeService.getName()).data.name
     if (this.doubleName) {
       this.doubleName = !this.doubleName.endsWith(".3bot") ? (this.doubleName + ".3bot") : this.doubleName
@@ -224,6 +232,9 @@ module.exports = {
 
   },
   methods: {
+    reloadPage () {
+      window.location.reload()
+    },
     async initialize3Bot() {
       if (!this.country) {
         this.countryError.push('Please select a country.')
@@ -336,6 +347,7 @@ module.exports = {
 
             if (reseed.status === 200) {
               console.log("Finished reseeding, we can continue!")
+              this.reloadPage()
             }
           }
         } catch (error) {
