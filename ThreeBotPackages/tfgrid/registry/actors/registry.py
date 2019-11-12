@@ -13,7 +13,7 @@ class registry(j.baseclasses.threebot_actor):
         self.threebot_data_model = self.bcdb.model_get(url="threebot.registry.entry.data.1")
 
     def register(
-        self, authors=[], verifykey=None, input_object=None, signature_hex=None, schema_out=None, user_session=None
+        self, authors=None, verifykey=None, input_object=None, signature_hex=None, schema_out=None, user_session=None
     ):
         """
         register an object of the type threebot.registry.entry.data.1
@@ -31,6 +31,9 @@ class registry(j.baseclasses.threebot_actor):
         :return: return the id of the object
         """
         # verify author id is correct
+        if not authors:
+            authors = []
+
         if user_session.threebot_id:
             threebot_id = user_session.threebot_id
             # adding the threebot_id in the session in the authors list
@@ -55,9 +58,8 @@ class registry(j.baseclasses.threebot_actor):
         # register the data
         new_data_model = None
         if input_object.schema_url:
-            # TODO: register other formats
             if input_object.registered_info:
-                new_data_model = j.data.serializers.jsxdata.loads(input_object.registered_info)
+                new_data_model = self.__decrypt_data(input_object.registered_info_format, input_object.registered_info)
             else:
                 new_data_model = input_object.registered_info_encrypted
 
@@ -75,7 +77,7 @@ class registry(j.baseclasses.threebot_actor):
         new_object.topic = input_object.topic
         new_object.description = input_object.description
         if input_object.registered_info:
-            new_object.registered_info = j.data.serializers.jsxdata.dumps(new_data_model)
+            new_object.registered_info = self.__encrypt_data(input_object.registered_info_format, new_data_model)
         new_object.save()
 
         return new_object.id
@@ -91,9 +93,21 @@ class registry(j.baseclasses.threebot_actor):
         res = !threebot.registry.entry.data.1
         ```
         """
-        # TODO: tune working for encrypted data
         res = self.threebot_data_model.get(obj_id=data_id)
-        return res
+        # verify if  encrypted data or not
+        if not res.registered_info:
+            if tid in res.readers or tid in res.authors:
+                encrypted_data_list = []
+                decrypted_data_list = res.registered_info_encrypted
+                for data in decrypted_data_list:
+                    encrypted_data = self.__decrypt_data(res.registered_info_format, data.data_)
+                    encrypted_data_list.append(encrypted_data)
+                return encrypted_data_list
+            else:
+                raise Exception("You are not authorized to few this data")
+        else:
+            encrypted_data = self.__decrypt_data(res.registered_info_format, res.registered_info)
+            return encrypted_data
 
     def schema_register(self, schema_url=None, schema_text=None, schema_out=None, user_session=None):
         """
@@ -155,14 +169,46 @@ class registry(j.baseclasses.threebot_actor):
         for item in results:
             model = self.threebot_data_model.get(obj_id=item[0])
             if model.registered_info_encrypted:
-                if tid in model.readers:
-                    if not model in res:
-                        res.append(model)
+                if tid in model.readers or tid in model.authors:
+                    for item in model.registered_info_encrypted:
+                        decrypted_data = self.__decrypt_data(model.registered_info_format, item.data_)
+                        if not decrypted_data in res:
+                            res.append(decrypted_data)
 
         if len(res) > 50:
             raise j.exceptions.Input("Can not return results is > 50")
 
         return res
+
+    def __encrypt_data(self, serializer_type, decrypted_data):
+        if serializer_type == "JSXSCHEMA":
+            encrypted_data = j.data.serializers.jsxdata.dumps(decrypted_data)
+
+        if serializer_type == "YAML":
+            encrypted_data = j.data.serializers.yaml.dumps(decrypted_data)
+
+        if serializer_type == "JSON":
+            encrypted_data = j.data.serializers.json.dumps(decrypted_data)
+
+        if serializer_type == "msgpack":
+            encrypted_data = j.data.serializers.msgpack.dumps(decrypted_data)
+
+        return encrypted_data
+
+    def __decrypt_data(self, serializer_type, encrypted_data):
+        if serializer_type == "JSXSCHEMA":
+            decrypted_data = j.data.serializers.jsxdata.loads(encrypted_data)
+
+        if serializer_type == "YAML":
+            decrypted_data = j.data.serializers.yaml.loads(encrypted_data)
+
+        if serializer_type == "JSON":
+            decrypted_data = j.data.serializers.json.loads(encrypted_data)
+
+        if serializer_type == "msgpack":
+            decrypted_data = j.data.serializers.msgpack.loads(encrypted_data)
+
+        return decrypted_data
 
     def find_formatted(
         self,
@@ -191,7 +237,9 @@ class registry(j.baseclasses.threebot_actor):
         topic = "travel,food,it,spirituality,health,education,finance,varia" (E)
         description = ""
         ```
-
+        ```out
+        res = (S)
+        ```
         only return if < 50 results
 
         :param schema_url:
@@ -219,25 +267,26 @@ class registry(j.baseclasses.threebot_actor):
         results = query.fetchall()
 
         for item in results:
+            # TODO: Check
+            # # find the data
+            # if found: see if there was a jumpscale schema used
+            # if jumpscale schema
+            # deserialize the data if needed and put in jumpscale object
+            # serialize the coming from the jumpscaleobject to the format asked for
+            # return the data
+            # if not jumpscale schema
+            # deserialize & re-serialize if needed to make sure the return format is the right one
+
             output = None
             model = self.threebot_data_model.get(obj_id=item[0])
             if model.registered_info:
-                if model.registered_info_format == "JSXSCHEMA":
-                    jsxobject = self.bcdb.model_get(url="threebot.registry.entry.data.1").new()
-                    jsxobject = j.data.serializers.jsxdata.loads(model.registered_info)
-                    output = jsxobject._data
-
-                if model.registered_info_format == "YAML":
-                    data = j.data.serializers.yaml.loads(model.registered_info)
-                    output = j.data.serializers.yaml.dumps(data)
-
-                if model.registered_info_format == "JSON":
-                    data = j.data.serializers.json.loads(model.registered_info)
-                    output = j.data.serializers.json.dumps(data)
-
-                if model.registered_info_format == "msgpack":
-                    data = j.data.serializers.msgpack.loads(model.registered_info)
-                    output = j.data.serializers.msgpack.dumps(data)
+                encry_data = None
+                decry_data = self.__decrypt_data(str(model.registered_info_format), model.registered_info)
+                if registered_info_format == "JSXSCHEMA":
+                    encry_data = self.__encrypt_data(registered_info_format, decry_data)
+                    output = str(self.__decrypt_data(registered_info_format, encry_data))
+                else:
+                    output = self.__encrypt_data(registered_info_format, decry_data._ddict)
 
                 if not output in res:
                     res.append(output)
@@ -245,7 +294,9 @@ class registry(j.baseclasses.threebot_actor):
         if len(res) > 50:
             raise j.exceptions.Input("Can not return results is > 50")
 
-        return res
+        out = schema_out.new()
+        out.res = res
+        return out
 
     def validate_signature(
         self, tid=None, verifykey=None, payload=None, signature=None, schema_out=None, user_session=None
