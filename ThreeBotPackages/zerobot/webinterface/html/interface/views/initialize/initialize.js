@@ -209,7 +209,8 @@ module.exports = {
     keys: {},
     walletKeys: {},
     threebotKeys: {},
-    doubleName: ""
+    doubleName: "",
+    validated: 1
   }),
   async mounted() {
     this.doubleName = (await window.initializeService.getName()).data.name
@@ -217,6 +218,7 @@ module.exports = {
       this.doubleName = !this.doubleName.endsWith(".3bot") ? (this.doubleName + ".3bot") : this.doubleName
       console.log(`User: `, this.doubleName)
     } else {
+      this.validated = 0
       console.log("No name found, please register first!")
     }
 
