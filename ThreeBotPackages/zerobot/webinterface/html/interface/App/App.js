@@ -59,7 +59,7 @@ module.exports = {
           meta: {
             ...route.meta,
             app: true,
-            position: 'top'
+            position: route.meta.position ? route.meta.position : 'top'
           }
         }
       })
