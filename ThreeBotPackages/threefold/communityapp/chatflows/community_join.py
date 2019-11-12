@@ -63,7 +63,7 @@ def chat(bot):
         <h3>Welcome to ThreeFold Connect</h3> <br/>
         Hi there! <br/>
         You're about to enter to a new digital world, where your data will be only yours.
-        The connect process, will allow us to better understand you and tailor our future connect services. <br/>
+        The connect process will allow us to better understand you and tailor our future connect services. <br/>
         Looking forward to build the conscious internet together.<br/>
         The ThreeFold Team <br/><br/>
 
@@ -79,7 +79,7 @@ def chat(bot):
         <h3>Welcome to ThreeFold Connect</h3> <br/>
         Hi there! <br/>
         You're about to enter to a new digital world, where your data will be only yours.
-        The connect process, will allow us to better understand you and tailor our future connect services. <br/>
+        The connect process will allow us to better understand you and tailor our future connect services. <br/>
         Looking forward to build the conscious internet together.<br/>
         The ThreeFold Team <br/><br/>
 
@@ -98,8 +98,8 @@ def chat(bot):
             form = bot.new_form()
             threebot_doublename_ref_person = form.string_ask(
                 """
-            <a>You have entered invalid name</a><br />
-            Please make sure it's in the correct format, it's two parts each is 5 characters or more, example: kristof.eagle
+            <a>You have entered an invalid name</a><br />
+            Please make sure it's in the correct format. it's two parts each is 5 characters or more. for example: kristof.eagle
             """
             )
             form.ask()
@@ -166,8 +166,8 @@ def chat(bot):
             if not is_valid_threebot:
                 threebot_given_name = form.string_ask(
                     """
-                <a>You have entered invalid name</a><br />
-                Please make sure it's in the correct format, it's two parts each is 5 characters or more, example: kristof.eagle
+                <a>You have entered an invalid name</a><br />
+                Please make sure it's in the correct format. it's two parts each is 5 characters or more. for example: kristof.eagle
                 """
                 )
             if is_unique_threebot == 1:
