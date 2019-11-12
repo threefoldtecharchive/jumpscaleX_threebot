@@ -277,7 +277,7 @@ module.exports = {
           console.log(` -> private key: `, this.walletKeys.privateKey)
           console.log(` -> public key: `, this.walletKeys.publicKey)
 
-          this.generateDerivedKeypair(result, window.location.hostname)
+          this.generateDerivedKeypair(result, window.location.host)
         })
       }
     },
@@ -319,8 +319,18 @@ module.exports = {
         }
 
         try {
-          var responseGet = (await window.initializeService.getInitializationData())
-          console.log(responseGet)
+          // Doubling checking if that data was actually saved and going to call the reseed API. 
+          console.log(`Attempting to get data`)
+          var initializationData = await window.initializeService.getInitializationData()
+          console.log(initializationData)
+          
+          if (initializationData.status === 200) {
+            var reseed = await window.initializeService.reseed(this.threebotKeys.phrase)
+
+            if(reseed.status === 200) {
+              console.log("Finished reseeding, we can continue!")
+            }
+          }
         } catch (error) {
           console.log(`Something else went wrong.`)
         }

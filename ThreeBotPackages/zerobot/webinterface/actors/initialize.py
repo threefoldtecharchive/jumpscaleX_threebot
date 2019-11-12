@@ -74,3 +74,22 @@ class initialize(j.baseclasses.threebot_actor):
             return res
         else:
             raise Exception("Already initialized.")
+
+    def reseed(self, newseed, user_session):
+        """
+        ```in
+        newseed = (S)
+        ```
+        :param newseed:
+        :param user_session:
+        :return:
+        """
+        
+        exportpath = j.sal.fs.getTmpDirPath()
+        j.data.bcdb.system.export(exportpath, False)
+        j.data.nacl.configure(privkey_words=newseed, reset=True)
+        j.tools.threebot_packages.delete("registration")
+        j.sal.process.execute(f"kosmos -p 'system = j.data.bcdb.get_system(); system.import_(\"{exportpath}\")'")
+        j.sal.fs.remove(exportpath)
+        # restart myself
+        gevent.spawn_later(5, j.sal.process.restart_program)
