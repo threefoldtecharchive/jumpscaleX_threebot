@@ -262,6 +262,11 @@ Same for the chat package
 ```
 Notice for chat package only cares about the `topic` not about the package name
 
+# Conventions for Webapps
+- If package has `frontend` directory, SPA location will be created with the name of the package as path_url
+- If package has `html` directory, Static location will be created with the name of the package as path_url
+
+
 # Webinterface package
 
 [Webinterface](https://github.com/threefoldtech/jumpscaleX_threebot/blob/c58b3db99095a8a9635c75ac7f82647947a9d110/ThreeBotPackages/threebot/webinterface) package is always registered when starting your threebot responsible for

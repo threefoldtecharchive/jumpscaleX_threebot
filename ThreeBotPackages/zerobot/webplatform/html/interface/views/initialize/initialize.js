@@ -345,6 +345,7 @@ module.exports = {
           if (initializationData.status === 200) {
             var reseed = await window.initializeService.reseed(this.threebotKeys.phrase)
 
+            // We will never receive a response from the reseeding function ... Find a way to handle this. 
             if (reseed.status === 200) {
               console.log("Finished reseeding, we can continue!")
             }
