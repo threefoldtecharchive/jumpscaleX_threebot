@@ -4,6 +4,7 @@ import config from '../config/index.js'
 
 export default ({
   getVueApps () {
+
     const frontendPackages = axios.post(`${config.jsApiUrl}package_manager/packages_list`, {
       args: {
         frontend: true
