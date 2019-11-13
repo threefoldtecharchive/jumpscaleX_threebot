@@ -73,7 +73,7 @@ def gedis_http(name, cmd):
     actor = getattr(client.actors, name, None)
     if not actor:
         response.status = 404
-        return f"Actor {name}  does not exist oO"
+        return f"Actor {name} does not exist"
     command = getattr(actor, cmd, None)
     if not command:
         response.status = 400
