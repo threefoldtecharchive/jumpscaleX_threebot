@@ -20,31 +20,31 @@ document.addEventListener('DOMContentLoaded', (event) => {
   window.userService = userService
   window.initializeService = initializeService
 
-const router = new VueRouter({
-  routes: [{
-    path: '/',
-    component: httpVueLoader('/interface/views/home/index.vue'),
-    name: 'home',
-    meta: {
-      icon: 'fa-home',
-      position: 'top'
-    }
-  }, {
-    path: '/login',
-    name: 'login',
-    component: httpVueLoader('/interface/views/login/index.vue'),
-    meta: {
-      position: 'none'
-    }
-  }, {
-    path: '/initialize',
-    name: 'initialize',
-    component: httpVueLoader('/interface/views/initialize/index.vue'),
-    meta: {
-      position: 'none'
-    }
-  }]
-})
+  const router = new VueRouter({
+    routes: [{
+      path: '/',
+      component: httpVueLoader('/interface/views/home/index.vue'),
+      name: 'home',
+      meta: {
+        icon: 'fa-home',
+        position: 'top'
+      }
+    }, {
+      path: '/login',
+      name: 'login',
+      component: httpVueLoader('/interface/views/login/index.vue'),
+      meta: {
+        position: 'none'
+      }
+    }, {
+      path: '/initialize',
+      name: 'initialize',
+      component: httpVueLoader('/interface/views/initialize/index.vue'),
+      meta: {
+        position: 'none'
+      }
+    }]
+  })
 
   store.dispatch('setRoutes', router.options.routes)
 
