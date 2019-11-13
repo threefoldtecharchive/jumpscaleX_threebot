@@ -30,14 +30,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         position: 'top'
       }
     }, {
-      path: '/appstore',
-      component: httpVueLoader('/interface/views/appstore/index.vue'),
-      name: 'appstore',
-      meta: {
-        icon: 'fa-th',
-        position: 'bottom'
-      }
-    }, {
       path: '/login',
       name: 'login',
       component: httpVueLoader('/interface/views/login/index.vue'),
