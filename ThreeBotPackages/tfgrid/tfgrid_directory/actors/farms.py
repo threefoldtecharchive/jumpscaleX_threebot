@@ -32,13 +32,15 @@ class farms(j.baseclasses.threebot_actor):
             if not getattr(farm, field):
                 raise j.exceptions.Value("%s is required" % field)
 
-        if self.farm_model.find(name=farm.name):
-            raise j.exceptions.Value("Farm with name %s is already exist" % farm.name)
-
         if not _re_name.match(farm.name):
             raise j.exceptions.Value(
                 "Farm name is not valide. Name can only contain alphanumeric characters dash (-) or underscore (_)"
             )
+
+    def _check_existing(self, farm):
+        if self.farm_model.find(name=farm.name):
+            raise j.exceptions.Value("Farm with name %s is already exist" % farm.name)
+
 
     def register(self, farm, schema_out=None, user_session=None):
         """
@@ -51,7 +53,7 @@ class farms(j.baseclasses.threebot_actor):
         ```
         """
         self._validate_farm(farm)
-
+        self._check_existing(farm)
         farm = self.farm_model.new(farm).save()
         out = schema_out.new()
         out.farm_id = farm.id
@@ -63,11 +65,14 @@ class farms(j.baseclasses.threebot_actor):
         farm_id = (I)
         farm = (O) !tfgrid.farm.1
         ```
+        ```out
+        farm = (O) !tfgrid.farm.1
+        ```
         """
         self._by_id(farm_id)
         self._validate_farm(farm)
         self.farm_model.set_dynamic(farm._ddict, obj_id=farm_id)
-        return True
+        return farm
 
     def get(self, farm_id, name, schema_out=None, user_session=None):
         """
