@@ -1,5 +1,15 @@
 from Jumpscale import j
 
+import gevent
+
+from nacl.signing import SigningKey
+from nacl.encoding import HexEncoder
+
+
+TESTNET_DOMAIN = "testnet.grid.tf"
+THREEBOT_DOMAIN = f"3bot.{TESTNET_DOMAIN}"
+EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
+
 
 class initialize(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
@@ -84,12 +94,29 @@ class initialize(j.baseclasses.threebot_actor):
         :param user_session:
         :return:
         """
-        
+        nacl = j.data.nacl.default
+        explorer = j.clients.gedis.get(name="explorer", host=EXPLORER_DOMAIN, port=8901)
+        explorer.reload()
+
+        # create a signature used to update the public key in the phonebook
+        tid = j.tools.threebot.me.default.tid
+        seed = j.data.encryption.mnemonic.to_entropy(newseed)
+        new_key = SigningKey(seed).encode(HexEncoder)
+        signature = j.data.nacl.payload_sign(tid, new_key, nacl=nacl)
+
         exportpath = j.sal.fs.getTmpDirPath()
         j.data.bcdb.system.export(exportpath, False)
         j.data.nacl.configure(privkey_words=newseed, reset=True)
         j.tools.threebot_packages.delete("registration")
         j.sal.process.execute(f"kosmos -p 'system = j.data.bcdb.get_system(); system.import_(\"{exportpath}\")'")
         j.sal.fs.remove(exportpath)
+
+        # update the public key in the phonebook
+        explorer.actors.phonebook.update_public_key(tid, new_key, signature)
+
+        me = j.tools.threebot.me.default
+        me.pubkey = new_key
+        me.save()
+
         # restart myself
         gevent.spawn_later(5, j.sal.process.restart_program)
