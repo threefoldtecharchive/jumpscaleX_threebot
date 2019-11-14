@@ -102,7 +102,11 @@ def get_document(docsite_name, relative_path):
     :return: a document object
     :rtype: Doc
     """
-    docsite = DocSite.get_from_name(docsite_name)
+    try:
+        docsite = DocSite.get_from_name(docsite_name)
+    except j.exceptions.Base:
+        return
+
     full_path = j.sal.fs.joinPaths(docsite.path, relative_path)
     parent_dir = j.sal.fs.getDirName(full_path)
     requested_filename = docsite._clean(j.sal.fs.getBaseName(full_path))
