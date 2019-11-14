@@ -60,7 +60,7 @@ class initialize(j.baseclasses.threebot_actor):
     def add(self, user, schema_out=None, user_session=None):
         """
         ```in
-        user = (O) !user.1  
+        user = (O) !user.1
         ```
 
         ```out
@@ -103,19 +103,21 @@ class initialize(j.baseclasses.threebot_actor):
         vk_hex = sk.verify_key.encode(HexEncoder)
         signature = j.data.nacl.payload_sign(tid, vk_hex, nacl=nacl)
 
+        # export data and configure nacl
         exportpath = j.sal.fs.getTmpDirPath()
         j.data.bcdb.system.export(exportpath, False)
         j.data.nacl.configure(privkey_words=words, reset=True)
-        j.tools.threebot_packages.delete("registration")
-        j.sal.process.execute(f"kosmos -p 'system = j.data.bcdb.get_system(); system.import_(\"{exportpath}\")'")
-        j.sal.fs.remove(exportpath)
 
-        # update the public key in the phonebook
+        # update the public key in the phonebook and locally
         explorer.actors.phonebook.update_public_key(tid, vk_hex, signature)
 
         me = j.tools.threebot.me.default
         me.pubkey = vk_hex
         me.save()
+
+        j.tools.threebot_packages.delete("registration")
+        j.sal.process.execute(f"kosmos -p 'system = j.data.bcdb.get_system(); system.import_(\"{exportpath}\")'")
+        j.sal.fs.remove(exportpath)
 
         # restart myself
         gevent.spawn_later(5, j.sal.process.restart_program)
