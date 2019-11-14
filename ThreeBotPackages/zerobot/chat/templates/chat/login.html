@@ -5,9 +5,14 @@
 
 <span class="li-social">
     {% for provider in providers%}
-    <a href="/chat/login?provider={{provider}}"><i class="fa fa-{{provider}}" style="font-size: 33px"></i></a>
+    <a type="button" class="btn btn-light" href="/chat/login?provider={{provider}}">
+        <i class="fa fa-{{provider}}" style="font-size: 33px">{{provider}}</i>
+    </a>
     {% endfor %}
-    <a href="/chat/login?provider=3bot"> <i class="bot" style="font-size: 33px"></i></a>
+    <a type="button" class="btn btn-light" href="/chat/login?provider=3bot">
+        <i class="bot" style="font-size: 33px"></i>3bot App
+    </a>
+
 
 </span>
 {% endblock %}
