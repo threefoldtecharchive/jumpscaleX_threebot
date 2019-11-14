@@ -51,11 +51,32 @@ def gedis_websocket(ws):
 #######################################
 ######## GEDIS HTTP ROUTES ############
 #######################################
+
+
+def get_actor(client, name, retry=True):
+    """try to get an actor from a gedis client
+
+    will reload the client and try again if the actor is not available
+
+    :param client: gedis client
+    :type client: GedisClient
+    :param name: actor name
+    :type name: str
+    :param retry: if set, will try to reload if actor is not found
+    :type retyr: bool
+    """
+    actor = getattr(client.actors, name, None)
+    if not actor and retry:
+        client.reload()
+        return get_actor(client, name, retry=False)
+    return actor
+
+
 @app.route("/gedis/http/<name>/<cmd>", method=["post", "get", "options"])
 @enable_cors
 def gedis_http(name, cmd):
     client = j.clients.gedis.get(name="main_gedis_threebot", port=8901)
-    actor = getattr(client.actors, name, None)
+    actor = get_actor(client, name)
     if not actor:
         response.status = 404
         return f"Actor {name} does not exist"
