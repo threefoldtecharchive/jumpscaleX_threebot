@@ -85,14 +85,12 @@ class initialize(j.baseclasses.threebot_actor):
         else:
             raise Exception("Already initialized.")
 
-    def reseed(self, newseed, user_session):
+    def reseed(self, words, user_session):
         """
         ```in
-        newseed = (S)
+        words = (S)
         ```
-        :param newseed:
-        :param user_session:
-        :return:
+        :param words: mnemonic words from the 3bot login app
         """
         nacl = j.data.nacl.default
         explorer = j.clients.gedis.get(name="explorer", host=EXPLORER_DOMAIN, port=8901)
@@ -100,22 +98,21 @@ class initialize(j.baseclasses.threebot_actor):
 
         # create a signature used to update the public key in the phonebook
         tid = j.tools.threebot.me.default.tid
-        seed = j.data.encryption.mnemonic.to_entropy(newseed)
-        new_key = SigningKey(seed).encode(HexEncoder)
-        signature = j.data.nacl.payload_sign(tid, new_key, nacl=nacl)
+        seed = j.data.encryption.mnemonic.to_entropy(words)
+        sk = SigningKey(seed)
+        vk_hex = sk.verify_key.encode(HexEncoder)
+        signature = j.data.nacl.payload_sign(tid, vk_hex, nacl=nacl)
 
-        # export data
+        # export data and configure nacl
         exportpath = j.sal.fs.getTmpDirPath()
         j.data.bcdb.system.export(exportpath, False)
+        j.data.nacl.configure(privkey_words=words, reset=True)
 
-        # configure nacl with the new seed
-        j.data.nacl.configure(privkey_words=newseed, reset=True)
-
-        # update the public key in the phonebook
-        explorer.actors.phonebook.update_public_key(tid, new_key, signature)
+        # update the public key in the phonebook and locally
+        explorer.actors.phonebook.update_public_key(tid, vk_hex, signature)
 
         me = j.tools.threebot.me.default
-        me.pubkey = new_key
+        me.pubkey = vk_hex
         me.save()
 
         j.tools.threebot_packages.delete("registration")
