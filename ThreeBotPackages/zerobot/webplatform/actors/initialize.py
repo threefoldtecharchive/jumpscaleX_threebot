@@ -60,7 +60,7 @@ class initialize(j.baseclasses.threebot_actor):
     def add(self, user, schema_out=None, user_session=None):
         """
         ```in
-        user = (O) !user.1  
+        user = (O) !user.1
         ```
 
         ```out
@@ -104,12 +104,12 @@ class initialize(j.baseclasses.threebot_actor):
         new_key = SigningKey(seed).encode(HexEncoder)
         signature = j.data.nacl.payload_sign(tid, new_key, nacl=nacl)
 
+        # export data
         exportpath = j.sal.fs.getTmpDirPath()
         j.data.bcdb.system.export(exportpath, False)
+
+        # configure nacl with the new seed
         j.data.nacl.configure(privkey_words=newseed, reset=True)
-        j.tools.threebot_packages.delete("registration")
-        j.sal.process.execute(f"kosmos -p 'system = j.data.bcdb.get_system(); system.import_(\"{exportpath}\")'")
-        j.sal.fs.remove(exportpath)
 
         # update the public key in the phonebook
         explorer.actors.phonebook.update_public_key(tid, new_key, signature)
@@ -117,6 +117,10 @@ class initialize(j.baseclasses.threebot_actor):
         me = j.tools.threebot.me.default
         me.pubkey = new_key
         me.save()
+
+        j.tools.threebot_packages.delete("registration")
+        j.sal.process.execute(f"kosmos -p 'system = j.data.bcdb.get_system(); system.import_(\"{exportpath}\")'")
+        j.sal.fs.remove(exportpath)
 
         # restart myself
         gevent.spawn_later(5, j.sal.process.restart_program)
