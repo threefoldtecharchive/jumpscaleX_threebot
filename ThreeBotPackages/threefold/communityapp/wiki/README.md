@@ -1,4 +1,4 @@
-## Dynamic macro
+## Community Spaces
 
 ```
 !!!dynamic_content

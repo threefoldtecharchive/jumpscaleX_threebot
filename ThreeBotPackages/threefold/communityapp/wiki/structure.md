@@ -1,5 +1,4 @@
-## Dynamic macro
-
+## your Tree
 ```
 !!!dynamic_content
 actor = "community_manager"

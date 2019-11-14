@@ -41,8 +41,10 @@ class community_manager(j.baseclasses.threebot_actor):
         ```
         join FFP by mail
         """
-        # TODO: create new account in FFP
-        return True
+        result = self.freeflow_client.users.create(user_name, user_email, "", "", "")
+        if result.get("id"):
+            return True
+        return False
 
     def set_current_user(self, user, schema_out=None, user_session=None):
         self.current_user = user.decode()
@@ -55,7 +57,7 @@ class community_manager(j.baseclasses.threebot_actor):
     def get_node_structure(self, schema_out=None, user_session=None):
         if not self.ids and not self.start:
             user = self.model.find(email=self.current_user)
-            d = self.get_nodes(user[0].name)
+            d = self.get_nodes(user[0].name, user[0].name)
 
             return j.data.serializers.json.dumps(d)
 
@@ -73,9 +75,12 @@ class community_manager(j.baseclasses.threebot_actor):
             self.links.append((user[0].name, i.name))
         return self.get_node_structure()
 
-    def get_nodes(self, node):
+    def get_nodes(self, node, main_user=None):
         d = {}
-        d["text"] = {"name": node}
+        if node == main_user:
+            d["text"] = {"name": node + " / " + "{}".format(self.count_children(node) + 1)}
+        else:
+            d["text"] = {"name": node + " / " + "{}".format(self.count_children(node) - 1)}
         children = self.get_children(node)
         if children:
             d["children"] = [self.get_nodes(child) for child in children]
@@ -83,6 +88,12 @@ class community_manager(j.baseclasses.threebot_actor):
 
     def get_children(self, node):
         return [x[1] for x in self.links if x[0] == node]
+
+    def count_children(self, node):
+        if not node:
+            return 1
+
+        return 1 + len([self.count_children(x[0]) for x in self.get_children(node)])
 
     def info_get_current_user(self, schema_out=None, user_session=None):
         """
@@ -157,7 +168,7 @@ class community_manager(j.baseclasses.threebot_actor):
                 user = users[0]
 
             user_invitation = self.model.find(referral_code=referral)
-            if user_invitation:
+            if user_invitation and user.id != user_invitation[0].id:
                 user.invited_by = user_invitation[0].id
                 user.save()
                 return user_invitation[0].email
