@@ -9,7 +9,13 @@ def chat(bot):
 
     bot.loading_show("minecraft", 5)
 
-    # j.builders.apps.wordpress.install(path, host_url, title, admin_user, admin_password, admin_email)
+    # Create and register new reservation with container information(credentials will be obtained from threebot.me)
+    reservation = j.tools.threebot.explorer.container_create(
+        flist="itzg-minecraft-server-latest.flist",
+        hub_url="https://hub.grid.tf/zaibon",
+        environment={"EULA": "TRUE"},
+        entrypoint="/bin/bash",
+    )
 
     res = f"""# Minecraft has been deployed successfully:
     """

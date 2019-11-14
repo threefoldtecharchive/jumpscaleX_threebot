@@ -14,7 +14,7 @@ def chat(bot):
     email_host = bot.string_ask("Email host:")
     email_host_user = bot.string_ask("Email host user:")
     email_host_password = bot.string_ask("Email host password:")
-    HOST_IP = ""  # IP or domain
+    HOST_IP = bot.string_ask("Host to access taiga on:")  # IP or domain
 
     bot.loading_show("taiga", 4)
 
@@ -27,9 +27,9 @@ def chat(bot):
     }
 
     # Create and register new reservation with container information(credentials will be obtained from threebot.me)
-    reservation = j.tools.threebot_reserve_container(
-        flist="https://hub.grid.tf/hosnys/hossnys-taiga-latest.flist",
-        hub_url="https://hub.grid.tf/hosnys/hossnys-taiga-latest.flist.md",
+    reservation = j.tools.threebot.explorer.container_create(
+        flist="hossnys-taiga-latest.flist",
+        hub_url="https://hub.grid.tf/hosnys",
         environment=environment,
         entrypoint="/bin/bash",
     )

@@ -11,6 +11,14 @@ def chat(bot):
 
     bot.loading_show("odoo", 4)
 
+    # Create and register new reservation with container information(credentials will be obtained from threebot.me)
+    reservation = j.tools.threebot.explorer.container_create(
+        flist="bishoyabdo-odoo-latest.flist",
+        hub_url="https://hub.grid.tf/mikhaieb",
+        environment={},
+        entrypoint="/bin/bash",
+    )
+
     res = f"""# Odoo has been deployed successfully:
     """
     bot.md_show(res)
