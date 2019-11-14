@@ -10,7 +10,18 @@ def chat(bot):
 
     bot.loading_show("wordpress", 5)
 
-    # j.builders.apps.wordpress.install(path, host_url, title, admin_user, admin_password, admin_email)
+    bot.loading_show("wordpress", 5)
+    MYSQL_ROOT_PASSWORD = "wordpress"
+    MYSQL_DATABASE = "wordpress"
+    MYSQL_USER = "wordpress"
+    MYSQL_PASSWORD = "wordpress"
+
+    WORDPRESS_DB_HOST = "localhost:3306"
+    WORDPRESS_DB_USER = "wordpress"
+    WORDPRESS_DB_PASSWORD = "wordpress"
+    WORDPRESS_DB_NAME = "wordpress"
+
+    bot.md_show("Flist to be added to be able to deploy!!!")
 
     res = f"""# Wordpress has been deployed successfully:
     """
