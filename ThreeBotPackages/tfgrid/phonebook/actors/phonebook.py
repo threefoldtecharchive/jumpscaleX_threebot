@@ -214,7 +214,7 @@ class phonebook(j.baseclasses.threebot_actor):
         out.is_valid = is_valid
         return out
 
-    def update_public_key(self, tid, old_pubkey, new_pubkey, signature, schema_out=None, user_session=None):
+    def update_public_key(self, tid, new_pubkey, signature, schema_out=None, user_session=None):
         """
         ```in
         tid = -1 (I)
