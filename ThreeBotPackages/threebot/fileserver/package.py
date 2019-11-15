@@ -23,33 +23,32 @@ class Package(j.baseclasses.threebot_package):
         app = App(root=root)()
         rack.bottle_server_add(name="fileman", port=6999, app=app)
 
-        website = self.openresty.websites.get(f"filemanager")
-        website.ssl = False
-        website.port = 7000
+        server = self.openresty
+        server.install(reset=False)
+        server.configure()
+        website = server.get_from_port(443)
+        locations = website.locations.get("fileserver")
 
-        locations = website.locations.get("filemanager")
+        website_location = locations.locations_spa.new()
+        website_location.name = "fileserver"
+        website_location.path_url = "/fileserver"
+        website_location.path_location = j.sal.fs.joinPaths(self.package_root, "filemanager_UI/static/")
+
+        website_location = locations.locations_spa.new()
+        website_location.name = "static"
+        website_location.path_url = "/fileserver/threetransfer"
+        website_location.path_location = j.sal.fs.joinPaths(self.package_root, "threetransfer")
+
         proxy_location = locations.locations_proxy.new()
         proxy_location.name = "filemanager"
-        proxy_location.path_url = "/"
+        proxy_location.path_url = "/fileserver/api"
         proxy_location.ipaddr_dest = "0.0.0.0"
         proxy_location.port_dest = 6999
         proxy_location.scheme = "http"
 
-        website_location = locations.locations_static.new()
-        website_location.name = "static"
-        website_location.path_url = "/static/"
-        website_location.path_location = f"{self._dirpath}/filemanager_UI/static"
-        # website_location.use_jumpscale_weblibs = True
-
-        proxy_location = locations.locations_proxy.new()
-        proxy_location.name = "onlyoffice"
-        proxy_location.path_url = "/onlyoffice/"
-        proxy_location.ipaddr_dest = "172.19.0.4"
-        proxy_location.port_dest = 80
-        proxy_location.scheme = "http"
-
         locations.configure()
         website.configure()
+        website.save()
 
     def prepare(self):
         """
