@@ -10,7 +10,7 @@ class CalenderActorsTests(BaseTest):
         cl = j.servers.threebot.local_start_default(web=True)
         cls.info("load calendar actors")
         cl.actors.package_manager.package_add(
-            path='"/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/calendar"')
+            path='j.core.tools.text_replace("{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/calendar""))
 
     @classmethod
     def tearDownClass(cls):
@@ -240,3 +240,4 @@ class CalenderActorsTests(BaseTest):
 
         self.info('assert that the contact id is existing inside the list')
         self.assertIn(contact_id, [contact['contact_id'] for contact in response.json()['contacts']])
+
