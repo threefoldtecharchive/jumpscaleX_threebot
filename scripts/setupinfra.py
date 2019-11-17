@@ -162,7 +162,7 @@ def configure_systemd_unit(executor, name, path):
 
 def configure_coredns(executor):
     print("  Configuring coredns")
-    configpath = "/sandbox/cfg/coredns.conf"
+    configpath = j.core.tools.text_replace("{DIR_BASE}/cfg/coredns.conf")
     config = corednsconfig.format(domain=THREEBOT_DOMAIN)
     executor.file_write(configpath, config)
     executor.execute("systemctl stop systemd-resolved && systemctl disable systemd-resolved")
@@ -171,8 +171,8 @@ def configure_coredns(executor):
 
 def configure_redis(executor, privateip):
     print("  Configuring redis")
-    dbpath = "/sandbox/var/redis/"
-    configpath = "/sandbox/cfg/redis-jsx.conf"
+    dbpath = j.core.tools.text_replace("{DIR_BASE}/var/redis/")
+    configpath = j.core.tools.text_replace("{DIR_BASE}/cfg/redis-jsx.conf")
     if privateip != MASTERIP:
         bindip = f"127.0.0.1 {privateip}"
     else:
@@ -186,7 +186,7 @@ def configure_redis(executor, privateip):
 
 def configure_tcprouter(executor):
     print("  Configuring tcprouter")
-    configpath = "/sandbox/cfg/router.toml"
+    configpath = j.core.tools.text_replace("{DIR_BASE}/cfg/router.toml")
     executor.file_write(configpath, routerconfig)
     configure_systemd_unit(executor, "tcprouter", path=f"{tcprouterpath} -config {configpath}")
 
@@ -232,19 +232,29 @@ j.sal.nettools.waitConnectionTest(THREEBOT_DOMAIN, 443, timeout=60)
 print("Start local 3bot")
 client = j.servers.threebot.local_start_default()
 client.actors.package_manager.package_add(
-    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/namemanager"
+    path=j.core.tools.text_replace(
+        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/namemanager"
+    )
 )
 client.actors.package_manager.package_add(
-    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/gridnetwork"
+    path=j.core.tools.text_replace(
+        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/gridnetwork"
+    )
 )
 client.actors.package_manager.package_add(
-    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/tfgrid_directory"
+    path=j.core.tools.text_replace(
+        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/tfgrid_directory"
+    )
 )
 client.actors.package_manager.package_add(
-    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/tfgrid_workloads"
+    path=j.core.tools.text_replace(
+        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/tfgrid_workloads"
+    )
 )
 client.actors.package_manager.package_add(
-    path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/provisioning"
+    path=j.core.tools.text_replace(
+        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/provisioning"
+    )
 )
 client.reload()
 
