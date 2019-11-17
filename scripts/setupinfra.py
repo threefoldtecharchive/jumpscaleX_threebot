@@ -97,9 +97,9 @@ port     = 6378
 refresh  = 10
 """
 
-tcprouterpath = "/sandbox/bin/tcprouter"
-redisserverpath = "/sandbox/bin/redis-server"
-corednspath = "/sandbox/bin/coredns"
+tcprouterpath = j.core.tools.text_replace("{DIR_BASE}/bin/tcprouter")
+redisserverpath = j.core.tools.text_replace("{DIR_BASE}/bin/redis-server")
+corednspath = j.core.tools.text_replace("{DIR_BASE}/bin/coredns")
 
 THREEBOT_DOMAIN = "3bot.testnet.grid.tf"
 MASTERIP = "192.168.99.254"
@@ -272,3 +272,4 @@ for endpoint in client.actors.gridnetwork.network_endpoint_find("3botnetwork").r
 for executor in clients:
     if executor.sshclient.addr not in existingendpoints:
         client.actors.gridnetwork.network_endpoint_add("3botnetwork", executor.sshclient.name)
+

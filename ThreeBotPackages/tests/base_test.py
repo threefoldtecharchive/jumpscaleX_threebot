@@ -8,9 +8,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from Jumpscale import j
 
-ALERTA_ACTOR = "/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/alerta"
-BLOG_ACTOR = "/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog"
-PASTEBIN_ACTOR = "/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/demo/pastebin"
+ALERTA_ACTOR = j.core.tools.text_replace("{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/alerta")
+BLOG_ACTOR = j.core.tools.text_replace("{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog")
+PASTEBIN_ACTOR = j.core.tools.text_replace("{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/demo/pastebin")
 BLOG_EXAMPLE = "git@gitlab.com:xmonader/sample-blog-jsx.git"
 
 
@@ -120,3 +120,4 @@ class BaseTest(unittest.TestCase):
     @staticmethod
     def rand_string(size=10):
         return str(uuid.uuid4()).replace("-", "")[1:size]
+
