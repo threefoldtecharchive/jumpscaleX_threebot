@@ -36,7 +36,7 @@ def chat(bot):
 
     question = "Please enter a description for your 3BOT:"
     description = bot.string_ask(question)
-    bot.md_show("Deployment will start this might take several minutes")
+    bot.md_show("Press next to start the deployment. This might take several minutes")
 
     bot.md_show_update(progress.format(0, "Creating 3Bot"))
     machine = deployer.machines.get_available()
