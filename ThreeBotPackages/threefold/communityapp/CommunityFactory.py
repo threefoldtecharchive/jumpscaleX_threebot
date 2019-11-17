@@ -13,4 +13,4 @@ class CommunityFactory(j.baseclasses.threebot_factory):
         # to do manually:
         # jsx wiki-load -u /sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/communityapp/wiki -n community -f
 
-        j.shell()
+        pass

@@ -2,15 +2,16 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
+    @property
+    def bcdb(self):
+        return self.threebot_server.bcdb_get("users")
+
     def prepare(self):
         """
-
         ports & paths used for threebotserver
         see: /sandbox/code/github/threefoldtech/jumpscaleX_core/docs/3Bot/web_environment.md
-
         will start bottle server web interface which include (gedis http interface, gedis websocket interface and
         bcdbfs web server)
-
         endpoints:
         "/web/gedis/http"       >    gedis htto interface
         "/web/gedis/websocket"  >    gedis websocket interface
@@ -49,6 +50,7 @@ class Package(j.baseclasses.threebot_package):
 
     def start(self):
         self.prepare()
+        self.gedis_server.actors_add(path=self.package_root + "/actors")
 
     def stop(self):
         pass

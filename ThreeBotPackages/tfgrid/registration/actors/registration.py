@@ -1,6 +1,9 @@
 from Jumpscale import j
 import gevent
 
+from nacl.signing import SigningKey
+from nacl.encoding import HexEncoder
+
 TESTNET_DOMAIN = "testnet.grid.tf"
 THREEBOT_DOMAIN = f"3bot.{TESTNET_DOMAIN}"
 EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
@@ -58,20 +61,13 @@ class registration(j.baseclasses.threebot_actor):
 
         print(f"Done, your url is: {doublename}.{THREEBOT_DOMAIN}")
 
-    def reseed(self, newseed, user_session):
+    def set_identity(self, tid, tname, email, pubkey, user_session):
         """
         ```in
-        newseed = (S)
+        tid = (I)
+        tname = (S)
+        email = (S)
+        pubkey = (S)
         ```
-        :param newseed:
-        :param user_session:
-        :return:
         """
-        exportpath = j.sal.fs.getTmpDirPath()
-        j.data.bcdb.system.export(exportpath, False)
-        j.data.nacl.configure(privkey_words=newseed, reset=True)
-        j.tools.threebot_packages.delete("registration")
-        j.sal.process.execute(f"kosmos -p 'system = j.data.bcdb.get_system(); system.import_(\"{exportpath}\")'")
-        j.sal.fs.remove(exportpath)
-        # restart myself
-        gevent.spawn_later(5, j.sal.process.restart_program)
+        j.tools.threebot.me.get(name="default", tid=tid, tname=tname, email=email, pubkey=pubkey).save()

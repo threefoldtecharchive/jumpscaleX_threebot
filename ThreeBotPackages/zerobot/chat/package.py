@@ -31,7 +31,6 @@ class Package(j.baseclasses.threebot_package):
             website_location.name = "chatstatic"
             website_location.path_url = "/chatstatic"
             website_location.path_location = f"{self._dirpath}/static"
-            website_location.use_jumpscale_weblibs = True
 
             proxy_location = locations.locations_proxy.new()
             proxy_location.name = "chat"

@@ -1,2 +1,2 @@
 cd jobvis && npm run export
-cp __sapper__/export/myjobs/* ../html/ -R
+cp __sapper__/export/myjobs/* ../frontend/ -R
