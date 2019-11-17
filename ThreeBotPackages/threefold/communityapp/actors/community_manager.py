@@ -145,18 +145,19 @@ class community_manager(j.baseclasses.threebot_actor):
         out.content = j.tools.jinja2.template_get(self._dirpath + "/index.html").render()
         return out
 
-    def check_referral(self, email, referral, name, schema_out=None, user_session=None):
+    def check_referral(self, email, referral, name, bot_invited, schema_out=None, user_session=None):
         """
         ```in
         email = (S)
         name = (S)
         referral = (S)
+        bot_invited = (S)
         ```
         check the referral is correct or not
         if correct send his username to community_join
         else: send message this inviation is wrong
         """
-        if referral:
+        if referral or bot_invited:
             users = self.model.find(email=email)
             if not users:
                 user = self.model.new()
@@ -166,8 +167,10 @@ class community_manager(j.baseclasses.threebot_actor):
                 user.save()
             else:
                 user = users[0]
-
-            user_invitation = self.model.find(referral_code=referral)
+            if referral:
+                user_invitation = self.model.find(referral_code=referral)
+            else:
+                user_invitation = self.model.find(name=bot_invited)
             if user_invitation and user.id != user_invitation[0].id:
                 user.invited_by = user_invitation[0].id
                 user.save()

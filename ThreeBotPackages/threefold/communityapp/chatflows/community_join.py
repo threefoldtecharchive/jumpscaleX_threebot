@@ -19,6 +19,14 @@ def chat(bot):
         email=user_email, name=user_name, referral=bot.kwargs.get("referral")
     )
 
+    if not invited:
+        form = bot.new_form()
+        invited_bot = form.string_ask("what is the name of  the 3bot that you were invited by ?")
+        form.ask()
+        invited = gedis_client.actors.community_manager.check_referral(
+            email=user_email, name=user_name, bot_invited=invited_bot
+        )
+
     gedis_client.actors.community_manager.set_current_user(user=user_email)
 
     choice = bot.single_choice(
@@ -42,13 +50,24 @@ def chat(bot):
         interests = bot.multi_choice("Choose your interests: ", [space.decode() for space in spaces])
         result = gedis_client.actors.community_manager.community_join(user_email=user_email, spaces=interests)
         if not result:
-            res = f"""
+            result = gedis_client.actors.community_manager.user_create(user_email=user_email, user_name=user_name)
+            result = gedis_client.actors.community_manager.community_join(user_email=user_email, spaces=interests)
+            if not result:
+                res = f"""
                 ## You invited by {invited.decode()}
                 # Sorry you can't joined to those spaces because:
                 - you don't have account in Freeflowpages
                 - or we have problem in FFP server
                 ### Click next
                 to try again
+                """
+            else:
+                res = f"""
+                ## You invited by {invited.decode()}
+                # You joined {interests}:
+                - Email : {user_email}
+                ### Click next
+                for the final step which will redirect you to dynamic macro
                 """
 
         else:
@@ -60,11 +79,12 @@ def chat(bot):
             for the final step which will redirect you to dynamic macro
             """
     else:
-        bot.single_choice("We'll send you an email with invitation soon! Stay tuned", ["OK"])
-        result = gedis_client.actors.community_manager.user_create(user_email=user_email, user_name=user_name)
+        result = False
         res = """
+        # Sorry the 3bot invited is incorrect or the referral code is incorrect
+        ## So we'll send you an email with invitation soon! Stay tuned
         ### Click next
-        for the final step which will redirect you to dynamic macro
+        to resetart your chatflow
         """
 
     res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
