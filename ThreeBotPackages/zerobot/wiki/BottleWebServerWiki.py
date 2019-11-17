@@ -72,13 +72,16 @@ def wiki_handler(docsite):
     return env.get_template("wiki/index.html").render(name=docsite, metadata=get_metadata(docsite), url=ws_url)
 
 
+@app.route("/wiki/gdrive/<doc_type>/<guid1>")
 @app.route("/wiki/gdrive/<doc_type>/<guid1>/<guid2>")
-def gdrive_handler(doc_type, guid1, guid2):
+def gdrive_handler(doc_type, guid1, guid2=""):
     cl = j.clients.gedis.get("wiki_gdrive_client", port=8901)
     try:
-        result = cl.actors.gdrive.file_get(doc_type, guid1, guid2)
-        redirect(result["res"])
-    except Exception as ex:
+        ret = cl.actors.gdrive.file_get(doc_type, guid1, guid2)
+        if not ret.error_code:
+            return redirect(ret.res)
+        return env.get_template("wiki/gdrive_error.html").render(code=ret.error_code, message=ret.error_message)
+    except j.exceptions.Base as ex:
         err = "".join(traceback.format_exception(etype=type(ex), value=ex, tb=ex.__traceback__))
         response.status = 400
         result = {"error": err}

@@ -29,7 +29,7 @@ def chat(bot):
 
     deployer = j.tools.threebot_deploy.get()
     try:
-        deployer.get_by_double_name(name)
+        container = deployer.get_by_double_name(name)
         bot.md_show(f"Doublename {name} has already been used to deploy a 3bot. You can find it here [{url}]({url})")
     except j.exceptions.NotFound:
         pass
@@ -41,19 +41,21 @@ def chat(bot):
     bot.md_show_update(progress.format(0, "Creating 3Bot"))
     machine = deployer.machines.get_available()
     bot.md_show_update(progress.format(10, "Configuring 3Bot"))
-    container = machine.threebot_deploy(name, start=False)
-    bot.md_show_update(progress.format(70, "Starting 3Bot"))
-    container.threebot_start()
-    print("Finished installing threebot")
-    print("Start registration installing threebot")
-    bot.md_show_update(progress.format(90, "Registering 3Bot"))
-    client = container.threebot_client
-    client.actors.registration.register(name, email, description)
-    record = explorer.actors.phonebook.get(name=name)
-    container.set_identity(record)
-    bot.md_show_update(progress.format(100, "Registering 3Bot completed"))
 
-    res = f"""\
-# Your 3bot has been registered successfully you can find it here [{url}]({url})
-    """
-    bot.md_show(res)
+    try:
+        container = machine.threebot_deploy(name, start=False)
+        bot.md_show_update(progress.format(70, "Starting 3Bot"))
+        container.threebot_start()
+        print("Finished installing threebot")
+        print("Start registering threebot")
+        bot.md_show_update(progress.format(90, "Registering 3Bot"))
+        client = container.threebot_client
+        client.actors.registration.register(name, email, description)
+        print("Setting the identity of the threebotserver")
+        record = explorer.actors.phonebook.get(name=name)
+        client.actors.registration.set_identity(record.id, record.name, record.email, record.pubkey)
+        bot.md_show_update(progress.format(100, "Registering 3Bot completed"))
+        bot.md_show(f"# Your 3bot has been registered successfully you can find it here [{url}]({url})")
+    except:
+        machine.destroy_container(name)
+        raise
