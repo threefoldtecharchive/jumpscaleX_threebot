@@ -158,11 +158,14 @@ class registry(j.baseclasses.threebot_actor):
         # will only return data user allowed to
         res = []
         table = self.threebot_data_model._index_.sql_table_name
+        country_code, format, category, topic = self.__prepare_parameters_for_sql_query(
+            country_code, format, category, topic
+        )
         query = f'SELECT * FROM {table} \
-            WHERE (country_code="{country_code}") \
-            OR (format="{format}") \
-            OR (category="{category}") \
-            OR (topic="{topic}")'
+            WHERE (country_code LIKE "{country_code}") \
+            AND (format LIKE "{format}") \
+            AND (category LIKE "{category}") \
+            AND (topic LIKE "{topic}")'
 
         query = self.threebot_data_model.query(query)
         results = query.fetchall()
@@ -174,11 +177,21 @@ class registry(j.baseclasses.threebot_actor):
                         decrypted_data = self.__decrypt_data(model.registered_info_format, item.data_)
                         if not decrypted_data in res:
                             res.append(decrypted_data)
-
         if len(res) > 50:
             raise j.exceptions.Input("Can not return results is > 50")
 
         return res
+
+    def __prepare_parameters_for_sql_query(self, country_code=None, format=None, category=None, topic=None):
+        if not country_code:
+            country_code = "%"
+        if not format:
+            format = "%"
+        if not category:
+            category = "%"
+        if not topic:
+            topic = "%"
+        return country_code, format, category, topic
 
     def __encrypt_data(self, serializer_type, decrypted_data):
         if serializer_type == "JSXSCHEMA":
@@ -257,12 +270,14 @@ class registry(j.baseclasses.threebot_actor):
 
         res = []
         table = self.threebot_data_model._index_.sql_table_name
+        country_code, format, category, topic = self.__prepare_parameters_for_sql_query(
+            country_code, format, category, topic
+        )
         query = f'SELECT * FROM {table} \
-            WHERE (country_code="{country_code}") \
-            OR (format="{format}") \
-            OR (category="{category}") \
-            OR (topic="{topic}")'
-
+            WHERE (country_code LIKE "{country_code}") \
+            AND (format LIKE "{format}") \
+            AND (category LIKE "{category}") \
+            AND (topic LIKE "{topic}")'
         query = self.threebot_data_model.query(query)
         results = query.fetchall()
 
@@ -290,7 +305,6 @@ class registry(j.baseclasses.threebot_actor):
 
                 if not output in res:
                     res.append(output)
-
         if len(res) > 50:
             raise j.exceptions.Input("Can not return results is > 50")
 
