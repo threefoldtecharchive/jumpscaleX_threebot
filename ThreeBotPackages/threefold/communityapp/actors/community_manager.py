@@ -158,6 +158,7 @@ class community_manager(j.baseclasses.threebot_actor):
         else: send message this inviation is wrong
         """
         if referral or bot_invited:
+            user_invitation = None
             users = self.model.find(email=email)
             if not users:
                 user = self.model.new()
