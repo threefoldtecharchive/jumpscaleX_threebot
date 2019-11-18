@@ -59,8 +59,8 @@ def chat(bot):
                 # please copy this url and send it to your friends
                 - https://community.app.3bot.testnet.grid.tf/chat/session/community_join?referral={code_id.decode()}
                 """
-        res = j.tools.jinja2.template_render(text=j.core.text.strip(md), **locals())
-        bot.md_show(res)
+            res = j.tools.jinja2.template_render(text=j.core.text.strip(md), **locals())
+            bot.md_show(res)
         spaces = gedis_client.actors.community_manager.spaces_list()
         interests = bot.multi_choice("Choose your interests: ", [space.decode() for space in spaces])
         result = gedis_client.actors.community_manager.community_join(user_email=user_email, spaces=interests)
