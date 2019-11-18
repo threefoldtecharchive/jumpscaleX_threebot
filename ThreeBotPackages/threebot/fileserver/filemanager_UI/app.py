@@ -143,6 +143,49 @@ class App(object):
             response.set_header("Content-Type", "text/plain; charset=utf-8")
             return "200 OK"
 
+        @self.app.route("/fileserver/api/threetransfer/<path:re:.*>", method="post")
+        def upload_threetransfer(path):
+            file = j.sal.fs.joinPaths("/", path)
+
+            def create(file):
+                content_type = "text/plain"
+                if request.body.seek(0, 2) == 0:
+                    self.db.file_create_empty(file)
+                else:
+                    request.body.seek(0)
+                    buff = request.body.read(1024)
+                    request.body.seek(0)
+                    mtype = filetype.guess(buff)
+
+                    if mtype:
+                        content_type = mtype.mime
+                    else:
+                        x = mimetypes.MimeTypes()
+                        types = {}
+                        for l in x.types_map:
+                            types.update(l)
+                        ct = types.get("." + j.sal.fs.getFileExtension(file))
+                        if ct:
+                            content_type = ct
+                    filename = "{}_{}".format(file, "test")
+                    self.db.file_write(filename, request.body, append=True, create=True)
+
+                obj = self.db._file_model.get_by_name(name=filename)
+                obj.content_type = content_type
+                obj.epoch = int(time.time())
+                obj.save()
+
+            #if exists do nothing
+
+            create(file)
+
+
+            response.set_header("X-Content-Type-Options", "nosniff")
+            response.set_header("X-Renew-Token", "true")
+            response.set_header("Etag", "15bed3cb4c34f4360")
+            response.set_header("Content-Type", "text/plain; charset=utf-8")
+            return "200 OK"
+
         @self.app.route("/fileserver/api/resources/<path:re:.*>", method="put")
         def create_file(path):
             def create(file):
