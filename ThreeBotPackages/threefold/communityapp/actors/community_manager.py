@@ -41,7 +41,7 @@ class community_manager(j.baseclasses.threebot_actor):
         ```
         join FFP by mail
         """
-        result = self.freeflow_client.users.create(user_name, user_email, "", "", "")
+        result = self.freeflow_client.users.create(user_name, user_email)
         if result.get("id"):
             return True
         return False
@@ -169,7 +169,7 @@ class community_manager(j.baseclasses.threebot_actor):
                 user = users[0]
             if referral:
                 user_invitation = self.model.find(referral_code=referral)
-            else:
+            if not user_invitation:
                 user_invitation = self.model.find(name=bot_invited)
             if user_invitation and user.id != user_invitation[0].id:
                 user.invited_by = user_invitation[0].id
