@@ -7,7 +7,6 @@ from Jumpscale import j
 # description = (S)
 # image = (S)
 # """
-#
 
 
 class apps(j.baseclasses.threebot_actor):
