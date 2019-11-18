@@ -57,7 +57,7 @@ class registry(j.baseclasses.threebot_actor):
 
         # register the data
         new_data_model = None
-        if input_object.schema_url:
+        if input_object:
             if input_object.registered_info:
                 new_data_model = self.__decrypt_data(input_object.registered_info_format, input_object.registered_info)
             else:
@@ -134,6 +134,8 @@ class registry(j.baseclasses.threebot_actor):
         topic=None,
         description=None,
         schema_out=None,
+        location_longitude=None,
+        location_latitude=None,
         user_session=None,
     ):
         """
@@ -142,9 +144,11 @@ class registry(j.baseclasses.threebot_actor):
         #search arguments
         schema_url = ""  #jumpscale schema url
         country_code = ""
-        format = "website,blog,wiki,doc,solutionpackage,threebotpackage" (E)
-        category = "publicity,info,knowledge,code,spec,config,varia" (E)
-        topic = "travel,food,it,spirituality,health,education,finance,varia" (E)
+        format = "None,website,blog,wiki,doc,solutionpackage,threebotpackage" (E)
+        category = "None,publicity,info,knowledge,code,spec,config,varia" (E)
+        topic = "None,travel,food,it,spirituality,health,education,finance,varia" (E)
+        location_longitude = (F)
+        location_latitude = (F)
         description = ""
         ```
 
@@ -159,12 +163,14 @@ class registry(j.baseclasses.threebot_actor):
         res = []
         table = self.threebot_data_model._index_.sql_table_name
         country_code, format, category, topic = self.__prepare_parameters_for_sql_query(
-            country_code, format, category, topic
+            country_code, format, category, topic, location_latitude, location_longitude
         )
         query = f'SELECT * FROM {table} \
             WHERE (country_code LIKE "{country_code}") \
             AND (format LIKE "{format}") \
             AND (category LIKE "{category}") \
+            AND (location_latitude LIKE "{location_latitude}") \
+            AND (location_longitude LIKE "{location_longitude}") \
             AND (topic LIKE "{topic}")'
 
         query = self.threebot_data_model.query(query)
@@ -182,15 +188,21 @@ class registry(j.baseclasses.threebot_actor):
 
         return res
 
-    def __prepare_parameters_for_sql_query(self, country_code=None, format=None, category=None, topic=None):
+    def __prepare_parameters_for_sql_query(
+        self, country_code=None, format=None, category=None, topic=None, location_longitude=None, location_latitude=None
+    ):
         if not country_code:
             country_code = "%"
-        if not format:
+        if not format or format == "None":
             format = "%"
-        if not category:
+        if not category or category == "None":
             category = "%"
-        if not topic:
+        if not topic or topic == "None":
             topic = "%"
+        if not location_longitude:
+            location_longitude = "%"
+        if not location_latitude:
+            location_latitude = "%"
         return country_code, format, category, topic
 
     def __encrypt_data(self, serializer_type, decrypted_data):
@@ -231,6 +243,8 @@ class registry(j.baseclasses.threebot_actor):
         format=None,
         category=None,
         topic=None,
+        location_longitude=None,
+        location_latitude=None,
         description=None,
         schema_out=None,
         user_session=None,
@@ -245,9 +259,11 @@ class registry(j.baseclasses.threebot_actor):
         #search arguments
         schema_url = ""  #jumpscale schema url
         country_code = ""
-        format = "website,blog,wiki,doc,solutionpackage,threebotpackage" (E)
-        category = "publicity,info,knowledge,code,spec,config,varia" (E)
-        topic = "travel,food,it,spirituality,health,education,finance,varia" (E)
+        format = "None,website,blog,wiki,doc,solutionpackage,threebotpackage" (E)
+        category = "None,publicity,info,knowledge,code,spec,config,varia" (E)
+        topic = "None,travel,food,it,spirituality,health,education,finance,varia" (E)
+        location_longitude = (F)
+        location_latitude = (F)
         description = ""
         ```
         ```out
@@ -271,13 +287,15 @@ class registry(j.baseclasses.threebot_actor):
         res = []
         table = self.threebot_data_model._index_.sql_table_name
         country_code, format, category, topic = self.__prepare_parameters_for_sql_query(
-            country_code, format, category, topic
+            country_code, format, category, topic, location_longitude, location_latitude
         )
         query = f'SELECT * FROM {table} \
             WHERE (country_code LIKE "{country_code}") \
             AND (format LIKE "{format}") \
             AND (category LIKE "{category}") \
-            AND (topic LIKE "{topic}")'
+            AND (topic LIKE "{topic}") \
+            AND (location_longitude LIKE "{location_longitude}") \
+            AND (location_latitude LIKE "{location_latitude}")'
         query = self.threebot_data_model.query(query)
         results = query.fetchall()
 
