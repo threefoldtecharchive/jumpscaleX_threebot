@@ -24,7 +24,7 @@ module.exports = {
     submitFile () {
       let formData = new FormData();
       formData.append('file', this.file);
-      this.uploadfile(formData)
+      this.uploadfile(this.file)
     }
   }
 }
