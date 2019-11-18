@@ -46,6 +46,25 @@ class community_manager(j.baseclasses.threebot_actor):
             return True
         return False
 
+    def send_mail(self, name=None, receiver=None, content=None, subject=None, user_session=None):
+        """
+        ```in
+        name = (S)
+        receiver = (S)
+        content = (S)
+        subject = (S)
+        ```
+        send email to user
+        """
+        email_to = []
+        if receiver:
+            email_to.append(receiver)
+        ecl = j.clients.sendgrid.get("send_grid")
+        try:
+            ecl.send("register@threefold.io", subject, content, email_to)
+        except:
+            print("Wrong Mail")
+
     def set_current_user(self, user, schema_out=None, user_session=None):
         self.current_user = user.decode()
 
