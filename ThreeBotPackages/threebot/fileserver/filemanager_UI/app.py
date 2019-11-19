@@ -167,7 +167,7 @@ class App(object):
                         ct = types.get("." + j.sal.fs.getFileExtension(file))
                         if ct:
                             content_type = ct
-                    filename = "{}_{}".format(file, "test")
+                    filename = "{}".format(file)
                     self.db.file_write(filename, request.body, append=True, create=True)
 
                 obj = self.db._file_model.get_by_name(name=filename)
@@ -185,6 +185,39 @@ class App(object):
             response.set_header("Etag", "15bed3cb4c34f4360")
             response.set_header("Content-Type", "text/plain; charset=utf-8")
             return "200 OK"
+
+        @self.app.route("/fileserver/api/threetransferdownload/<identifier:re:.*>")
+        def threetransfer_download(identifier):
+            """
+            single file or single dir
+            """
+            import ipdb; ipdb.set_trace()
+            bcdb = j.data.bcdb.get("threetransfer")
+            shortlink_model = bcdb.model_get(url="threetransfer.shortlink.1")
+
+            files = shortlink_model.find(identifier=identifier)
+
+            file = ""
+            if files:
+                file = files[0].url
+            else:
+                raise j.exception.Value("The identifier %s does not exist" % identifier)
+            path = j.sal.fs.joinPaths("/", file)
+            # download single file
+            inline = request.GET.get("inline") == "true"
+            obj = self.db._file_model.get_by_name(name=path)
+
+            response.set_header("X-Renew-Token", "true")
+            response.set_header("Content-Type", "application/octet-stream")
+
+            if inline:
+                response.set_header("Content-Disposition", "inline")
+                response.set_header("Accept-Ranges", "bytes")
+            else:
+                response.set_header(
+                    "Content-Disposition", "attachment; filename**=utf-8" "%s" % j.sal.fs.getBaseName(file)
+                )
+            return self.db.file_read(path)
 
         @self.app.route("/fileserver/api/resources/<path:re:.*>", method="put")
         def create_file(path):

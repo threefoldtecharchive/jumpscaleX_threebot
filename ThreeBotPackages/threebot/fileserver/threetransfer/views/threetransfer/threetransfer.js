@@ -5,26 +5,39 @@ module.exports = {
   props: [],
   data () {
     return {
-      file: ''
+      file: '',
+      downloadUUID: '',
+      generatedUUID: ''
     }
   },
   computed: {
-
+    ...window.vuex.mapGetters([
+      'uploadMessages'
+    ])
   },
   mounted () {
-
+    
   },
   methods: {
     ...window.vuex.mapActions([
-      'uploadfile'
+      'uploadfile',
+      'generateLink',
+      'downloadfile'
     ]),
     handleFileUpload () {
       this.file = this.$refs.file.files[0];
     },
     submitFile () {
-      let formData = new FormData();
-      formData.append('file', this.file);
+      console.log(`submit file`, this.file)
       this.uploadfile(this.file)
+      console.log("after submit")
+      console.log(this.uploadMessages)
+      this.generateLink(this.file.name)
+    },
+    downloadFile () {
+      
+      this.downloadfile(this.downloadUUID)
+
     }
   }
 }

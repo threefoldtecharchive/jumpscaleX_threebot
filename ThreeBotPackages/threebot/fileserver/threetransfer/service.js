@@ -1,7 +1,6 @@
 export default ({
     uploadFile (file) {
-        console.log(`In service`, file)
-        return axios.post(`${window.config.fileTransferApiUrl}/fileserver/api/threetransfer/${file.name}`, 
+        return axios.post(`${window.config.fileTransferApiUrl}/fileserver/api/threetransferr/${file.name}`, 
         file,
         {
             headers: {
@@ -9,5 +8,17 @@ export default ({
             }
         }
         )
+    },
+    generateLink (url) {
+        return axios.post(`${window.config.jsApiUrl}/threetransfer/link`, {
+            args: {
+                shortlink:{
+                    url
+                }
+            }
+        })
+    },
+    downloadFile (identifier) {
+        return axios.get(`${window.config.fileTransferApiUrl}/fileserver/api/threetransferdownload/${identifier}`)
     },
 })
