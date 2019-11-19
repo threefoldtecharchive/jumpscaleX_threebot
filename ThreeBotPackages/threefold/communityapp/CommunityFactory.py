@@ -3,11 +3,11 @@ from Jumpscale import j
 
 class CommunityFactory(j.baseclasses.threebot_factory):
 
-    __jslocation__ = "j.threebot.package.communiy_bot"
+    __jslocation__ = "j.threebot.package.community_bot"
 
     def test(self):
         """
-        kosmos 'j.threebot.package.communiy_bot.test()'
+        kosmos 'j.threebot.package.community_bot.test()'
         :return:
         """
         # to do manually:
