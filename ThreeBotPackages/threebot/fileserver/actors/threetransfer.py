@@ -33,8 +33,9 @@ class threetransfer(j.baseclasses.threebot_actor):
         ```
         """
 
-        if not re.search("^http",shortlink.url):
-            self._check_file_exists(shortlink.url)
+        # if not re.search("^http",shortlink.url):
+            # 
+            # self._check_file_exists(shortlink.url)
         
         if shortlink.identifier:
             shortlink.identifier = self._get_uuid(shortlink.identifier)
@@ -59,12 +60,9 @@ class threetransfer(j.baseclasses.threebot_actor):
         ```
         """
         
-        if not self._check_uuid_exists(identifier):
-            raise j.exceptions.Value("The identifier %s does not exist" % identifier)
-        
-        file = self.shortlink_model.find(identifier=identifier)
-        import ipdb; ipdb.set_trace()
-        out = schema_out.new()
-        out.file = file
-        return out
+        files = self.shortlink_model.find(identifier=identifier)
+        if files:
+            return files[0]
+        else:
+            raise j.exception.Value("The identifier %s does not exist" % identifier)
 

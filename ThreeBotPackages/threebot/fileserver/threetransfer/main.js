@@ -16,6 +16,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
       path: '/',
       component: httpVueLoader('./views/threetransfer/index.vue'),
       name: 'threetransfer',
+    },
+    {
+      path: "/download/:identifier",
+      component: httpVueLoader('./views/threetransferdownload/index.vue'),
+      name: "threetransferdownload",
+      props: true,
     }]
   })
 

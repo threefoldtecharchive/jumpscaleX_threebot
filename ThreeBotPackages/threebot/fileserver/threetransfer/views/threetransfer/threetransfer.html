@@ -15,17 +15,25 @@
       </v-card-title>
       <v-card-text class="fill-height">
         <v-row>
-          <v-col cols="4">
+          <!-- <v-col cols="4">
             <h2>Download file</h2>
-            <v-text-field label="Download url"></v-text-field>
-          </v-col>
+            <v-text-field v-model="downloadUUID" label="UUID to download"></v-text-field>
+            <v-btn v-on:click="downloadFile()">Download</v-btn>
+          </v-col> -->
           <v-col cols="8">
             <h2>Upload file</h2>
             <v-row>
               <label>File
-                <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" />
+                <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
               </label>
-              <button v-on:click="submitFile()">Submit</button>
+              <v-btn v-on:click="submitFile()">Submit</v-btn>
+            </v-row>
+            <v-row>
+              <ul v-for="item in uploadMessages">
+                <li>
+                    {{item.message}}
+                </li>
+              </ul>
             </v-row>
 
           </v-col>
