@@ -4,7 +4,7 @@ import gevent
 
 def chat(bot):
     """
-    to call http://localhost/chat/session/community_join
+    to call http://localhost/chat/session/community_admin
     """
     # simple chatflow
     res = {}
@@ -39,7 +39,13 @@ def chat(bot):
         res = j.tools.jinja2.template_render(text=j.core.text.strip(md), **locals())
         bot.md_show(res)
     spaces = gedis_client.actors.community_manager.spaces_list()
-    interests = bot.multi_choice("Choose your interests: ", [space.decode() for space in spaces])
+    interests = bot.multi_choice(
+        """
+            <h1>please notice this is currently set to staging ffp for testing purposes </h1> <br/>
+            <h2>to be set to freeflowpages.com on next release</h2><br/>
+            Choose your interests: """,
+        [space.decode() for space in spaces],
+    )
     result = gedis_client.actors.community_manager.community_join(user_email=user_email, spaces=interests)
     if not result:
         result = gedis_client.actors.community_manager.user_create(user_email=user_email, user_name=user_name)
