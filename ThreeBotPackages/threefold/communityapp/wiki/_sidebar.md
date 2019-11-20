@@ -1,2 +1,2 @@
-* [spaces](README.md)
-* [your tree](structure.md)
+* [Community Spaces](README.md)
+* [Impact Tree](structure.md)

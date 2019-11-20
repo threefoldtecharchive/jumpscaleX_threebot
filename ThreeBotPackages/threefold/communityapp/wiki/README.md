@@ -1,3 +1,4 @@
+<img style="float: right;width: 162px;" src="logo.svg">
 ## Community Spaces
 
 ```

@@ -11,6 +11,7 @@ class community_manager(j.baseclasses.threebot_actor):
         self.links = []
         self.ids = []
         self.start = True
+        self.check_referral("admin@3bot.com", "", "admin", "admin")  # refrral code for admin
 
     def community_join(self, user_email, spaces, user_session=None):
         """
@@ -138,10 +139,11 @@ class community_manager(j.baseclasses.threebot_actor):
         for space in spaces:
             posts = self.freeflow_client.posts.list(space_id=space["id"])
             latestNews[space["id"]] = [post["message"] for post in posts["results"]]
+        users = self.model.find(email=self.current_user)
         out = schema_out.new()
         # TODO: improve html styling in the template
         out.content = j.tools.jinja2.template_get(self._dirpath + "/info_template.html").render(
-            username=self.current_user,
+            username=users[0].name,
             spaces=spaces,
             notfound=error_message,
             url=self.FFP,
@@ -160,8 +162,13 @@ class community_manager(j.baseclasses.threebot_actor):
         :return:
         """
         out = schema_out.new()
+        user = self.model.find(email=self.current_user)
+        referral_code = user[0].referral_code
+        list_of_nodes = self.get_children(user[0].name)
         # TODO: improve html styling in the template
-        out.content = j.tools.jinja2.template_get(self._dirpath + "/index.html").render()
+        out.content = j.tools.jinja2.template_get(self._dirpath + "/index.html").render(
+            invitation=referral_code, nodes=list_of_nodes
+        )
         return out
 
     def check_referral(self, email, referral, name, bot_invited, schema_out=None, user_session=None):
