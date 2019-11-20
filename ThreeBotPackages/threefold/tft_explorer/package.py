@@ -17,9 +17,7 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot starts
         :return:
         """
-        ## TODO: BAD
-        self.db.models_add(path=self.package_root + "/models")
-        self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
+        pass
 
     def stop(self):
         """
@@ -33,5 +31,4 @@ class Package(j.baseclasses.threebot_package):
         called when the package is no longer needed and will be removed from the threebot
         :return:
         """
-        # TODO: clean up bcdb ?
         pass
