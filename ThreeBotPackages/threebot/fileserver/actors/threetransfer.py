@@ -8,7 +8,8 @@ class threetransfer(j.baseclasses.threebot_actor):
         self.shortlink_model = bcdb.model_get(url="threetransfer.shortlink.1")
 
     def _check_file_exists(self, path, version=4):
-        if not j.sal.fs.isFile(path):
+        path = j.sal.fs.joinPaths("/", path)
+        if not j.sal.bcdbfs.exists(path):
             raise j.exceptions.Value("There is no file on the given path: %s" % path)
 
     def _get_uuid(self, uuid_to_test):
@@ -33,9 +34,9 @@ class threetransfer(j.baseclasses.threebot_actor):
         ```
         """
 
-        # if not re.search("^http",shortlink.url):
-            # 
-            # self._check_file_exists(shortlink.url)
+        if not re.search("^http",shortlink.url):
+            
+            self._check_file_exists(shortlink.url)
         
         if shortlink.identifier:
             shortlink.identifier = self._get_uuid(shortlink.identifier)
