@@ -19,6 +19,13 @@ export default ({
         })
     },
     downloadFile (identifier) {
-        return axios.get(`${window.config.fileTransferApiUrl}/fileserver/api/threetransferdownload/${identifier}`)
+        // return axios.get(`${window.config.fileTransferApiUrl}/fileserver/api/threetransferdownload/${identifier}`)
+
+        return axios.request(
+            {
+                url: `${window.config.fileTransferApiUrl}/fileserver/api/threetransferdownload/${identifier}`, 
+                method: 'GET', 
+                responseType: 'blob'
+            })
     },
 })

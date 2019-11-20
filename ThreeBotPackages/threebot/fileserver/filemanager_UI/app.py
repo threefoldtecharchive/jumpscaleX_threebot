@@ -191,7 +191,6 @@ class App(object):
             """
             single file or single dir
             """
-            import ipdb; ipdb.set_trace()
             bcdb = j.data.bcdb.get("threetransfer")
             shortlink_model = bcdb.model_get(url="threetransfer.shortlink.1")
 

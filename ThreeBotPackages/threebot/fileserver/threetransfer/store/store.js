@@ -3,7 +3,8 @@ import threetransferService from '../service.js'
 export default ({
     state : {
         uploadMessages: [],
-        uploaded: false
+        downloadError: "abc"
+
     },
     actions: {
         uploadfile: (context, file) => {
@@ -19,7 +20,7 @@ export default ({
         generateLink: (context, url) => {
             context.commit('addMessage', {message: 'Generating link', color:'green'})
             threetransferService.generateLink(url).then(response => {
-                let message = `The file is available for download on the following url: ${window.location.origin}fileserver/threetransfer/#/download/${response.data.identifier}`
+                let message = `The file is available for download on the following url: ${window.location.origin}/fileserver/threetransfer/#/download/${response.data.identifier}`
                 context.commit('addMessage', {message: message, color:'green'})
             }).catch(error => {
                 context.commit('addMessage', {message: 'Link generation failed', color:'red'})
@@ -27,21 +28,31 @@ export default ({
             })
         },
         downloadfile: (context, identifier) => {
+            console.log(`downloadfile`, identifier)
             threetransferService.downloadFile(identifier).then(response => {
                 console.log(response)
-
-                let blob = new Blob([response.data])
-                console.log(`blob`,blob)
-                url = window.URL.createObjectURL(blob)
-                console.log(`hello?`)
-                console.log(`url`,url)
-
-
-                var a = document.createElement("a");
-                a.href = response.data;
-                a.setAttribute("download", identifier);
+                const a = document.createElement("a");
+                a.style.display = "none";
+                document.body.appendChild(a);
+                
+                // Set the HREF to a Blob representation of the data to be downloaded
+                a.href = window.URL.createObjectURL(
+                    new Blob([response.data])
+                );
+                
+                // Use download attribute to set set desired file name
+                a.setAttribute("download", 'miauw');
+                
+                // Trigger the download by simulating click
                 a.click();
-                console.log(a)
+                
+                // Cleanup
+                window.URL.revokeObjectURL(a.href);
+                document.body.removeChild(a);
+                
+
+            }).catch(error => {
+                context.commit('setDownloadError', 'Downloading failed')
             })
         },
         clearMessages: (context) => {
@@ -50,9 +61,11 @@ export default ({
     },
     mutations: {
         addMessage: (state, message) => { state.uploadMessages.push(message) },
-        clearMessages: (state) => { state.uploadMessages = [] }
+        clearMessages: (state) => { state.uploadMessages = [] },
+        setDownloadError: (state, message) => {state.downloadError = massage}
     },
     getters: {
-        uploadMessages: (state) => state.uploadMessages
+        uploadMessages: (state) => state.uploadMessages,
+        downloadError: (state) => state.downloadError
     }
 })
