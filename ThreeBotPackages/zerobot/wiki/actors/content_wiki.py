@@ -28,4 +28,3 @@ class content_wiki(j.baseclasses.threebot_actor):
 
         job = j.servers.myjobs.schedule(load_wiki, wiki_name=wiki_name, wiki_url=wiki_url, pull=pull, download=download)
         job.wait()
-
