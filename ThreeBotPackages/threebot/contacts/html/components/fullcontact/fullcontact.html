@@ -1,0 +1,196 @@
+<section class="fullcontact">
+  <v-form ref="contactForm">
+    <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked">
+    <v-col class="pt-0">
+      <div style="position: absolute; right:10px; top: 10px;">
+        <slot name="actions">
+          <v-btn v-if="edit" dark icon @click="updateContact">
+            <v-icon small>fas fa-save</v-icon>
+          </v-btn>
+          <v-btn v-if="edit" dark icon @click="cancelUpdate">
+            <v-icon small>fas fa-times</v-icon>
+          </v-btn>
+          <v-btn v-if="!edit" dark icon @click="updateFavorite(!currentContact.favorite)">
+            <v-icon v-if="currentContact.favorite" small>fas fa-star</v-icon>
+            <v-icon v-else small>far fa-star</v-icon>
+          </v-btn>
+          <v-btn v-if="!edit" dark icon @click="edit = true">
+            <v-icon small>fas fa-pencil-alt</v-icon>
+          </v-btn>
+          <v-menu v-if="!edit">
+            <template v-slot:activator="{ on }">
+              <v-btn dark icon v-on="on">
+                <v-icon small>fas fa-ellipsis-v</v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item @click="deleteThisContact">
+                <v-list-item-icon>
+                  <v-icon>fas fa-trash</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Delete contact</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </slot>
+      </div>
+      <v-row class="primary pa-5" align="center">
+        <v-avatar v-if="edit" @click="openFilePicker"
+          style="cursor: pointer; position: absolute; z-index: 2; background: rgba(0,0,0,0.5);" size="100">
+          <v-icon size="50" dark>fas fa-camera</v-icon>
+        </v-avatar>
+        <v-avatar size="100" color="secondary">
+          <v-img v-if="currentContact.picture" :src="currentContact.picture"></v-img>
+          <v-icon v-else size="50" dark>fas fa-user</v-icon>
+        </v-avatar>
+        <v-flex class="pl-2">
+          <v-row class="px-4">
+            <v-text-field :disabled="!edit" :rules="[$rules.required, $rules.noLongerThan100]" dark
+              v-model="currentContact.firstname" label="First name"></v-text-field>
+            <v-text-field :disabled="!edit" :rules="[$rules.required, $rules.noLongerThan100]" dark
+              v-model="currentContact.lastname" label="Last name"></v-text-field>
+          </v-row>
+          <!-- <v-text-field :disabled="!edit" dark v-model="currentContact.tags" label="Tags"/>!-->
+        </v-flex>
+      </v-row>
+      <v-col>
+        <h2 class="font-weight-thin">
+          Contact details
+        </h2>
+        <v-row>
+          <v-col cols="6">
+            <v-text-field v-if="currentContact.job_title || edit" :disabled="!edit" v-model="currentContact.job_title"
+              label="Job title" prepend-icon="fas fa-briefcase" />
+          </v-col>
+          <v-col cols="6">
+            <v-text-field v-if="currentContact.website || edit" :disabled="!edit" v-model="currentContact.website"
+              label="Website" prepend-icon="fas fa-globe-europe" />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="6">
+            <v-select v-if="currentContact.salutation || edit" :disabled="!edit" :items="salutations"
+              v-model="currentSalutations" label="Salutation" prepend-icon="fas fa-quote-left" multiple></v-select>
+          </v-col>
+          <v-col cols="6">
+            <v-dialog v-if="currentContact.birthdate || edit" ref="birthDateDialog"
+              :return-value.sync="currentContact.birthdate" width="290px">
+              <template v-slot:activator="{ on }">
+                <v-text-field :disabled="!edit" v-model="currentContact.birthdate" label="Birthdate"
+                  prepend-icon="fas fa-calendar" readonly v-on="on">
+                </v-text-field>
+              </template>
+              <v-date-picker v-model="currentContact.birthdate" scrollable>
+                <div class="flex-grow-1"></div>
+                <v-btn text color="primary" @click="birthDateDialog = false">Cancel</v-btn>
+                <v-btn text color="primary" @click="$refs.birthDateDialog.save(currentContact.birthdate)">OK</v-btn>
+              </v-date-picker>
+            </v-dialog>
+          </v-col>
+        </v-row>
+        <v-divider v-if="currentContact.phone_numbers && currentContact.phone_numbers.length" class="my-5"></v-divider>
+        <v-row align="center" v-for="(item, index) in currentContact.phone_numbers" :key="`phone${index}`">
+          <v-col cols="1" justify="center" class="text-center">
+            <v-icon :disabled="!edit" v-if="!index">
+              fas fa-phone
+            </v-icon>
+          </v-col>
+          <v-col cols="7" class="py-0">
+            <v-row>
+              <v-col cols="2" class="py-0">
+                <v-text-field :disabled="!edit" v-model="item.extensions" label="Extensions"></v-text-field>
+              </v-col>
+              <v-col class="py-0">
+                <v-text-field :disabled="!edit" v-model="item.number" label="Phone number"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col cols="3" class="py-0">
+            <v-autocomplete :disabled="!edit" v-model="item.description" label="Description" :items="description">
+            </v-autocomplete>
+          </v-col>
+          <v-col cols="1" class="py-0">
+            <v-btn v-if="edit && index" icon small class="secondary" @click="removeNumber(index)">
+              <v-icon small class="white--text">fas fa-times</v-icon>
+            </v-btn>
+            <v-btn v-if="edit" icon small class="secondary" @click="addPhoneNumber">
+              <v-icon small class="white--text">fas fa-plus</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+
+        <v-divider v-if="currentContact.email && currentContact.email.length" class="my-5"></v-divider>
+        <v-row align="center" v-for="(item, index) in currentContact.email" :key="`email${index}`">
+          <v-col cols="1" justify="center" class="text-center">
+            <v-icon :disabled="!edit" v-if="!index">
+              fas fa-envelope
+            </v-icon>
+          </v-col>
+          <v-col cols="7" class="py-0">
+            <v-row>
+              <v-col class="py-0">
+                <v-text-field :disabled="!edit" :rules="[$rules.email]" v-model="item.email" label="Email">
+                </v-text-field>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col cols="3" class="py-0">
+            <v-autocomplete :disabled="!edit" v-model="item.description" label="Description" :items="description">
+            </v-autocomplete>
+          </v-col>
+          <v-col cols="1" class="py-0">
+            <v-btn v-if="edit && index" icon small class="secondary" @click="removeEmail(index)">
+              <v-icon small class="white--text">fas fa-times</v-icon>
+            </v-btn>
+            <v-btn v-if="edit" icon small class="secondary" @click="addEmail">
+              <v-icon small class="white--text">fas fa-plus</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+
+        <v-divider v-if="currentContact.addresses && currentContact.addresses.length" class="my-5"></v-divider>
+        <v-row align="center" v-for="(item, index) in currentContact.addresses" :key="`address${index}`">
+          <v-col cols="1" justify="center" class="text-center">
+            <v-icon :disabled="!edit" v-if="!index">
+              fas fa-map-marked
+            </v-icon>
+          </v-col>
+          <v-col cols="10" class="py-0">
+            <v-divider v-if="currentContact.addresses.length > 1" />
+            <v-row>
+              <v-col class="py-0">
+                <v-text-field :disabled="!edit" v-model="item.street_name" label="Street name"></v-text-field>
+              </v-col>
+              <v-col cols="2" class="py-0">
+                <v-text-field :disabled="!edit" v-model="item.street_number" label="Nr"></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="2">
+                <v-text-field :disabled="!edit" v-model="item.zip_code" label="ZIP-code"></v-text-field>
+              </v-col>
+              <v-col>
+                <v-text-field :disabled="!edit" v-model="item.city" label="City"></v-text-field>
+              </v-col>
+              <v-col>
+                <v-text-field :disabled="!edit" v-model="item.state_province" label="State/Province"></v-text-field>
+              </v-col>
+              <v-col>
+                <v-text-field :disabled="!edit" v-model="item.country" label="Country"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col cols="1" class="py-0">
+            <v-btn v-if="edit && index" icon small class="secondary" @click="removeAddress(index)">
+              <v-icon small class="white--text">fas fa-times</v-icon>
+            </v-btn>
+            <v-btn v-if="edit" icon small class="secondary" @click="addAddress">
+              <v-icon small class="white--text">fas fa-plus</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-col>
+
+  </v-form>
+</section>
