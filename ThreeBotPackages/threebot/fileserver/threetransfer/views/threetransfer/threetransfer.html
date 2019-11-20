@@ -24,18 +24,17 @@
             <h2>Upload file</h2>
             <v-row>
               <label>File
-                <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
+                <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" />
               </label>
               <v-btn v-on:click="submitFile()">Submit</v-btn>
             </v-row>
             <v-row>
-              <ul v-for="item in uploadMessages">
-                <li>
-                    {{item.message}}
-                </li>
-              </ul>
+              <v-col cols="4">
+                <v-row v-for="item in uploadMessages" :class="item.color">
+                  - {{item.message}}
+                </v-row>
+              </v-col>
             </v-row>
-
           </v-col>
         </v-row>
       </v-card-text>

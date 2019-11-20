@@ -21,18 +21,15 @@ module.exports = {
   methods: {
     ...window.vuex.mapActions([
       'uploadfile',
-      'generateLink',
-      'downloadfile'
+      'downloadfile',
+      'clearMessages'
     ]),
     handleFileUpload () {
+      this.clearMessages()
       this.file = this.$refs.file.files[0];
     },
     submitFile () {
-      console.log(`submit file`, this.file)
-      this.uploadfile(this.file)
-      console.log("after submit")
-      console.log(this.uploadMessages)
-      this.generateLink(this.file.name)
+      this.uploadfile(this.file)    
     },
     downloadFile () {
       
