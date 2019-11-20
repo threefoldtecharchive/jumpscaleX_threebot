@@ -1,0 +1,12 @@
+# used by the explorer to aggregate some chain facts
+@url = tft.explorer.chain.aggregated.facts.1
+total_coins = "0" (N)
+total_coins_locked = "0" (N)
+total_block_stakes = "0" (N)
+total_block_stakes_locked = "0" (N)
+estimated_block_stakes_active = "0" (N)
+last_blocks = (LO) !tft.explorer.block.facts.context.1
+
+@url = tft.explorer.block.facts.context.1
+target = "" (S)
+timestamp = 0 (D)
