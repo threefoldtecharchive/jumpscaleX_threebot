@@ -11,7 +11,7 @@ class CommunityFactory(j.baseclasses.threebot_factory):
         users = model.find(name="admin")
         if users:
             return users[0].referral_code
-        return "Sorry , admin not created yet"
+        j.exceptions.NotFound("Admin not created yet..")
 
     def test(self):
         """
