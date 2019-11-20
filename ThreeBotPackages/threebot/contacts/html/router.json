@@ -1,0 +1,10 @@
+[
+    {
+        "path": "/",
+        "component": "views/contacts",
+        "name": "",
+        "meta": {
+            "icon": "fa-user"
+        }
+    }
+]
