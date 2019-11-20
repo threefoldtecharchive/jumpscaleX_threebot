@@ -5,7 +5,9 @@ module.exports = {
   props: ['identifier'],
   data () {
     return {
-      
+      ...window.vuex.mapGetters([
+        'downloadError'
+      ])
     }
   },
   computed: {
@@ -13,13 +15,18 @@ module.exports = {
   },
   mounted () {
     this.downloadFile()
+    
   },
   methods: {
     ...window.vuex.mapActions([
       'downloadfile'
     ]),
     downloadFile () {
-      this.downloadfile(this.identifier)
+      let file = this.downloadfile(this.identifier)
+      this.downloadToSystem(file)
+    },
+    downloadToSystem(file){
+      console.log(file)
     }
   }
 }

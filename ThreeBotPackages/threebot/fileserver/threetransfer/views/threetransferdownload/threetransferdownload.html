@@ -14,7 +14,13 @@
         </v-row>
       </v-card-title>
       <v-card-text>
-        Trying to download {{identifier}}
+        <v-row>
+            Trying to download {{identifier}}
+        </v-row>
+        <v-row v-if="downloadError">
+          {{downloadError}}
+        </v-row>
+
       </v-card-text>
     </v-card>
     </v-flex>
