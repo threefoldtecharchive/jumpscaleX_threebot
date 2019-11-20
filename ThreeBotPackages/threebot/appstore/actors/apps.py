@@ -12,6 +12,7 @@ from Jumpscale import j
 class apps(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
         bcdb = j.data.bcdb.get("appstore")
+        # bcdb = j.threebot.bcdb.appstore
         self.model = bcdb.model_get(url="appstore.app.1")
         # self.model = bcdb.model_get(schema=SCHEMA)
 
