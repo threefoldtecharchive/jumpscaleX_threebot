@@ -37,11 +37,12 @@ export default ({
                 
                 // Set the HREF to a Blob representation of the data to be downloaded
                 a.href = window.URL.createObjectURL(
-                    new Blob([response.data])
+                    new Blob([response.data]/*, {type: response.data.type}*/)
                 );
                 
                 // Use download attribute to set set desired file name
-                a.setAttribute("download", 'miauw');
+                
+                a.setAttribute("download", response.headers.filename);
                 
                 // Trigger the download by simulating click
                 a.click();
@@ -52,7 +53,8 @@ export default ({
                 
 
             }).catch(error => {
-                context.commit('setDownloadError', 'Downloading failed')
+                console.log(error)
+                // context.commit('setDownloadError', 'Downloading failed')
             })
         },
         clearMessages: (context) => {
