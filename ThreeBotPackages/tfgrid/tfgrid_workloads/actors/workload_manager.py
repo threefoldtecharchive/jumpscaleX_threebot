@@ -202,11 +202,11 @@ class workload_manager(j.baseclasses.threebot_actor):
         for _type, w in workloads:
             wids.append(w.workload_id)
             if _type in ["container", "zdb", "volume"] and not w.node_id:
-                raise j.exceptions.Value(f"workload {w.workload_id} as no node_id set")
+                raise j.exceptions.Value(f"workload {w.workload_id} has not a node_id set")
             elif _type == "network":
                 for r in w.network_resources:
                     if not r.node_id:
-                        raise j.exceptions.Value(f"network resource in workload {w.workload_id} as no node_id set")
+                        raise j.exceptions.Value(f"network resource in workload {w.workload_id} has not a node_id set")
 
         if sorted(wids) != list(range(1, len(workloads) + 1)):
             raise j.exceptions.Value(
