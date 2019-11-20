@@ -29,8 +29,10 @@ class tft_explorer(j.baseclasses.threebot_actor):
         ```
         """
         chain_ctx = self._model_chain_context.find()
-        if chain_ctx is None:
+        if not chain_ctx:
             chain_ctx = self._model_chain_context.new()
+        else:
+            chain_ctx = chain_ctx[0]
         chain_ctx.consensus_change_id = consensus_change_id
         chain_ctx.height = height
         chain_ctx.timestamp = timestamp
@@ -48,7 +50,8 @@ class tft_explorer(j.baseclasses.threebot_actor):
         """
         chain_ctx_out = schema_out.new()
         chain_ctx = self._model_chain_context.find()
-        if chain_ctx is not None:
+        if chain_ctx:
+            chain_ctx = chain_ctx[0]
             chain_ctx_out.consensus_change_id = chain_ctx.consensus_change_id
             chain_ctx_out.height = chain_ctx.height
             chain_ctx_out.timestamp = chain_ctx.timestamp
