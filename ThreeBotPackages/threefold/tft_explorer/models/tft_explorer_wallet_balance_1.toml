@@ -1,0 +1,6 @@
+@url = tft.explorer.wallet.balance.1
+object_id** = 0 (I)
+coins_unlocked** = 0 (N)
+coins_locked** = 0 (N)
+block_stakes_unlocked** = 0 (N)
+block_stakes_locked** = 0 (N)
