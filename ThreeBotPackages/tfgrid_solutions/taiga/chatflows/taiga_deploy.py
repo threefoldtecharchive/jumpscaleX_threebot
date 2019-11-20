@@ -1,21 +1,42 @@
 from Jumpscale import j
+import binascii
+from nacl import signing
 
 
 def chat(bot):
     """
-    to call http://localhost:5050/chat/session/wordpress_deploy
+    to call http://localhost:5050/chat/session/taiga_deploy
     """
-    admin_user = bot.string_ask("Admin user:")
-    admin_password = bot.string_ask("Admin password:")
-    admin_email = bot.string_ask("Admin Email:")
-    db_user = bot.string_ask("Database user:")
-    db_password = bot.string_ask("Database password:")
+    # User parameters and env variables preperation to be passed to new container
+    USER = "taiga"
+    PORT = "4321"
+    SECRET_KEY = "taiga"
+    email_host = bot.string_ask("Email host:")
+    email_host_user = bot.string_ask("Email host user:")
+    email_host_password = bot.string_ask("Email host password:")
+    HOST_IP = bot.string_ask("Host to access taiga on:")  # IP or domain
 
-    # j.builders.apps.wordpress.install(path, host_url, title, admin_user, admin_password, admin_email)
+    bot.loading_show("taiga", 4)
 
-    res = f"""
-    # Taiga has been deployed successfully: 
+    environment = {
+        "SECRET_KEY": SECRET_KEY,
+        "EMAIL_HOST": email_host,
+        "EMAIL_HOST_USER": email_host_user,
+        "EMAIL_HOST_PASSWORD": email_host_password,
+        "HOST_IP": HOST_IP,
+    }
+
+    # Create and register new reservation with container information(credentials will be obtained from threebot.me)
+    reservation = j.tools.threebot.explorer.container_create(
+        flist="hossnys-taiga-latest.flist",
+        hub_url="https://hub.grid.tf/hosnys",
+        environment=environment,
+        entrypoint="/bin/bash",
+    )
+
+    # bot.md_show(reservation)
+
+    res = f"""# Taiga has been deployed successfully:
     """
-
     bot.md_show(res)
     bot.redirect("https://threefold.me")
