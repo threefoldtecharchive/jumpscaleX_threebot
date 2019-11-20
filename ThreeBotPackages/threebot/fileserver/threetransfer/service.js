@@ -1,6 +1,6 @@
 export default ({
     uploadFile (file) {
-        return axios.post(`${window.config.fileTransferApiUrl}/fileserver/api/threetransferr/${file.name}`, 
+        return axios.post(`${window.config.fileTransferApiUrl}/fileserver/api/threetransfer/${file.name}`, 
         file,
         {
             headers: {
