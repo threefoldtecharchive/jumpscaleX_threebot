@@ -9,23 +9,44 @@ export default ({
     actions: {
         uploadfile: (context, file) => {
             context.commit('addMessage', {message: 'Uploading file', color:'green'})
-            threetransferService.uploadFile(file).then(response => {
+            // threetransferService.uploadFile(file).then(response => {
+            //     context.commit('addMessage', {message: 'File has been succesfully uploaded', color:'green'})
+            //     context.dispatch('generateLink',file.name)
+            // }).catch(error => {
+            //     context.commit('addMessage', {message: 'An error occured during the uploading of the file', color:'red'})
+            //     console.log(`Request failed: `, error)
+            // })
+            var uploadfile_worked = true
+            if (uploadfile_worked){
                 context.commit('addMessage', {message: 'File has been succesfully uploaded', color:'green'})
                 context.dispatch('generateLink',file.name)
-            }).catch(error => {
+            } else {
                 context.commit('addMessage', {message: 'An error occured during the uploading of the file', color:'red'})
-                console.log(`Request failed: `, error)
-            })
+            }
+            
+
         },
         generateLink: (context, url) => {
             context.commit('addMessage', {message: 'Generating link', color:'green'})
-            threetransferService.generateLink(url).then(response => {
+            // threetransferService.generateLink(url).then(response => {
+            //     let message = `The file is available for download on the following url: ${window.location.origin}/fileserver/threetransfer/#/download/${response.data.identifier}`
+            //     context.commit('addMessage', {message: message, color:'green'})
+            // }).catch(error => {
+            //     context.commit('addMessage', {message: 'Link generation failed', color:'red'})
+            //     console.log(error)
+            // })
+            var link_works = true
+            if (link_works){
+                var response = {data : {
+                    "url": "cute-kitten-with-blue-eyes.jpg",
+                    "identifier": "1a23e070-4d37-47a2-acce-ea079fd50a88",
+                    "id": 36
+                }}
                 let message = `The file is available for download on the following url: ${window.location.origin}/fileserver/threetransfer/#/download/${response.data.identifier}`
                 context.commit('addMessage', {message: message, color:'green'})
-            }).catch(error => {
+            } else {
                 context.commit('addMessage', {message: 'Link generation failed', color:'red'})
-                console.log(error)
-            })
+            }
         },
         downloadfile: (context, identifier) => {
             console.log(`downloadfile`, identifier)
