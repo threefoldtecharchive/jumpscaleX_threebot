@@ -41,7 +41,6 @@ class farms(j.baseclasses.threebot_actor):
         if self.farm_model.find(name=farm.name):
             raise j.exceptions.Value("Farm with name %s is already exist" % farm.name)
 
-
     def register(self, farm, schema_out=None, user_session=None):
         """
         ```in
