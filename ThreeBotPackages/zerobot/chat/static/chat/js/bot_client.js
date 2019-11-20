@@ -270,7 +270,7 @@ var generateSlide = function (message) {
         }
     }
     if (res['cat'] === "user_info") {
-        next(JSON.stringify({ "username": USERNAME, "email": EMAIL }), true);
+        next(JSON.stringify({"username": USERNAME, "email": EMAIL}), true);
     }
     contents = `
         <fieldset>
@@ -293,7 +293,6 @@ var generateSlide = function (message) {
     $(".btn-submit").on("click", function (ev) {
         ev.preventDefault();
         let values = [];
-        value = "";
         for (var idx = 0; idx < messages.length; idx++) {
             res = messages[idx];
             if (["string_ask", "int_ask", "text_ask", "password_ask", "drop_down_choice", "captcha_ask", "location_ask"].includes(res['cat'])) {

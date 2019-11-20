@@ -1,12 +1,17 @@
 from Jumpscale import j
 
 
-class gitea(j.baseclasses.threebot_actor):
-    def _init(self, *args, **kwargs):
-        self.bcdb = j.data.bcdb.get("gitea")
+class provision(j.baseclasses.threebot_actor):
+    def _init(self, **kwargs):
+        self.bcdb = j.data.bcdb.get("tfgrid_solutions")
         self.model = j.data.bcdb.system.model_get(url="tfgridsolutions.gitea.instance.1")
 
     def getall(self, user_session=None):
+        """
+        ```out
+        result = (LO) !...
+        ```
+        """
         return self.model.find()
 
     def chatbot_install_url_get(self):
@@ -14,21 +19,18 @@ class gitea(j.baseclasses.threebot_actor):
 
         :return: the url (normally relative to threebot) for the chatbot which will create a threebot
         """
-        pass
 
     def chatbot_recovery_url_get(self):
         """
 
         :return: the url (normally relative to threebot) for the chatbot which will create a threebot
         """
-        pass
 
     def wiki_doc_url_get(self):
         """
         :return: the url (normally relative to threebot) for the chatbot which will create a threebot
 
         """
-        pass
 
     def wiki_solution_url_get(self, name=None):
         """
@@ -36,7 +38,6 @@ class gitea(j.baseclasses.threebot_actor):
         :return: the url (normally relative to threebot) for the chatbot which will create a threebot
 
         """
-        pass
 
     def delete(self, name=None):
         """
@@ -47,11 +48,9 @@ class gitea(j.baseclasses.threebot_actor):
         state = "OK,ERROR" (E)
         ```
         """
-        pass
 
     def monitor_up(self):
         """
         does monitoring returns True if ok
         :return:
         """
-        pass

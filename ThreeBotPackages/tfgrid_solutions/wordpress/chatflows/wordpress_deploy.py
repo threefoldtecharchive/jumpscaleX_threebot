@@ -5,25 +5,17 @@ def chat(bot):
     """
     to call http://localhost:5050/chat/session/wordpress_deploy
     """
+    path = bot.string_ask("Path:")
+    host_url = bot.string_ask("Host URL:")
+    title = bot.string_ask("Titlte:")
+    admin_user = bot.string_ask("Admin user:")
+    admin_password = bot.string_ask("Admin password:")
+    admin_email = bot.string_ask("Admin Email:")
 
-    # all the required data related to the database so they will be static
+    # j.builders.apps.wordpress.install(path, host_url, title, admin_user, admin_password, admin_email)
 
-    bot.loading_show("wordpress", 5)
-
-    bot.loading_show("wordpress", 5)
-    MYSQL_ROOT_PASSWORD = "wordpress"
-    MYSQL_DATABASE = "wordpress"
-    MYSQL_USER = "wordpress"
-    MYSQL_PASSWORD = "wordpress"
-
-    WORDPRESS_DB_HOST = "localhost:3306"
-    WORDPRESS_DB_USER = "wordpress"
-    WORDPRESS_DB_PASSWORD = "wordpress"
-    WORDPRESS_DB_NAME = "wordpress"
-
-    bot.md_show("Flist to be added to be able to deploy!!!")
-
-    res = f"""# Wordpress has been deployed successfully:
+    res = f"""
+    # Wordpress has been deployed successfully: 
     """
     bot.md_show(res)
     bot.redirect("https://threefold.me")

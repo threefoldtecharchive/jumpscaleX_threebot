@@ -6,20 +6,16 @@ def chat(bot):
     to call http://localhost:5050/chat/session/odoo_deploy
     """
 
-    USER = "odoo"
-    HOST_IP = ""  # IP or domain
+    admin_user = bot.string_ask("Admin user:")
+    admin_password = bot.string_ask("Admin password:")
+    admin_email = bot.string_ask("Admin Email:")
+    db_user = bot.string_ask("Database user:")
+    db_password = bot.string_ask("Database password:")
 
-    bot.loading_show("odoo", 4)
+    # j.builders.apps.wordpress.install(path, host_url, title, admin_user, admin_password, admin_email)
 
-    # Create and register new reservation with container information(credentials will be obtained from threebot.me)
-    reservation = j.tools.threebot.explorer.container_create(
-        flist="bishoyabdo-odoo-latest.flist",
-        hub_url="https://hub.grid.tf/mikhaieb",
-        environment={},
-        entrypoint="/bin/bash",
-    )
-
-    res = f"""# Odoo has been deployed successfully:
+    res = f"""
+    # Odoo has been deployed successfully: 
     """
     bot.md_show(res)
     bot.redirect("https://threefold.me")
