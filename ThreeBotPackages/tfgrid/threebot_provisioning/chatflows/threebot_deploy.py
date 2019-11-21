@@ -30,13 +30,22 @@ def chat(bot):
     deployer = j.tools.threebot_deploy.get()
     try:
         container = deployer.get_by_double_name(name)
-        bot.md_show(f"Doublename {name} has already been used to deploy a 3bot. You can find it here [{url}]({url})")
+        try:
+            explorer.actors.phonebook.get(name=name)
+        except j.exceptions.RemoteException:
+            bot.md_show(
+                "There seems to be a deployment in progress. Please check again later or contact support at support@threefold.tech"
+            )
+        else:
+            bot.md_show(
+                f"Doublename {name} has already been used to deploy a 3bot. You can find it here [{url}]({url})"
+            )
     except j.exceptions.NotFound:
         pass
 
     question = "Please enter a description for your 3BOT:"
     description = bot.string_ask(question)
-    bot.md_show("Deployment will start this might take several minutes")
+    bot.md_show("Press next to start the deployment. This might take several minutes")
 
     bot.md_show_update(progress.format(0, "Creating 3Bot"))
     machine = deployer.machines.get_available()
