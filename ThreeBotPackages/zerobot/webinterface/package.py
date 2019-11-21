@@ -9,7 +9,7 @@ class Package(j.baseclasses.threebot_package):
     def prepare(self):
         """
         ports & paths used for threebotserver
-        see: /sandbox/code/github/threefoldtech/jumpscaleX_core/docs/3Bot/web_environment.md
+        see: {DIR_BASE}/code/github/threefoldtech/jumpscaleX_core/docs/3Bot/web_environment.md
         will start bottle server web interface which include (gedis http interface, gedis websocket interface and
         bcdbfs web server)
         endpoints:
