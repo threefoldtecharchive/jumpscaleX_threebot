@@ -6,7 +6,7 @@ class TFTokenFactory(j.baseclasses.threebot_factory):
     _web = False
 
     def start(self):
-        gedis_client = j.servers.threebot.local_start_default(web=True)
+        gedis_client = j.servers.threebot.local_start_default()
         gedis_client.actors.package_manager.package_add(path=self._dirpath)
 
     def client_get(self):
@@ -14,7 +14,7 @@ class TFTokenFactory(j.baseclasses.threebot_factory):
         j.threebot.package.token.client_get()
         :return:
         """
-        j.servers.threebot.local_start_default(web=True)
+        j.servers.threebot.local_start_default()
         self.client = j.threebot.servers.core.client
         self.client.actors.package_manager.package_add(
             git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/threefold/tfgrid_token"

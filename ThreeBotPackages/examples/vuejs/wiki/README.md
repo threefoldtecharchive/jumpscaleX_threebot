@@ -3,7 +3,7 @@
 To start the package in `kosmos` use the following:
 
 ```python
-JSX> cl = j.servers.threebot.local_start_default(web=True)
+JSX> cl = j.servers.threebot.local_start_default()
 JSX> cl.actors.package_manager.package_add(path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/examples/vuejs/")
 ```
 
