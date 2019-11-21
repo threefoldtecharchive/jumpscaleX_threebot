@@ -10,7 +10,7 @@ class HelloWorldFactory(j.baseclasses.object, j.baseclasses.testtools):
         kosmos 'j.threebot.package.helloworld.start()'
         :return:
         """
-        gedis_client = j.servers.threebot.local_start_default(web=True)
+        gedis_client = j.servers.threebot.local_start_default()
         gedis_client.actors.package_manager.package_add(path=self._dirpath)
 
     def test(self, name=""):

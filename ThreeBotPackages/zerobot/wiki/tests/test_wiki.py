@@ -15,7 +15,7 @@ class Wiki(TestCase):
         LOGGER.info(message)
 
     def setUp(self):
-        self.gedis = j.servers.threebot.local_start_default(timeout=1200)
+        self.gedis = j.servers.threebot.local_start_default()
 
     @classmethod
     def tearDownClass(cls):

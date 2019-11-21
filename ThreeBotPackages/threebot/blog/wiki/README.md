@@ -7,7 +7,7 @@
 `j.tools.blog_loader.add_blog("xmon", "git@gitlab.com:xmonader/sample-blog-jsx.git")`
 
 2- Start the threebot server first in `kosmos` using:
-`cl = j.servers.threebot.local_start_default(web=True)`
+`cl = j.servers.threebot.local_start_default()`
 
 3- Add The blogs package:
 `cl.actors.package_manager.package_add(path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog")`
