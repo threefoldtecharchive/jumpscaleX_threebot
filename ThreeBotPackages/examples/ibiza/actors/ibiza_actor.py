@@ -5,6 +5,7 @@ from io import BytesIO
 
 class ibiza_actor(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
+        self.bcdb = j.data.bcdb.get("ibiza_test")
         self.model = self.bcdb.model_get(url="jumpscale.test.ibiza.wallet")
 
     @j.baseclasses.actor_method
