@@ -164,8 +164,26 @@ class pastebin(j.baseclasses.threebot_actor):
 ```
 - the actors of your registered packages are exposed on http endpoint `/web/gedis/http` more [here](https://github.com/threefoldtech/jumpscaleX_core/blob/be2496d7ca03ad1cbf43caa2b9ec132ae471598a/JumpscaleCore/servers/gedis_http)
 
+### API communication
+
 - if you want to communicate over websocket (unrecommended) use `/web/gedis/http_websocket
 - http/websocket clients available [here](https://github.com/threefoldtech/jumpscaleX_weblibs/tree/master/static/gedis) as well
+
+#### Gedis Websocket
+[Gedis websocket client](https://github.com/threefoldtech/jumpscaleX_weblibs/blob/master/static/gedis/gedis_client.js) available on `/weblibs` on your threebot.
+
+```javascript
+info = { "namespace": "default", "actor": "system", "command": "ping" }
+GEDIS_CLIENT.execute(info).then(res => console.log(res));
+```
+
+#### Gedis HTTP Javascript client
+
+[Gedis client](https://github.com/threefoldtech/jumpscaleX_weblibs/blob/master/static/gedis/gedis_http.js) available on `/weblibs` on your threebot.
+example of usage:
+- `localGedisClient.executeCommand("alerta", "list_alerts").then( (resp) => console.log(resp.json())`
+- or with a friendlier API something like `localGedisClient.actors.alerta.list_alerts().then((resp) => console.log(resp.json()))`
+
 
 or if you want to use pure http client, here's an example in javascript
 ```javascript
@@ -321,6 +339,6 @@ Notice for chat package only cares about the `topic` not about the package name
   - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/pastebin/pastebin/README.md)
 
 - VueJS
-  
+
   - [backend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/examples/vuejs/README.md)
   - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/examples/vuejs/newproject/README.md)
