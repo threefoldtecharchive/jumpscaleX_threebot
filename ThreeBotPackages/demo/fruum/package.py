@@ -37,7 +37,6 @@ class Package(j.baseclasses.threebot_package):
 
         rack = j.servers.rack.get()
 
-
         spec = importlib.util.spec_from_file_location("app", os.path.abspath(os.path.dirname(__file__)) + "/app.py")
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
