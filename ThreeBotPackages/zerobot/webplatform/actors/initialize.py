@@ -21,6 +21,7 @@ class initialize(j.baseclasses.threebot_actor):
             if not getattr(user, field):
                 raise j.exceptions.Value("%s is required" % field)
 
+    @j.baseclasses.actor_method
     def get(self, bot_name, public_key, referrer, schema_out=None, user_session=None):
         """
         ```in
@@ -45,6 +46,7 @@ class initialize(j.baseclasses.threebot_actor):
             out.users.append(user)
         return out
 
+    @j.baseclasses.actor_method
     def name(self, schema_out=None, user_session=None):
         """
         ```out
@@ -57,6 +59,7 @@ class initialize(j.baseclasses.threebot_actor):
 
         return out
 
+    @j.baseclasses.actor_method
     def add(self, user, schema_out=None, user_session=None):
         """
         ```in
@@ -85,6 +88,7 @@ class initialize(j.baseclasses.threebot_actor):
         else:
             raise Exception("Already initialized.")
 
+    @j.baseclasses.actor_method
     def reseed(self, words, user_session):
         """
         ```in
