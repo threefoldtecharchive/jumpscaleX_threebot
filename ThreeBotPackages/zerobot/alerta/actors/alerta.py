@@ -27,6 +27,7 @@ class alerta(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.alert_model = j.tools.alerthandler.model
 
+    @j.baseclasses.actor_method
     def get_alert(self, alert_id, schema_out=None, user_session=None):
         """
         ```in
@@ -39,10 +40,12 @@ class alerta(j.baseclasses.threebot_actor):
             return j.data.serializers.json.dumps(res[0]._ddict)
         return "{}"
 
+    @j.baseclasses.actor_method
     def list_alerts(self, schema_out=None, user_session=None):
         alerts = j.data.serializers.json.dumps({"alerts": [alert._ddict for alert in self.alert_model.find()]})
         return alerts
 
+    @j.baseclasses.actor_method
     def list_alerts_by_env(self, env_name="all", schema_out=None, user_session=None):
         """
         ```in
@@ -66,6 +69,7 @@ class alerta(j.baseclasses.threebot_actor):
         response = {"result": alerts, "error_code": "", "error_message": ""}
         return j.data.serializers.json.dumps(response)
 
+    @j.baseclasses.actor_method
     def new_alert(
         self,
         severity=10,
@@ -117,9 +121,11 @@ class alerta(j.baseclasses.threebot_actor):
         res.res = True
         return res
 
+    @j.baseclasses.actor_method
     def delete_all_alerts(self, schema_out=None, user_session=None):
         self.alert_model.destroy()
 
+    @j.baseclasses.actor_method
     def delete_alert(self, alert_id, schema_out=None, user_session=None):
         """
         ```in

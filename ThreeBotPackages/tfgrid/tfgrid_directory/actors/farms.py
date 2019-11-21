@@ -41,6 +41,7 @@ class farms(j.baseclasses.threebot_actor):
         if self.farm_model.find(name=farm.name):
             raise j.exceptions.Value("Farm with name %s is already exist" % farm.name)
 
+    @j.baseclasses.actor_methods
     def register(self, farm, schema_out=None, user_session=None):
         """
         ```in
@@ -58,6 +59,7 @@ class farms(j.baseclasses.threebot_actor):
         out.farm_id = farm.id
         return out
 
+    @j.baseclasses.actor_methods
     def update(self, farm_id, farm, schema_out=None, user_session=None):
         """
         ```in
@@ -73,6 +75,7 @@ class farms(j.baseclasses.threebot_actor):
         self.farm_model.set_dynamic(farm._ddict, obj_id=farm_id)
         return farm
 
+    @j.baseclasses.actor_methods
     def get(self, farm_id, name, schema_out=None, user_session=None):
         """
         ```in
@@ -91,6 +94,7 @@ class farms(j.baseclasses.threebot_actor):
             return self._by_name(name)
         raise j.exceptions.Value("farm_id or name is required")
 
+    @j.baseclasses.actor_methods
     def list(self, country, city, schema_out=None, user_session=None):
         """
         ```in
@@ -111,6 +115,7 @@ class farms(j.baseclasses.threebot_actor):
             out.farms.append(farm)
         return out
 
+    @j.baseclasses.actor_methods
     def owned_by(self, threebot_id, schema_out=None, user_session=None):
         """
         ```in

@@ -2,6 +2,7 @@ from Jumpscale import j
 
 
 class content_wiki(j.baseclasses.threebot_actor):
+    @j.baseclasses.actor_method
     def reload(self, wiki_name, user_session):
         """
         :param name: name of the wiki to reload
@@ -12,6 +13,7 @@ class content_wiki(j.baseclasses.threebot_actor):
         """
         j.tools.markdowndocs.reload(wiki_name)
 
+    @j.baseclasses.actor_method
     def load(self, wiki_name, wiki_url, pull, download, user_session):
         """
         ```in

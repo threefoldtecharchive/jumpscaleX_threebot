@@ -11,6 +11,7 @@ class users(j.baseclasses.threebot_actor):
             if not getattr(user, field):
                 raise j.exceptions.Value("%s is required" % field)
 
+    @j.baseclasses.actor_method
     def list(self, bot_name, public_key, referrer, schema_out=None, user_session=None):
         """
         ```in
@@ -35,10 +36,11 @@ class users(j.baseclasses.threebot_actor):
             out.users.append(user)
         return out
 
+    @j.baseclasses.actor_method
     def add(self, user, schema_out=None, user_session=None):
         """
         ```in
-        user = (O) !user.1  
+        user = (O) !user.1
         ```
 
         ```out
