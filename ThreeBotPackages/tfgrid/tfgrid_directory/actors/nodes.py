@@ -242,6 +242,21 @@ class nodes(j.baseclasses.threebot_actor):
         node.save()
         return True
 
+    def publish_wg_ports(self, node_id, ports, user_session=None):
+        """
+        ```in
+        node_id = (S)
+        ports = (LI)
+        ```
+        """
+        node = self._find(node_id)
+        if not node:
+            raise j.exceptions.NotFound("node %s not found" % id)
+
+        node.wg_ports = ports
+        node.save()
+        return True
+
 
 def hash_proof(proof):
     #  we are trying to have always produce same hash for same content of proof
