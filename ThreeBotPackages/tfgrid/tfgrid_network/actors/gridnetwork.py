@@ -8,7 +8,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
         self.networkmodel = bcdb.model_get(url="tfgrid.network.network.1")
         self.endpointmodel = bcdb.model_get(url="tfgrid.network.endpoint.1")
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def network_add(self, name, subnet, schema_out=None, user_session=None):
         """"
         ```in
@@ -25,7 +25,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
         out.res = True
         return out
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def network_endpoint_add(self, networkname, sshclient_name, schema_out=None, user_session=None):
         """"
         ```in
@@ -56,7 +56,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
         out.res = True
         return out
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def network_endpoint_delete(self, networkname, sshclient_name, schema_out=None, user_session=None):
         """"
         ```in
@@ -78,7 +78,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
         out.res = True
         return out
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def network_endpoint_find(self, networkname, schema_out=None, user_session=None):
         """"
         ```in
@@ -109,7 +109,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
 
         return out
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def network_find(self, name, schema_out=None, user_session=None):
         """"
         ```in
@@ -154,7 +154,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
             raise j.exceptions.Runtime("No free IPAdress inside network")
         return f"{newip}/{subnet.prefixlen}"
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def network_peer_add(self, networkname, peername, publickey, schema_out=None, user_session=None):
         """
         ```in
@@ -213,7 +213,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
 
         return out
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def network_peer_remove(self, networkname, peername, schema_out=None, user_session=None):
         """
         ```in

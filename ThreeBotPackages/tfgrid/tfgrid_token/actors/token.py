@@ -12,7 +12,7 @@ class token(j.baseclasses.threebot_actor):
         self.capacity = self.bcdb.model_get(url="tfgrid.capacity.1")
         self.tokens = self.bcdb.model_get(url="tfgrid.token.price.1")
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def get_market(self, schema_out=None, user_session=None):
         """
         ```out
@@ -23,7 +23,7 @@ class token(j.baseclasses.threebot_actor):
         self.market.set(out)
         return out
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def get_capacity(self, schema_out=None, user_session=None):
         """
         ```out
@@ -34,7 +34,7 @@ class token(j.baseclasses.threebot_actor):
         self.capacity.set(out)
         return out
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def find_prices(self, price_timeframe, from_date=None, to_date=None, schema_out=None, user_session=None):
         """
         ```in
@@ -68,7 +68,7 @@ class token(j.baseclasses.threebot_actor):
             res = prices
         return res
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def add(self, price, schema_out=None, user_session=None):
         """
         ```in
@@ -81,12 +81,12 @@ class token(j.baseclasses.threebot_actor):
         """
         return self.tokens.new(data=price).save()
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def delete_all(self, schema_out=None, user_session=None):
         self.bcdb.destroy()
         return True
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def feed_dummy_data_prices(self, price_timeframe, year, month, day, price_from, schema_out=None, user_session=None):
         """
         ```in
@@ -105,7 +105,7 @@ class token(j.baseclasses.threebot_actor):
             timeframe=str(price_timeframe), year=year, month=month, day=day, price_from=price_from
         )
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def feed_dummy_data_prices_total(self):
         # TODO: generate the year you need
         pass
@@ -155,7 +155,7 @@ class token(j.baseclasses.threebot_actor):
             res.append(self.tokens.new(data=t).save())
         return res
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def list(self, schema_out=None, user_session=None):
         """
         ```out

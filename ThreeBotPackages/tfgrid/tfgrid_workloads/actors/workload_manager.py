@@ -216,7 +216,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         if not self.user_model.find(id=reservation.customer_tid):
             raise j.exceptions.Value("customer_tid is invalid, or user does not exist")
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def reservation_register(self, reservation, schema_out, user_session):
         """
         ```in
@@ -234,7 +234,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation.save()
         return reservation
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def reservation_get(self, reservation_id, schema_out, user_session):
         """
         ```in
@@ -247,7 +247,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         return self._reservation_get(reservation_id)
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def reservations_list(self, node_id, state, cursor, schema_out, user_session):
         """
         ```in
@@ -269,7 +269,7 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         return output
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def workloads_list(self, node_id, cursor, schema_out, user_session):
         """
         ```in
@@ -307,7 +307,7 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         return output
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def workload_get(self, gwid, schema_out, user_session):
         """
         ```in
@@ -336,7 +336,7 @@ class workload_manager(j.baseclasses.threebot_actor):
                 return obj
         raise j.exceptions.NotFound(f"workload {gwid} not found")
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def sign_provision(self, reservation_id, tid, signature, user_session):
         """
         :param reservation_id: is the id of the reservation, unique in BCDB
@@ -357,7 +357,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation.save()
         return True
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def sign_delete(self, reservation_id, tid, signature, user_session):
         """
         :param reservation_id: is the id of the reservation, unique in BCDB
@@ -382,7 +382,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation.save()
         return True
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def sign_farmer(self, reservation_id, tid, signature, user_session):
         """
         :param reservation_id: is the id of the reservation, unique in BCDB
@@ -410,7 +410,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation.save()
         return True
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def sign_customer(self, reservation_id, signature, user_session):
         """
         :param reservation_id: is the id of the reservation, unique in BCDB
@@ -426,7 +426,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation.save()
         return True
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def set_workload_result(self, global_workload_id, result, user_session):
         """
         Set the result of the deployment of the workload
@@ -453,7 +453,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation.save()
         return True
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def workload_deleted(self, workload_id):
         """
         Mark a workload as deleted

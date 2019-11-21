@@ -126,7 +126,7 @@ class mail(j.baseclasses.threebot_actor):
         out.success = True
         return out
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def update_priority(self, mail_id, priority, schema_out=None, user_session=None):
         """
         ```in
