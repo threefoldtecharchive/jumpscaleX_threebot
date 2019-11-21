@@ -5,6 +5,7 @@ class provisioning(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.token = j.clients.digitalocean.provisioning.token_
 
+    @j.baseclasses.actor_method
     def threebot_create(self, name, user_session=None):
         """
         ```in
@@ -18,6 +19,7 @@ class provisioning(j.baseclasses.threebot_actor):
         machine = deployer.machines.get_available()
         machine.threebot_deploy()
 
+    @j.baseclasses.actor_method
     def threebot_registration(self, name, doublename, email, description, user_session=None):
         """
         ```in
