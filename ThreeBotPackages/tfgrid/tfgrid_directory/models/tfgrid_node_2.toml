@@ -19,6 +19,7 @@ public_config = (O)!tfgrid.node.public_iface.1
 exit_node = (B)
 approved = false (B)
 public_key_hex = "" (S)     #hex representation of public key of the TF node
+wg_ports = (LI)
 
 #following info is not usable for provisioning, its convenience info for the farmer
 #e.g. to know which interface names there are
