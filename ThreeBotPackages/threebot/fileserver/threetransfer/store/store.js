@@ -64,7 +64,7 @@ export default ({
     mutations: {
         addMessage: (state, message) => { state.uploadMessages.push(message) },
         clearMessages: (state) => { state.uploadMessages = [] },
-        setDownloadError: (state, message) => {state.downloadError = massage}
+        setDownloadError: (state, message) => {state.downloadError = message}
     },
     getters: {
         uploadMessages: (state) => state.uploadMessages,
