@@ -207,7 +207,10 @@ class App(object):
             obj = self.db._file_model.get_by_name(name=path)
 
             response.set_header("X-Renew-Token", "true")
-            response.set_header("filename", obj.name) 
+            filename = obj.name
+            if filename[0] == "/":
+                filename = filename[1:]
+            response.set_header("filename", filename) 
 
             filetype = obj.content_type
             response.set_header("Content-Type", filetype)
