@@ -207,8 +207,16 @@ class App(object):
             obj = self.db._file_model.get_by_name(name=path)
 
             response.set_header("X-Renew-Token", "true")
+<<<<<<< HEAD
             response.set_header("Content-Type", "application/octet-stream")
             
+=======
+            response.set_header("filename", obj.name) 
+
+            filetype = obj.content_type
+            response.set_header("Content-Type", filetype)
+
+>>>>>>> 88d6674e044b2aa5dd9b2df9959e4639ce2b1f5f
             if inline:
                 response.set_header("Content-Disposition", "inline")
                 response.set_header("Accept-Ranges", "bytes")
