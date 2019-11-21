@@ -20,7 +20,7 @@ class ModelsCRUDPackageFactory(j.baseclasses.threebot_factory):
 
         # get gedis client
         cl = j.clients.gedis.threebot
-
+        cl.reload()
         # destroy old testing data
         cl.actors.bcdb_example_model.destroy()
 
