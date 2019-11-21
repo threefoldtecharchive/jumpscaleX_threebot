@@ -34,7 +34,7 @@ export default ({
                 const a = document.createElement("a");
                 a.style.display = "none";
                 document.body.appendChild(a);
-                
+                console.log(response.data)
                 // Set the HREF to a Blob representation of the data to be downloaded
                 a.href = window.URL.createObjectURL(
                     new Blob([response.data]/*, {type: response.data.type}*/)

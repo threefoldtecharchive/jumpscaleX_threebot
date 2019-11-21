@@ -179,7 +179,7 @@ class App(object):
 
             create(file)
 
-
+            
             response.set_header("X-Content-Type-Options", "nosniff")
             response.set_header("X-Renew-Token", "true")
             response.set_header("Etag", "15bed3cb4c34f4360")
@@ -207,21 +207,23 @@ class App(object):
             obj = self.db._file_model.get_by_name(name=path)
 
             response.set_header("X-Renew-Token", "true")
+
             filename = obj.name
             if filename[0] == "/":
                 filename = filename[1:]
             response.set_header("filename", filename) 
 
+            response.set_header("Content-Type", "application/octet-stream")
+            
+
             filetype = obj.content_type
             response.set_header("Content-Type", filetype)
-
             if inline:
                 response.set_header("Content-Disposition", "inline")
                 response.set_header("Accept-Ranges", "bytes")
             else:
-                response.set_header(
-                    "Content-Disposition", "attachment; filename**=utf-8" "%s" % j.sal.fs.getBaseName(file)
-                )
+                #response.set_header("Content-Disposition", "attachment; filename=utf-8" "%s" % j.sal.fs.getBaseName(file))
+                response.set_header("Content-Disposition", 'attachment; filename="myfile.txt"')
             return self.db.file_read(path)
 
         @self.app.route("/fileserver/api/resources/<path:re:.*>", method="put")
