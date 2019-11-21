@@ -9,9 +9,10 @@ class CalenderActorsTests(BaseTest):
         cls.info("start calendar server")
         cl = j.servers.threebot.local_start_default(web=True)
         cls.info("load calendar actors")
-        cl.actors.package_manager.package_add(
-            path='"/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/calendar"'
+        path = j.core.tools.text_replace(
+            "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/calendar"
         )
+        cl.actors.package_manager.package_add(path=path)
 
     @classmethod
     def tearDownClass(cls):

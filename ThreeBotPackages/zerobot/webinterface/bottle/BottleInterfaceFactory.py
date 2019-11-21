@@ -148,7 +148,9 @@ class BottleInterfaceFactory(j.baseclasses.object, j.baseclasses.testtools):
 
         gedis_client = j.servers.threebot.local_start_default(timeout=300)
         gedis_client.actors.package_manager.package_add(
-            "/sandbox/code/github/threefoldtech/jumpscaleX_core/JumpscaleCore/servers/gedis/pytests/test_package"
+            j.core.tools.text_replace(
+                "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_core/JumpscaleCore/servers/gedis/pytests/test_package"
+            )
         )
         gedis_client.reload()
 
