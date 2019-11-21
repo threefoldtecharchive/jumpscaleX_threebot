@@ -117,7 +117,6 @@ class phonebook(j.baseclasses.threebot_actor):
         :param description:
         :return:
         """
-
         assert tid
         assert pubkey
         assert name
@@ -213,4 +212,31 @@ class phonebook(j.baseclasses.threebot_actor):
         is_valid = j.data.nacl.payload_verify(payload, verifykey=u.pubkey, signature=signature, die=False)
         out = schema_out.new()
         out.is_valid = is_valid
+        return out
+
+    def update_public_key(self, tid, new_pubkey, signature, schema_out=None, user_session=None):
+        """
+        ```in
+        tid = -1 (I)
+        new_pubkey = "" (S) # hex encoded
+        signature = "" (S) # hex encoded
+        ```
+
+        ```out
+        user = (O) !threebot.phonebook.user.1
+        ```
+        """
+        try:
+            user = self.phonebook_model.get(tid, die=False)
+        except j.exceptions.NotFound:
+            raise j.exceptions.NotFound(f"user with threebot id {tid} not found")
+
+        valid = j.data.nacl.payload_verify(tid, new_pubkey, verifykey=user.pubkey, signature=signature, die=False)
+        if not valid:
+            raise j.exceptions.Input("signature invalid")
+
+        user.pubkey = new_pubkey
+        user.save()
+        out = schema_out.new()
+        out.user = user
         return out

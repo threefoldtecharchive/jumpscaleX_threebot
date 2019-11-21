@@ -8,3 +8,4 @@
 * [Slides version2](test_presentation_v2.md)
 * [Markdown](test_markdown.md)
 * [Inline html](test_html.md)
+* [PDF documents](test_gpdf.md)

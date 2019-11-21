@@ -1,7 +1,8 @@
 
 @url = tfgrid.node.2
 node_id** = (S)
-farm_id** = (S)
+node_id_v1** = (S)
+farm_id** = (I)
 os_version** = (S)
 #parameters = (dict)
 created = (T)

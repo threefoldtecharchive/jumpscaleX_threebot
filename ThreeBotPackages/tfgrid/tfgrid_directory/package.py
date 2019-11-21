@@ -31,8 +31,8 @@ class Package(j.baseclasses.threebot_package):
         locations = website.locations.get("cockpit_locations")
 
         website_location = locations.locations_spa.new()
-        website_location.name = "cockpit"
-        website_location.path_url = "/"
+        website_location.name = "grid_directory"
+        website_location.path_url = "/grid_directory"
         website_location.use_jumpscale_weblibs = False
         fullpath = j.sal.fs.joinPaths(self.package_root, "frontend/")
         website_location.path_location = fullpath

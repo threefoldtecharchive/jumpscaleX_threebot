@@ -5,7 +5,7 @@ from Jumpscale import j
 from parameterized import parameterized
 
 locations = []
-for root, dirs, files in os.walk("/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages"):
+for root, dirs, files in os.walk(j.core.tools.text_replace("{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages")):
     for file in files:
         if file.endswith(".py"):
             file_path = os.path.join(root, file)
@@ -29,3 +29,4 @@ class ThreeBotTests(TestCase):
             test()
         else:
             self.skipTest(f"{location} doesn't have test")
+

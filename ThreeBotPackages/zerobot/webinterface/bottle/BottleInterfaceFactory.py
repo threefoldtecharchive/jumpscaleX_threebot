@@ -5,26 +5,11 @@ import traceback
 from bottle import Bottle, abort, post, request, response, run
 from bottle.ext.websocket import GeventWebSocketServer, websocket
 from Jumpscale import j
+from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
 
 GEDIS_PORT = 8901
 client_gedis = None
 app = Bottle()
-
-
-def enable_cors(fn):
-    def _enable_cors(*args, **kwargs):
-        # set CORS headers
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-        response.headers[
-            "Access-Control-Allow-Headers"
-        ] = "Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token"
-
-        if request.method != "OPTIONS":
-            # actual request; reply with the actual response
-            return fn(*args, **kwargs)
-
-    return _enable_cors
 
 
 #######################################
@@ -66,11 +51,32 @@ def gedis_websocket(ws):
 #######################################
 ######## GEDIS HTTP ROUTES ############
 #######################################
+
+
+def get_actor(client, name, retry=True):
+    """try to get an actor from a gedis client
+
+    will reload the client and try again if the actor is not available
+
+    :param client: gedis client
+    :type client: GedisClient
+    :param name: actor name
+    :type name: str
+    :param retry: if set, will try to reload if actor is not found
+    :type retyr: bool
+    """
+    actor = getattr(client.actors, name, None)
+    if not actor and retry:
+        client.reload()
+        return get_actor(client, name, retry=False)
+    return actor
+
+
 @app.route("/gedis/http/<name>/<cmd>", method=["post", "get", "options"])
 @enable_cors
 def gedis_http(name, cmd):
     client = j.clients.gedis.get(name="main_gedis_threebot", port=8901)
-    actor = getattr(client.actors, name, None)
+    actor = get_actor(client, name)
     if not actor:
         response.status = 404
         return f"Actor {name} does not exist"
@@ -142,7 +148,9 @@ class BottleInterfaceFactory(j.baseclasses.object, j.baseclasses.testtools):
 
         gedis_client = j.servers.threebot.local_start_default(timeout=300)
         gedis_client.actors.package_manager.package_add(
-            "/sandbox/code/github/threefoldtech/jumpscaleX_core/JumpscaleCore/servers/gedis/pytests/test_package"
+            j.core.tools.text_replace(
+                "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_core/JumpscaleCore/servers/gedis/pytests/test_package"
+            )
         )
         gedis_client.reload()
 
