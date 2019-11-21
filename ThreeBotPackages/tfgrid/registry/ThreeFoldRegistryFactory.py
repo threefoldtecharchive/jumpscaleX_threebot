@@ -32,7 +32,7 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         # . Start threebot server, add registery package, then reload the client.
         cl = self.client_get()
         cl.actors.package_manager.package_add(
-            path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/registry"
+            path=j.core.tools.text_replace("{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/registry")
         )
         cl.reload()
         print(name)
@@ -125,3 +125,4 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         print(res.res)
 
         print("OK")
+

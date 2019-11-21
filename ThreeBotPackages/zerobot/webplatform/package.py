@@ -9,14 +9,15 @@ class Package(j.baseclasses.threebot_package):
     def prepare(self):
         """
         """
+        server = self.openresty
+        server.install(reset=False)
 
-    def start(self):       
-        #This should be cleaned up, but it works for now. 
+    def start(self):
+        # This should be cleaned up, but it works for now.
         self.bcdb.models_add(path=self.package_root + "/models")
         self.gedis_server.actors_add(path=self.package_root + "/actors")
 
         server = self.openresty
-        server.install(reset=False)
         server.configure()
         website = server.get_from_port(443)
         locations = website.locations.get("interface_location")
