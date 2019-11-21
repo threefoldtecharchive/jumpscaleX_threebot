@@ -57,7 +57,7 @@ After starting the server with recommended way, you can use the returned client 
 
 ```
 kosmos -p
-JSX> cl = j.servers.threebot.local_start_zerobot_default(web=True)
+JSX> cl = j.servers.threebot.local_start_zerobot_default()
 JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta')
 ```
 
