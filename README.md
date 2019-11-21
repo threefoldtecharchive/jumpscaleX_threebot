@@ -181,8 +181,8 @@ GEDIS_CLIENT.execute(info).then(res => console.log(res));
 
 [Gedis client](https://github.com/threefoldtech/jumpscaleX_weblibs/blob/master/static/gedis/gedis_http.js) available on `/weblibs` on your threebot.
 example of usage:
-- `localGedisClient.executeCommand("alerta", "list_alerts").then( (resp) => console.log(resp.json())`
-- or with a friendlier API something like `localGedisClient.actors.alerta.list_alerts().then((resp) => console.log(resp.json()))`
+- `localGedisClient.executeCommand("identity", "name").then( (resp) => resp.json()).then(data => console.log(data))`
+- or with a friendlier API something like `localGedisClient.actors.identity.name().then( (resp) => resp.json()).then(data => console.log(data))`
 
 
 or if you want to use pure http client, here's an example in javascript
