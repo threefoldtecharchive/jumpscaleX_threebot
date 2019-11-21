@@ -1,0 +1,6 @@
+# used by the explorer to know at what part of the blockchain the DB syncing is
+@url = tft.explorer.chain.context.1
+consensus_change_id = "" (S)
+height = 0 (I)
+timestamp = 0 (D)
+block_id = "" (S)

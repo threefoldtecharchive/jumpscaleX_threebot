@@ -1,6 +1,0 @@
-@url = tft.explorer.chain.1
-name** = ""
-balance_coins = (O) !tft.explorer.balance.1
-balance_blockstakes = (O) !tft.explorer.balance.1
-height = 0 (I)
-timestamp = "" (D)
