@@ -186,7 +186,7 @@ class BlogLoader(j.baseclasses.object):
         self.dest = j.clients.git.pullGitRepo(self.repo_url)
         bcdb = j.data.bcdb.system
         bcdb.models_add(
-            path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog/models"
+            path=j.core.tools.text_replace("{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog/models")
         )
         self.post_model = bcdb.model_get(url="jumpscale.blog.post")
 
@@ -226,3 +226,4 @@ class BlogLoader(j.baseclasses.object):
         self.blog_name = blog_name
         self.repo_url = repo_url
         self._load_blog()
+

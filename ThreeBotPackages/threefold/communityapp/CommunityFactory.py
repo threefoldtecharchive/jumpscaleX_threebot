@@ -11,6 +11,7 @@ class CommunityFactory(j.baseclasses.threebot_factory):
         :return:
         """
         # to do manually:
-        # jsx wiki-load -u /sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/communityapp/wiki -n community -f
+        # jsx wiki-load -u {DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/communityapp/wiki -n community -f
 
         pass
+

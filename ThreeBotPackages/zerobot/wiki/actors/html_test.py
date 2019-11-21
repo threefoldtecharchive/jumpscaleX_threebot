@@ -2,12 +2,12 @@ from Jumpscale import j
 
 
 class html_test(j.baseclasses.threebot_actor):
-    def hello(self, name, user_session, schema_out=None):
+    def hello(self, name_, user_session, schema_out=None):
         """
         :param name: name to say hello to
 
         ```in
-        name = (S)
+        name_ = (S)
         ```
 
         ```out
@@ -18,12 +18,12 @@ class html_test(j.baseclasses.threebot_actor):
         out.content = f"Hello <h3>{name}</h3>"
         return out
 
-    def hello_markdown(self, name, user_session, schema_out=None):
+    def hello_markdown(self, name_, user_session, schema_out=None):
         """
         :param name: name to say hello to
 
         ```in
-        name = (S)
+        name_ = (S)
         ```
 
         ```out
