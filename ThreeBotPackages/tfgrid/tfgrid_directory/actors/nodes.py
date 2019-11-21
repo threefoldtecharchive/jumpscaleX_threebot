@@ -14,7 +14,7 @@ class nodes(j.baseclasses.threebot_actor):
             return None
         return nodes[0]
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def add(self, node, schema_out=None, user_session=None):
         """
         ```in
@@ -46,7 +46,7 @@ class nodes(j.baseclasses.threebot_actor):
             node.created = j.data.time.epoch
         return self.node_model.new(data=node).save()
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def list(self, farm_id, country, city, cru, sru, mru, hru, proofs, schema_out=None, user_session=None):
         """
         ```in
@@ -101,7 +101,7 @@ class nodes(j.baseclasses.threebot_actor):
             output.nodes.append(node)
         return output
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def get(self, node_id, proofs, schema_out=None, user_session=None):
         """
         ```in
@@ -120,7 +120,7 @@ class nodes(j.baseclasses.threebot_actor):
             node.proofs = []
         return node
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def update_total_capacity(self, node_id, resource, schema_out=None, user_session=None):
         """
         ```in
@@ -139,7 +139,7 @@ class nodes(j.baseclasses.threebot_actor):
         node.save()
         return True
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def update_reserved_capacity(self, node_id, resource, schema_out=None, user_session=None):
         """
         ```in
@@ -158,7 +158,7 @@ class nodes(j.baseclasses.threebot_actor):
         node.save()
         return True
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def update_used_capacity(self, node_id, resource, schema_out=None, user_session=None):
         """
         ```in
@@ -177,7 +177,7 @@ class nodes(j.baseclasses.threebot_actor):
         node.save()
         return True
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def add_proof(self, node_id, proof, user_session=None):
         """
         ```in
@@ -202,7 +202,7 @@ class nodes(j.baseclasses.threebot_actor):
         node.save()
         return True
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def publish_interfaces(self, node_id, ifaces, schema_out=None, user_session=None):
         """
         ```in
@@ -218,7 +218,7 @@ class nodes(j.baseclasses.threebot_actor):
         node.save()
         return True
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def set_public_iface(self, node_id, public, schema_out=None, user_session=None):
         """
         ```in
@@ -235,7 +235,7 @@ class nodes(j.baseclasses.threebot_actor):
         node.save()
         return True
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def uptime_update(self, node_id, uptime, user_session=None):
         """
         ```in

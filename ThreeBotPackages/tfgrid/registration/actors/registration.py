@@ -14,7 +14,7 @@ class registration(j.baseclasses.threebot_actor):
         self.server = kwargs["gedis_server"]
         self.format = "json"
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def register(self, doublename, email, description, user_session=None):
         """
         ```in
@@ -62,7 +62,7 @@ class registration(j.baseclasses.threebot_actor):
 
         print(f"Done, your url is: {doublename}.{THREEBOT_DOMAIN}")
 
-    @j.baseclasses.actor_methods
+    @j.baseclasses.actor_method
     def set_identity(self, tid, tname, email, pubkey, user_session):
         """
         ```in
