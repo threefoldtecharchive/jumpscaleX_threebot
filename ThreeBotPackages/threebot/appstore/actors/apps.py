@@ -27,6 +27,7 @@ class apps(j.baseclasses.threebot_actor):
         except j.exceptions.NotFound:
             raise j.exceptions.NotFound("App %s not found" % app_id)
 
+    @j.baseclasses.actor_method
     def new(self, schema_out=None, user_session=None):
         app = self.model.new()
         return app
@@ -51,7 +52,7 @@ class apps(j.baseclasses.threebot_actor):
     @j.baseclasses.actor_method
     def get(self, schema_out=None, user_session=None):
         """
-        ```out 
+        ```out
         apps = (LO) !appstore.app.1
         ```
         """

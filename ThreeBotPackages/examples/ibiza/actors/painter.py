@@ -5,12 +5,15 @@ class painter(j.baseclasses.threebot_actor):
     """
     """
 
+    @j.baseclasses.actor_method
     def echo(self, msg, schema_out=None, user_session=None):
         return msg
 
+    @j.baseclasses.actor_method
     def count(self, a, b, schema_out=None, user_session=None):
         return int(a) + int(b)
 
+    @j.baseclasses.actor_method
     def example1(self, addr, schema_out=None, user_session=None):
         """
         ```out
@@ -21,6 +24,7 @@ class painter(j.baseclasses.threebot_actor):
         w.addr = addr
         return w
 
+    @j.baseclasses.actor_method
     def example2(self, wallet, schema_out=None, user_session=None):
         """
         ```in
@@ -35,6 +39,7 @@ class painter(j.baseclasses.threebot_actor):
         w = wallet
         return w
 
+    @j.baseclasses.actor_method
     def example3(self, a, b, c, schema_out=None, user_session=None):
         """
         ```in
@@ -55,6 +60,7 @@ class painter(j.baseclasses.threebot_actor):
         w.c = c
         return w
 
+    @j.baseclasses.actor_method
     def example4(self, wallet, schema_out=None, user_session=None):
         """
         ```in
