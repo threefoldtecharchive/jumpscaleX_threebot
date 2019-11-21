@@ -16,7 +16,7 @@ We can call it "BCDB public interface".
 
 ## Start the package
 
-using komsos -p
+using kosmos -p
 
 ```python
 # start threebot server
