@@ -8,7 +8,8 @@ export const state = {
 export const actions = {
   getName: async (context) => {
       var response = await farmManagementService.getName()
-      return response.data.name
+      console.log(`response in store`,response)
+      return response.name
     },
   getUser: async (context) => {
     var name = await context.dispatch('getName')
