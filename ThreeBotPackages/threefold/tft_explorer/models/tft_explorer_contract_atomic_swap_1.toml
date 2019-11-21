@@ -1,0 +1,11 @@
+@url = tft.explorer.contract.atomic.swap.1
+object_id** = 0 (I)
+value** = 0 (N)
+condition = "" (S)
+transaction_object_ids = (LI)
+coin_input_object_id = (LI)
+spenditure_data = (O) !tft.explorer.contract.atomic.swap.spenditure.data.1
+
+@url = tft.explorer.contract.atomic.swap.spenditure.data.1
+fulfillment = "" (S)
+coin_output_object_id = 0 (I)

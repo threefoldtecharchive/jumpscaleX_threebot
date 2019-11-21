@@ -102,3 +102,13 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+node_modules
+package-lock.json
+
+# editors
+.vscode
+.idea
+weblibs
+__sapper__
+

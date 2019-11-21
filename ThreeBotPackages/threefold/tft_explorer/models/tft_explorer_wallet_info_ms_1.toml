@@ -1,0 +1,4 @@
+@url = tft.explorer.wallet.info.ms.1
+object_id** = 0 (I)
+owner_object_ids = (LI)
+required_signature_count = (I)
