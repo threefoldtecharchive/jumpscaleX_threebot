@@ -1,0 +1,12 @@
+@url = tft.explorer.output.1
+object_id** = 0 (I)
+parent_object_id = 0 (I)
+type = 0 (I)
+value = 0 (N)
+condition = "" (S)
+unlock_reference_point** = 0 (I)
+spenditure_data = (O) !tft.explorer.output.spenditure.data.1
+
+@url = tft.explorer.output.spenditure.data.1
+fulfillment = "" (S)
+fulfillment_transaction_object_id = 0 (I)
