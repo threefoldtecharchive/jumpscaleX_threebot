@@ -19,6 +19,7 @@ class tft_explorer(j.baseclasses.threebot_actor):
         # self._model_wallet_info_ss = bcdb.model_get(url="tft.explorer.wallet.info.ss.1")
         # self._model_wallet_info_ms = bcdb.model_get(url="tft.explorer.wallet.info.ms.1")
 
+    @j.baseclasses.actor_method
     def set_chain_context(self, consensus_change_id, height, timestamp, block_id, schema_out=None, user_session=None):
         """
         ```in
@@ -39,6 +40,7 @@ class tft_explorer(j.baseclasses.threebot_actor):
         chain_ctx.block_id = block_id
         chain_ctx.save()
 
+    @j.baseclasses.actor_method
     def get_chain_context(self, schema_out=None, user_session=None):
         """
         ```out

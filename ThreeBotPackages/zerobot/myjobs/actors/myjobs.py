@@ -11,6 +11,7 @@ class myjobs(j.baseclasses.threebot_actor):
         self.action_model = j.servers.myjobs.model_action
         self.worker_model = j.servers.myjobs.workers._model
 
+    @j.baseclasses.actor_method
     def list_workers(self, schema_out=None, user_session=None):
         def transform_worker(worker_obj):
             # worker_obj._ddict_hr  gets values converted to strings and also convert timestamps too!
@@ -32,6 +33,7 @@ class myjobs(j.baseclasses.threebot_actor):
         print("returning workers  ", workers)
         return workers
 
+    @j.baseclasses.actor_method
     def list_jobs(self, schema_out=None, user_session=None):
         def transform_job(job_obj):
             job_dict = job_obj._ddict
