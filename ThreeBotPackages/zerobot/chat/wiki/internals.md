@@ -52,14 +52,14 @@ Retrieving the current active question from chatbot is done using `work_get` on 
 
 
 ### Pushing answers
-Pushing answers to chatbot on the last question is done using `work_report` 
+Pushing answers to chatbot on the last question is done using `work_report`
 
 
 
 
 
 ### GedisChatBot
-has all of the implementation details of getting questions, pushing questions, queues, also it's responsible for the primitive question types `int_ask`, `string_ask`, `captcha_ask`, `multi_choice`, `single_choice`, `drop_down_choice` 
+has all of the implementation details of getting questions, pushing questions, queues, also it's responsible for the primitive question types `int_ask`, `string_ask`, `captcha_ask`, `multi_choice`, `single_choice`, `drop_down_choice` , `autocomplete_drop_down`
 
 #### Validation
 
@@ -103,7 +103,7 @@ Here's an example of validations required for a string input
         return self.q_in.get() == captcha
 ```
 
-#### Step 2: Write Content Generator Function 
+#### Step 2: Write Content Generator Function
 
 Now that when we get the `captcha question dict` from the previous step we would want to render it. So let's define the content generator for captcha
 
@@ -140,7 +140,7 @@ var generateSlide = function (res) {
 
 ## How GedisChatBot Works
 
-[GedisChatBot](https://github.com/threefoldtech/jumpscaleX_core/blob/0afdc7d212ee24c37e7c510a92e8ace051696516/JumpscaleCore/servers/gedis/GedisChatBot.py) is the one responsible for creating sessions and keeping track of them and of the loaded chatflows, and also for getting questions to a certain session by `session_id` `session_work_get` and receiving user's answer and giving it to a certain session by `session_id` 
+[GedisChatBot](https://github.com/threefoldtech/jumpscaleX_core/blob/0afdc7d212ee24c37e7c510a92e8ace051696516/JumpscaleCore/servers/gedis/GedisChatBot.py) is the one responsible for creating sessions and keeping track of them and of the loaded chatflows, and also for getting questions to a certain session by `session_id` `session_work_get` and receiving user's answer and giving it to a certain session by `session_id`
 
 ### Session
 
@@ -168,11 +168,6 @@ Here's an example for asking for a password
         return self.q_in.get()
 
 ```
-- cat: used in frontend `bot_client.js` to generate the suitable slide 
+- cat: used in frontend `bot_client.js` to generate the suitable slide
 - msg: question message
 - kwargs can be used for validations or any extra options to your content renderer function
-
-
-
-
-
