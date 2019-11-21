@@ -34,14 +34,14 @@ export default ({
                 const a = document.createElement("a");
                 a.style.display = "none";
                 document.body.appendChild(a);
-                
+                console.log(response.data)
                 // Set the HREF to a Blob representation of the data to be downloaded
                 a.href = window.URL.createObjectURL(
                     new Blob([response.data])
                 );
                 
                 // Use download attribute to set set desired file name
-                a.setAttribute("download", 'miauw');
+                //a.setAttribute("download", 'miauw');
                 
                 // Trigger the download by simulating click
                 a.click();
