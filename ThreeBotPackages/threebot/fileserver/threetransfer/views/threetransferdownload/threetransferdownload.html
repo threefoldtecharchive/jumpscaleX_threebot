@@ -13,39 +13,35 @@
           </v-col>
         </v-row>
       </v-card-title>
-      <v-img
-      class="align-left"
-      style="width: 100%; height: auto"
-
-      src="https://threefold.io/assets/home_banner_new.jpg"
-    >
-      <v-card-text>
-        <v-row>
+      <v-img class="align-left" style="width: 100%; height: auto" src="https://threefold.io/assets/home_banner_new.jpg">
+        <v-card-text>
+          <v-row>
             <v-card class="mx-auto" style="min-height: 400px; height: 80%; width: 400px">
-                <v-card-title>
-                    Download File
-                </v-card-title>
-              </v-card-actions class='ma-3 text-center' style="width: 100%">
-                <div class="text-center" v-if="!downloadError">
-                    <v-progress-circular
-                    indeterminate
-                    class="mr-3"
-                    color="primary"
-                  ></v-progress-circular>
-                  Downloading {{identifier}}
+              <v-card-title>
+                Download File
+              </v-card-title>
+              </v-card-actions class='ma-3  text-center' style="width: 100%">
+              <div class="text-center pa-5">
+                <div v-if="downloadMessage.code == 'DOWNLOADING'">
+                  <v-progress-circular indeterminate class="mr-3" color="primary"></v-progress-circular>
+                  {{downloadMessage.message}}
                 </div>
-                
-                <div v-if="downloadError" class="ma-3 text-center" >
-                  <p><v-icon color="red" medium left>fas fa-times</v-icon>Oops, something went wrong!
-                  </p>
-                  {{downloadError}}
+                <div v-if="downloadMessage.code == 'ERROR'">
+                  <v-icon color="red" medium left>fas fa-times</v-icon>{{downloadMessage.message}}<br><br><br>
+                  <v-btn text icon large color="black" class=" ml-2" @click="reloadPage()">
+                    <v-icon>fa-redo-alt</v-icon>
+                  </v-btn>
                 </div>
+                <div v-if="downloadMessage.code == 'SUCCESS'">
+                  <v-icon color="green" medium left>fas fa-check</v-icon>{{downloadMessage.message}}
+                </div>
+              </div>
               </v-card-actions>
             </v-card>
-        </v-row>
+          </v-row>
 
 
-      </v-card-text>
+        </v-card-text>
       </v-img>
     </v-card>
     </v-flex>
