@@ -3,12 +3,13 @@ import threetransferService from '../service.js'
 export default ({
     state : {
         uploadMessages: [],
-        downloadError: "abc"
-
+        downloadError: "abc",
+        uploadMessage: "",
+        uploading: false
     },
     actions: {
         uploadfile: (context, file) => {
-            context.commit('addMessage', {message: 'Uploading file', color:'green'})
+            context.commit('addMessage', {message: 'Uploading file', code:'UPLOADING', color:'green'})
             // threetransferService.uploadFile(file).then(response => {
             //     context.commit('addMessage', {message: 'File has been succesfully uploaded', color:'green'})
             //     context.dispatch('generateLink',file.name)
@@ -16,13 +17,14 @@ export default ({
             //     context.commit('addMessage', {message: 'An error occured during the uploading of the file', color:'red'})
             //     console.log(`Request failed: `, error)
             // })
-            var uploadfile_worked = true
-            if (uploadfile_worked){
-                context.commit('addMessage', {message: 'File has been succesfully uploaded', color:'green'})
-                context.dispatch('generateLink',file.name)
-            } else {
-                context.commit('addMessage', {message: 'An error occured during the uploading of the file', color:'red'})
-            }
+
+            //var uploadfile_worked = true
+            //if (uploadfile_worked){
+            //    context.commit('addMessage', {message: 'File has been succesfully uploaded', code:'SUCCESS', color:'green'})
+            //    context.dispatch('generateLink',file.name)
+            //} else {
+            //    context.commit('addMessage', {message: 'An error occured during the uploading of the file', code:'UPLOADFAILED', color:'red'})
+           // }
             
 
         },
@@ -35,18 +37,20 @@ export default ({
             //     context.commit('addMessage', {message: 'Link generation failed', color:'red'})
             //     console.log(error)
             // })
-            var link_works = true
-            if (link_works){
-                var response = {data : {
-                    "url": "cute-kitten-with-blue-eyes.jpg",
-                    "identifier": "1a23e070-4d37-47a2-acce-ea079fd50a88",
-                    "id": 36
-                }}
-                let message = `The file is available for download on the following url: ${window.location.origin}/fileserver/threetransfer/#/download/${response.data.identifier}`
-                context.commit('addMessage', {message: message, color:'green'})
-            } else {
-                context.commit('addMessage', {message: 'Link generation failed', color:'red'})
-            }
+
+            
+            //var link_works = true
+            //if (link_works){
+            //    var response = {data : {
+            //        "url": "cute-kitten-with-blue-eyes.jpg",
+            //        "identifier": "1a23e070-4d37-47a2-acce-ea079fd50a88",
+            //        "id": 36
+            //    }}
+            //    let message = `The file is available for download on the following url: ${window.location.origin}/fileserver/threetransfer/#/download/${response.data.identifier}`
+            //    context.commit('addMessage', {message: message, code:'SUCCESS', color:'green'})
+            //} else {
+            //    context.commit('addMessage', {message: 'Link generation failed', code:'FAILED', color:'red'})
+            //}
         },
         downloadfile: (context, identifier) => {
             console.log(`downloadfile`, identifier)
@@ -81,12 +85,20 @@ export default ({
         } 
     },
     mutations: {
-        addMessage: (state, message) => { state.uploadMessages.push(message) },
+        addMessage: (state, message) => { 
+            state.uploadMessages.push(message);
+            state.uploadMessage = message
+        },
         clearMessages: (state) => { state.uploadMessages = [] },
-        setDownloadError: (state, message) => {state.downloadError = massage}
+        setDownloadError: (state, message) => {
+            state.downloadError = massage;
+            state.uploading = false;
+        }
     },
     getters: {
+        uploadMessage: (state) => state.uploadMessage,
         uploadMessages: (state) => state.uploadMessages,
-        downloadError: (state) => state.downloadError
+        downloadError: (state) => state.downloadError,
+        uploading: (state) => state.uploading
     }
 })

@@ -7,16 +7,52 @@ module.exports = {
     return {
       file: '',
       downloadUUID: '',
-      generatedUUID: ''
+      generatedUUID: '',
+      uploadedFiles: [],
+      uploading: false
     }
   },
   computed: {
     ...window.vuex.mapGetters([
-      'uploadMessages'
+      'uploadMessages',
+      'uploadMessage'
     ])
   },
   mounted () {
-    
+    var self = this;
+      window.addEventListener("dragenter", function (e) {
+              document.querySelector("#dropzone").style.visibility = "";
+              document.querySelector("#dropzone").style.opacity = 1;
+              document.querySelector("#textnode").style.fontSize = "48px";
+      });
+
+      window.addEventListener("dragleave", function (e) {
+          e.preventDefault();
+
+              document.querySelector("#dropzone").style.visibility = "hidden";
+              document.querySelector("#dropzone").style.opacity = 0;
+              document.querySelector("#textnode").style.fontSize = "42px";
+          
+      });
+
+      window.addEventListener("dragover", function (e) {
+          e.preventDefault();
+          document.querySelector("#dropzone").style.visibility = "";
+          document.querySelector("#dropzone").style.opacity = 1;
+          document.querySelector("#textnode").style.fontSize = "48px";
+      });
+
+      window.addEventListener("drop", function (e) {
+          e.preventDefault();
+          document.querySelector("#dropzone").style.visibility = "hidden";
+          document.querySelector("#dropzone").style.opacity = 0;
+          document.querySelector("#textnode").style.fontSize = "42px";
+          
+        var files = e.dataTransfer.files;
+          console.log("Drop files:", files);
+          //this.uploadFile(files);
+          self.uploadFiles(files);
+        });
   },
   methods: {
     ...window.vuex.mapActions([
@@ -29,12 +65,75 @@ module.exports = {
       this.file = this.$refs.file.files[0];
     },
     submitFile () {
-      this.uploadfile(this.file)    
+      this.uploadfile(this.file);  
+      this.uploading = true  
     },
+    cancelUploading () {
+      this.uploadfile("");  
+      this.uploading = false  
+    },   
     downloadFile () {
       
       this.downloadfile(this.downloadUUID)
 
+    },
+    uploadFiles: function(f) {
+      var self = this;
+
+      function loadFiles(file) {
+        // Pull the file name and remove the ".txt" extension
+        var name =
+          file.name.substr(0, file.name.lastIndexOf(".txt")) || file.name;
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+          
+          var content = e.target.result;
+          var data = d3.csvParse(content, function(d) {
+            return {
+              x: +d["# X "],
+              y: +d[" Y "],
+              error: +d[" E "],
+              dx: +d[" DX"],
+              name: name
+            };
+          });
+
+          //console.log("data = ", data);
+          data = data.splice(1, data.length);
+
+          self.uploadedFiles.unshift({
+            data: data,
+            fileName: name
+          });
+          
+          var results = JSON.stringify(data[0]);
+          d3.select("#results").html("First data point:<br> " + results);
+        };
+        reader.readAsText(file, "UTF-8");
+      }
+
+      for (var i = 0; i < f.length; i++) {
+          if (this.uploadedFiles.length > 0) {
+            if (
+              !this.checkDuplicateFile(
+                f[i].name.substr(0, f[i].name.lastIndexOf(".txt"))
+              )
+            ) {
+              loadFiles(f[i]);
+            }
+          } else {
+            loadFiles(f[i]);
+          }
+      }
+    },
+    checkDuplicateFile: function(filename) {
+      if (this.uploadedFiles.find(el => el.fileName === filename)) {
+        alert("Duplicate file: " + filename);
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 }
