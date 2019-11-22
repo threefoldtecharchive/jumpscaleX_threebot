@@ -2,10 +2,9 @@ import threetransferService from '../service.js'
 
 export default ({
     state : {
-        // uploadMessages: [],
-        downloadError: "abc",
+        uploadMessages: [],
         uploadMessage: "",
-        uploading: false
+        downloadMessage: ""
     },
     actions: {
         uploadfile: (context, file) => {
@@ -15,22 +14,26 @@ export default ({
                 context.commit('addMessage', {message: 'File has been succesfully uploaded', color:'green'})
                 context.dispatch('generateLink',file.name)
             }).catch(error => {
-                context.commit('addMessage', {message: 'An error occured during the uploading of the file', color:'red'})
+                context.commit('addMessage', {message: 'An error occured during the uploading of the file', code:'ERROR', color:'red'})
                 console.log(`Request failed: `, error)
             })
         },
         generateLink: (context, url) => {
-            context.commit('addMessage', {message: 'Generating link', color:'green'})
+            // context.commit('addMessage', {message: 'Generating link', color:'green'})
             threetransferService.generateLink(url).then(response => {
-                let message = `The file is available for download on the following url: ${window.location.origin}/fileserver/threetransfer/#/download/${response.data.identifier}`
-                context.commit('addMessage', {message: message, color:'green'})
+                let url = `${window.location.origin}/fileserver/threetransfer/#/download/${response.data.identifier}`
+                let message = `The file is available for download on the following url: `
+                context.commit('addMessage', {message: message, code:'SUCCESS', color:'green', url:url})
             }).catch(error => {
-                context.commit('addMessage', {message: 'Link generation failed', color:'red'})
+                context.commit('addMessage', {message: 'Link generation failed', code:'ERROR', color:'red'})
+                this.uploading = false
                 console.log(error)
             })
         },
         downloadfile: (context, identifier) => {
             console.log(`downloadfile`, identifier)
+            context.commit('setDownloadMessage', {message: 'Downloading file', code:'DOWNLOADING'})
+            console.log(`downloadmessage` , context.downloadMessage)
             threetransferService.downloadFile(identifier).then(response => {
                 console.log(response)
                 const a = document.createElement("a");
@@ -52,11 +55,11 @@ export default ({
                 // Cleanup
                 window.URL.revokeObjectURL(a.href);
                 document.body.removeChild(a);
-                
+                context.commit('setDownloadMessage', {message: 'File successfully downloaded!', code:'SUCCESS'})
 
             }).catch(error => {
                 console.log(error)
-                // context.commit('setDownloadError', 'Downloading failed')
+                context.commit('setDownloadMessage', {message: 'Downloading failed, please try again', code:'ERROR', color:'red'})
             })
         },
         clearMessages: (context) => {
@@ -68,16 +71,17 @@ export default ({
             state.uploadMessages.push(message);
             state.uploadMessage = message
         },
-        clearMessages: (state) => { state.uploadMessages = [] },
-        setDownloadError: (state, message) => {
-            state.downloadError = message;
-            state.uploading = false;
+        clearMessages: (state) => { 
+            state.uploadMessages = []
+            state.uploadMessage = ""
+        },
+        setDownloadMessage: (state, message) => {
+            state.downloadMessage = message;
         }
     },
     getters: {
         uploadMessage: (state) => state.uploadMessage,
         uploadMessages: (state) => state.uploadMessages,
-        downloadError: (state) => state.downloadError,
-        uploading: (state) => state.uploading
+        downloadMessage: (state) => state.downloadMessage
     }
 })

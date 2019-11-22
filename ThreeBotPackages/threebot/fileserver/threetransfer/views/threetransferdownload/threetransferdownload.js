@@ -3,30 +3,32 @@ module.exports = {
   components: {
   },
   props: ['identifier'],
-  data () {
+  data() {
     return {
-      ...window.vuex.mapGetters([
-        'downloadError'
-      ])
     }
   },
   computed: {
+    ...window.vuex.mapGetters([
+      'downloadMessage'
+    ])
 
   },
-  mounted () {
+  mounted() {
     this.downloadFile()
-    
   },
   methods: {
     ...window.vuex.mapActions([
       'downloadfile'
     ]),
-    downloadFile () {
+    downloadFile() {
       let file = this.downloadfile(this.identifier)
       this.downloadToSystem(file)
     },
-    downloadToSystem(file){
+    downloadToSystem(file) {
       console.log(file)
+    },
+    reloadPage(){
+      window.location.reload()
     }
   }
 }

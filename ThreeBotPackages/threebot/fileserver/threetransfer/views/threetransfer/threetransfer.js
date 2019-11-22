@@ -8,14 +8,14 @@ module.exports = {
       file: '',
       downloadUUID: '',
       generatedUUID: '',
-      uploadedFiles: [],
-      uploading: false
+      uploadedFiles: []
     }
   },
   computed: {
     ...window.vuex.mapGetters([
       'uploadMessages',
-      'uploadMessage'
+      'uploadMessage',
+      'uploading'
     ])
   },
   mounted () {
@@ -63,19 +63,20 @@ module.exports = {
     ...window.vuex.mapActions([
       'uploadfile',
       'downloadfile',
-      'clearMessages'
+      'clearMessages',
+      'setUploading'
     ]),
     handleFileUpload () {
       this.clearMessages()
       this.file = this.$refs.file.files[0];
     },
     submitFile () {
-      this.uploadfile(this.file);  
-      this.uploading = true  
+      this.uploadfile(this.file); 
+      this.file = '' 
     },
     cancelUploading () {
-      this.uploadfile("");  
-      this.uploading = false  
+      this.uploadfile(""); 
+      this.setUploading(false)
     },   
     downloadFile () {      
       this.downloadfile(this.downloadUUID)
