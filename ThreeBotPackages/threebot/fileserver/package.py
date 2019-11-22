@@ -55,7 +55,8 @@ class Package(j.baseclasses.threebot_package):
         is called at install time
         :return:
         """
-        j.builders.runtimes.python3.pip_package_install("filetype")
+        pass
+        # j.builders.runtimes.python3.pip_package_install("filetype")
 
     def start(self):
         self.start_webdav()
