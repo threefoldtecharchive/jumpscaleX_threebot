@@ -2,13 +2,15 @@ import threetransferService from '../service.js'
 
 export default ({
     state : {
-        uploadMessages: [],
-        downloadError: "abc"
-
+        // uploadMessages: [],
+        downloadError: "abc",
+        uploadMessage: "",
+        uploading: false
     },
     actions: {
         uploadfile: (context, file) => {
-            context.commit('addMessage', {message: 'Uploading file', color:'green'})
+            context.commit('addMessage', {message: 'Uploading file', code:'UPLOADING', color:'green'})
+            console.log('in service uploadfile' , file)
             threetransferService.uploadFile(file).then(response => {
                 context.commit('addMessage', {message: 'File has been succesfully uploaded', color:'green'})
                 context.dispatch('generateLink',file.name)
@@ -62,12 +64,20 @@ export default ({
         } 
     },
     mutations: {
-        addMessage: (state, message) => { state.uploadMessages.push(message) },
+        addMessage: (state, message) => { 
+            state.uploadMessages.push(message);
+            state.uploadMessage = message
+        },
         clearMessages: (state) => { state.uploadMessages = [] },
-        setDownloadError: (state, message) => {state.downloadError = message}
+        setDownloadError: (state, message) => {
+            state.downloadError = message;
+            state.uploading = false;
+        }
     },
     getters: {
+        uploadMessage: (state) => state.uploadMessage,
         uploadMessages: (state) => state.uploadMessages,
-        downloadError: (state) => state.downloadError
+        downloadError: (state) => state.downloadError,
+        uploading: (state) => state.uploading
     }
 })
