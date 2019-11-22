@@ -49,9 +49,14 @@ module.exports = {
           document.querySelector("#textnode").style.fontSize = "42px";
           
         var files = e.dataTransfer.files;
-          console.log("Drop files:", files);
-          //this.uploadFile(files);
-          self.uploadFiles(files);
+        console.log("Drop files:", files);
+        console.log(files.length)
+        
+        if (files.length === 0 || files.length > 1){
+          alert("Please drop only 1 file")
+        }else {
+          self.setUploadFile(files[0]);
+        }
         });
   },
   methods: {
@@ -62,9 +67,11 @@ module.exports = {
     ]),
     handleFileUpload () {
       this.clearMessages()
+      console.log(this.$refs.file.files[0])
       this.file = this.$refs.file.files[0];
     },
     submitFile () {
+      console.log('in submit', this.file)
       this.uploadfile(this.file);  
       this.uploading = true  
     },
@@ -72,18 +79,17 @@ module.exports = {
       this.uploadfile("");  
       this.uploading = false  
     },   
-    downloadFile () {
-      
+    downloadFile () {      
       this.downloadfile(this.downloadUUID)
-
     },
-    uploadFiles: function(f) {
+    setUploadFile (file){
+      console.log('insetuploadfile', file)
+      this.file = file
+    }
+    /*uploadFiles: function(f) {
       var self = this;
 
       function loadFiles(file) {
-        // Pull the file name and remove the ".txt" extension
-        var name =
-          file.name.substr(0, file.name.lastIndexOf(".txt")) || file.name;
         var reader = new FileReader();
 
         reader.onload = function(e) {
@@ -134,6 +140,6 @@ module.exports = {
       } else {
         return false;
       }
-    }
+    }*/
   }
 }
