@@ -10,6 +10,7 @@ export default ({
     actions: {
         uploadfile: (context, file) => {
             context.commit('addMessage', {message: 'Uploading file', code:'UPLOADING', color:'green'})
+            console.log('in service uploadfile' , file)
             // threetransferService.uploadFile(file).then(response => {
             //     context.commit('addMessage', {message: 'File has been succesfully uploaded', color:'green'})
             //     context.dispatch('generateLink',file.name)
