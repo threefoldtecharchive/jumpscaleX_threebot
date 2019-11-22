@@ -8,7 +8,9 @@ module.exports = {
       file: '',
       downloadUUID: '',
       generatedUUID: '',
-      uploadedFiles: []
+      uploadedFiles: [],
+      snackbar: false,
+      copyMessage: ''
     }
   },
   computed: {
@@ -16,7 +18,13 @@ module.exports = {
       'uploadMessages',
       'uploadMessage',
       'uploading'
-    ])
+    ]),
+    showUploadButton () {
+      if (this.file === '' || this.uploadMessage.code === 'UPLOADING'){
+        return false
+      }
+      return true
+    }
   },
   mounted () {
     var self = this;
@@ -84,6 +92,12 @@ module.exports = {
     setUploadFile (file){
       console.log('insetuploadfile', file)
       this.file = file
+    },
+    onCopy: function (e) {
+      this.copyMessage = 'Url has been copied to your clipboard'
+    },
+    onError: function (e) {
+      this.copyMessage = 'Something went wrong while copying'
     }
     /*uploadFiles: function(f) {
       var self = this;
