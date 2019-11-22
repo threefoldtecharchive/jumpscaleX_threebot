@@ -5,6 +5,7 @@ module.exports = {
   props: ['identifier'],
   data() {
     return {
+      
     }
   },
   computed: {
