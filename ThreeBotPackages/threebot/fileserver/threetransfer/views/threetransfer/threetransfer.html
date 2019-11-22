@@ -1,43 +1,85 @@
+<!-- File Drop Zone https://codepen.io/kristof-van-stappen/pen/MWWxezW -->
+
 <section class="threetransfer">
+    <div style="visibility:hidden; opacity:0" id="dropzone">
+      
+        <div id="textnode"> <v-icon large color="white" left>fas fa-file-upload</v-icon> Drop files to add data.</div>
+    </div>
   <v-row class="my-3 mx-1">
-    <v-card style="width: 100%;">
-      <v-card-title primary-title class="primary py-3 mb-5 white--text">
-        <v-row>
-          <v-col cols="6" class="py-0">
-            <v-icon small color="white" left>fas fa-server</v-icon>
-            Threetransfer -- Send
-          </v-col>
-          <v-col></v-col>
-          <v-col cols="4" class="py-0">
-            </v-text-field>
-          </v-col>
-        </v-row>
-      </v-card-title>
-      <v-card-text class="fill-height">
-        <v-row>
-          <!-- <v-col cols="4">
-            <h2>Download file</h2>
-            <v-text-field v-model="downloadUUID" label="UUID to download"></v-text-field>
-            <v-btn v-on:click="downloadFile()">Download</v-btn>
-          </v-col> -->
-          <v-col cols="8">
-            <h2>Upload file</h2>
+    <v-card class="flexcard" style="width: 100%; height: 100%">
+        <v-card-title primary-title class="primary py-3 white--text">
             <v-row>
-              <label>File
-                <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" />
-              </label>
-              <v-btn v-on:click="submitFile()">Submit</v-btn>
-            </v-row>
-            <v-row>
-              <v-col cols="4">
-                <v-row v-for="item in uploadMessages" :class="item.color">
-                  - {{item.message}}
-                </v-row>
+              <v-col cols="6" class="py-0">
+                <v-icon small color="white" left>fas fa-server</v-icon>
+                Threetransfer
+              </v-col>
+              <v-col></v-col>
+              <v-col cols="4" class="py-0">
+                </v-text-field>
               </v-col>
             </v-row>
-          </v-col>
-        </v-row>
-      </v-card-text>
+          </v-card-title>
+      <v-img
+        class="align-auto"
+        style="width: 100%;"
+
+        src="https://threefold.io/assets/home_banner_new.jpg"
+      >
+
+        <v-card-text class="fill-height">
+            <v-row>
+              <!-- <v-col cols="4">
+                <h2>Download file</h2>
+                <v-text-field v-model="downloadUUID" label="UUID to download"></v-text-field>
+                <v-btn v-on:click="downloadFile()">Download</v-btn>
+              </v-col> -->
+              <v-card  style="min-height: 400px; height: 80%; width: 400px">
+                  <v-card-title>
+                      Upload file
+                  </v-card-title>
+                  
+                </v-card-actions class='ma-3' style="width: 100%">
+                        <div v-if='uploading == false'>
+                          <p class="text-center"> <v-icon large left>fas fa-file-export</v-icon> Drop your file <br>  or </p> <br></p>
+                          <div class="text-center" style="width: 100%">
+                            <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" />
+                          </div>
+                          <br><br><br>
+                          <div class="text-center" class="text-center">
+                              <v-btn v-on:click="submitFile()">Upload file</v-btn>
+                          </div>
+                        </div>
+                        <div v-if='uploading == true'>
+                          <div class="text-center" v-if="uploadMessage.code == 'UPLOADING'">
+                              <v-progress-circular
+                              indeterminate
+                              class="mr-3"
+                              color="primary"
+                            ></v-progress-circular>
+                            {{uploadMessage.message}}
+                          </div>
+                          <br><br><br>
+                          <div class="text-center" class="text-center">
+                              <v-btn v-on:click="cancelUploading()">Cancel</v-btn>
+                          </div>
+
+                          <v-row v-for="item in uploadMessages" :class="item.color">
+                            - {{item.message}}
+                          
+                            <p></p>
+                        </div>
+                          
+                        </v-col>
+                    
+                    </v-card-actions>
+              </v-card>
+                  
+              
+            </v-row>
+          </v-card-text>
+      </v-img>
+     
+     
     </v-card>
     </v-flex>
   </v-row>
