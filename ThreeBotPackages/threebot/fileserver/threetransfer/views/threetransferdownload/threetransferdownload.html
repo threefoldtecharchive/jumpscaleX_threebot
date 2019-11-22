@@ -1,11 +1,11 @@
 <section class="threetransferdownload">
   <v-row class="my-3 mx-1">
-    <v-card style="width: 100%;">
-      <v-card-title primary-title class="primary py-3 mb-5 white--text">
+    <v-card class="flexcard" style="width: 100%; height: 100%">
+      <v-card-title primary-title class="primary py-3 white--text">
         <v-row>
           <v-col cols="6" class="py-0">
             <v-icon small color="white" left>fas fa-server</v-icon>
-            Threetransfer -- Download
+            Threetransfer
           </v-col>
           <v-col></v-col>
           <v-col cols="4" class="py-0">
@@ -13,15 +13,40 @@
           </v-col>
         </v-row>
       </v-card-title>
+      <v-img
+      class="align-left"
+      style="width: 100%; height: auto"
+
+      src="https://threefold.io/assets/home_banner_new.jpg"
+    >
       <v-card-text>
         <v-row>
-            Trying to download {{identifier}}
-        </v-row>
-        <v-row v-if="downloadError">
-          {{downloadError}}
+            <v-card class="mx-auto" style="min-height: 400px; height: 80%; width: 400px">
+                <v-card-title>
+                    Download File
+                </v-card-title>
+              </v-card-actions class='ma-3 text-center' style="width: 100%">
+                <div class="text-center" v-if="!downloadError">
+                    <v-progress-circular
+                    indeterminate
+                    class="mr-3"
+                    color="primary"
+                  ></v-progress-circular>
+                  Downloading {{identifier}}
+                </div>
+                
+                <div v-if="downloadError" class="ma-3 text-center" >
+                  <p><v-icon color="red" medium left>fas fa-times</v-icon>Oops, something went wrong!
+                  </p>
+                  {{downloadError}}
+                </div>
+              </v-card-actions>
+            </v-card>
         </v-row>
 
+
       </v-card-text>
+      </v-img>
     </v-card>
     </v-flex>
   </v-row>
