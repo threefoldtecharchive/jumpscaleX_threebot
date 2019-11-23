@@ -1,0 +1,127 @@
+<!-- File Drop Zone https://codepen.io/kristof-van-stappen/pen/MWWxezW -->
+
+<section class="threetransfer">
+  <div style="visibility:hidden; opacity:0" id="dropzone">
+
+    <div id="textnode">
+      <v-icon large color="white" left>fas fa-file-upload</v-icon> Drop files to add data.
+    </div>
+  </div>
+  <v-row class="my-3 mx-1">
+    <v-card class="flexcard" style="width: 100%; height: 100%">
+      <v-card-title primary-title class="primary py-3 white--text">
+        <v-row>
+          <v-col cols="6" class="py-0">
+            <v-icon small color="white" left>fas fa-server</v-icon>
+            Threetransfer
+          </v-col>
+          <v-col></v-col>
+          <v-col cols="4" class="py-0">
+            </v-text-field>
+          </v-col>
+        </v-row>
+      </v-card-title>
+      <v-img class="align-auto" style="width: 100%;" src="https://threefold.io/assets/home_banner_new.jpg">
+
+        <v-card-text class="fill-height">
+          <v-row>
+            <!-- <v-col cols="4">
+                <h2>Download file</h2>
+                <v-text-field v-model="downloadUUID" label="UUID to download"></v-text-field>
+                <v-btn v-on:click="downloadFile()">Download</v-btn>
+              </v-col> -->
+            <v-card style="min-height: 400px; height: 80%; width: 400px" class="mx-auto pa-2">
+              <v-card-title>
+                Upload file
+              </v-card-title>
+
+              </v-card-actions class='ma-3' style="width: 100%">
+              <div>
+                <p class="text-center">
+                  <v-icon large left>fas fa-file-export</v-icon> Drop your file <br> or
+                </p> <br></p>
+                <div class="text-center" style="width: 100%">
+                  <input type="file" id="file" ref="file" style="display: none;" v-on:change="handleFileUpload()" />
+                  <v-btn small type="button"  onclick="document.getElementById('file').click();" >Choose a file !</v-btn>
+                  <br><br>
+                  <p>
+                  <b>{{file.name}}</b>
+                </p>
+                </div>
+                <br>
+                <div class="text-center" v-if="uploadMessage.code == 'ERROR'">
+                  <v-icon color="red" medium left>fas fa-times</v-icon>{{uploadMessage.message}}
+                </div>
+                <div class="text-center" v-if="uploadMessage.code == 'UPLOADING'">
+                    <v-progress-circular indeterminate class="mr-3" color="primary"></v-progress-circular>
+                    {{uploadMessage.message}}
+                  </div>
+                <div class="text-center" v-if="uploadMessage.code == 'SUCCESS'">
+                    <v-icon color="green" medium left>fas fa-check</v-icon>{{uploadMessage.message}}
+                      <a target="_blank" :href="uploadMessage.url">{{uploadMessage.url}}</a>
+                      <br><br>
+                      <v-btn color="primary" class="ml-2" @click="snackbar = true"
+                        v-clipboard:copy="uploadMessage.url"
+                        v-clipboard:success="onCopy"
+                        v-clipboard:error="onError"
+                      >
+                        <v-icon left>
+                          fas fa-copy
+                        </v-icon> Copy to clipboard
+                      </v-btn>
+                  </div>
+                <br><br>
+                <div class="text-center mb-5" class="text-center">
+                  <div v-if="showUploadButton">
+                    
+                  <v-btn color="primary"  v-on:click="submitFile()">Upload file</v-btn>
+                </div>
+                </div>
+
+              </div>
+              <!-- <div v-if='uploading == true' class="mb-3 mt-3">
+                <div class="text-center" v-if="uploadMessage.code == 'UPLOADING'">
+                  <v-progress-circular indeterminate class="mr-3" color="primary"></v-progress-circular>
+                  {{uploadMessage.message}}
+                </div>
+                <div class="text-center mt-3" class="text-center">
+                  <v-btn v-on:click="cancelUploading()">Cancel</v-btn>
+                </div>
+                <br><br>
+                <v-row v-for="item in uploadMessages" :class="item.color">
+                  - {{item.message}}
+
+                  <p></p>
+              </div> -->
+
+              </v-col>
+
+              </v-card-actions>
+            </v-card>
+
+
+          </v-row>
+        </v-card-text>
+      </v-img>
+
+
+    </v-card>
+    </v-flex>
+  </v-row>
+  <v-snackbar
+      v-model="snackbar"
+      :timout="5000"
+      color="primary"
+      bottom right
+      >
+      {{copyMessage}}
+      <v-btn
+        color="white"
+        text
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
+    <script type="application/javascript" src="/fileserver/threetransfer/packages/vue-clipboard.min.js" async></script>
+</section>
