@@ -1,0 +1,14 @@
+
+[source]
+name = "threebot_provisioning"
+description = "allow anyone to deploy threebots on TFGRID installed on TFGRID explorers"
+3bot = "threefold"
+version = "1.0.0"
+
+[actor]
+namespace = "threebot"
+
+[[bcdb]]
+namespace = "threebot_provisioning"
+type = "zdb"
+instance = "default
