@@ -11,6 +11,7 @@ class phonebook(j.baseclasses.threebot_actor):
         self.bcdb = self._bcdb_get("threebot_phonebook")
         self.phonebook_model = self.bcdb.model_get(url="threebot.phonebook.user.1")
 
+    @j.baseclasses.actor_method
     def wallet_create(self, name, schema_out=None, user_session=None):
         """
 
@@ -39,6 +40,7 @@ class phonebook(j.baseclasses.threebot_actor):
         o.wallet_addr = wallet.address
         return o
 
+    @j.baseclasses.actor_method
     def name_register(self, name=None, pubkey=None, wallet_name=None, schema_out=None, user_session=None):
         """
 
@@ -80,6 +82,7 @@ class phonebook(j.baseclasses.threebot_actor):
             u.save()
         return u
 
+    @j.baseclasses.actor_method
     def record_register(
         self,
         tid=None,
@@ -156,6 +159,7 @@ class phonebook(j.baseclasses.threebot_actor):
         u.save()
         return u
 
+    @j.baseclasses.actor_method
     def get(self, tid=None, name=None, email=None, die=True, schema_out=None, user_session=None):
         """
         ```in
@@ -192,6 +196,7 @@ class phonebook(j.baseclasses.threebot_actor):
 
         return jsxobject
 
+    @j.baseclasses.actor_method
     def validate_signature(
         self, tid=None, name=None, email=None, payload=None, signature=None, schema_out=None, user_session=None
     ):
@@ -203,7 +208,7 @@ class phonebook(j.baseclasses.threebot_actor):
         payload = (S)
         signature = (S)
         ```
-        
+
         ```out
         is_valid = (B)
         ```
@@ -214,6 +219,7 @@ class phonebook(j.baseclasses.threebot_actor):
         out.is_valid = is_valid
         return out
 
+    @j.baseclasses.actor_method
     def update_public_key(self, tid, new_pubkey, signature, schema_out=None, user_session=None):
         """
         ```in

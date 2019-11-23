@@ -10,6 +10,7 @@ class news(j.baseclasses.threebot_actor):
             self.bcdb = j.data.bcdb.new("tf_grid_token")
         self.news = self.bcdb.model_get(url="tfgrid.news.1")
 
+    @j.baseclasses.actor_method
     def list(self, schema_out=None, user_session=None):
         """
         ```out
