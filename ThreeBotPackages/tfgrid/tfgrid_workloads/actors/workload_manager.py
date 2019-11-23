@@ -194,12 +194,21 @@ class workload_manager(j.baseclasses.threebot_actor):
         return reservations
 
     def _reservation_validate(self, reservation):
-        workloads = [l for _, l in j.threebot.package.workloadmanager.iterate_over_workloads(reservation)]
-        if not workloads:
+        workloads = [l for l in j.threebot.package.workloadmanager.iterate_over_workloads(reservation)]
+        if len(workloads) == 0:
             raise j.exceptions.Value("At least one workload should be defined")
 
-        workloads_ids = [w.workload_id for w in workloads]
-        if sorted(workloads_ids) != list(range(1, len(workloads) + 1)):
+        wids = []
+        for _type, w in workloads:
+            wids.append(w.workload_id)
+            if _type in ["container", "zdb", "volume"] and not w.node_id:
+                raise j.exceptions.Value(f"workload {w.workload_id} has not a node_id set")
+            elif _type == "network":
+                for r in w.network_resources:
+                    if not r.node_id:
+                        raise j.exceptions.Value(f"network resource in workload {w.workload_id} has not a node_id set")
+
+        if sorted(wids) != list(range(1, len(workloads) + 1)):
             raise j.exceptions.Value(
                 "Invalid workloads ids, workloads ids should be unique and between 1 and the number of worklaods"
             )
