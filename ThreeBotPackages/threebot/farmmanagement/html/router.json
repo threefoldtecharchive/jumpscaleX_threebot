@@ -1,0 +1,10 @@
+[
+    {
+        "path": "/",
+        "component": "views/farmmanagement",
+        "name": "",
+        "meta": {
+            "icon": "fas fa-tractor"
+        }
+    }
+]
