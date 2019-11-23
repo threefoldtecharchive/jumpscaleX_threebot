@@ -165,13 +165,28 @@ var dropDownChoiceGenerate = function (message, options, kwargs, idx) {
     $.each(options, function (i, value) {
         choices += `<option value="${value}">${value}</option>`;
     });
-    let contents = `
-    <h4>${message}</h4>
-    <div class="form-group">
-        <select class="form-control" id="value_${idx}">
-            ${choices}
-        </select>
-    </div>`;
+    let contents = null;
+    // in case we need autocomplete in dropdown
+    if (kwargs.auto_complete) {
+
+        contents = `
+        <h4>${message}</h4>
+        <div>
+            <input class="form-control" id="value_${idx}" type="search" list="choices" placeholder="Please select an option">
+            <datalist id="choices">
+                ${choices}
+            </datalist>
+        </div>`;
+
+    } else {
+        contents = `
+        <h4>${message}</h4>
+        <div class="form-group">
+            <select class="form-control" id="value_${idx}">
+                ${choices}
+            </select>
+        </div>`;
+    }
     return contents;
 }
 
