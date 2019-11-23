@@ -23,7 +23,6 @@ class community_manager(j.baseclasses.threebot_actor):
         spaces = (LS)
         ```
         """
-
         spaces_joined = []
         user_id = self.freeflow_client.users.get_by_email(user_email).get("id")
         spaces_list = self.freeflow_client.spaces.list()
@@ -189,26 +188,103 @@ class community_manager(j.baseclasses.threebot_actor):
         if correct send his username to community_join
         else: send message this inviation is wrong
         """
-        if referral or bot_invited:
-            user_invitation = None
-            users = self.model.find(email=email)
-            if not users:
-                user = self.model.new()
-                user.email = email
-                user.name = name
-                user.referral_code = j.data.idgenerator.generateGUID().replace("-", "")
-                user.save()
-            else:
-                user = users[0]
-            if referral:
-                user_invitation = self.model.find(referral_code=referral)
-            if not user_invitation:
-                user_invitation = self.model.find(name=bot_invited)
-            if user_invitation and user.id != user_invitation[0].id:
-                user.invited_by = user_invitation[0].id
-                user.save()
-                return user_invitation[0].email
-        return False
+
+        #         if referral or bot_invited:
+        #             user_invitation = None
+        #             users = self.model.find(email=email)
+        #             if not users:
+        #                 user = self.model.new()
+        #                 user.email = email
+        #                 user.name = name
+        #                 user.referral_code = j.data.idgenerator.generateGUID().replace("-", "")
+        #                 user.save()
+        #             else:
+        #                 user = users[0]
+        #             if referral:
+        #                 user_invitation = self.model.find(referral_code=referral)
+        #             if not user_invitation:
+        #                 user_invitation = self.model.find(name=bot_invited)
+        #             if user_invitation and user.id != user_invitation[0].id:
+        #                 user.invited_by = user_invitation[0].id
+        #                 user.save()
+        #                 return user_invitation[0].email
+        #         return False
+
+        users = []
+        users = self.model.find()
+        found = False
+        for item in users:
+            if item.remark_threefold == referral:
+                found = True
+
+        return found
+
+    def send_mail(self, name=None, receiver=None, content=None, subject=None, user_session=None):
+        """
+        ```in
+        name = (S)
+        receiver = (S)
+        content = (S)
+        subject = (S)
+        ```
+        send email to user
+        """
+        email_to = []
+        if receiver:
+            email_to.append(receiver)
+        ecl = j.clients.sendgrid.get("send_grid")
+        try:
+            ecl.send("register@threefold.io", subject, content, email_to)
+        except:
+            print("Wrong Mail")
+
+    def get_by_secret(self, secret, schema_out=None, user_session=None):
+        """
+        ```in
+        secret = (S)
+        ```
+        """
+        users = []
+        users = self.model.find()
+        threebot_name = ""
+        for item in users:
+            if item.referral_code == secret:
+                threebot_name = item.remark_threefold
+
+        return threebot_name
+
+    def get_referral_name(self, referral, schema_out=None, user_session=None):
+        """
+        ```in
+        referral = (S)
+        ```
+        check the referral is correct or not
+        if correct send his username to community_join
+        else: send message this inviation is wrong
+        """
+        users = []
+        users = self.model.find()
+        name = ""
+        for item in users:
+            if item.remark_threefold == referral:
+                name = item.name
+
+        return name
+
+    def get_referral_id(self, referral, schema_out=None, user_session=None):
+        """
+        ```in
+        referral = (S)
+        ```
+        """
+        users = []
+        users = self.model.find()
+        ref_id = 0
+        for item in users:
+            if item.remark_threefold == referral:
+                ref_id = item.id
+
+        return ref_id
 
     @j.baseclasses.actor_method
     def unsubscribe_space(self, space, user, user_session=None):
@@ -218,6 +294,113 @@ class community_manager(j.baseclasses.threebot_actor):
         pass
 
     @j.baseclasses.actor_method
+    def get_all_data(self, email=None, schema_out=None, user_session=None):
+        """
+        ```in
+        email = (S)
+        ```
+        """
+        users = []
+        res = []
+        if email:
+            users = self.model.find(email=email)
+        else:
+            users = self.model.find()
+
+        for item in users:
+            res.append(item._ddict_hr)
+
+        return res
+
+    def get_threebots(self, threebot_name, user_session=None):
+        """
+        ```in
+        threebot_name = (S)
+        ```
+        """
+        users = []
+        users = self.model.find()
+        found = False
+        for item in users:
+            if item.remark_threefold == threebot_name:
+                found = True
+
+        return found
+
+    def user_add(
+        self,
+        name=None,
+        email=None,
+        country=None,
+        company=None,
+        threebot_name=None,
+        spaces=None,
+        secret=None,
+        invited_by=None,
+        user_session=None,
+    ):
+        """
+        ```in
+        email = (S)
+        name = (S)
+        country = (S)
+        company = (S)
+        threebot_name = (S)
+        spaces = (S)
+        secret = (S)
+        invited_by= (S)
+        ```
+        """
+        users = self.model.find(name=name)
+        current_user = ""
+        if not users:
+            user = self.model.new()
+            user.email = email
+            user.name = name
+            user.country = country
+            user.company = company
+            # TODO: CHANGE ME: will register threebotname in this field to avoid changing the schema
+            user.remark_threefold = threebot_name
+            # TODO: CHANGE ME: will register userspaces in this field to avoid changing the schema
+            user.remark_member = spaces
+            user.referral_code = secret
+            user.invited_by = self.get_referral_id(invited_by)
+            user.save()
+            return True
+        else:
+            for item in users:
+                if item.remark_threefold == threebot_name or item.remark_threefold == "guest":
+                    current_user = item
+                    break
+            if current_user:
+                if current_user.remark_threefold == "guest":
+                    user = current_user
+                    user.email = email
+                    user.name = name
+                    user.country = country
+                    user.company = company
+                    # TODO: CHANGE ME: will register threebotname in this field to avoid changing the schema
+                    user.remark_threefold = threebot_name
+                    # TODO: CHANGE ME: will register userspaces in this field to avoid changing the schema
+                    user.referral_code = secret
+                    user.invited_by = self.get_referral_id(invited_by)
+                    user.save()
+                    return True
+            else:
+                return False
+
+    def check_name_existance(self, name, user_session=None):
+        """
+        ```in
+        name = (S)
+        ```
+        """
+        users = self.model.find(name=name)
+        if users:
+            return True
+        else:
+            return False
+
     def get_invitation_code(self, email, user_name, user_session=None):
         """
         ```in
@@ -231,11 +414,12 @@ class community_manager(j.baseclasses.threebot_actor):
             user = self.model.new()
             user.email = email
             user.name = user_name
-            user.referral_code = j.data.idgenerator.generateGUID().replace("-", "")
+            user.referral_code = user_name
 
             user.save()
         else:
             user = users[0]
+
         return user.referral_code
 
     def info_get(self, name, schema_out=None, user_session=None):

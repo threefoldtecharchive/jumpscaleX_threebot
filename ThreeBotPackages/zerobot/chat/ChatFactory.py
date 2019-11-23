@@ -21,6 +21,16 @@ oauth_app = j.tools.oauth_proxy.get(app, client, "/chat/login")
 bot_app = j.tools.threebotlogin_proxy.get(app)
 
 PROVIDERS = list(client.providers_list())
+OAUTH_SERVER = ""
+
+
+def auth(fn):
+    def _auth(*args, **kwargs):
+        session = request.environ.get("beaker.session")
+        session["username"] = "Guest"
+        return fn(*args, **kwargs)
+
+    return _auth
 
 
 def get_ws_url():
@@ -44,15 +54,14 @@ def _get_chatflows():
 
 @app.route("/chat/login")
 def login():
-    provider = request.query.get("provider")
-    if provider:
-        if provider == "3bot":
-            return bot_app.login(request.headers["HOST"], "/chat/3botlogin")
-
-        redirect_url = f"https://{request.headers['HOST']}/chat/authorize"
-        return oauth_app.login(provider, redirect_url=redirect_url)
-
-    return env.get_template("chat/login.html").render(providers=PROVIDERS)
+    session = request.environ.get("beaker.session")
+    session_uid = j.data.idgenerator.generateGUID()
+    session["uid"] = session_uid
+    server_domain = "https://" + request.headers["HOST"]
+    query_params = f"uid={session_uid}&redirect_url={server_domain}/chat/authorize"
+    return env.get_template("chat/login.html").render(
+        oauth_server=OAUTH_SERVER, query=query_params, providers=PROVIDERS
+    )
 
 
 @app.route("/chat/3botlogin")
@@ -62,32 +71,41 @@ def chat_botcallback():
 
 @app.route("/chat/authorize")
 def chat_authorize():
-    user_info = oauth_app.callback()
-    oauth_app.session["email"] = user_info["email"]
-    return redirect(oauth_app.next_url)
+    data = request.query
+    session = request.environ.get("beaker.session")
+    if data.get("uid") and data["uid"] == session.get("uid"):
+        session["username"] = data["username"]
+        next_url = session.get("next-url", "/chat")
+        redirect(next_url)
+    else:
+        response.status = 401
+        error = f"Couldn't authorize user"
+        return env.get_template("chat/error.html").render(error=error)
 
 
 @app.route("/chat")
-@oauth_app.login_required
+@auth
 def home_handler():
-    session = oauth_app.session
+    session = request.environ.get("beaker.session")
     chatflows = _get_chatflows()
     data = [(chatflow, chatflow.capitalize().replace("_", " ")) for chatflow in chatflows]
-    return env.get_template("chat/home.html").render(chatflows=data, email=session["email"])
+    return env.get_template("chat/home.html").render(chatflows=data, username=session["username"])
 
 
 @app.route("/chat/session/<topic>", method="get")
 @enable_cors
-@oauth_app.login_required
 def topic_handler(topic):
-    session = oauth_app.session
+    session = request.environ.get("beaker.session")
     query = request.urlparts.query
     if query:
         query = query.split("&")
         query_params = {}
         for q in query:
-            k, v = q.split("=")
-            query_params[k] = v
+            try:
+                k, v = q.split("=")
+                query_params[k] = v
+            except:
+                query_params["referral"] = q
 
         session["kwargs"] = query_params
     else:
@@ -98,11 +116,12 @@ def topic_handler(topic):
         return env.get_template("chat/error.html").render(error=error, email=session["email"])
     ws_url = get_ws_url()
     return env.get_template("chat/index.html").render(
-        topic=topic, url=ws_url, email=session["email"], qs=session["kwargs"], username=session.get("username")
+        topic=topic, url=ws_url, email=session.get("email", ""), qs=session["kwargs"], username=session.get("username")
     )
 
 
-app = oauth_app.app
+session_opts = {"session.type": "file", "session.data_dir": "./data", "session.auto": True}
+app = SessionMiddleware(app, session_opts)
 
 
 class ChatFactory(j.baseclasses.threebot_factory):
