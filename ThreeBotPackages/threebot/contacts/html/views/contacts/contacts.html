@@ -1,0 +1,53 @@
+<section class="contacts">
+  <!-- <v-toolbar class="transparent elevation-0">
+  </v-toolbar> -->
+  <v-row class="pa-2 fill-height">
+    <v-flex md12 class="px-4">
+      <v-card class="fill-height">
+        <v-row class="fill-height">
+          <v-flex md4 class="right-border">
+            <v-toolbar class="primary" dark>
+              <v-row class="mx-4 pt-5">
+                <v-flex md4>
+                  <v-select value="Name" dense :items="sortingSelection"></v-select>
+                  <!-- <v-checkbox></v-checkbox> -->
+                </v-flex>
+                <v-flex md3>
+
+                </v-flex>
+                <v-flex md5>
+                  <v-text-field prepend-icon="fas fa-search" label="Search"></v-text-field>
+                </v-flex>
+              </v-row>
+            </v-toolbar>
+            <div class="pa-0" style="position: relative; width: 100%; height: 100%; overflow: auto; min-height: 100px;">
+              <div style="position: absolute; height:100%; width: 100%;" class="pa-3">
+                <v-list two-line class="pl-3">
+                  <v-list-item-group>
+                    <template v-for="(contact, index) in contacts">
+                      <contact-list-item :contact="contact" :key="index" @click="openContact = contact" />
+                      <v-divider></v-divider>
+                    </template>
+                  </v-list-item-group>
+                </v-list>
+              </div>
+            </div>
+
+            <v-divider vertical></v-divider>
+          </v-flex>
+          <v-flex md8>
+            <full-contact :key="openContact.id" :contact="openContact" v-if="openContact" @delete:contact="deleteContact" />
+          </v-flex>
+        </v-row>
+      </v-card>
+    </v-flex>
+  </v-row>
+  <v-dialog v-model="addContactDialog" max-width="900px" @click:outside="clearAndClose">
+    <v-card>
+      <full-contact :key="Math.random()" editable @update="clearAndClose" @cancel="clearAndClose"/>
+    </v-card>
+  </v-dialog>
+  <v-btn fixed app bottom right fab dark color="secondary" @click="addContactDialog = true" style="z-index: 99">
+    <v-icon>fas fa-plus</v-icon>
+  </v-btn>
+</section>
