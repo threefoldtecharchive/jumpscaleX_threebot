@@ -1,0 +1,60 @@
+<section class="fullcontact">
+  <v-col class="pt-0">
+    <div style="position: absolute; right:10px; top: 10px;">
+      <v-btn dark icon>
+        <v-icon small>fas fa-star</v-icon>
+      </v-btn>
+      <v-btn dark icon>
+        <v-icon small>fas fa-pencil-alt</v-icon>
+      </v-btn>
+      <v-btn dark icon>
+        <v-icon small>fas fa-ellipsis-v</v-icon>
+      </v-btn>
+    </div>
+    <v-row justify="center" class="primary">
+      <v-avatar size="150" color="secondary" style="position: relative; top: 50px">
+        <v-icon size="100" dark>fas fa-user</v-icon>
+      </v-avatar>
+    </v-row>
+    <v-row align="start" justify="center" style="margin-top: 70px">
+      <h2>
+        {{contact.name}}
+      </h2>
+    </v-row>
+    <v-col class="pt-2">
+      <h2>
+        Contact details
+      </h2>
+      <v-row v-for="(cont, index) in contact.contacts" :key="index" class="mt-2">
+        <v-flex md1 class="text-center">
+          <v-icon small v-if="cont.type == 'email'">fas fa-envelope</v-icon>
+          <v-icon small v-if="cont.type == 'phone'">fas fa-phone</v-icon>
+        </v-flex>
+        <v-flex class="ml-3"><span class="font-weight-bold">{{cont.value}} </span> - {{cont.label}}</v-flex>
+      </v-row>
+    </v-col>
+    <!-- <v-col class="pt-2">
+      <h2>
+        Recent contact
+      </h2>
+      <v-row v-for="(cont, index) in contact.recent" :key="index" class="mt-2">
+        <v-flex md1 class="text-center">
+          <v-row>
+            <v-flex md4>
+              <v-icon small v-if="cont.direction == 'incoming'">fas fa-angle-right</v-icon>
+            </v-flex>
+            <v-flex md4>
+              <v-icon small v-if="cont.type == 'email'">fas fa-envelope</v-icon>
+              <v-icon small v-if="cont.type == 'phone'">fas fa-phone</v-icon>
+            </v-flex>
+            <v-flex md4>
+              <v-icon small v-if="cont.direction == 'outgoing'">fas fa-angle-right</v-icon>
+            </v-flex>
+          </v-row>
+
+        </v-flex>
+        <v-flex class="ml-3">{{cont.body}}</v-flex>
+      </v-row>
+    </v-col> -->
+  </v-col>
+</section>

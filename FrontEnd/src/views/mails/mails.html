@@ -1,0 +1,104 @@
+<section class="mails">
+  <!-- <v-toolbar class="transparent elevation-0">
+  </v-toolbar> -->
+  <v-row class="pa-2 fill-height">
+    <v-flex md2>
+      <email-navigation />
+    </v-flex>
+    <v-flex md10 class="px-4">
+      <v-card class="fill-height">
+        <v-container class="pt-0 fill-height">
+          <v-row class="fill-height">
+            <v-flex md4 class="right-border">
+              <v-toolbar class="primary" dark>
+                <v-row class="mx-4 pt-5" v-if="!selected.length">
+                  <v-flex md4>
+                    <v-select value="Date" dense :items="sortingSelection"></v-select>
+                    <!-- <v-checkbox></v-checkbox> -->
+                  </v-flex>
+                  <v-flex md3>
+
+                  </v-flex>
+                  <v-flex md5>
+                    <v-text-field prepend-icon="fas fa-search" label="Search"></v-text-field>
+                  </v-flex>
+                </v-row>
+                <v-row class="mx-3" v-else>
+                  <span class="pt-3 pl-1">
+                    <v-checkbox hide-details></v-checkbox>
+                  </span>
+                  <!-- <v-checkbox></v-checkbox> -->
+                  <!-- <v-btn icon>
+                    <v-icon>fas fa-d</v-icon>
+                  </v-btn> -->
+                  <v-btn icon>
+                    <v-icon small>fas fa-trash</v-icon>
+                  </v-btn>
+                  <v-btn icon>
+                    <v-icon small>fas fa-envelope</v-icon>
+                  </v-btn>
+                  <v-btn icon>
+                    <v-icon small>fas fa-star</v-icon>
+                  </v-btn>
+                </v-row>
+              </v-toolbar>
+              <div class="pa-0"
+                style="position: relative; width: 100%; height: 100%; overflow: auto; min-height: 100px;">
+                <div style="position: absolute; height:100%; width: 100%;" class="pa-3">
+                  <v-list three-line>
+                    <v-list-item-group v-model="selected">
+                      <template v-for="(index) in 100">
+                        <email-list-item :email="item" :key="index" @click="openMail = item" />
+                        <v-divider></v-divider>
+                      </template>
+                    </v-list-item-group>
+                  </v-list>
+                </div>
+              </div>
+
+              <v-divider vertical></v-divider>
+            </v-flex>
+            <v-flex md8>
+              <full-email class="pl-2" :email="openMail" v-if="openMail" />
+            </v-flex>
+          </v-row>
+        </v-container>
+      </v-card>
+    </v-flex>
+  </v-row>
+  <v-card class="newMail mr-2">
+    <v-card-title dark class="primary white--text">
+      New mail
+      <v-spacer />
+      <v-btn dark small icon>
+        <v-icon small>fas fa-window-minimize</v-icon>
+      </v-btn>
+      <v-btn dark small icon>
+        <v-icon small>fas fa-times</v-icon>
+      </v-btn>
+    </v-card-title>
+    <v-card-text class="pb-0">
+      <v-text-field label="To" required></v-text-field>
+      <v-text-field label="Subject" required></v-text-field>
+      <v-divider></v-divider>
+      <rich-input :fullToolbar="extraInputOptions"/>
+    </v-card-text>
+    <v-card-actions class="pl-4">
+      <v-btn color="secondary">
+        <v-icon left small>fas fa-paper-plane</v-icon>
+        Send
+      </v-btn>
+      <v-btn icon text>
+        <v-icon small>fas fa-paperclip</v-icon>
+      </v-btn>
+      <!-- <v-btn :class=" extraInputOptions ? 'primary' : '' " icon text @click="extraInputOptions = !extraInputOptions">
+        <v-icon small>fas fa-font</v-icon>
+      </v-btn> -->
+      <v-spacer></v-spacer>
+      <v-btn icon text>
+        <v-icon small>fas fa-trash</v-icon>
+      </v-btn>
+
+    </v-card-actions>
+  </v-card>
+</section>
