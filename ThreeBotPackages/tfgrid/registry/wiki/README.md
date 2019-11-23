@@ -20,7 +20,7 @@ using kosmos -p
 
 ```python
 # start threebot server
-cl = j.servers.threebot.local_start_default(web=True)
+cl = j.servers.threebot.local_start_default()
 # add the package
 cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/registry/')
 # reload the client to use actors

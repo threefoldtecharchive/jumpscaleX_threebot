@@ -2,7 +2,8 @@ from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from testconfig import config
-import unittest, time
+import unittest
+import time
 from .base_test import BaseTest
 from parameterized import parameterized
 import random
@@ -153,7 +154,7 @@ class alerta(BaseTest):
         self.assertEqual("There is no alerts matching your criteria", self.find_element("no_alerts").text)
 
         self.info("Add some alerts.")
-        client = j.servers.threebot.local_start_default(web=True)
+        client = j.servers.threebot.local_start_default()
         for _ in range(5):
             client.actors.alerta.new_alert(
                 severity=10,
