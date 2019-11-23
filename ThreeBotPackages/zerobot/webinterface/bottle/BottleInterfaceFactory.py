@@ -9,8 +9,9 @@ from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
 
 GEDIS_PORT = 8901
 client_gedis = None
+# to check beaker session
 app = Bottle()
-
+auth_app = j.tools.oauth_proxy.get_session_middleware(app)
 
 #######################################
 ###### GEDIS WEBSOCKET ROUTES #########
@@ -130,7 +131,7 @@ class BottleInterfaceFactory(j.baseclasses.object, j.baseclasses.testtools):
     __jslocation__ = "j.servers.bottle_web"
 
     def get_app(self):
-        return app
+        return auth_app
 
     def test(self, port=None, prefix="web", scheme="https"):
         """
