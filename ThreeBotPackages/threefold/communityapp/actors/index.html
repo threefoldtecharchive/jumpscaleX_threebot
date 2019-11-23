@@ -1,0 +1,53 @@
+{% if nodes == [] %}
+<h1>have impact by inviting people!</h1>
+{% else %}
+<h1> Showing your impact on the community through your invitations</h1>
+{% endif %}
+<h1> invitation URL :</h1>
+<p>https://community.app.3bot.testnet.grid.tf/chat/session/community_join?referral={{invitation}}</p>
+
+<div class="chart" id="collapsable-example"></div>
+<link rel="stylesheet" href="/community/Treant.css">
+<link rel="stylesheet" href="/community/collapsable.css">
+
+<link rel="stylesheet" href="/community/vendor/perfect-scrollbar/perfect-scrollbar.css">
+<script src="/community/vendor/raphael.js" async="false"></script>
+<script src="/community/Treant.js" async="false"></script>
+<script src="/community/vendor/jquery.min.js" async="false"></script>
+<script src="/community/vendor/jquery.easing.js" async="false"></script>
+
+
+<script>
+    function draw_nodes_structure() {
+        localGedisClient.actors.community_manager.get_node_structure()
+            .then(resp => resp.json())
+            .then(nodeStructure => {
+                console.log(nodeStructure)
+
+                var chart_config = {
+                    chart: {
+                        container: "#collapsable-example",
+
+                        animateOnInit: true,
+
+                        node: {
+                            collapsable: true
+                        },
+                        animation: {
+                            nodeAnimation: "easeOutBounce",
+                            nodeSpeed: 700,
+                            connectorsAnimation: "bounce",
+                            connectorsSpeed: 700
+                        }
+                    },
+                    nodeStructure: nodeStructure
+                };
+                tree = new Treant(chart_config);
+            }
+            );
+
+    }
+
+    draw_nodes_structure();
+
+</script>
