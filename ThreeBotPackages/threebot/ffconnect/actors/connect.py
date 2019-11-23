@@ -8,6 +8,7 @@ class tft_explorer(j.baseclasses.threebot_actor):
         bcdb = j.data.bcdb.get("ffconnect")
         self.tft_ex_t = bcdb.model_get(url="ffconnect.room.1")
 
+    @j.baseclasses.actor_method
     def create_room(self, transaction_data, schema_out=None, user_session=None):
         """
         ```in
@@ -20,6 +21,7 @@ class tft_explorer(j.baseclasses.threebot_actor):
 
         """
 
+    @j.baseclasses.actor_method
     def join_room(self, schema_out=None, user_session=None):
         pass
 

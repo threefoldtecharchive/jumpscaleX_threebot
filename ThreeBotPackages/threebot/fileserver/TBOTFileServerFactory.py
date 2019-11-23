@@ -46,8 +46,7 @@ class TBOTFileServerFactory(j.baseclasses.object, j.baseclasses.testtools):
         # TODO: check the actor is already loaded if not do following:
 
         self.client.actors.package_manager.package_add(
-            "threebot_phonebook",
-            git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/threebot/fileserver",
+            git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/threebot/fileserver"
         )
 
         self.client.reload()

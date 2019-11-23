@@ -7,15 +7,18 @@ class community_manager(j.baseclasses.threebot_actor):
         self.model = self.bcdb.model_get(url="threefold.community.user.1")
         self.current_user = "community_user"  # temporary hack
 
+    @j.baseclasses.actor_method
     def community_join(self, user_name, community_name, user_session=None):
         """
-        ask FFP client to join to this space 
+        ask FFP client to join to this space
         """
         return user_name
 
+    @j.baseclasses.actor_method
     def set_current_user(self, user, schema_out=None, user_session=None):
         self.current_user = "dylan_verstraete_1"
 
+    @j.baseclasses.actor_method
     def info_get_current_user(self, schema_out=None, user_session=None):
         """
         ```out
@@ -35,6 +38,7 @@ class community_manager(j.baseclasses.threebot_actor):
         )
         return out
 
+    @j.baseclasses.actor_method
     def check_referral(self, email, referral, name, schema_out=None, user_session=None):
         """
         ```in
@@ -59,12 +63,14 @@ class community_manager(j.baseclasses.threebot_actor):
             return True
         return False
 
+    @j.baseclasses.actor_method
     def unsubscribe_space(self, space, user, user_session=None):
         """
         unsubscribe from any community just take space name
         """
         pass
 
+    @j.baseclasses.actor_method
     def info_get(self, name, schema_out=None, user_session=None):
         """
         ```in

@@ -143,6 +143,7 @@ class addressbook(j.baseclasses.threebot_actor):
 
         return vcard
 
+    @j.baseclasses.actor_method
     def login(self, username, password, user_session=None):
         """
         ```in
@@ -160,6 +161,7 @@ class addressbook(j.baseclasses.threebot_actor):
         if not self.client:
             raise j.exceptions.Runtime("Use login method to enable the actor")
 
+    @j.baseclasses.actor_method
     def add(self, addressbook, schema_out=None, user_session=None):
         """
         ```in
@@ -187,6 +189,7 @@ class addressbook(j.baseclasses.threebot_actor):
         output.addressbook = a
         return output
 
+    @j.baseclasses.actor_method
     def get(self, addressbook_id, schema_out=None, user_session=None):
         """
         ```in
@@ -202,6 +205,7 @@ class addressbook(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound(f"Couldn't find addressbook with id: {addressbook_id}")
         return addressbooks[0]
 
+    @j.baseclasses.actor_method
     def delete(self, addressbook_id, user_session=None):
         """
         ```in
@@ -224,6 +228,7 @@ class addressbook(j.baseclasses.threebot_actor):
         output.addressbooks = self.book_model.find()
         return output
 
+    @j.baseclasses.actor_method
     def add_contact(self, contact, schema_out=None, user_session=None):
         """
         ```in
@@ -243,6 +248,7 @@ class addressbook(j.baseclasses.threebot_actor):
 
         return self.contact_model.find(item_id=item_id)[0]
 
+    @j.baseclasses.actor_method
     def get_contact(self, contact_id, schema_out=None, user_session=None):
         """
         ```in
@@ -258,6 +264,7 @@ class addressbook(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound(f"Couldn't find contact with id: {contact_id}")
         return contacts[0]
 
+    @j.baseclasses.actor_method
     def delete_contact(self, contact_id, user_session=None):
         """
         ```in
@@ -271,6 +278,7 @@ class addressbook(j.baseclasses.threebot_actor):
         contact = contacts[0]
         self.client.delete_vcard(f"/{self.user}/{contact.addressbook_id}/{contact.item_id}", None)
 
+    @j.baseclasses.actor_method
     def list_contacts(self, contact, schema_out=None, user_session=None):
         """
         ```in
@@ -386,6 +394,7 @@ class addressbook(j.baseclasses.threebot_actor):
         output.contacts = result
         return output
 
+    @j.baseclasses.actor_method
     def update_contact(self, contact, schema_out=None, user_session=None):
         """
         ```in

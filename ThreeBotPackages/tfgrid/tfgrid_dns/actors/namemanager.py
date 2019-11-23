@@ -26,6 +26,7 @@ class namemanager(j.baseclasses.threebot_actor):
             self._tfgateway = j.tools.tf_gateway.get(redisclient)
         return self._tfgateway
 
+    @j.baseclasses.actor_method
     def domain_register(self, doublename, privateip, signature, user_session=None):
         """
         Registers a domain in coredns (needs to be authoritative)
@@ -51,6 +52,7 @@ class namemanager(j.baseclasses.threebot_actor):
         self.tfgateway.domain_register_a(first, f"{last}.{THREEBOT_PRIVATE_DOMAIN}", privateip)
         return True
 
+    @j.baseclasses.actor_method
     def subdomain_register(self, doublename, subdomain, signature, user_session=None):
         """
         Registers a domain in coredns (needs to be authoritative)

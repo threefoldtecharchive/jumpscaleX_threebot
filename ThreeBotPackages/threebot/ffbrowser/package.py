@@ -7,8 +7,7 @@ class Package(j.baseclasses.threebot_package):
 
     @property
     def bcdb(self):
-        # return self.threebot_server.bcdb_get("ffbrowser")
-        pass
+        return self._package.threebot_server.bcdb_get("ffbrowser")
 
     def prepare(self):
         """

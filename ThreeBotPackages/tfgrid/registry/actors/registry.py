@@ -12,6 +12,7 @@ class registry(j.baseclasses.threebot_actor):
         self.registration_model = self.bcdb.model_get(url="threebot.registry.entry.1")
         self.threebot_data_model = self.bcdb.model_get(url="threebot.registry.entry.data.1")
 
+    @j.baseclasses.actor_method
     def register(
         self, authors=None, verifykey=None, input_object=None, signature_hex=None, schema_out=None, user_session=None
     ):
@@ -82,6 +83,7 @@ class registry(j.baseclasses.threebot_actor):
 
         return new_object.id
 
+    @j.baseclasses.actor_method
     def get(self, tid=None, data_id=None, schema_out=None, user_session=None):
         """
         ```in
@@ -109,6 +111,7 @@ class registry(j.baseclasses.threebot_actor):
             encrypted_data = self.__decrypt_data(res.registered_info_format, res.registered_info)
             return encrypted_data
 
+    @j.baseclasses.actor_method
     def schema_register(self, schema_url=None, schema_text=None, schema_out=None, user_session=None):
         """
 
@@ -124,6 +127,7 @@ class registry(j.baseclasses.threebot_actor):
 
         return schema._md5
 
+    @j.baseclasses.actor_method
     def find_encrypted(
         self,
         tid=None,
@@ -235,6 +239,7 @@ class registry(j.baseclasses.threebot_actor):
 
         return decrypted_data
 
+    @j.baseclasses.actor_method
     def find_formatted(
         self,
         registered_info_format=None,
@@ -330,6 +335,7 @@ class registry(j.baseclasses.threebot_actor):
         out.res = res
         return out
 
+    @j.baseclasses.actor_method
     def validate_signature(
         self, tid=None, verifykey=None, payload=None, signature=None, schema_out=None, user_session=None
     ):

@@ -2,6 +2,7 @@ from Jumpscale import j
 
 
 class html_test(j.baseclasses.threebot_actor):
+    @j.baseclasses.actor_method
     def hello(self, name_, user_session, schema_out=None):
         """
         :param name: name to say hello to
@@ -18,6 +19,7 @@ class html_test(j.baseclasses.threebot_actor):
         out.content = f"Hello <h3>{name_}</h3>"
         return out
 
+    @j.baseclasses.actor_method
     def hello_markdown(self, name_, user_session, schema_out=None):
         """
         :param name: name to say hello to

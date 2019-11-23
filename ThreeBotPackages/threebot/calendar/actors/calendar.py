@@ -20,6 +20,7 @@ class calendar(j.baseclasses.threebot_actor):
         if dtstart > dtend:
             raise j.exceptions.Input("dtstart needs to be before dtend")
 
+    @j.baseclasses.actor_method
     def login(self, username, password, user_session=None):
         """
         ```in
@@ -42,6 +43,7 @@ class calendar(j.baseclasses.threebot_actor):
         if raise_error:
             raise j.exceptions.NotFound(f"Couldn't find calendar with id: {cal_id}")
 
+    @j.baseclasses.actor_method
     def add(self, calendar, schema_out=None, user_session=None):
         """
         ```in
@@ -67,6 +69,7 @@ class calendar(j.baseclasses.threebot_actor):
         output.calendar = c
         return output
 
+    @j.baseclasses.actor_method
     def get(self, calendar_id, schema_out=None, user_session=None):
         """
         ```in
@@ -82,6 +85,7 @@ class calendar(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound(f"Couldn't find calendar with id: {calendar_id}")
         return calendars[0]
 
+    @j.baseclasses.actor_method
     def delete(self, calendar_id, user_session=None):
         """
         ```in
@@ -93,6 +97,7 @@ class calendar(j.baseclasses.threebot_actor):
         if calendar:
             calendar.delete()
 
+    @j.baseclasses.actor_method
     def list(self, schema_out=None, user_session=None):
         """
         ```out
@@ -104,6 +109,7 @@ class calendar(j.baseclasses.threebot_actor):
         output.calendars = self.calendar_model.find()
         return output
 
+    @j.baseclasses.actor_method
     def add_event(self, event, schema_out=None, user_session=None):
         """
         ```in
@@ -135,6 +141,7 @@ class calendar(j.baseclasses.threebot_actor):
         calendar.add_event(cal_object.serialize())
         return self.event_model.find(item_id=f"{event.item_id}.ics")[0]
 
+    @j.baseclasses.actor_method
     def get_event(self, event_id, schema_out=None, user_session=None):
         """
         ```in
@@ -149,6 +156,7 @@ class calendar(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound(f"Couldn't find event with id: {event_id}")
         return events[0]
 
+    @j.baseclasses.actor_method
     def list_events(self, event, schema_out=None, user_session=None):
         """
         ```in
@@ -189,6 +197,7 @@ class calendar(j.baseclasses.threebot_actor):
         output.events = result
         return output
 
+    @j.baseclasses.actor_method
     def delete_event(self, calendar_id, event_id, user_session=None):
         """
         ```in
@@ -204,6 +213,7 @@ class calendar(j.baseclasses.threebot_actor):
         except caldav.error.NotFoundError:
             pass
 
+    @j.baseclasses.actor_method
     def edit_event(self, event, schema_out=None, user_session=None):
         """
         ```in
