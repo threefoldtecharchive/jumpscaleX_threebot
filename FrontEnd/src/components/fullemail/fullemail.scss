@@ -1,0 +1,30 @@
+.fullemail {
+    .mail-actions {
+        position: relative;
+        &::before{
+            z-index: 0;
+            content: '';
+            width: 100%;
+            left: 0;
+            top: 50%;
+            position: absolute;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+        }
+        .all-round{
+            position: relative;
+            z-index: 2;
+            border-radius: 15px;
+            overflow: hidden;
+            >button:first-of-type{
+                position: relative;
+                &::after {
+                    position: absolute;
+                    right: 0;
+                    height: 100%;
+                    content: '';
+                    border-right: 1px solid rgba(255, 255, 255, 0.12);
+                }
+            }
+        }
+    }
+}
