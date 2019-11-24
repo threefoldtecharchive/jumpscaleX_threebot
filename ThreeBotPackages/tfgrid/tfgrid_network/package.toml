@@ -1,0 +1,13 @@
+[source]
+name = "tfgrid_network"
+description = "TBD"
+3bot = "threefold"
+version = "1.0.0"
+
+[actor]
+namespace = "tfgrid"
+
+[[bcdb]]
+namespace = "tfgrid"
+type = "zdb"
+instance = "default"

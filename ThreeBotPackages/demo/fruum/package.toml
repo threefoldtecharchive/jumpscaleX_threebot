@@ -1,0 +1,13 @@
+[source]
+name = "fruum"
+description = "TBD"
+3bot = "threefold"
+version = "1.0.0"
+
+[actor]
+namespace = "demo"
+
+[[bcdb]]
+namespace = "demo"
+type = "zdb"
+instance = "default"

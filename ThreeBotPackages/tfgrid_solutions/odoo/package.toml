@@ -1,0 +1,13 @@
+[source]
+name = "odoo"
+description = "A content management system (CMS) bassed on PHP and MySQL"
+3bot = "threefold"
+version = "1.0.0"
+
+[actor]
+namespace = "tfgrid_solutions"
+
+[[bcdb]]
+namespace = "tfgrid_solutions"
+type = "zdb"
+instance = "default"
