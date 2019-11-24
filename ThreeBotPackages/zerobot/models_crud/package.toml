@@ -1,6 +1,6 @@
 [source]
-name = "wiki_webserver"
-description = "webserver which hosts the wiki's"
+name = "crudgenerator"
+description = "Models CRUD generator"
 3bot = "threefold"
 version = "1.0.0"
 

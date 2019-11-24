@@ -1,6 +1,6 @@
 [source]
-name = "wiki_webserver"
-description = "webserver which hosts the wiki's"
+name = "myjobs_ui"
+description = "UI for myjobs
 3bot = "threefold"
 version = "1.0.0"
 
