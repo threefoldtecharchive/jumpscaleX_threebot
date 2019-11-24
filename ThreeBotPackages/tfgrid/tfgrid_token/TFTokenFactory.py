@@ -31,7 +31,7 @@ class TFTokenFactory(j.baseclasses.threebot_factory):
 
         self.start()
 
-        if "tf_grid_token" in [b.name for b in j.data.bcdb.instances]:
+        if "tf_grid_token" in [b.name for b in j.data.bcdb.instances.values()]:
             m = j.data.bcdb.get("tf_grid_token")
         else:
             m = j.data.bcdb.new("tf_grid_token")

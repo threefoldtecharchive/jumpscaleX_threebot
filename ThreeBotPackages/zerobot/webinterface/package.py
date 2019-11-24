@@ -2,10 +2,6 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-    @property
-    def bcdb(self):
-        return self.threebot_server.bcdb_get("users")
-
     def prepare(self):
         """
         ports & paths used for threebotserver

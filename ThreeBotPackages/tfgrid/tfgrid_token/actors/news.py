@@ -19,7 +19,7 @@ class news(j.baseclasses.threebot_actor):
         """
         news_list = schema_out.new()
 
-        for item in self.bcdb.children.tfgrid_news_1.find():
+        for item in self.bcdb.instances.tfgrid_news_1.find():
             news_list.news.append(item)
 
         return news_list
