@@ -1,7 +1,7 @@
 [source]
 name = "webinterface"
 description = "TBD"
-3bot = "threefold"
+threebot = "threefold"
 version = "1.0.0"
 
 [actor]
@@ -10,4 +10,8 @@ namespace = "zerobot"
 [[bcdb]]
 namespace = "zerobot"
 type = "zdb"
-instance = "default
+instance = "default"
+
+[[web]]
+prefix = "gedis"
+server = "GedisWebServer"

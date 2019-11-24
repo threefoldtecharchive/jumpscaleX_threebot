@@ -1,7 +1,7 @@
 [source]
 name = "alerta_ui"
 description = "visualize alerts in 3bot"
-3bot = "threefold"
+threebot = "threefold"
 version = "1.0.0"
 
 [actor]
@@ -10,4 +10,4 @@ namespace = "zerobot"
 [[bcdb]]
 namespace = "zerobot"
 type = "zdb"
-instance = "default
+instance = "default"

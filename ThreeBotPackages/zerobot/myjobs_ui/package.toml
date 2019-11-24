@@ -1,7 +1,7 @@
 [source]
 name = "myjobs_ui"
-description = "UI for myjobs
-3bot = "threefold"
+description = "UI for myjobs"
+threebot = "threefold"
 version = "1.0.0"
 
 [actor]
@@ -10,4 +10,4 @@ namespace = "zerobot"
 [[bcdb]]
 namespace = "zerobot"
 type = "zdb"
-instance = "default
+instance = "default"

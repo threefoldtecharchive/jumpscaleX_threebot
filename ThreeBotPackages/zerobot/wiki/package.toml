@@ -1,8 +1,12 @@
 [source]
 name = "wiki_webserver"
 description = "webserver which hosts the wiki's"
-3bot = "threefold"
+threebot = "threefold"
 version = "1.0.0"
+
+$3botipaddr/$3botname_application_creator/$name_creator
+
+despiegk.3bot.tf/threefold/someapp
 
 [actor]
 namespace = "zerobot"
@@ -10,4 +14,4 @@ namespace = "zerobot"
 [[bcdb]]
 namespace = "zerobot"
 type = "zdb"
-instance = "default
+instance = "default"
