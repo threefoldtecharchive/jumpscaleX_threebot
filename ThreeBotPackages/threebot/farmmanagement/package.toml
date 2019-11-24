@@ -1,0 +1,13 @@
+[source]
+name = "farmmanagement"
+description = "TBD"
+3bot = "threefold"
+version = "1.0.0"
+
+[actor]
+namespace = "threebot"
+
+[[bcdb]]
+namespace = "threebot"
+type = "zdb"
+instance = "default"

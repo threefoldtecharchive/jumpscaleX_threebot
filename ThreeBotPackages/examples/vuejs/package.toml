@@ -1,0 +1,13 @@
+[source]
+name = "examples_vuejs"
+description = "Example how to make package with vuejs"
+3bot = "threefold"
+version = "1.0.0"
+
+[actor]
+namespace = "vuejs"
+
+[[bcdb]]
+namespace = "system"
+type = "zdb"
+instance = "default"

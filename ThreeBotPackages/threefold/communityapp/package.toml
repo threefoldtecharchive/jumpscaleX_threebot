@@ -1,0 +1,13 @@
+[source]
+name = "communityapp"
+description = ""
+3bot = "threefold"
+version = "1.0.0"
+
+[actor]
+namespace = "threefold"
+
+[[bcdb]]
+namespace = "threefold"
+type = "zdb"
+instance = "default"

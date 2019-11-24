@@ -1,0 +1,13 @@
+[source]
+name = "gitea"
+description = "Gitea is a painless self-hosted Git service"
+3bot = "threefold"
+version = "1.0.0"
+
+[actor]
+namespace = "tfgrid_solutions"
+
+[[bcdb]]
+namespace = "tfgrid_solutions"
+type = "zdb"
+instance = "default"
