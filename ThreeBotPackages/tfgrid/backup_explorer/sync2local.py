@@ -24,7 +24,7 @@ def synclocal():
 
 
 # THERE IS A BACKUP TO WIN TIME
-synclocal()
+# synclocal()
 
 download()
 

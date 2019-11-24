@@ -17,11 +17,16 @@ for exclude in ["bcdbfs", "myjobs"]:
 dest = "/bcdb_export"
 reset = True
 
-# bcdbs = ["tf_workloads"]
+bcdbs = ["tf_workloads"]
 
 for bcdb_name in bcdbs:
 
-    # s = j.data.bcdb._get_storclient(bcdb_name)
+    # TO TEST THE BCDB STORCLIENT
+    s = j.data.bcdb._get_storclient(bcdb_name)
+    # next will give you e.g. 40 records
+    s.count
+    # next will fail
+    assert len([i for i in s.iterate()]) == s.count
     # j.shell()
 
     bcdb = j.data.bcdb.get(name=bcdb_name)
