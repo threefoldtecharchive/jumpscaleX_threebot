@@ -1,7 +1,7 @@
 [source]
 name = "gitea"
 description = "Gitea is a painless self-hosted Git service"
-3bot = "threefold"
+threebot = "threefold"
 version = "1.0.0"
 
 [actor]
