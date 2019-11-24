@@ -1,6 +1,6 @@
 [source]
-name = "wiki_webserver"
-description = "webserver which hosts the wiki's"
+name = "packagemanager_ui"
+description = "TBD"
 3bot = "threefold"
 version = "1.0.0"
 

@@ -1,6 +1,6 @@
 [source]
-name = "wiki_webserver"
-description = "webserver which hosts the wiki's"
+name = "chat_ui"
+description = "Chatflow UI"
 3bot = "threefold"
 version = "1.0.0"
 

@@ -5,9 +5,9 @@ description = "TBD"
 version = "1.0.0"
 
 [actor]
-namespace = "threebot"
+namespace = "zerobot"
 
 [[bcdb]]
-namespace = "web_interface"
+namespace = "zerobot"
 type = "zdb"
 instance = "default

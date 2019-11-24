@@ -1,6 +1,6 @@
 [source]
-name = "wiki_webserver"
-description = "webserver which hosts the wiki's"
+name = "alerta_ui"
+description = "visualize alerts in 3bot"
 3bot = "threefold"
 version = "1.0.0"
 
