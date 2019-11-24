@@ -54,7 +54,7 @@ def chat(bot):
     try:
         container = machine.threebot_deploy(name, start=False)
         bot.md_show_update(progress.format(70, "Starting 3Bot"))
-        container.threebot_start()
+        container.threebot_zdb_sonic_start()
         print("Finished installing threebot")
         print("Start registering threebot")
         bot.md_show_update(progress.format(90, "Registering 3Bot"))

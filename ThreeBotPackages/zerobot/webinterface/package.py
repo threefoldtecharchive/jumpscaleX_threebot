@@ -23,7 +23,6 @@ class Package(j.baseclasses.threebot_package):
 
             # start bottle server
             app = j.servers.bottle_web.get_app()
-            self.rack_server.bottle_server_add(name="bottle_web_interface", port=9999, app=app, websocket=True)
 
             # PROXY for gedis HTTP
             proxy_location = website.locations.get().locations_proxy.new()
@@ -43,6 +42,14 @@ class Package(j.baseclasses.threebot_package):
             weblibs_location.path_location = f"{weblibs_path}/static"
 
             website.configure()
+
+    def start(self):
+
+        # add the main webapplication
+        from .bottle.main import webapp
+
+        self.rack_server.bottle_server_add(name="bottle_web_interface", port=9999, app=webapp, websocket=False)
+        self.rack_server.webapp_root = webapp
 
     def test(self, port=None, prefix="web", scheme="https"):
         """
