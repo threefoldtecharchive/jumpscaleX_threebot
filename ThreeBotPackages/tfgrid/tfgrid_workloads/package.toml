@@ -1,13 +1,13 @@
 [source]
-name = "chat_ui"
-description = "Chatflow UI"
+name = "tfgrid_workloads"
+description = "TBD"
 3bot = "threefold"
 version = "1.0.0"
 
 [actor]
-namespace = "zerobot"
+namespace = "tfgrid"
 
 [[bcdb]]
-namespace = "zerobot"
+namespace = "tfgrid"
 type = "zdb"
 instance = "default"

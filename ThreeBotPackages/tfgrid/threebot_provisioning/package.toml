@@ -6,9 +6,9 @@ threebot = "threefold"
 version = "1.0.0"
 
 [actor]
-namespace = "threebot"
+namespace = "tfgrid"
 
 [[bcdb]]
-namespace = "threebot_provisioning"
+namespace = "tfgrid"
 type = "zdb"
 instance = "default"
