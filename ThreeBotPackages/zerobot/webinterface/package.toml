@@ -1,5 +1,5 @@
 [source]
-name = "web_interface"
+name = "webinterface"
 description = "TBD"
 3bot = "threefold"
 version = "1.0.0"
@@ -8,6 +8,6 @@ version = "1.0.0"
 namespace = "threebot"
 
 [[bcdb]]
-namespace = "web_interface"
+namespace = "webinterface"
 type = "zdb"
 instance = "default
