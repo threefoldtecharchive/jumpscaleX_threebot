@@ -10,4 +10,4 @@ namespace = "zerobot"
 [[bcdb]]
 namespace = "zerobot"
 type = "zdb"
-instance = "default
+instance = "default"

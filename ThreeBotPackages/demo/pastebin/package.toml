@@ -1,13 +1,13 @@
 [source]
-name = "chat_ui"
-description = "Chatflow UI"
+name = "pastebin"
+description = "TBD"
 3bot = "threefold"
 version = "1.0.0"
 
 [actor]
-namespace = "zerobot"
+namespace = "demo"
 
 [[bcdb]]
-namespace = "zerobot"
+namespace = "demo"
 type = "zdb"
 instance = "default"
