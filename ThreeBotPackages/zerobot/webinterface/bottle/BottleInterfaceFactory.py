@@ -11,6 +11,7 @@ GEDIS_PORT = 8901
 client_gedis = None
 # to check beaker session
 app = Bottle()
+
 auth_app = j.tools.oauth_proxy.get_session_middleware(app)
 
 #######################################
