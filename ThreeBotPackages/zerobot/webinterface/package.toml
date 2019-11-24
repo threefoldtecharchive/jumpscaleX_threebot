@@ -1,5 +1,5 @@
 [source]
-name = "web_interface"
+name = "webinterface"
 description = "TBD"
 3bot = "threefold"
 version = "1.0.0"
