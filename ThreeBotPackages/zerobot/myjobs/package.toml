@@ -1,0 +1,13 @@
+[source]
+name = "myjobs"
+description = "TBD"
+3bot = "threefold"
+version = "1.0.0"
+
+[actor]
+namespace = "threebot"
+
+[[bcdb]]
+namespace = "myjobs"
+type = "zdb"
+instance = "default

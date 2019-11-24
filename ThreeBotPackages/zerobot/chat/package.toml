@@ -1,0 +1,13 @@
+[source]
+name = "chat"
+description = "Chatflow"
+3bot = "threefold"
+version = "1.0.0"
+
+[actor]
+namespace = "threebot"
+
+[[bcdb]]
+namespace = "chat"
+type = "zdb"
+instance = "default
