@@ -7,7 +7,7 @@ version = "1.0.0"
 [actor]
 namespace = "zerobot"
 
-[[bcdbs]]
-namespace = "zerobot"
-type = "zdb"
-instance = "default"
+#[[bcdbs]]
+#namespace = "zerobot"
+#type = "zdb"
+#instance = "default"
