@@ -13,7 +13,7 @@ class Package(j.baseclasses.threebot_package):
 
         from threebot_packages.zerobot.chat_ui.bottle.main import app
 
-        rack = j.servers.rack.get()
+        rack = j.threebot.servers.gevent_rack
 
         rack.bottle_server_add(name="chatapp", port=8522, app=app)
 

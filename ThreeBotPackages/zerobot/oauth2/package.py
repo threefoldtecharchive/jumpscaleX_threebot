@@ -19,8 +19,7 @@ class Package(j.baseclasses.threebot_package):
 
         from threebot_packages.zerobot.oauth2.bottle.Oauth2Bottle import app
 
-        rack = j.servers.rack.get()
-        rack.bottle_server_add(name="oauth", port=8523, app=app)
+        j.threebot.servers.gevent_rack.bottle_server_add(name="oauth", port=8523, app=app)
         for port in (443, 80):
             website = server.get_from_port(port=port)
             locations = website.locations.get("main_oauth2")

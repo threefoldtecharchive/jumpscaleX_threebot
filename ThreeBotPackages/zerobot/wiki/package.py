@@ -24,11 +24,9 @@ class Package(j.baseclasses.threebot_package):
         """
         server = self.openresty
 
-        rack = j.servers.rack.get()
-
         from threebot_packages.zerobot.wiki.bottle.main import app
 
-        rack.bottle_server_add(name="wikisapp", port=8521, app=app)
+        self.gevent_rack.bottle_server_add(name="wikisapp", port=8521, app=app)
 
         for port in [443, 80]:
             website = server.get_from_port(port)

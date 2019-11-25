@@ -1,5 +1,5 @@
 [source]
-name = "wiki_web"
+name = "alerta_ui"
 description = "wiki web frontend"
 threebot = "threefold"
 version = "1.0.0"
@@ -7,7 +7,12 @@ version = "1.0.0"
 [actor]
 namespace = "zerobot"
 
+#[[bcdbs]]
+#namespace = "alerta"
+#type = "redis"
+#instance = "default"
+
 [[bcdbs]]
 namespace = "alerta"
-type = "redis"
+type = "zdb"
 instance = "default"
