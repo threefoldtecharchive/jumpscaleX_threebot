@@ -11,6 +11,8 @@ from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
 
 
 templates_path = j.sal.fs.joinPaths(j.sal.fs.getDirName(__file__), "templates")
+print("TEMPLATES PATH: ", templates_path)
+
 
 env = Environment(loader=FileSystemLoader(templates_path), autoescape=select_autoescape(["html", "xml"]))
 

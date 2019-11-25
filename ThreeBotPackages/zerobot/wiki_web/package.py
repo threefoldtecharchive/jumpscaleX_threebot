@@ -14,7 +14,7 @@ class Package(j.baseclasses.threebot_package):
         """
         server = self.openresty
 
-        from threebot_packages.zerobot.wiki.bottle.main import app
+        from threebot_packages.zerobot.wiki_web.bottle.main import app
 
         self.gevent_rack.bottle_server_add(name="wikisapp", port=8521, app=app)
 
