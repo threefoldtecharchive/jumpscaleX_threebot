@@ -8,6 +8,6 @@ version = "1.0.0"
 namespace = "zerobot"
 
 [[bcdbs]]
-namespace = "zerobot"
-type = "zdb"
+namespace = "alerta"
+type = "redis"
 instance = "default"
