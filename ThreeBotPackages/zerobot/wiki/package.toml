@@ -1,5 +1,5 @@
 [source]
-name = "wiki_webserver"
+name = "wiki"
 description = "webserver which hosts the wiki's"
 threebot = "threefold"
 version = "1.0.0"

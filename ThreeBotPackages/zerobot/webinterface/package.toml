@@ -1,6 +1,6 @@
 [source]
 name = "webinterface"
-description = "TBD"
+description = "zerobot API for gedis and bcdbfs"
 threebot = "threefold"
 version = "1.0.0"
 
