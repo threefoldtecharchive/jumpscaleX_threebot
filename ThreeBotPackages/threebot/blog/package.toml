@@ -7,7 +7,7 @@ version = "1.0.0"
 [actor]
 namespace = "threebot"
 
-[[bcdb]]
+[[bcdbs]]
 namespace = "threebot"
 type = "zdb"
 instance = "default"

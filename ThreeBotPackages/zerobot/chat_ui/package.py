@@ -11,7 +11,8 @@ class Package(j.baseclasses.threebot_package):
         server = self.openresty
         server.configure()
 
-        app = j.threebot.package.chat.get_app()
+        from threebot_packages.zerobot.chat_ui.bottle.main import app
+
         rack = j.servers.rack.get()
 
         rack.bottle_server_add(name="chatapp", port=8522, app=app)
