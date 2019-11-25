@@ -4,10 +4,6 @@ description = "webserver which hosts the wiki's"
 threebot = "threefold"
 version = "1.0.0"
 
-$3botipaddr/$3botname_application_creator/$name_creator
-
-despiegk.3bot.tf/threefold/someapp
-
 [actor]
 namespace = "zerobot"
 
