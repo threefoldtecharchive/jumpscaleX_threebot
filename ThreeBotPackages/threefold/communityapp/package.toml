@@ -7,7 +7,7 @@ version = "1.0.0"
 [actor]
 namespace = "threefold"
 
-[[bcdb]]
+[[bcdbs]]
 namespace = "threefold"
 type = "zdb"
 instance = "default"

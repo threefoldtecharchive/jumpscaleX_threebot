@@ -7,7 +7,7 @@ version = "1.0.0"
 [actor]
 namespace = "vuejs"
 
-[[bcdb]]
+[[bcdbs]]
 namespace = "system"
 type = "zdb"
 instance = "default"

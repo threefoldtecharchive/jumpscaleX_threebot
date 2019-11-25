@@ -7,7 +7,7 @@ version = "1.0.0"
 [actor]
 namespace = "tfgrid"
 
-[[bcdb]]
+[[bcdbs]]
 namespace = "tfgrid"
 type = "zdb"
 instance = "default"

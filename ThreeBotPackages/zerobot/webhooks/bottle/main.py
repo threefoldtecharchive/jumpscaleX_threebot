@@ -6,6 +6,8 @@ from hashlib import sha1
 from Jumpscale import j
 
 app = Bottle()
+
+# NOT NICE, we don't use config manager here
 SECRET = j.core.tools.text_replace("{DIR_BASE}/var/github_webhook_secret")
 
 
@@ -39,4 +41,3 @@ class WebhooksFactory(j.baseclasses.threebot_factory):
 
     def get_app(self):
         return app
-

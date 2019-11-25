@@ -13,7 +13,7 @@ class Package(j.baseclasses.threebot_package):
         website = server.get_from_port(port=443)
         locations = website.locations.get("main_webhooks")
 
-        app = j.threebot.package.webhooks.get_app()
+        from threebot_packages.zerobot.webhooks.bottle.main import app
 
         self.gevent_rack.bottle_server_add(name="webhooks", port=8530, app=app)
 

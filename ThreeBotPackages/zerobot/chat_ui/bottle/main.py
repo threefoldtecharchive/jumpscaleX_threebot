@@ -5,14 +5,10 @@ from bottle import abort, response, request, Bottle, redirect
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
 
-try:
-    from beaker.middleware import SessionMiddleware
-except (ModuleNotFoundError, ImportError):
-    j.builders.runtimes.python3.pip_package_install("beaker")
-    from beaker.middleware import SessionMiddleware
+from beaker.middleware import SessionMiddleware
 
 
-templates_path = j.sal.fs.joinPaths(j.sal.fs.getDirName(__file__), "templates")
+templates_path = j.sal.fs.joinPaths(j.sal.fs.getDirName(__file__), "..", "templates")
 env = Environment(loader=FileSystemLoader(templates_path), autoescape=select_autoescape(["html", "xml"]))
 
 app = Bottle()
@@ -122,10 +118,3 @@ def topic_handler(topic):
 
 session_opts = {"session.type": "file", "session.data_dir": "./data", "session.auto": True}
 app = SessionMiddleware(app, session_opts)
-
-
-class ChatFactory(j.baseclasses.threebot_factory):
-    __jslocation__ = "j.threebot.package.chat"
-
-    def get_app(self):
-        return app
