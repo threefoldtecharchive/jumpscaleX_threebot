@@ -21,9 +21,6 @@ class Package(j.baseclasses.threebot_package):
         for port in (443, 80):
             website = self.openresty.get_from_port(port)
 
-            # start bottle server
-            app = j.servers.bottle_web.get_app()
-
             # PROXY for gedis HTTP
             proxy_location = website.locations.get().locations_proxy.new()
             proxy_location.name = "webinterface"
@@ -46,10 +43,11 @@ class Package(j.baseclasses.threebot_package):
     def start(self):
 
         # add the main webapplication
-        from .bottle.main import webapp
 
-        self.rack_server.bottle_server_add(name="bottle_web_interface", port=9999, app=webapp, websocket=False)
-        self.rack_server.webapp_root = webapp
+        from threebot_packages.zerobot.webinterface.bottle.gedis import app
+
+        self.gevent_rack.bottle_server_add(name="bottle_web_interface", port=9999, app=app, websocket=False)
+        # self.gevent_rack.webapp_root = webapp
 
     def test(self, port=None, prefix="web", scheme="https"):
         """

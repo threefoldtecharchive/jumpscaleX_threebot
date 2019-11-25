@@ -15,7 +15,7 @@ class Package(j.baseclasses.threebot_package):
 
         app = j.threebot.package.webhooks.get_app()
 
-        self.rack_server.bottle_server_add(name="webhooks", port=8530, app=app)
+        self.gevent_rack.bottle_server_add(name="webhooks", port=8530, app=app)
 
         proxy_location = locations.locations_proxy.new()
         proxy_location.name = "webhooks"
