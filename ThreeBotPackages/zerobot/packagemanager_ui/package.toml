@@ -1,13 +1,8 @@
 [source]
 name = "packagemanager_ui"
-description = "TBD"
+description = "zerobot package manager"
 threebot = "threefold"
 version = "1.0.0"
 
 [actor]
 namespace = "zerobot"
-
-#[[bcdbs]]
-#namespace = "wiki"
-#type = "zdb"
-#instance = "default"
