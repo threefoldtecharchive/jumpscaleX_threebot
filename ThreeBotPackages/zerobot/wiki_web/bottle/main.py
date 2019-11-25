@@ -10,8 +10,7 @@ from JumpscaleLibs.tools.markdowndocs.DocSite import DocSite
 from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
 
 
-templates_path = j.sal.fs.joinPaths(j.sal.fs.getDirName(__file__), "templates")
-print("TEMPLATES PATH: ", templates_path)
+templates_path = j.sal.fs.joinPaths(j.sal.fs.getParent(j.sal.fs.getParent(__file__)), "templates")
 
 
 env = Environment(loader=FileSystemLoader(templates_path), autoescape=select_autoescape(["html", "xml"]))
@@ -46,6 +45,7 @@ def home_handler():
     if j.sal.bcdbfs.exists("/docsites"):
         wikis_names = j.sal.bcdbfs.list_dirs("/docsites")
         wikis_names = [wiki[10:] for wiki in wikis_names]
+    print("TEMPLATES PATH: ", templates_path)
     return env.get_template("home.html").render(wikis_names=wikis_names)
 
 
