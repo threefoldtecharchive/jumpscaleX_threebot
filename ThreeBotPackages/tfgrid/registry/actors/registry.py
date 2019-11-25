@@ -8,7 +8,7 @@ NONE = 2147483647
 
 class registry(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        self.bcdb = self._bcdb_get("threebot_registery")
+        self.bcdb = self._bcdb_get("threebot_registry")
         self.registration_model = self.bcdb.model_get(url="threebot.registry.entry.1")
         self.threebot_data_model = self.bcdb.model_get(url="threebot.registry.entry.data.1")
 
@@ -54,7 +54,7 @@ class registry(j.baseclasses.threebot_actor):
         )
 
         if not verifiy_data:
-            raise j.exceptions.Input("Registery cannot be registered, wrong signature")
+            raise j.exceptions.Input("Registry cannot be registered, wrong signature")
 
         # register the data
         new_data_model = None
