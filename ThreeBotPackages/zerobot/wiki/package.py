@@ -7,16 +7,6 @@ class Package(j.baseclasses.threebot_package):
     ** Note **: you must load this package before loading any wikis
     """
 
-    def prepare(self):
-        """
-        is called at install time
-        :return:
-        """
-        # add graphviz for dot macro
-        if not j.core.tools.cmd_installed("dot"):
-            if j.builders.tools.platform_is_ubuntu:
-                j.sal.ubuntu.apt_install("graphviz")
-
     def start(self):
         """
         called when the 3bot starts
