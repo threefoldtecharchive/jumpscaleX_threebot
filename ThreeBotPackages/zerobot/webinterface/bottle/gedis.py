@@ -8,14 +8,12 @@ from Jumpscale import j
 from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
 
 
-# to check beaker session
-app = Bottle()
-webapp = j.tools.oauth_proxy.get_session_middleware(app)
+from .rooter import app
 
 #######################################
 ###### GEDIS WEBSOCKET ROUTES #########
 #######################################
-@app.route("/websocket", apply=[websocket])
+@app.route("/gedis/websocket", apply=[websocket])
 def gedis_websocket(ws):
     # TODO: getting a gedis client should happen only once
     client_gedis = j.clients.gedis.get("main", port=GEDIS_PORT)
@@ -110,3 +108,14 @@ def gedis_http(name, cmd):
         if content_type:
             result = getattr(result, f"_{content_type}", result)
     return result
+
+
+@app.route("/bcdbfs/<url:re:.+>")
+@enable_cors
+def index(url):
+    try:
+        file = j.sal.bcdbfs.file_read("/" + url)
+    except j.exceptions.NotFound:
+        abort(404)
+    response.headers["Content-Type"] = mimetypes.guess_type(url)[0]
+    return file

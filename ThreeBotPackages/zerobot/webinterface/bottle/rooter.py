@@ -9,16 +9,16 @@ from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
 
 
 # to check beaker session
-webapp = Bottle()
-# webapp = j.tools.oauth_proxy.get_session_middleware(app)
+app = Bottle()
+# app = j.tools.oauth_proxy.get_session_middleware(app)
 
 
-@app.route("/app/<url:re:.+>")
-def index(url):
-    return f"<p>app {url}.</p>"
-
-
-@app.route("/<url:re:.+>")
-def index(url):
-    return f"<p>all {url}.</p>"
-    # j.shell()
+# @app.route("/app/<url:re:.+>")
+# def index(url):
+#     return f"<p>app {url}.</p>"
+#
+#
+# @app.route("/<url:re:.+>")
+# def index(url):
+#     return f"<p>all {url}.</p>"
+#     # j.shell()

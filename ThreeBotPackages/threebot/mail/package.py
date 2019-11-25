@@ -21,7 +21,7 @@ class Package(j.baseclasses.threebot_package):
         # TODO: ADD REVERSE PROXY
 
         server = j.servers.imap.get_instance("0.0.0.0", 7002)
-        self.rack_server.add(name="smtp", server=server)
+        self.gevent_rack.add(name="smtp", server=server)
         self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
 
     def stop(self):
