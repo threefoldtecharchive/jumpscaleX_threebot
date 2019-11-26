@@ -46,7 +46,7 @@ class Package(j.baseclasses.threebot_package):
 
         from threebot_packages.zerobot.webinterface.bottle.gedis import app
 
-        self.gevent_rack.bottle_server_add(name="bottle_web_interface", port=9999, app=app, websocket=False)
+        self.gevent_rack.bottle_server_add(name="bottle_web_interface", port=9999, app=app, websocket=True)
         # self.gevent_rack.webapp_root = webapp
 
     def test(self, port=None, prefix="web", scheme="https"):
