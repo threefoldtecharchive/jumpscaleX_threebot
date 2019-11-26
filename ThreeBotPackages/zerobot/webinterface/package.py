@@ -22,7 +22,9 @@ class Package(j.baseclasses.threebot_package):
             website = self.openresty.get_from_port(port)
 
             # PROXY for gedis HTTP
-            proxy_location = website.locations.get().locations_proxy.new()
+            locations = website.locations.get(name="webinterface_locations")
+
+            proxy_location = locations.locations_proxy.new()
             proxy_location.name = "webinterface"
             proxy_location.path_url = "/web/"
             proxy_location.ipaddr_dest = "127.0.0.1"
@@ -33,7 +35,7 @@ class Package(j.baseclasses.threebot_package):
 
             url = "https://github.com/threefoldtech/jumpscaleX_weblibs"
             weblibs_path = j.clients.git.getContentPathFromURLorPath(url, pull=False)
-            weblibs_location = website.locations.get().locations_static.new()
+            weblibs_location = locations.locations_static.new()
             weblibs_location.name = "weblibs"
             weblibs_location.path_url = "/weblibs"
             weblibs_location.path_location = f"{weblibs_path}/static"
