@@ -7,7 +7,7 @@ from bottle.ext.websocket import GeventWebSocketServer, websocket
 from Jumpscale import j
 from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
 
-
+GEDIS_PORT = 8901
 from .rooter import app
 
 #######################################
