@@ -110,6 +110,26 @@ def gedis_http(name, cmd):
     return result
 
 
+@app.route("<3bot_name>/<package_name>/chat/<chat_name>", method=["get"])
+def gedis_http_chat(threebot_name, package_name, chat_name):
+    pass
+
+
+@app.route("<3bot_name>/<package_name>/wiki/<wiki_name>", method=["get"])
+def gedis_http_wiki(threebot_name, package_name, wiki_name):
+    pass
+
+
+@app.route("<3bot_name>/<package_name>/crud/<schema_name>", method=["post", "get", "options"])
+def gedis_http_crud(threebot_name, package_name, schema_name):
+    pass
+
+
+@app.route("<3bot_name>/<package_name>/actors/<actor_name>/<method_name>", method=["post"])
+def gedis_http_actor(threebot_name, package_name, actor_name, method_name):
+    pass
+
+
 @app.route("/bcdbfs/<url:re:.+>")
 @enable_cors
 def index(url):
