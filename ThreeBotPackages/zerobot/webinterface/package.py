@@ -26,7 +26,7 @@ class Package(j.baseclasses.threebot_package):
 
             proxy_location = locations.locations_proxy.new()
             proxy_location.name = "webinterface"
-            proxy_location.path_url = "/web/"
+            proxy_location.path_url = "/"
             proxy_location.ipaddr_dest = "127.0.0.1"
             proxy_location.port_dest = 9999
             proxy_location.path_dest = "/"
@@ -39,6 +39,16 @@ class Package(j.baseclasses.threebot_package):
             weblibs_location.name = "weblibs"
             weblibs_location.path_url = "/weblibs"
             weblibs_location.path_location = f"{weblibs_path}/static"
+
+            website_location = locations.locations_static.new()
+            website_location.name = "chatstatic"
+            website_location.path_url = "/chatstatic"
+            website_location.path_location = f"{self._dirpath}/static"
+
+            website_location = locations.locations_static.new()
+            website_location.name = "wikistatic"
+            website_location.path_url = "/wikistatic"
+            website_location.path_location = f"{self._dirpath}/static"
 
             website.configure()
 
