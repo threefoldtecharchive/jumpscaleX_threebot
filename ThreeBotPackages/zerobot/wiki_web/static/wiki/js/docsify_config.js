@@ -11,7 +11,7 @@ function docsifyConfig(name, repo) {
     homepage: 'readme.md',
     basePath: basePath,
     name: 'ThreeFold Foundation ' + name.charAt(0).toUpperCase() + name.slice(1),
-    el: '#app_' + name,
+    el: '#main_wiki_container',
     disqus: '//tf-foundation.disqus.com/embed.js',
     repo: repo || ('https://github.com/threefoldfoundation/' + name),
     loadSidebar: true,
