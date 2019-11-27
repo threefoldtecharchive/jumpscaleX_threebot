@@ -33,6 +33,15 @@ class Package(j.baseclasses.threebot_package):
             proxy_location.type = "http"
             proxy_location.scheme = "http"
 
+            package_actors_location = locations.locations_proxy.new()
+            package_actors_location.name = "package"
+            package_actors_location.path_url = "~* /(.*)/(.*)/actors/(.*)/(.*)$"
+            package_actors_location.ipaddr_dest = "127.0.0.1"
+            package_actors_location.port_dest = 9999
+            package_actors_location.path_dest = ""
+            package_actors_location.type = "http"
+            package_actors_location.scheme = "http"
+
             url = "https://github.com/threefoldtech/jumpscaleX_weblibs"
             weblibs_path = j.clients.git.getContentPathFromURLorPath(url, pull=False)
             weblibs_location = locations.locations_static.new()
