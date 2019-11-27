@@ -1,8 +1,0 @@
-[source]
-name = "crudgenerator"
-description = "Models CRUD generator"
-threebot = "threefold"
-version = "1.0.0"
-
-[actor]
-namespace = "zerobot"
