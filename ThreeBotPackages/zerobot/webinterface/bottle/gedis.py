@@ -71,10 +71,23 @@ def get_actor(client, name, retry=True):
     return actor
 
 
+@app.route("/<threebot_name>/<package_name>/actors/<name>/<cmd>", method=["post", "get", "options"])
 @app.route("/gedis/http/<name>/<cmd>", method=["post", "get", "options"])
 @enable_cors
-def gedis_http(name, cmd):
-    client = j.clients.gedis.get(name="main_gedis_threebot", port=8901)
+def gedis_http(name, cmd, threebot_name=None, package_name=None):
+    namespace = "default"
+
+    if package_name:
+        if threebot_name:
+            package_name = f"{threebot_name}.{package_name}"
+
+        try:
+            package = j.tools.threebot_packages.get(package_name)
+            namespace = package.actor.namespace
+        except j.exceptions.NotFound:
+            pass
+
+    client = j.clients.gedis.get(name="main_gedis_threebot", namespace=namespace, port=8901)
     actor = get_actor(client, name)
     if not actor:
         response.status = 404
@@ -140,7 +153,7 @@ def get_metadata(docsite):
 def gedis_http_chat(threebot_name, package_name):
     try:
         package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-    except AssertionError:
+    except j.exceptions.NotFound:
         print("Couldn't")
         abort(404)
 
@@ -155,7 +168,7 @@ def gedis_http_chat(threebot_name, package_name, chat_name):
     session = request.environ.get("beaker.session", {})
     try:
         package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-    except AssertionError:
+    except j.exceptions.NotFound:
         print("Couldn't")
         abort(404)
     query = request.urlparts.query
@@ -190,7 +203,7 @@ def gedis_http_chat(threebot_name, package_name, chat_name):
 def gedis_http_wiki(threebot_name, package_name):
     try:
         package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-    except AssertionError:
+    except j.exceptions.NotFound:
         print("Couldn't")
         abort(404)
     wiki_names = package.wiki_names
@@ -203,7 +216,7 @@ def gedis_http_wiki(threebot_name, package_name):
 def gedis_http_wiki(threebot_name, package_name, wiki_name):
     try:
         package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-    except AssertionError:
+    except j.exceptions.NotFound:
         print("Couldn't")
         abort(404)
     docsite_path = j.sal.fs.joinPaths("/docsites", wiki_name)
