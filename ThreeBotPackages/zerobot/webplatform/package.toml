@@ -11,3 +11,5 @@ namespace = "zerobot"
 namespace = "zerobot"
 type = "zdb"
 instance = "default"
+
+#TODO: i don't understand this package, what is it about

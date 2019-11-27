@@ -7,7 +7,8 @@ version = "1.0.0"
 [actor]
 namespace = "zerobot"
 
+#NEED TO CORRESPOND TO DB AS USED IN JOB MANAGER
 #[[bcdbs]]
-#namespace = "zerobot"
-#type = "zdb"
+#namespace = "myjobs"
+#type = "redis"
 #instance = "default"
