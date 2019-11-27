@@ -31,8 +31,8 @@
 
                         <h1>Wikis</h1>
                         <ul>
-                            {% for wiki in wikis_names %}
-                            <li><a href="/wiki/{{wiki}}">{{wiki}}</a></li>
+                            {% for wiki in wiki_names %}
+                            <li><a href="/{{threebot_name}}/{{package_name}}/wiki/{{wiki}}">{{wiki}}</a></li>
                             {% endfor %}
                         </ul>
 
