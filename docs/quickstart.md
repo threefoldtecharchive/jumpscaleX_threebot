@@ -10,26 +10,66 @@ application is driven using `package.py` file which controls the life cycle of t
 - to simplify the development workflow you can start packages directly using their factories, for example:
     * `kosmos -p "j.threebot.package.alerta.start()"`
 
-## Registering package (using package manager)
-After starting the server with recommended way, you can use the returned client to access package manager actor and add your package, for an example starting alerta package:
+This will give you a ready shell in the same process where you can interact with your threebot:
 
+```
+*****************************
+*** 3BOTSERVER IS RUNNING ***
+*****************************
+
+*** file: /sandbox/lib/jumpscale/Jumpscale/servers/threebot/ThreebotServer.py
+*** function: start [linenr:295]
+
+JSX>
+```
+
+## Registering package (using package manager)
+After starting the server with recommended way is to use package manager (it's implemented as a package too and loaded by default):
+
+Directly from threebot shell:
+
+```
+j.threebot.actors.zerobot.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta')
+
+```
+
+Or through a client from another process:
 
 ```
 kosmos -p
-JSX> cl = j.servers.threebot.local_start_default()
+JSX> cl = j.clients.gedis.get(name="zerobot_client", port=8901, namespace="zerobot")
 JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta')
 ```
 
-**Note** you can pass timeout=`yourtime` to control your starting server timeout, in case if you have a slow machine or your package takes longer to start
-
 ## Package structure
 - models directory registers the model on the package loading. no need to manually add the models
-- actors directory is registered automatically when loading the package no need to manually add actors
+- actors directory is registered automatically when loading the package no need to manually add actors, can be accessed via http at `3BOT_URL/<threefold_name>/<package_name>/actors/<actor_name>/<actor_method>`.
+- wiki directory is loaded automatically and can be accessed via, can be accessd via `3BOT_URL/<threefold_name>/<package_name>/wiki`.
+- chatflows directory is loaded automatically, can be access via `3BOT_URL/<threefold_name>/<package_name>/chat`.
 
 - package.py  where you define your package logic
-- meta.toml  where you define your package metadata (eg. name, description, frontend (optional)
+- package.toml  define package information, bcdb and actors namespaces...
 
-- PACKAGE_NAME_Factory the entry point for your package so it can be referenced within jumpscaleX ecosystem
+`package.toml` example:
+
+```toml
+[source]
+name = "alerta_ui"
+description = "alerting system for jumpscale"
+threebot = "threefold"
+version = "1.0.0"
+
+[actor]
+namespace = "zerobot"
+
+[[bcdbs]]
+namespace = "alerta"
+type = "redis"
+instance = "default"
+```
+
+
+- PACKAGE_NAME_Factory (optional) the entry point for your package so it can be referenced within jumpscaleX ecosystem
 
 - for packages that need their own bcdb, you need to override bcdb property like this
 
@@ -123,26 +163,28 @@ class pastebin(j.baseclasses.threebot_actor):
         return res
 
 ```
-- the actors of your registered packages are exposed on http endpoint `/web/gedis/http` more [here](https://github.com/threefoldtech/jumpscaleX_core/blob/be2496d7ca03ad1cbf43caa2b9ec132ae471598a/JumpscaleCore/servers/gedis_http)
+- the actors of your registered packages are exposed on http endpoint `<threebot_name>/<package name>/actors/<actor_name>/<method_name>`.
 
-- if you want to communicate over websocket (unrecommended) use `/web/gedis/http_websocket
-- http/websocket clients available [here](https://github.com/threefoldtech/jumpscaleX_weblibs/tree/master/static/gedis) as well
+- if you want to communicate over websocket (unrecommended) use `gedis/websocket`
+- http/websocket clients available [here](https://github.com/threefoldtech/jumpscaleX_weblibs/tree/development/static/gedis) as well
 
 or if you want to use pure http client, here's an example in javascript
 ```javascript
 import axios from 'axios'
 
 export function getPaste(pasteId) {
-    return (axios.post("/web/gedis/http/pastebin/get_paste", { "args": { "paste_id": pasteId } }))
+    return (axios.post("/threefold/pastebin/actors/pastebin/get_paste", { "args": { "paste_id": pasteId } }))
 }
 
 export function newPaste(code) {
-    return (axios.post("/web/gedis/http/pastebin/new_paste", { "args": { "code": code } }))
+    return (axios.post("/threefold/pastebin/actors/pastebin/new_paste", { "args": { "code": code } }))
 }
 ```
 
 # Locations
 As you already figured out we use `openresty` for running applications and proxying requests based on their locations. There're multiple types
+
+Auto-created locations are registered under `<threebot_name>/<package_name>`.
 
 ### Static:
 Used to serve static assets directly (should use that for your css, js, images).
@@ -245,26 +287,17 @@ class Package(j.baseclasses.threebot_package):
 
 #### Example for custom location
 
-For example `3botURL/wiki/PACKAGE_NAME` is the how the url of a certain wiki looks like, and to support the urls to be like `PACKAGE_NAME/wiki` we can use a custom location with rewriting the url as follows
 ```python
-            modrewrite_wiki = locations.locations_custom.new()
-            modrewrite_wiki.name = "wikirewrite"
-            modrewrite_wiki.config = """rewrite ^/(.*)/wiki$ /wiki/$1;"""
+            custom_location = locations.locations_custom.new()
+            custom_location.name = "custom"
+            custom_location.config = """rewrite ^/(.*)/path$ /path/$1;"""
 
 ```
-
-Same for the chat package
-
-```python
-            modrewrite_chat = locations.locations_custom.new()
-            modrewrite_chat.name = "chatrewrite"
-            modrewrite_chat.config = """rewrite ^/(.*)/chatflow/(.*)$ /chat/session/$2;"""
-```
-Notice for chat package only cares about the `topic` not about the package name
 
 # Conventions for Webapps
-- If package has `frontend` directory, SPA location will be created with the name of the package as path_url
-- If package has `html` directory, Static location will be created with the name of the package as path_url
+- If package has `frontend` directory, SPA location will be created with the name of the package as `<threebot_name>/<package_name>`.
+
+- If package has `html` directory, Static location will be created with the name of the package as `<threebot_name>/<package_name>`.
 
 
 # Webinterface package
@@ -273,7 +306,6 @@ Notice for chat package only cares about the `topic` not about the package name
 - exposing http endpoints for actors
 - exposing websocket endpoints for actors
 - exposing bcdbfs endpoints
-
 
 
 # Complete examples
@@ -289,6 +321,6 @@ Notice for chat package only cares about the `topic` not about the package name
   - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/pastebin/pastebin/README.md)
 
 - VueJS
-  
+
   - [backend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/examples/vuejs/README.md)
   - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/examples/vuejs/newproject/README.md)
