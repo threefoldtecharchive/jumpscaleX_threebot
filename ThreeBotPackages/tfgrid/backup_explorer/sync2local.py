@@ -1,11 +1,13 @@
 from Jumpscale import j
 
+j.application.interactive = True
+
 assert j.tools.console.askYesNo("ARE YOU SURE YOU WANT TO SYNC EXPLORER TO LOCAL, THIS WILL DESTROY ALL")
 
 # remove the existing installed packages
-j.tools.threebot_packages.delete()
+# j.tools.threebot_packages.delete()
 
-j.data.bcdb.threebot_stop()
+# j.data.bcdb.threebot_stop()
 
 cl = j.clients.ssh.get("explorer", addr="explorer.testnet.grid.tf")
 
