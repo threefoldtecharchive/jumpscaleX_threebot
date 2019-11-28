@@ -50,7 +50,19 @@ JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldt
 - package.py  where you define your package logic
 - package.toml  define package information, bcdb and actors namespaces...
 
-`package.toml` example:
+- for packages that need their own bcdb, you need to override bcdb property like this
+
+```python
+class Package(j.baseclasses.threebot_package):
+    @property
+    def bcdb(self):
+        return self.threebot_server.bcdb_get("your_name")
+
+    ...
+```
+
+## Example package.toml
+
 
 ```toml
 [source]
@@ -66,32 +78,6 @@ namespace = "zerobot"
 namespace = "alerta"
 type = "redis"
 instance = "default"
-```
-
-
-- PACKAGE_NAME_Factory (optional) the entry point for your package so it can be referenced within jumpscaleX ecosystem
-
-- for packages that need their own bcdb, you need to override bcdb property like this
-
-```python
-class Package(j.baseclasses.threebot_package):
-    @property
-    def bcdb(self):
-        return self.threebot_server.bcdb_get("your_name")
-
-    ...
-```
-
-
-## Example factory
-
-```python
-from Jumpscale import j
-
-
-class PastebinFactory(j.baseclasses.threebot_factory):
-
-    __jslocation__ = "j.threebot.package.pastebin2"
 ```
 
 ## Example package.py
@@ -180,6 +166,14 @@ export function newPaste(code) {
     return (axios.post("/threefold/pastebin/actors/pastebin/new_paste", { "args": { "code": code } }))
 }
 ```
+
+Or you can use [gedis_package.js](https://github.com/threefoldtech/jumpscaleX_weblibs/tree/development/static/gedis/gedis_package.js), and call actors in the form of:
+
+`packageGedisClient.<threebot_name>.<package_name>.actors.<actor_name>.<method_name>...`
+
+like:
+
+`packageGedisClient.threefold.alerta_ui.actors.alerta.list_alerts()`
 
 # Locations
 As you already figured out we use `openresty` for running applications and proxying requests based on their locations. There're multiple types
