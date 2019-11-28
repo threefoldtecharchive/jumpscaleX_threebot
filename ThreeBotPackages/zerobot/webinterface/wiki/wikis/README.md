@@ -70,5 +70,3 @@ j.threebot.package.wikis.test()
         ```
         name = (S) # wiki name
         ```
-
-

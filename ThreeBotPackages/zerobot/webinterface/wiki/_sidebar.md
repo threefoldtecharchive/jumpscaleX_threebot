@@ -2,3 +2,5 @@
 * [Gedis Websocket Interface](gedis_websocket.md)
 * [BCDBFS Web Interface](bcdbfs.md)
 * [Weblibs](weblibs.md)
+* [Chat bot](chatbot/README.md)
+* [wikis](wikis/README.md)
