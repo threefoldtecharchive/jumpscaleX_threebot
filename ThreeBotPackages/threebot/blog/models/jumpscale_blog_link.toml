@@ -1,11 +1,11 @@
 
-@url = jumpscale.blog.link
+@url = link
 title** = "" (S)
 link = "" (S)
 page = "" (S)
 faclass = "" (S)
 
-@url = jumpscale.blog.metadata
+@url = metadata
 blog_name** = "" (S)
 blog_title** = "JSX blog" (S)
 blog_description = "JSX blog description" (S)
@@ -17,16 +17,16 @@ url = "" (S)
 posts_dir = "posts"
 github_username = "" (S)
 github_repo_url** = "" (S)
-nav_links = (LO)      !jumpscale.blog.link
-sidebar_social_links = (LO) !jumpscale.blog.link
-sidebar_links = (LO)  !jumpscale.blog.link
-allow_disqus = true (B) 
+nav_links = (LO)      !link
+sidebar_social_links = (LO) !threefold.blog.link
+sidebar_links = (LO)  !link
+allow_disqus = true (B)
 allow_navbar = true (B)
 allow_footer = true (B)
 posts_per_page = (I)
 
 
-@url = jumpscale.blog.post
+@url = post
 title** = "" (S)
 slug** = "" (S)
 content = "" (S)
