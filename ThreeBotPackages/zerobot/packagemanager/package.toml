@@ -1,5 +1,5 @@
 [source]
-name = "packagemanager_ui"
+name = "packagemanager"
 description = "zerobot package manager"
 threebot = "threefold"
 version = "1.0.0"
