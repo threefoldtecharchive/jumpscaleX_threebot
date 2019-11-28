@@ -1,6 +1,6 @@
 <div class="text-center">
   <img
-    src={'/alerta/img/loader.gif'}
+    src={'/threefold/alerta_ui/img/loader.gif'}
     class="img-fluid"
     alt="Responsive image" />
 </div>
