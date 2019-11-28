@@ -63,7 +63,7 @@
           {#each alerts as myAlert}
             <tr>
               <th scope="row">
-                <a href="/alerta/alert/{myAlert.id}">{myAlert.id}</a>
+                <a href="/alerta_ui/alert/{myAlert.id}">{myAlert.id}</a>
               </th>
               {#if myAlert.severity == severity.CRITICAL}
                 <td>
