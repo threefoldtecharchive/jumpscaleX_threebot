@@ -59,13 +59,13 @@ self.addEventListener('fetch', event => {
 			.then(async cache => {
 				try {
 					const response = await fetch(event.request);
-					if(!response || response.status !== 200 || response.type !== 'basic') {
-					    return response;
+					if (!response || response.status !== 200 || response.type !== 'basic') {
+						return response;
 					}
 
 					cache.put(event.request, response.clone());
 					return response;
-				} catch(err) {
+				} catch (err) {
 					const response = await cache.match(event.request);
 					if (response) return response;
 
