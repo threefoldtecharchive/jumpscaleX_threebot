@@ -41,12 +41,12 @@ hello/
 
 
 ## Starting zerobot with registered packages
-- the recommended way is `j.servers.threebot.local_start_zerobot_default()`.
+- the recommended way is `j.servers.threebot.local_start_default()`.
 
 - to simplify the development workflow you can start packages directly using their factories, for example:
     * `kosmos -p "j.threebot.package.alerta.start()"`
 
-## Starting threebot 
+## Starting threebot
 - the recommended way is `j.servers.threebot.local_start_default()`.
 
 - to simplify the development workflow you can start packages directly using their factories, for example:
@@ -57,7 +57,7 @@ After starting the server with recommended way, you can use the returned client 
 
 ```
 kosmos -p
-JSX> cl = j.servers.threebot.local_start_zerobot_default()
+JSX> cl = j.servers.threebot.local_start_default()
 JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta')
 ```
 
@@ -325,6 +325,6 @@ Notice for chat package only cares about the `topic` not about the package name
   - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/pastebin/pastebin/README.md)
 
 - VueJS
-  
+
   - [backend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/examples/vuejs/README.md)
   - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/examples/vuejs/newproject/README.md)
