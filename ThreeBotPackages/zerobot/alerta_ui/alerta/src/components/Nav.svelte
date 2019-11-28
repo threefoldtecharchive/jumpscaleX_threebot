@@ -25,7 +25,7 @@
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link text-white" href="/alerta_ui">
+          <a class="nav-link text-white" href="/threefold/alerta_ui">
             Home
             <span class="sr-only">(current)</span>
           </a>
