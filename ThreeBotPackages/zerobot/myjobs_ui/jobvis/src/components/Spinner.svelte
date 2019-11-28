@@ -1,6 +1,6 @@
 <div class="text-center">
   <img
-    src={'/myjobs_ui/img/loader.gif'}
+    src={'/threefold/myjobs_ui/img/loader.gif'}
     class="img-fluid"
     alt="Responsive image" />
 </div>
