@@ -6,7 +6,6 @@ from bottle import Bottle, abort, post, request, response, run
 from bottle.ext.websocket import GeventWebSocketServer, websocket
 from Jumpscale import j
 from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
-from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 GEDIS_PORT = 8901
 from .rooter import app
@@ -50,8 +49,6 @@ def gedis_websocket(ws):
 #######################################
 ######## GEDIS HTTP ROUTES ############
 #######################################
-
-
 def get_actor(client, name, retry=True):
     """try to get an actor from a gedis client
 
@@ -122,119 +119,6 @@ def gedis_http(name, cmd, threebot_name=None, package_name=None):
         if content_type:
             result = getattr(result, f"_{content_type}", result)
     return result
-
-
-templates_path = j.sal.fs.joinPaths(j.sal.fs.getDirName(__file__), "..", "templates")
-env = Environment(loader=FileSystemLoader(templates_path), autoescape=select_autoescape(["html", "xml"]))
-
-
-def get_ws_url():
-    """get the proper ws url from the request"""
-    url_parts = request.urlparts
-    ws_scheme = "ws"
-    if url_parts.scheme == "https" or request.headers["x-forwarded-proto"] == "https":
-        ws_scheme = "wss"
-
-    ws_url = f"{ws_scheme}://{url_parts.hostname}"
-    if url_parts.port:
-        ws_url = f"{ws_url}:{url_parts.port}"
-    return ws_url
-
-
-def get_metadata(docsite):
-    try:
-        with open(f"/docsites/{docsite}/.data") as f:
-            return f.read()
-    except FileNotFoundError:
-        return "{}"
-
-
-@app.route("/<threebot_name>/<package_name>/chat", method=["get"])
-def gedis_http_chat(threebot_name, package_name):
-    try:
-        package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-    except j.exceptions.NotFound:
-        print("Couldn't")
-        abort(404)
-
-    data = [(chatflow, chatflow.capitalize().replace("_", " ")) for chatflow in package.chat_names]
-    return env.get_template("chat/home.html").render(
-        chatflows=data, threebot_name=threebot_name, package_name=package_name
-    )
-
-
-@app.route("/<threebot_name>/<package_name>/chat/<chat_name>", method=["get"])
-def gedis_http_chat(threebot_name, package_name, chat_name):
-    session = request.environ.get("beaker.session", {})
-    try:
-        package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-    except j.exceptions.NotFound:
-        print("Couldn't")
-        abort(404)
-    query = request.urlparts.query
-    if query:
-        query = query.split("&")
-        query_params = {}
-        for q in query:
-            try:
-                k, v = q.split("=")
-                query_params[k] = v
-            except:
-                query_params["referral"] = q
-
-        session["kwargs"] = query_params
-    else:
-        session["kwargs"] = {}
-    if chat_name not in package.chat_names:
-        response.status = 404
-        error = f"Specified chatflow {chat_name} is not registered on the system"
-        return env.get_template("chat/error.html").render(error=error, email=session["email"])
-    ws_url = get_ws_url()
-    return env.get_template("chat/index.html").render(
-        topic=chat_name,
-        url=ws_url,
-        email=session.get("email", ""),
-        qs=session["kwargs"],
-        username=session.get("username"),
-    )
-
-
-@app.route("/<threebot_name>/<package_name>/wiki", method=["get"])
-def gedis_http_wiki(threebot_name, package_name):
-    try:
-        package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-    except j.exceptions.NotFound:
-        print("Couldn't")
-        abort(404)
-    wiki_names = package.wiki_names
-    return env.get_template("wiki/home.html").render(
-        wiki_names=wiki_names, threebot_name=threebot_name, package_name=package_name
-    )
-
-
-@app.route("/<threebot_name>/<package_name>/wiki/<wiki_name>", method=["get"])
-def gedis_http_wiki(threebot_name, package_name, wiki_name):
-    try:
-        package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-    except j.exceptions.NotFound:
-        print("Couldn't")
-        abort(404)
-    docsite_path = j.sal.fs.joinPaths("/docsites", wiki_name)
-    if not j.sal.bcdbfs.exists(docsite_path):
-        return abort(404)
-
-    ws_url = get_ws_url()
-    return env.get_template("wiki/wiki/index.html").render(name=wiki_name, metadata=get_metadata(wiki_name), url=ws_url)
-
-
-# @app.route("/<3bot_name>/<package_name>/crud/<schema_name>", method=["post", "get", "options"])
-# def gedis_http_crud(threebot_name, package_name, schema_name):
-#     pass
-#
-#
-# @app.route("/<3bot_name>/<package_name>/actors/<actor_name>/<method_name>", method=["post"])
-# def gedis_http_actor(threebot_name, package_name, actor_name, method_name):
-#     pass
 
 
 @app.route("/bcdbfs/<url:re:.+>")

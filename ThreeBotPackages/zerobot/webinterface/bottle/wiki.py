@@ -1,21 +1,11 @@
-import mimetypes
-import traceback
-
-from bottle import abort, response, request, Bottle, redirect
-from jinja2 import Environment, FileSystemLoader, select_autoescape
-
+from bottle import Bottle, abort, post, request, response, run, redirect
 from Jumpscale import j
 from JumpscaleLibs.tools.markdowndocs.Doc import Doc
 from JumpscaleLibs.tools.markdowndocs.DocSite import DocSite
 from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
-
-
-templates_path = j.sal.fs.joinPaths(j.sal.fs.getParent(j.sal.fs.getParent(__file__)), "templates")
-
-
-env = Environment(loader=FileSystemLoader(templates_path), autoescape=select_autoescape(["html", "xml"]))
-
-app = Bottle()
+from .rooter import env, app, get_ws_url
+import mimetypes
+import traceback
 
 
 def get_metadata(docsite):
@@ -26,38 +16,32 @@ def get_metadata(docsite):
         return "{}"
 
 
-def get_ws_url():
-    """get the proper ws url from the request"""
-    url_parts = request.urlparts
-    ws_scheme = "ws"
-    if url_parts.scheme == "https":
-        ws_scheme = "wss"
-
-    ws_url = f"{ws_scheme}://{url_parts.hostname}"
-    if url_parts.port:
-        ws_url = f"{ws_url}:{url_parts.port}"
-    return ws_url
-
-
-@app.route("/wiki")
-def home_handler():
-    wikis_names = []
-    if j.sal.bcdbfs.exists("/docsites"):
-        wikis_names = j.sal.bcdbfs.list_dirs("/docsites")
-        wikis_names = [wiki[10:] for wiki in wikis_names]
-    print("TEMPLATES PATH: ", templates_path)
-    return env.get_template("home.html").render(wikis_names=wikis_names)
+@app.route("/<threebot_name>/<package_name>/wiki", method=["get"])
+def gedis_http_wiki(threebot_name, package_name):
+    try:
+        package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
+    except j.exceptions.NotFound:
+        print("Couldn't")
+        abort(404)
+    wiki_names = package.wiki_names
+    return env.get_template("wiki/home.html").render(
+        wiki_names=wiki_names, threebot_name=threebot_name, package_name=package_name
+    )
 
 
-@app.route("/wiki/<docsite>", method="get")
-@enable_cors
-def wiki_handler(docsite):
-    docsite_path = j.sal.fs.joinPaths("/docsites", docsite)
+@app.route("/<threebot_name>/<package_name>/wiki/<wiki_name>", method=["get"])
+def gedis_http_wiki(threebot_name, package_name, wiki_name):
+    try:
+        package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
+    except j.exceptions.NotFound:
+        print("Couldn't")
+        abort(404)
+    docsite_path = j.sal.fs.joinPaths("/docsites", wiki_name)
     if not j.sal.bcdbfs.exists(docsite_path):
         return abort(404)
 
     ws_url = get_ws_url()
-    return env.get_template("wiki/index.html").render(name=docsite, metadata=get_metadata(docsite), url=ws_url)
+    return env.get_template("wiki/wiki/index.html").render(name=wiki_name, metadata=get_metadata(wiki_name), url=ws_url)
 
 
 @app.route("/wiki/gdrive/<doc_type>/<guid1>")

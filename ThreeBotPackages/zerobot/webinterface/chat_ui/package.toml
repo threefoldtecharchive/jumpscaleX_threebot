@@ -1,8 +1,0 @@
-[source]
-name = "chat_ui"
-description = "Chatflow UI"
-threebot = "threefold"
-version = "1.0.0"
-
-[actor]
-namespace = "zerobot"
