@@ -4,10 +4,6 @@ import random
 
 class token(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        try:
-            self.bcdb = j.data.bcdb.get("tf_grid_token")
-        except:
-            self.bcdb = j.data.bcdb.new("tf_grid_token")
         self.market = self.bcdb.model_get(url="tfgrid.market.1")
         self.capacity = self.bcdb.model_get(url="tfgrid.capacity.1")
         self.tokens = self.bcdb.model_get(url="tfgrid.token.price.1")

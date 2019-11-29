@@ -3,7 +3,6 @@ from Jumpscale import j
 
 class application(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        self.bcdb = j.data.bcdb.get("fruum")
         self.model = self.bcdb.model_get(url="jumpscale.fruum.application")
 
     @j.baseclasses.actor_method

@@ -1,4 +1,4 @@
-@url = tfgrid.reservation.workload.1
+@url = reservation.workload.1
 workload_id = (S)
 user = (S)
 type = "zdb,container,volume,network" (E)

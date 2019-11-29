@@ -6,7 +6,7 @@ class nodes(j.baseclasses.threebot_actor):
 
         bcdb = j.data.bcdb.get("tf_directory")
         self.node_model = bcdb.model_get(url="tfgrid.node.2")
-        self.farm_model = bcdb.model_get(url="tfgrid.farm.1")
+        self.farm_model = bcdb.model_get(url="tfgrid.directory.farm.1")
 
     def _find(self, node_id):
         nodes = self.node_model.find(node_id=node_id)

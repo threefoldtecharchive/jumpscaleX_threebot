@@ -5,10 +5,6 @@ class TFTokenFactory(j.baseclasses.threebot_factory):
     __jslocation__ = "j.threebot.package.token"
     _web = False
 
-    def start(self):
-        gedis_client = j.servers.threebot.local_start_default()
-        gedis_client.actors.package_manager.package_add(path=self._dirpath)
-
     def client_get(self):
         """
         j.threebot.package.token.client_get()
@@ -28,14 +24,6 @@ class TFTokenFactory(j.baseclasses.threebot_factory):
         """
         kosmos 'j.threebot.package.token.test()'
         """
-
-        self.start()
-
-        if "tf_grid_token" in [b.name for b in j.data.bcdb.instances.values()]:
-            m = j.data.bcdb.get("tf_grid_token")
-        else:
-            m = j.data.bcdb.new("tf_grid_token")
-        m.models_add(path=self._dirpath + "/models")
 
         gedis_cli = self.client_get()
 

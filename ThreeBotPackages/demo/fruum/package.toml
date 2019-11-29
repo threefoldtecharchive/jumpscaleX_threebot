@@ -1,7 +1,7 @@
 [source]
 name = "fruum"
 description = "TBD"
-threebot = "threefold"
+threebot = "jumpscale"
 version = "1.0.0"
 
 [actor]

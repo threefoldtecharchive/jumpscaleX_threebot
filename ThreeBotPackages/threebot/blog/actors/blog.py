@@ -3,7 +3,7 @@ from Jumpscale import j
 
 class blog(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        self.blog_model = j.data.bcdb.system.model_get(url="jumpscale.blog")
+        self.blog_model = self.bcdb.model_get(url="blog")
 
     @j.baseclasses.actor_method
     def get_blogs(self, user_session=None):

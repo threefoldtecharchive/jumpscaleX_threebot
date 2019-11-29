@@ -1,5 +1,5 @@
 #json representation of whatever needs to come back from the ZOS after provisioning
-@url = tfgrid.reservation.result.1
+@url = reservation.result.1
 category = "zdb,container,network,volume" (E)
 workload_id = (S)
 data_json = (S)
@@ -8,5 +8,3 @@ signature = (bytes)
 state = "error,ok" (E)
 message = "" (S)
 epoch = (T)
-
-

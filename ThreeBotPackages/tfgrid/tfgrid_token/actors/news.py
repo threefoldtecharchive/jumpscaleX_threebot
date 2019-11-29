@@ -4,10 +4,6 @@ import random
 
 class news(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        try:
-            self.bcdb = j.data.bcdb.get("tf_grid_token")
-        except:
-            self.bcdb = j.data.bcdb.new("tf_grid_token")
         self.news = self.bcdb.model_get(url="tfgrid.news.1")
 
     @j.baseclasses.actor_method

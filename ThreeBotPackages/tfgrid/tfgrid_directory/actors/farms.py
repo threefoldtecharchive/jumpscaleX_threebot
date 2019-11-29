@@ -7,8 +7,7 @@ _re_name = re.compile(r"^[A-Za-z0-9\ _\-]+$")
 
 class farms(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        bcdb = j.data.bcdb.get("tf_directory")
-        self.farm_model = bcdb.model_get(url="tfgrid.farm.1")
+        self.farm_model = self.bcdb.model_get(url="tfgrid.directory.farm.1")
 
     def _by_id(self, farm_id):
         try:
@@ -45,7 +44,7 @@ class farms(j.baseclasses.threebot_actor):
     def register(self, farm, schema_out=None, user_session=None):
         """
         ```in
-        farm = (O) !tfgrid.farm.1
+        farm = (O) !tfgrid.directory.farm.1
         ```
 
         ```out
@@ -64,10 +63,10 @@ class farms(j.baseclasses.threebot_actor):
         """
         ```in
         farm_id = (I)
-        farm = (O) !tfgrid.farm.1
+        farm = (O) !tfgrid.directory.farm.1
         ```
         ```out
-        farm = (O) !tfgrid.farm.1
+        farm = (O) !tfgrid.directory.farm.1
         ```
         """
         self._by_id(farm_id)
@@ -84,7 +83,7 @@ class farms(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        farm = (O) !tfgrid.farm.1
+        farm = (O) !tfgrid.directory.farm.1
         ```
         """
 
@@ -103,7 +102,7 @@ class farms(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        farms = (LO) !tfgrid.farm.1
+        farms = (LO) !tfgrid.directory.farm.1
         ```
         """
         out = schema_out.new()
@@ -123,7 +122,7 @@ class farms(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        farms = (LO) !tfgrid.farm.1
+        farms = (LO) !tfgrid.directory.farm.1
         ```
         """
         output = schema_out.new()

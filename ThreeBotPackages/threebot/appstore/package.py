@@ -2,17 +2,12 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-    # @property
-    # def bcdb(self):
-    #     return self._package.threebot_server.bcdb_get("appstore")
-
     def prepare(self):
         """
         Dependencies
         """
         # write 4 apps to database
-        bcdb = j.data.bcdb.get("appstore")
-        appModel = bcdb.model_get(url="appstore.app.1")
+        appModel = self.bcdb.model_get(url="app.1")
 
         appsList = [
             {
@@ -53,16 +48,3 @@ class Package(j.baseclasses.threebot_package):
             if appModel.count(appname=application["appname"]) == 0:
                 app = appModel.new(application)
                 app.save()
-
-    def start(self):
-        self.bcdb.models_add(path=self.package_root + "/models")
-        self.gedis_server.actors_add(path=self.package_root + "/actors")
-
-    def stop(self):
-        pass
-
-    def uninstall(self):
-        """
-        Remove Dependencies
-        """
-        # clear database

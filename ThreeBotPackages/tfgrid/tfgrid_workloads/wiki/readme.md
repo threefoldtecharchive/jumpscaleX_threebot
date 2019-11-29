@@ -13,12 +13,12 @@ To start the package run `j.threebot.package.workloadmanager.start()`.
 
     - schema in: [reservation object](./models/tfgrid_reservation_1.toml)
         ```
-        reserveration = (O) !tfgrid.reservation.1
+        reserveration = (O) !tfgrid.workloads.reservation.1
         ```
 
     - schema out: returns the same reservation object with `epoch` and `next_action` fields filled out.
         ```
-        reserveration = (O) !tfgrid.reservation.1
+        reserveration = (O) !tfgrid.workloads.reservation.1
         ```
 
 - **reservation_get**: given a reservation id, it returns the reservation object from the database.
@@ -29,7 +29,7 @@ To start the package run `j.threebot.package.workloadmanager.start()`.
         ```
     - schema out: [reservation object](./models/tfgrid_reservation_1.toml)
         ```
-        tfgrid.reservation.1
+        tfgrid.workloads.reservation.1
         ```
 
 - **reservation_list**: returns a list of all reservations with the ability to filter on nodes, state (next action) and epoch (creation date).
@@ -44,7 +44,7 @@ To start the package run `j.threebot.package.workloadmanager.start()`.
     - schema out: `reservations` containing a list of [reservation objects](./models/tfgrid_reservation_1.toml)
 
         ```
-        reservations = (LO) !tfgrid.reservation.1
+        reservations = (LO) !tfgrid.workloads.reservation.1
         ```
 
 - **workloads_list**: list workloads of reservations in `deploy` or `delete` state, with the ability to filter on nodes, and epoch.
@@ -56,7 +56,7 @@ To start the package run `j.threebot.package.workloadmanager.start()`.
         ```
     - schema out: `workloads` containing a list of [workload objects](./models/tfgrid_reservation_workload_1.toml)
         ```
-        workloads = (LO) !tfgrid.reservation.workload.1
+        workloads = (LO) !tfgrid.workloads.reservation.workload.1
         ```
 
 - **workload_get**: given a workload id, it returns the workload object.
@@ -68,7 +68,7 @@ To start the package run `j.threebot.package.workloadmanager.start()`.
 
     - schema out: [workload object](./models/tfgrid_reservation_workload_1.toml)
         ```
-        !tfgrid.reservation.workload.1
+        !tfgrid.workloads.reservation.workload.1
         ```
 
 - **sign_provision**: Add a new provision signature to a reservation's `signature_provision` list.
@@ -106,7 +106,7 @@ To start the package run `j.threebot.package.workloadmanager.start()`.
     - schema in:
     ```
     global_workload_id = (S)
-    result = (O) !tfgrid.reservation.result.1
+    result = (O) !tfgrid.workloads.reservation.result.1
     ```
 
 - **workload_deleted**: mark a workload as deleted. NOT IMPLEMENTED YET.
