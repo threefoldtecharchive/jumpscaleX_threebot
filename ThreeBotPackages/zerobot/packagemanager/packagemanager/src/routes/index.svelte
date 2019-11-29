@@ -1,7 +1,6 @@
 
 <script>
 	import { onMount } from "svelte";
-	const localGedisClient = new GedisHTTPClient(`${location.protocol}//${location.hostname}/web/gedis/http`)
 
 	let method = "path";
 	let newPackagePath = "";
@@ -21,7 +20,7 @@
 	});
 
 	function updatePackages() {
-		localGedisClient.executeCommand("package_manager", "packages_list").then((resp) => {
+		packageGedisClient.threefold.packagemanager.actors.package_manager.packages_list().then((resp) => {
 			if (resp.ok) {
 				resp.json().then((data) => {
 					packages = data.packages;
@@ -38,7 +37,7 @@
 	function packageAdd() {
 		let args = {};
 		args[method] = newPackagePath;
-		localGedisClient.executeCommand("package_manager", "package_add", args).then((resp) => {
+		packageGedisClient.threefold.packagemanager.actors.package_manager.package_add(args).then((resp) => {
 			if(resp.ok) {
 				lastError = null;
 				updatePackages()
@@ -50,7 +49,7 @@
 
 	function packageEnable(name) {
 		let args = {name: name}
-		localGedisClient.executeCommand("package_manager", "package_enable", args).then((resp) => {
+		packageGedisClient.threefold.packagemanager.actors.package_manager.package_enable(args).then((resp) => {
 			if(resp.ok) {
 				lastError = null;
 				updatePackages()
@@ -62,7 +61,7 @@
 
 	function packageDisable(name) {
 		let args = {name: name}
-		localGedisClient.executeCommand("package_manager", "package_disable", args).then((resp) => {
+		packageGedisClient.threefold.packagemanager.actors.package_manager.spackage_disable(args).then((resp) => {
 			if(resp.ok) {
 				lastError = null;
 				updatePackages()
@@ -74,7 +73,7 @@
 
 	function packageStop(name) {
 		let args = {name: name}
-		localGedisClient.executeCommand("package_manager", "package_stop", args).then((resp) => {
+		packageGedisClient.threefold.packagemanager.actors.package_manager.package_stop(args).then((resp) => {
 			if(resp.ok) {
 				lastError = null;
 				updatePackages()
@@ -86,7 +85,7 @@
 
 	function packageStart(name) {
 		let args = {name: name}
-		localGedisClient.executeCommand("package_manager", "package_start", args).then((resp) => {
+		packageGedisClient.threefold.packagemanager.actors.package_manager.package_start(args).then((resp) => {
 			if(resp.ok) {
 				lastError = null;
 				updatePackages()
@@ -98,7 +97,7 @@
 
 	function packageDelete(name) {
 		let args = {name: name}
-		localGedisClient.executeCommand("package_manager", "package_delete", args).then((resp) => {
+		packageGedisClient.threefold.packagemanager.actors.package_manager.package_delete(args).then((resp) => {
 			if(resp.ok) {
 				lastError = null;
 				updatePackages()
@@ -132,7 +131,7 @@
 			</div>
 		</div>
 		<div class="col-auto">
-			<button type="button" class="btn btn-prweblibs/gedis/gedis_http.jsimary mb-2" on:click={()=>packageAdd()}>Add package</button>
+			<button type="button" class="btn btn-primary mb-2" on:click={()=>packageAdd()}>Add package</button>
 		</div>
 	</div>
 </form>

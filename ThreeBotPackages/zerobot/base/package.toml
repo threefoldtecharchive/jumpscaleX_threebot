@@ -1,0 +1,8 @@
+[source]
+name = "base"
+description = "contains the base actors and chatflows"
+threebot = "threefold"
+version = "1.0.0"
+
+[actor]
+namespace = "default"
