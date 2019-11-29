@@ -1,7 +1,7 @@
 [source]
 name = "taiga"
 description = "Taiga is a free and open-source project management system"
-threebot = "threefold"
+threebot = "tfgrid"
 version = "1.0.0"
 
 [actor]

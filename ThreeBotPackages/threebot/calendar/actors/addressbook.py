@@ -8,10 +8,9 @@ class addressbook(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.base_url = "http://{}:{}@127.0.0.1:8851"
         self.client = None
-        bcdb = j.data.bcdb.get("caldav")
-        self.book_model = bcdb.model_get(url="tf.caldav.addressbook.1")
-        self.contact_model = bcdb.model_get(url="tf.caldav.contact.1")
-        self.addressbook_model = bcdb.model_get(url="tf.caldav.addressbook.1")
+        self.book_model = self.bcdb.model_get(url="threebot.calendar.addressbook.1")
+        self.contact_model = self.bcdb.model_get(url="threebot.calendar.contact.1")
+        self.addressbook_model = self.bcdb.model_get(url="threebot.calendar.addressbook.1")
 
     def _get_vcard_from_contact(self, contact):
         vcard = vobject.vCard()
@@ -165,10 +164,10 @@ class addressbook(j.baseclasses.threebot_actor):
     def add(self, addressbook, schema_out=None, user_session=None):
         """
         ```in
-        addressbook = (O) !tf.caldav.addressbook.1
+        addressbook = (O) !threebot.calendar.addressbook.1
         ```
         ```out
-        addressbook = (O) !tf.caldav.addressbook.1
+        addressbook = (O) !threebot.calendar.addressbook.1
         ```
         """
         self._verify_client()
@@ -196,7 +195,7 @@ class addressbook(j.baseclasses.threebot_actor):
         addressbook_id = (S)
         ```
         ```out
-        calendar = !tf.caldav.addressbook.1
+        calendar = !threebot.calendar.addressbook.1
         ```
         """
         self._verify_client()
@@ -220,7 +219,7 @@ class addressbook(j.baseclasses.threebot_actor):
     def list(self, schema_out=None, user_session=None):
         """
         ```out
-        addressbooks = (LO) !tf.caldav.addressbook.1
+        addressbooks = (LO) !threebot.calendar.addressbook.1
         ```
         """
         self._verify_client()
@@ -232,10 +231,10 @@ class addressbook(j.baseclasses.threebot_actor):
     def add_contact(self, contact, schema_out=None, user_session=None):
         """
         ```in
-        contact = (O) !tf.caldav.contact.1
+        contact = (O) !threebot.calendar.contact.1
         ```
         ```out
-        contact = (O) !tf.caldav.contact.1
+        contact = (O) !threebot.calendar.contact.1
         ```
         """
         self._verify_client()
@@ -255,7 +254,7 @@ class addressbook(j.baseclasses.threebot_actor):
         contact_id = (S)
         ```
         ```out
-        contact = (O) !tf.caldav.contact.1
+        contact = (O) !threebot.calendar.contact.1
         ```
         """
         self._verify_client()
@@ -282,10 +281,10 @@ class addressbook(j.baseclasses.threebot_actor):
     def list_contacts(self, contact, schema_out=None, user_session=None):
         """
         ```in
-        contact = (O) !tf.caldav.contact.1
+        contact = (O) !threebot.calendar.contact.1
         ```
         ```out
-        contacts = (LO) !tf.caldav.contact.1
+        contacts = (LO) !threebot.calendar.contact.1
         ```
         """
         output = schema_out.new()
@@ -398,10 +397,10 @@ class addressbook(j.baseclasses.threebot_actor):
     def update_contact(self, contact, schema_out=None, user_session=None):
         """
         ```in
-        contact = (O) !tf.caldav.contact.1
+        contact = (O) !threebot.calendar.contact.1
         ```
         ```out
-        contact = (O) !tf.caldav.contact.1
+        contact = (O) !threebot.calendar.contact.1
         ```
         """
         contacts = self.contact_model.find(contact_id=contact.contact_id)

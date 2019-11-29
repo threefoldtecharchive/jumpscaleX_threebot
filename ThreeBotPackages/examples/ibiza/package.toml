@@ -1,6 +1,6 @@
 [source]
-name = "examples_vuejs"
-description = "Example how to make package with vuejs"
+name = "ibiza"
+description = ""
 threebot = "jumpscale"
 version = "1.0.0"
 

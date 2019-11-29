@@ -1,7 +1,7 @@
 [source]
 name = "minecraft"
 description = "Minecraft is a sandbox video game"
-threebot = "threefold"
+threebot = "tfgrid"
 version = "1.0.0"
 
 [actor]

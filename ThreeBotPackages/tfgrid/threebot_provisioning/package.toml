@@ -2,7 +2,7 @@
 [source]
 name = "threebot_provisioning"
 description = "allow anyone to deploy threebots on TFGRID installed on TFGRID explorers"
-threebot = "threefold"
+threebot = "tfgrid"
 version = "1.0.0"
 
 [actor]

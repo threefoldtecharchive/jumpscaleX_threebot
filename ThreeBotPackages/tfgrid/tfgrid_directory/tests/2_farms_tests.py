@@ -16,7 +16,7 @@ def main(self=None):
     path = os.path.dirname(os.path.dirname(__file__))
     bcdb.models_add(os.path.join(path, "models"))
     bcdb = j.data.bcdb.get("tf_directory")
-    model = bcdb.model_get(url="tfgrid.farm.1")
+    model = bcdb.model_get(url="tfgrid.directory.farm.1")
 
     gedis = j.servers.gedis.get("test", port=9901)
     gedis.actors_add(os.path.join(path, "actors"))

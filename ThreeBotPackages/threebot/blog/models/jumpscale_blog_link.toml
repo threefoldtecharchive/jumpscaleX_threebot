@@ -18,7 +18,7 @@ posts_dir = "posts"
 github_username = "" (S)
 github_repo_url** = "" (S)
 nav_links = (LO)      !link
-sidebar_social_links = (LO) !threefold.blog.link
+sidebar_social_links = (LO) !link
 sidebar_links = (LO)  !link
 allow_disqus = true (B)
 allow_navbar = true (B)
@@ -41,9 +41,9 @@ excerpt = "" (S)
 
 
 
-@url = jumpscale.blog
+@url = blog
 name** = "" (S)
 git_repo_url** = "" (S)
-metadata = (O) !jumpscale.blog.metadata
-posts =  (LO) !jumpscale.blog.post
-pages = (LO) !jumpscale.blog.post
+metadata = (O) !metadata
+posts =  (LO) !post
+pages = (LO) !post

@@ -1,7 +1,7 @@
 [source]
-name = "tfgrid_dns"
+name = "dns"
 description = "TBD"
-threebot = "threefold"
+threebot = "tfgrid"
 version = "1.0.0"
 
 [actor]

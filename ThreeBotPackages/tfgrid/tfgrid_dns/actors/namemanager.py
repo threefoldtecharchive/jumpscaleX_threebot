@@ -16,12 +16,14 @@ class namemanager(j.baseclasses.threebot_actor):
     @property
     def explorer(self):
         if self._explorer is None:
+            raise RuntimeError("should not use gedis client")
             self._explorer = j.clients.gedis.get(host=EXPLORER_DOMAIN, port=8901)
         return self._explorer
 
     @property
     def tfgateway(self):
         if self._tfgateway is None:
+            raise RuntimeError("should not use gedis client")
             redisclient = j.clients.redis.get(MASTERIP, port=6378)
             self._tfgateway = j.tools.tf_gateway.get(redisclient)
         return self._tfgateway

@@ -22,8 +22,6 @@ class Package(j.baseclasses.threebot_package):
         # self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
 
         server = self.openresty
-        server.install(reset=False)
-        server.configure()
 
         website = server.get_from_port(443)
 
@@ -32,7 +30,7 @@ class Package(j.baseclasses.threebot_package):
         website_location = locations.locations_spa.new()
         website_location.name = "farmmanagement"
         website_location.path_url = "/farmmanagement"
-        #website_location.use_jumpscale_weblibs = False
+        # website_location.use_jumpscale_weblibs = False
         fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
         website_location.path_location = fullpath
 

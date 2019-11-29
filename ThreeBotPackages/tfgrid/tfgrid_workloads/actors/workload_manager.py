@@ -18,11 +18,11 @@ def rid_from_gwid(workload_id):
 class workload_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         bcdb = j.data.bcdb.get("tf_workloads")
-        self.reservation_model = bcdb.model_get(url="tfgrid.reservation.1")
-        self.signature_model = bcdb.model_get(url="tfgrid.reservation.signing.signature.1")
-        self.workload_schema = j.data.schema.get_from_url("tfgrid.reservation.workload.1")
+        self.reservation_model = bcdb.model_get(url="tfgrid.workloads.reservation.1")
+        self.signature_model = bcdb.model_get(url="tfgrid.workloads.reservation.signing.signature.1")
+        self.workload_schema = j.data.schema.get_from_url("tfgrid.workloads.reservation.workload.1")
         tb_bcdb = j.data.bcdb.get("threebot_phonebook")
-        self.user_model = tb_bcdb.model_get(url="threebot.phonebook.user.1")
+        self.user_model = tb_bcdb.model_get(url="tfgrid.workloads.phonebook.user.1")
         self.nacl = j.data.nacl.default
 
         index_table = j.threebot.package.workloadmanager.reservation_index_model()
@@ -50,7 +50,7 @@ class workload_manager(j.baseclasses.threebot_actor):
     def _validate_signing_signature(self, payload, signature):
         """
         :param payload: the payload
-        :param signature: the signature object (tfgrid.reservation.signing.signature)
+        :param signature: the signature object (tfgrid.workloads.reservation.signing.signature)
         """
         try:
             user = self.user_model.get(signature.tid)
@@ -229,11 +229,11 @@ class workload_manager(j.baseclasses.threebot_actor):
     def reservation_register(self, reservation, schema_out, user_session):
         """
         ```in
-        reservation = (O) !tfgrid.reservation.1
+        reservation = (O) !tfgrid.workloads.reservation.1
         ```
 
         ```out
-        reservation = (O) !tfgrid.reservation.1
+        reservation = (O) !tfgrid.workloads.reservation.1
         ```
         """
         self._reservation_validate(reservation)
@@ -251,7 +251,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        !tfgrid.reservation.1
+        !tfgrid.workloads.reservation.1
         ```
         """
         return self._reservation_get(reservation_id)
@@ -266,7 +266,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        reservations = (LO) !tfgrid.reservation.1
+        reservations = (LO) !tfgrid.workloads.reservation.1
         ```
         """
         if state and not isinstance(state, list):
@@ -287,7 +287,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        workloads = (LO) !tfgrid.reservation.workload.1
+        workloads = (LO) !tfgrid.workloads.reservation.workload.1
         ```
         """
         output = schema_out.new()
@@ -324,7 +324,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        !tfgrid.reservation.workload.1
+        !tfgrid.workloads.reservation.workload.1
         ```
         """
         rid, wid = rid_from_gwid(gwid)
@@ -444,7 +444,7 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         ```in
         global_workload_id = (S)
-        result = (O) !tfgrid.reservation.result.1
+        result = (O) !tfgrid.workloads.reservation.result.1
         ```
         """
         rid, wid = rid_from_gwid(global_workload_id)

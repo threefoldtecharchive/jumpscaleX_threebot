@@ -1,7 +1,7 @@
 [source]
-name = "tfgrid_token"
+name = "token"
 description = "TBD"
-threebot = "threefold"
+threebot = "tfgrid"
 version = "1.0.0"
 
 [actor]

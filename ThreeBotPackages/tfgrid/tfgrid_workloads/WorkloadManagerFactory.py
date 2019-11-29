@@ -6,10 +6,6 @@ class WorkloadManagerFactory(j.baseclasses.threebot_factory, j.baseclasses.testt
 
     __jslocation__ = "j.threebot.package.workloadmanager"
 
-    def start(self):
-        gedis_client = j.servers.threebot.local_start_default()
-        gedis_client.actors.package_manager.package_add(path=self._dirpath)
-
     def test(self, name=""):
         """
 

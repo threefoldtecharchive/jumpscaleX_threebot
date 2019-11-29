@@ -8,7 +8,7 @@ def sync_directory():
     new_format = "%d/%m/%Y %H:%M"
 
     bcdb = j.data.bcdb.get("tf_directory")
-    farm_model = bcdb.model_get(url="tfgrid.farm.1")
+    farm_model = bcdb.model_get(url="tfgrid.directory.farm.1")
     node_model = bcdb.model_get(url="tfgrid.node.2")
 
     response = j.clients.threefold_directory.client.ListFarmers()[1]

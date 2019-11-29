@@ -8,23 +8,22 @@ NONE = 2147483647
 
 class registry(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        self.bcdb = self._bcdb_get("threebot_registry")
-        self.registration_model = self.bcdb.model_get(url="threebot.registry.entry.1")
-        self.threebot_data_model = self.bcdb.model_get(url="threebot.registry.entry.data.1")
+        self.registration_model = self.bcdb.model_get(url="tfgrid.registry.entry.1")
+        self.threebot_data_model = self.bcdb.model_get(url="tfgrid.registry.entry.data.1")
 
     @j.baseclasses.actor_method
     def register(
         self, authors=None, verifykey=None, input_object=None, signature_hex=None, schema_out=None, user_session=None
     ):
         """
-        register an object of the type threebot.registry.entry.data.1
+        register an object of the type tfgrid.registry.entry.data.1
         can be given in multiple formats
 
         signature hex is done on the capnp output of the object
 
         ```in
         authors = (LI)  #tid of the author
-        input_object = (O)  !threebot.registry.entry.data.1
+        input_object = (O)  !tfgrid.registry.entry.data.1
         signature_hex = "" (S)
         verifykey = (BIN)
         ```
@@ -64,7 +63,7 @@ class registry(j.baseclasses.threebot_actor):
             else:
                 new_data_model = input_object.registered_info_encrypted
 
-        new_object = self.bcdb.model_get(url="threebot.registry.entry.data.1").new()
+        new_object = self.bcdb.model_get(url="tfgrid.registry.entry.data.1").new()
         new_object.authors = input_object.authors
         new_object.readers = input_object.readers
         new_object.registered_info_format = input_object.registered_info_format
@@ -92,7 +91,7 @@ class registry(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        res = !threebot.registry.entry.data.1
+        res = !tfgrid.registry.entry.data.1
         ```
         """
         res = self.threebot_data_model.get(obj_id=data_id)
@@ -159,7 +158,7 @@ class registry(j.baseclasses.threebot_actor):
         only return if < 50 results
 
         ```out
-        res = (LO) !threebot.registry.entry.data.1
+        res = (LO) !tfgrid.registry.entry.data.1
         ```
         :return:
         """

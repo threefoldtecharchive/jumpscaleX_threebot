@@ -1,4 +1,4 @@
-@url = jumpscale.fruum.user
+@url = user
 anonymous** = (B)
 admin** = (B)
 blocked** = (B)
@@ -14,7 +14,7 @@ karma** = 0 (I)
 logout_karma** = 0 (I)
 
 
-@url = jumpscale.fruum.application
+@url = application
 name** = (S)
 description** = (S)
 url = (S)
@@ -26,12 +26,12 @@ private_key = (S)
 notifications_email = (S)
 contact_email = (S)
 
-@url = jumpscale.fruum.attachment
+@url = attachment
 name** = (S)
 type = (S) # image
 data = (S) # base64
 
-@url = jumpscale.fruum.document
+@url = document
 doc_id** = (S)
 app_name** = (S)
 breadcrumb = (LS)
@@ -60,5 +60,5 @@ react_down =  (LS) # List of user names
 children_count** = 0 (I)
 archived** = (B)
 archived_ts** = 0 (I)
-attachments = (LO) !jumpscale.fruum.attachment
+attachments = (LO) !attachment
 tags = (LS)

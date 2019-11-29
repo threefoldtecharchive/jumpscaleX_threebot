@@ -8,8 +8,7 @@ NONE = 2147483647
 
 class phonebook(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        self.bcdb = self._bcdb_get("threebot_phonebook")
-        self.phonebook_model = self.bcdb.model_get(url="threebot.phonebook.user.1")
+        self.phonebook_model = self.bcdb.model_get(url="tfgrid.phonebook.user.1")
 
     @j.baseclasses.actor_method
     def wallet_create(self, name, schema_out=None, user_session=None):
@@ -51,7 +50,7 @@ class phonebook(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        !threebot.phonebook.user.1
+        !tfgrid.phonebook.user.1
         ```
 
         is the first step of a registration, this is the step where money is involved.
@@ -108,7 +107,7 @@ class phonebook(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        !threebot.phonebook.user.1
+        !tfgrid.phonebook.user.1
         ```
 
         this is the 2nd step
@@ -170,7 +169,7 @@ class phonebook(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        !threebot.phonebook.user.1
+        !tfgrid.phonebook.user.1
         ```
         """
         if tid and not tid == NONE:
@@ -229,7 +228,7 @@ class phonebook(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        user = (O) !threebot.phonebook.user.1
+        user = (O) !tfgrid.phonebook.user.1
         ```
         """
         try:

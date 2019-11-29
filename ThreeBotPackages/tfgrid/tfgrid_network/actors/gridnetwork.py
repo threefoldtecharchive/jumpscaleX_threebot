@@ -4,9 +4,8 @@ import netaddr
 
 class gridnetwork(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        bcdb = j.data.bcdb.system
-        self.networkmodel = bcdb.model_get(url="tfgrid.network.network.1")
-        self.endpointmodel = bcdb.model_get(url="tfgrid.network.endpoint.1")
+        self.networkmodel = self.bcdb.model_get(url="tfgrid.network.network.1")
+        self.endpointmodel = self.bcdb.model_get(url="tfgrid.network.endpoint.1")
 
     @j.baseclasses.actor_method
     def network_add(self, name, subnet, schema_out=None, user_session=None):

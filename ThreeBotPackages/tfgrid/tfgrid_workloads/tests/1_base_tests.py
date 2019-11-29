@@ -17,7 +17,7 @@ def main(self):
     signer_signing_key = signing.SigningKey.generate()
 
     bcdb = j.servers.threebot.default.bcdb_get("tf_workloads")
-    reservation_model = bcdb.model_get(url="tfgrid.reservation.1")
+    reservation_model = bcdb.model_get(url="tfgrid.workloads.reservation.1")
     index_table = j.threebot.package.workloadmanager.reservation_index_model()
     index_table._meta.database = reservation_model.bcdb.sqlite_index_client
     index_table.create_table(safe=True)
@@ -31,7 +31,7 @@ def main(self):
     reservation_model.destroy()
 
     ph_bcdb = j.servers.threebot.default.bcdb_get("threebot_phonebook")
-    model = ph_bcdb.model_get(url="threebot.phonebook.user.1")
+    model = ph_bcdb.model_get(url="tfgrid.workloads.phonebook.user.1")
     model.destroy()
 
     threebots = [
@@ -53,11 +53,11 @@ def main(self):
     reservation = reservation_model.new()
     reservation.customer_tid = tbots["customer"].id
 
-    container_model = bcdb.model_get(url="tfgrid.reservation.container.1")
-    volume_model = bcdb.model_get(url="tfgrid.reservation.volume.1")
-    zdb_model = bcdb.model_get(url="tfgrid.reservation.zdb.1")
-    network_model = bcdb.model_get(url="tfgrid.reservation.network.1")
-    net_resource = bcdb.model_get(url="tfgrid.network.net_resource.1")
+    container_model = bcdb.model_get(url="tfgrid.workloads.reservation.container.1")
+    volume_model = bcdb.model_get(url="tfgrid.workloads.reservation.volume.1")
+    zdb_model = bcdb.model_get(url="tfgrid.workloads.reservation.zdb.1")
+    network_model = bcdb.model_get(url="tfgrid.workloads.reservation.network.1")
+    net_resource = bcdb.model_get(url="tfgrid.workloads.network.net_resource.1")
 
     # create container
     container = container_model.new()
@@ -94,7 +94,7 @@ def main(self):
     reservation.data_reservation.networks.append(network)
 
     # create sigining request
-    request_model = bcdb.model_get(url="tfgrid.reservation.signing.request.1")
+    request_model = bcdb.model_get(url="tfgrid.workloads.reservation.signing.request.1")
     request = request_model.new()
     request.signers = [tbots["signer"].id]
     request.quorum_min = 1
@@ -169,7 +169,7 @@ def main(self):
     reservation = reservation_model.new()
     reservation.customer_tid = 1000000  # id of inexistant customer
 
-    container_model = bcdb.model_get(url="tfgrid.reservation.container.1")
+    container_model = bcdb.model_get(url="tfgrid.workloads.reservation.container.1")
 
     # create container
     container = container_model.new()
@@ -181,7 +181,7 @@ def main(self):
     reservation.data_reservation.containers.append(container)
 
     # create sigining request
-    request_model = bcdb.model_get(url="tfgrid.reservation.signing.request.1")
+    request_model = bcdb.model_get(url="tfgrid.workloads.reservation.signing.request.1")
     request = request_model.new()
     request.signers = [tbots["signer"].id]
     request.quorum_min = 1

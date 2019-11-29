@@ -5,8 +5,7 @@ import time
 
 class document(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        bcdb = j.data.bcdb.get("fruum")
-        self.model = bcdb.model_get(url="jumpscale.fruum.document")
+        self.model = self.bcdb.model_get(url="jumpscale.fruum.document")
 
     @j.baseclasses.actor_method
     def add(
