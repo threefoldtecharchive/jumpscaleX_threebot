@@ -18,10 +18,12 @@ def get_metadata(docsite):
 
 @app.route("/<threebot_name>/<package_name>/wiki", method=["get"])
 def gedis_http_wiki(threebot_name, package_name):
+    print(f"request load wikis for {threebot_name}.{package_name}")
+
     try:
         package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
     except j.exceptions.NotFound:
-        print("Couldn't")
+        print(f"couldn't load wikis for {threebot_name}.{package_name}")
         abort(404)
     wiki_names = package.wiki_names
     return env.get_template("wiki/home.html").render(
@@ -31,10 +33,12 @@ def gedis_http_wiki(threebot_name, package_name):
 
 @app.route("/<threebot_name>/<package_name>/wiki/<wiki_name>", method=["get"])
 def gedis_http_wiki(threebot_name, package_name, wiki_name):
+    print(f"request load wiki {wiki_name} for {threebot_name}.{package_name}")
+
     try:
         package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
     except j.exceptions.NotFound:
-        print("Couldn't")
+        print(f"couldn't load wiki {wiki_name} for {threebot_name}.{package_name}")
         abort(404)
     docsite_path = j.sal.fs.joinPaths("/docsites", wiki_name)
     if not j.sal.bcdbfs.exists(docsite_path):

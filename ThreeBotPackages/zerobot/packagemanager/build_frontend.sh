@@ -1,2 +1,2 @@
-cd packagemanagerui && npm run export
-cp __sapper__/export/packagemanagerui/* ../frontend/ -R
+cd packagemanager && npm run export
+cp __sapper__/export/threefold/packagemanager/* ../frontend/ -R
