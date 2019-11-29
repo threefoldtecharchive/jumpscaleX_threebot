@@ -8,7 +8,7 @@ def gedis_http_chat(threebot_name, package_name):
     try:
         package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
     except j.exceptions.NotFound:
-        print("Couldn't")
+        print(f"couldn't load chats for {threebot_name}.{package_name}")
         abort(404)
 
     data = [(chatflow, chatflow.capitalize().replace("_", " ")) for chatflow in package.chat_names]
@@ -23,7 +23,7 @@ def gedis_http_chat(threebot_name, package_name, chat_name):
     try:
         package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
     except j.exceptions.NotFound:
-        print("Couldn't")
+        print(f"couldn't load chat {chat_name} for {threebot_name}.{package_name}")
         abort(404)
     query = request.urlparts.query
     if query:

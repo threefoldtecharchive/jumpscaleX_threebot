@@ -64,14 +64,12 @@ class Package(j.baseclasses.threebot_package):
             website_location.path_url = "~* /(.*)/(.*)/(chat|wiki)$"
             website_location.ipaddr_dest = "127.0.0.1"
             website_location.port_dest = 9999
-            # website_location.path_dest = "/$1/$2"
 
             website_location = locations.locations_proxy.new()
             website_location.name = "0chatwikicatchsingle"
             website_location.path_url = "~* /(.*)/(.*)/(chat|wiki)/(.*)$"
             website_location.ipaddr_dest = "127.0.0.1"
             website_location.port_dest = 9999
-            # website_location.path_dest = "/$1/$2/$3"
 
             website.configure()
 
