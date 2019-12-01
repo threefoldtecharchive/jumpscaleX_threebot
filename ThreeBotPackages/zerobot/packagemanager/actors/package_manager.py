@@ -3,9 +3,9 @@ from Jumpscale import j
 
 
 class package_manager(j.baseclasses.threebot_actor):
-    def _init(self, gedis_server=None):
-        assert gedis_server
-        self._gedis_server = gedis_server
+    def _init(self, **kwargs):
+        assert self.package.gedis_server
+        self._gedis_server = self.package.gedis_server
         j.data.schema.get_from_text(j.tools.threebot_packages._model.schema.text)
 
     @j.baseclasses.actor_method
