@@ -4,9 +4,6 @@ description = "Example how to make package with vuejs"
 threebot = "jumpscale"
 version = "1.0.0"
 
-[actor]
-namespace = "vuejs"
-
 [[bcdbs]]
 namespace = "test"
 type = "zdb"

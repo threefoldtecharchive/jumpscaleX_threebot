@@ -4,10 +4,7 @@ description = "TBD"
 threebot = "tfgrid"
 version = "1.0.0"
 
-[actor]
-namespace = "tfgrid"
-
 [[bcdbs]]
-namespace = "tfgrid"
+namespace = "phonebook"
 type = "zdb"
 instance = "default"

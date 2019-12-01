@@ -1,8 +1,5 @@
 [source]
 name = "webinterface"
 description = "zerobot API for gedis and bcdbfs"
-threebot = "threefold"
+threebot = "zerobot"
 version = "1.0.0"
-
-[actor]
-namespace = "zerobot"

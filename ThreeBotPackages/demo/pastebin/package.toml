@@ -4,9 +4,6 @@ description = "TBD"
 threebot = "jumpscale"
 version = "1.0.0"
 
-[actor]
-namespace = "demo"
-
 [[bcdbs]]
 namespace = "demo"
 type = "zdb"
