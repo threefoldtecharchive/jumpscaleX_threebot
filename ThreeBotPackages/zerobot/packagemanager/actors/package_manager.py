@@ -38,7 +38,8 @@ class package_manager(j.baseclasses.threebot_actor):
         p = j.core.tools.text_replace(p)
 
         def getfullname(p):
-            tomlpath = j.sal.fs.joinPaths(j.clients.git.getContentPathFromURLorPath(p), "package.toml")
+            path = j.clients.git.getContentPathFromURLorPath(p)
+            tomlpath = j.sal.fs.joinPaths(path, "package.toml")
             name_from_path = j.sal.fs.getBaseName(path).lower().strip()
 
             if j.sal.fs.exists(tomlpath):
@@ -170,7 +171,7 @@ class package_manager(j.baseclasses.threebot_actor):
                 mdp = j.sal.fs.joinPaths(package.path, "package.toml")
                 if j.sal.fs.exists(mdp):
                     metadata = j.data.serializers.toml.loads(j.sal.fs.readFile(mdp))
-                    if not metadata['source'].get("frontend", False):
+                    if not metadata["source"].get("frontend", False):
                         continue
                 else:
                     continue
