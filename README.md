@@ -48,46 +48,38 @@ hello/
 │   └── hello.py
 ├── chatflows
 │   └── hello.py
-├── HelloFactory.py
 ├── models
 ├── package.py
 └── wiki
 
 ```
 
+## Registering package (using package manager)
+After starting the server with recommended way is to use package manager (it's implemented as a package too and loaded by default):
 
-## Starting threebot with registered packages
-- start threebot server `j.servers.threebot.local_start_default()`.
+Directly from threebot shell:
 
-- to simplify the development workflow you can start packages directly using their factories, for example:
-    * `kosmos -p "j.threebot.package.alerta.start()"`
+```
+j.threebot.actors.zerobot.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta')
 
-## Registering package (using package manager), the recommended way is
-After starting the server with recommended way, you can use the returned client to access package manager actor and add your package, for an example starting alerta package:
+```
 
+Or through a client from another process:
 
 ```
 kosmos -p
-JSX> cl = j.servers.threebot.local_start_default()
-JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/alerta')
-JSX> cl.reload()
+JSX> cl = j.clients.gedis.get(name="zerobot_client", port=8901, namespace="zerobot")
+JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta')
 ```
-
-**Note** you can pass timeout=`yourtime` to control your starting server timeout, in case if you have a slow machine or your package takes longer to start
-
-### Using the package manager UI
-After starting threebot you can go to `3BOT_URL/packages`
-
-![packagemanager](./docs/images/packagemanager.jpg)
 
 ## Package structure
 - models directory registers the model on the package loading. no need to manually add the models
-- actors directory is registered automatically when loading the package no need to manually add actors
+- actors directory is registered automatically when loading the package no need to manually add actors, can be accessed via http at `3BOT_URL/<threefold_name>/<package_name>/actors/<actor_name>/<actor_method>`.
+- wiki directory is loaded automatically and can be accessed via, can be accessd via `3BOT_URL/<threefold_name>/<package_name>/wiki`.
+- chatflows directory is loaded automatically, can be access via `3BOT_URL/<threefold_name>/<package_name>/chat`.
 
 - package.py  where you define your package logic
-- meta.toml  where you define your package metadata (eg. name, description, frontend (optional)
-
-- PACKAGE_NAME_Factory the entry point for your package so it can be referenced within jumpscaleX ecosystem
+- package.toml  define package information, bcdb and actors namespaces...
 
 - for packages that need their own bcdb, you need to override bcdb property like this
 
@@ -96,19 +88,27 @@ class Package(j.baseclasses.threebot_package):
     @property
     def bcdb(self):
         return self.threebot_server.bcdb_get("your_name")
+
     ...
 ```
 
-
-## Example factory
-
-```python
-from Jumpscale import j
+## Example package.toml
 
 
-class PastebinFactory(j.baseclasses.threebot_factory):
+```toml
+[source]
+name = "alerta_ui"
+description = "alerting system for jumpscale"
+threebot = "threefold"
+version = "1.0.0"
 
-    __jslocation__ = "j.threebot.package.pastebin2"
+[actor]
+namespace = "zerobot"
+
+[[bcdbs]]
+namespace = "alerta"
+type = "redis"
+instance = "default"
 ```
 
 ## Example package.py
@@ -143,6 +143,8 @@ class Package(j.baseclasses.threebot_package):
 
         locations.configure()
         website.configure()
+
+
 ```
 
 ## APIs (actors)
@@ -178,44 +180,36 @@ class pastebin(j.baseclasses.threebot_actor):
         return res
 
 ```
-- the actors of your registered packages are exposed on http endpoint `/web/gedis/http` more [here](https://github.com/threefoldtech/jumpscaleX_core/blob/be2496d7ca03ad1cbf43caa2b9ec132ae471598a/JumpscaleCore/servers/gedis_http)
+- the actors of your registered packages are exposed on http endpoint `<threebot_name>/<package name>/actors/<actor_name>/<method_name>`.
 
-### API communication
-
-- if you want to communicate over websocket (unrecommended) use `/web/gedis/http_websocket
-- http/websocket clients available [here](https://github.com/threefoldtech/jumpscaleX_weblibs/tree/master/static/gedis) as well
-
-#### Gedis Websocket
-[Gedis websocket client](https://github.com/threefoldtech/jumpscaleX_weblibs/blob/master/static/gedis/gedis_client.js) available on `/weblibs` on your threebot.
-
-```javascript
-info = { "namespace": "default", "actor": "system", "command": "ping" }
-GEDIS_CLIENT.execute(info).then(res => console.log(res));
-```
-
-#### Gedis HTTP Javascript client
-
-[Gedis client](https://github.com/threefoldtech/jumpscaleX_weblibs/blob/master/static/gedis/gedis_http.js) available on `/weblibs` on your threebot.
-example of usage:
-- `localGedisClient.executeCommand("identity", "name").then( (resp) => resp.json()).then(data => console.log(data))`
-- or with a friendlier API something like `localGedisClient.actors.identity.name().then( (resp) => resp.json()).then(data => console.log(data))`
-
+- if you want to communicate over websocket (unrecommended) use `gedis/websocket`
+- http/websocket clients available [here](https://github.com/threefoldtech/jumpscaleX_weblibs/tree/development/static/gedis) as well
 
 or if you want to use pure http client, here's an example in javascript
 ```javascript
 import axios from 'axios'
 
 export function getPaste(pasteId) {
-    return (axios.post("/web/gedis/http/pastebin/get_paste", { "args": { "paste_id": pasteId } }))
+    return (axios.post("/threefold/pastebin/actors/pastebin/get_paste", { "args": { "paste_id": pasteId } }))
 }
 
 export function newPaste(code) {
-    return (axios.post("/web/gedis/http/pastebin/new_paste", { "args": { "code": code } }))
+    return (axios.post("/threefold/pastebin/actors/pastebin/new_paste", { "args": { "code": code } }))
 }
 ```
 
+Or you can use [gedis_package.js](https://github.com/threefoldtech/jumpscaleX_weblibs/tree/development/static/gedis/gedis_package.js), and call actors in the form of:
+
+`packageGedisClient.<threebot_name>.<package_name>.actors.<actor_name>.<method_name>...`
+
+like:
+
+`packageGedisClient.threefold.alerta_ui.actors.alerta.list_alerts()`
+
 # Locations
 As you already figured out we use `openresty` for running applications and proxying requests based on their locations. There're multiple types
+
+Auto-created locations are registered under `<threebot_name>/<package_name>`.
 
 ### Static:
 Used to serve static assets directly (should use that for your css, js, images).
@@ -318,22 +312,18 @@ class Package(j.baseclasses.threebot_package):
 
 #### Example for custom location
 
-For example `3botURL/wiki/PACKAGE_NAME` is the how the url of a certain wiki looks like, and to support the urls to be like `PACKAGE_NAME/wiki` we can use a custom location with rewriting the url as follows
 ```python
-            modrewrite_wiki = locations.locations_custom.new()
-            modrewrite_wiki.name = "wikirewrite"
-            modrewrite_wiki.config = """rewrite ^/(.*)/wiki$ /wiki/$1;"""
+            custom_location = locations.locations_custom.new()
+            custom_location.name = "custom"
+            custom_location.config = """rewrite ^/(.*)/path$ /path/$1;"""
 
 ```
 
-Same for the chat package
+# Conventions for Webapps
+- If package has `frontend` directory, SPA location will be created with the name of the package as `<threebot_name>/<package_name>`.
 
-```python
-            modrewrite_chat = locations.locations_custom.new()
-            modrewrite_chat.name = "chatrewrite"
-            modrewrite_chat.config = """rewrite ^/(.*)/chatflow/(.*)$ /chat/session/$2;"""
-```
-Notice for chat package only cares about the `topic` not about the package name
+- If package has `html` directory, Static location will be created with the name of the package as `<threebot_name>/<package_name>`.
+
 
 # Webinterface package
 
@@ -342,12 +332,13 @@ Notice for chat package only cares about the `topic` not about the package name
 - exposing websocket endpoints for actors
 - exposing bcdbfs endpoints
 
+
 # Complete examples
 
 - Myjobs
 
   - [backend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/myjobs/README.md)
-  - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development_actors_improvement/ThreeBotPackages/zerobot/myjobs/jobvis/README.md)
+  - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/myjobs/JobsVisualSvelte/README.md)
 
 - Alerta - [backend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/alerta/README.md) - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/alerta/alerta/README.md)
 - Pastebin
