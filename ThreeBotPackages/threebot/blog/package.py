@@ -16,8 +16,6 @@ class Package(j.baseclasses.threebot_package):
         :return:
         """
         server = self.openresty
-        server.install(reset=False)
-        server.configure()
         for port in [80, 443]:
             website = server.get_from_port(port)
 
