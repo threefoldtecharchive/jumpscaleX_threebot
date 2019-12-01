@@ -1,8 +1,10 @@
 [source]
 name = "base"
 description = "contains the base actors and chatflows"
-threebot = "threefold"
+threebot = "zerobot"
 version = "1.0.0"
 
-[actor]
-namespace = "default"
+[[bcdbs]]
+namespace = "threebot"
+type = "zdb"
+instance = "default"

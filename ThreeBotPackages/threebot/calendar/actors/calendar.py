@@ -11,8 +11,8 @@ class calendar(j.baseclasses.threebot_actor):
         self.base_url = "http://{}:{}@127.0.0.1:8851"
         self.client = None
         bcdb = j.data.bcdb.get("caldav")
-        self.calendar_model = bcdb.model_get(url="tf.caldav.calendar.1")
-        self.event_model = bcdb.model_get(url="tf.caldav.event.1")
+        self.calendar_model = bcdb.model_get(url="threebot.calendar.calendar.1")
+        self.event_model = bcdb.model_get(url="threebot.calendar.event.1")
 
     def _verfiy_time(self, dtstart, dtend, user_session=None):
         if not (dtstart and dtend):
@@ -47,10 +47,10 @@ class calendar(j.baseclasses.threebot_actor):
     def add(self, calendar, schema_out=None, user_session=None):
         """
         ```in
-        calendar = (O) !tf.caldav.calendar.1
+        calendar = (O) !threebot.calendar.calendar.1
         ```
         ```out
-        calendar = (O) !tf.caldav.calendar.1
+        calendar = (O) !threebot.calendar.calendar.1
         ```
         """
         self._verify_client()
@@ -76,7 +76,7 @@ class calendar(j.baseclasses.threebot_actor):
         calendar_id = (S)
         ```
         ```out
-        calendar = !tf.caldav.calendar.1
+        calendar = !threebot.calendar.calendar.1
         ```
         """
         self._verify_client()
@@ -101,7 +101,7 @@ class calendar(j.baseclasses.threebot_actor):
     def list(self, schema_out=None, user_session=None):
         """
         ```out
-        calendars = (LO) !tf.caldav.calendar.1
+        calendars = (LO) !threebot.calendar.calendar.1
         ```
         """
         self._verify_client()
@@ -113,10 +113,10 @@ class calendar(j.baseclasses.threebot_actor):
     def add_event(self, event, schema_out=None, user_session=None):
         """
         ```in
-        event = (O) !tf.caldav.event.1
+        event = (O) !threebot.calendar.event.1
         ```
         ```out
-        event = (O) !tf.caldav.event.1
+        event = (O) !threebot.calendar.event.1
         ```
         This actor method is used to add event (only used to add invitation)
         """
@@ -148,7 +148,7 @@ class calendar(j.baseclasses.threebot_actor):
         event_id = (S)
         ```
         ```out
-        events = (O) !tf.caldav.event.1
+        events = (O) !threebot.calendar.event.1
         ```
         """
         events = self.event_model.find(item_id=event_id)
@@ -160,10 +160,10 @@ class calendar(j.baseclasses.threebot_actor):
     def list_events(self, event, schema_out=None, user_session=None):
         """
         ```in
-        event = (O) !tf.caldav.event.1
+        event = (O) !threebot.calendar.event.1
         ```
         ```out
-        events = (LO) !tf.caldav.event.1
+        events = (LO) !threebot.calendar.event.1
         ```
         """
         output = schema_out.new()
@@ -217,10 +217,10 @@ class calendar(j.baseclasses.threebot_actor):
     def edit_event(self, event, schema_out=None, user_session=None):
         """
         ```in
-        event = (O) !tf.caldav.event.1
+        event = (O) !threebot.calendar.event.1
         ```
         ```out
-        event = (O) !tf.caldav.event.1
+        event = (O) !threebot.calendar.event.1
         ```
         """
         self._verify_client()

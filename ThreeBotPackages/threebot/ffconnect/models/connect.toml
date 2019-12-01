@@ -1,7 +1,5 @@
-@url = ffconnect.room.1
+@url = room.1
 @acl = false
 participants =[]
 description = ""
 creation_date = ""
- 
-

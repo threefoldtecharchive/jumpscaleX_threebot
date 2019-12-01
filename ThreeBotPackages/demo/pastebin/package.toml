@@ -1,11 +1,8 @@
 [source]
 name = "pastebin"
 description = "TBD"
-threebot = "threefold"
+threebot = "jumpscale"
 version = "1.0.0"
-
-[actor]
-namespace = "demo"
 
 [[bcdbs]]
 namespace = "demo"

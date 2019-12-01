@@ -1,13 +1,10 @@
 [source]
 name = "examples_vuejs"
 description = "Example how to make package with vuejs"
-threebot = "threefold"
+threebot = "jumpscale"
 version = "1.0.0"
 
-[actor]
-namespace = "vuejs"
-
 [[bcdbs]]
-namespace = "system"
+namespace = "test"
 type = "zdb"
 instance = "default"

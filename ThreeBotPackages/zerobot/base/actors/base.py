@@ -1,13 +1,7 @@
 from Jumpscale import j
 
-JSBASE = j.baseclasses.object
 
-
-class base(JSBASE):
-    def _init(self, **kwargs):
-        self.server = kwargs["gedis_server"]
-        self.format = "json"
-
+class base(j.baseclasses.threebot_actor):
     def _return_format(self, out):
         return getattr(out, f"_{self.format}")
 
@@ -16,6 +10,7 @@ class base(JSBASE):
             raise j.exceptions.Input("format_type needs to be either json or msgpack")
         self.format = format_type
 
+    @j.baseclasses.actor_method
     def identify(self, seed_encrypted, schema_out=None, user_session=None):
         """
         :seed_encrypted: a random seed as given by the client, encrypted by private key of client
@@ -28,12 +23,15 @@ class base(JSBASE):
         out = schema_out.new()
         nacl = j.data.nacl.default
 
+        # TODO: not working !!!
+
         assert isinstance(seed_encrypted, bytes)
         toencode = "%s:%s" % (seed, j.core.myenv.config["THREEBOT_ID"])
         signature = j.tools.threebot.sign_data(toencode.encode())
         out.server_id = j.core.myenv.config["THREEBOT_ID"]
         return self._return_format(out)
 
+    @j.baseclasses.actor_method
     def phonebook_get(self, threebot_id, schema_out=None, user_session=None):
         """
         ```in

@@ -1,11 +1,8 @@
 [source]
 name = "ubuntu"
 description = "A free and open-source Linux distribution based on Debian."
-threebot = "threefold"
+threebot = "tfgrid"
 version = "1.0.0"
-
-[actor]
-namespace = "tfgrid_solutions"
 
 [[bcdbs]]
 namespace = "tfgrid_solutions"

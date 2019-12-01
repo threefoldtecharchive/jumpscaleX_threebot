@@ -1,11 +1,8 @@
 [source]
 name = "alerta_ui"
 description = "alerting system for jumpscale"
-threebot = "threefold"
+threebot = "zerobot"
 version = "1.0.0"
-
-[actor]
-namespace = "zerobot"
 
 [[bcdbs]]
 namespace = "alerta"

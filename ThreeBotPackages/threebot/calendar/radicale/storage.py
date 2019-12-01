@@ -686,16 +686,16 @@ ITEM_CACHE_VERSION = 1
 
 class Database:
     bcdb = j.data.bcdb.get("caldav")
-    user_model = bcdb.model_get(url="tf.caldav.user.1")
-    calendar_model = bcdb.model_get(url="tf.caldav.calendar.1")
-    addressbook_model = bcdb.model_get(url="tf.caldav.addressbook.1")
-    event_model = bcdb.model_get(url="tf.caldav.event.1")
-    contact_model = bcdb.model_get(url="tf.caldav.contact.1")
-    attachment_model = bcdb.model_get(url="tf.caldav.attachment.1")
-    email_model = bcdb.model_get(url="tf.caldav.email.1")
-    telephone_model = bcdb.model_get(url="tf.caldav.telephone.1")
-    mailaddress_model = bcdb.model_get(url="tf.caldav.mailaddress.1")
-    instantmessaging_model = bcdb.model_get(url="tf.caldav.instantmessaging.1")
+    user_model = bcdb.model_get(url="threebot.calendar.user.1")
+    calendar_model = bcdb.model_get(url="threebot.calendar.calendar.1")
+    addressbook_model = bcdb.model_get(url="threebot.calendar.addressbook.1")
+    event_model = bcdb.model_get(url="threebot.calendar.event.1")
+    contact_model = bcdb.model_get(url="threebot.calendar.contact.1")
+    attachment_model = bcdb.model_get(url="threebot.calendar.attachment.1")
+    email_model = bcdb.model_get(url="threebot.calendar.email.1")
+    telephone_model = bcdb.model_get(url="threebot.calendar.telephone.1")
+    mailaddress_model = bcdb.model_get(url="threebot.calendar.mailaddress.1")
+    instantmessaging_model = bcdb.model_get(url="threebot.calendar.instantmessaging.1")
 
     @classmethod
     def find_collections(cls, collection_id, user_id):

@@ -1,7 +1,7 @@
 from Jumpscale import j
 
 
-class sonic(j.baseclasses.object):
+class sonic(j.baseclasses.threebot_actor):
     def query(self, name, text, schema_out=None, user_session=None):
         """
         ```in

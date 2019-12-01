@@ -3,8 +3,7 @@ from Jumpscale import j
 
 class gitea(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        self.bcdb = j.data.bcdb.get("gitea")
-        self.model = j.data.bcdb.system.model_get(url="tfgridsolutions.gitea.instance.1")
+        self.model = self.bcdb.model_get(url="tfgrid.gitea.instance.1")
 
     @j.baseclasses.actor_method
     def getall(self, user_session=None):

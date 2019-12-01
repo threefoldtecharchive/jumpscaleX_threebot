@@ -40,7 +40,7 @@ This will save some public and encrypted data, and return them again
 ## Actor Methods
 
 - Register
-Register an object of the type threebot.registry.entry.data.1
+Register an object of the type tfgrid.registry.entry.data.1
 Can be given in multiple formats
 
 ```python
@@ -52,7 +52,7 @@ def register(
 
     ```in
     authors = (LI)  #tid of the authors
-    input_object = (O)  !threebot.registry.entry.data.1 # the input data
+    input_object = (O)  !tfgrid.registry.entry.data.1 # the input data
     signature_hex = "" (S) # the signed data
     verifykey = (BIN) # threebot's me verify key
     ```
@@ -75,7 +75,7 @@ def get(self, tid=None, data_id=None, schema_out=None, user_session=None):
     ```
 
     ```out
-    res = !threebot.registry.entry.data.1
+    res = !tfgrid.registry.entry.data.1
     ```
     """
 ```
@@ -129,7 +129,7 @@ def find_encrypted(
     only return if < 50 results
 
     ```out
-    res = (LO) !threebot.registry.entry.data.1
+    res = (LO) !tfgrid.registry.entry.data.1
     ```
     :return:
     """
