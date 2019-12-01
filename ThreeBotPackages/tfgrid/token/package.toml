@@ -1,0 +1,10 @@
+[source]
+name = "token"
+description = "TBD"
+threebot = "tfgrid"
+version = "1.0.0"
+
+[[bcdbs]]
+namespace = "tfgrid"
+type = "zdb"
+instance = "default"

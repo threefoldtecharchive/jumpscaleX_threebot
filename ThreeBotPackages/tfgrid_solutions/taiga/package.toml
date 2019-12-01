@@ -4,9 +4,6 @@ description = "Taiga is a free and open-source project management system"
 threebot = "tfgrid"
 version = "1.0.0"
 
-[actor]
-namespace = "tfgrid_solutions"
-
 [[bcdbs]]
 namespace = "tfgrid_solutions"
 type = "zdb"

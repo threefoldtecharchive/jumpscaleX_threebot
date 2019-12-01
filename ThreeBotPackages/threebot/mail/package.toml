@@ -4,8 +4,6 @@ description = "TBD"
 threebot = "threebot"
 version = "1.0.0"
 
-[actor]
-namespace = "threebot"
 
 [[bcdbs]]
 namespace = "threebot"

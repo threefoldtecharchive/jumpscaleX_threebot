@@ -1,8 +1,5 @@
 [source]
 name = "oauth2"
 description = "TBD"
-threebot = "threefold"
+threebot = "zerobot"
 version = "1.0.0"
-
-[actor]
-namespace = "zerobot"
