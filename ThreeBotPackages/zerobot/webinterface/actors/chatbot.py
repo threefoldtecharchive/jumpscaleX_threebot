@@ -7,7 +7,7 @@ class chatbot(j.baseclasses.threebot_actor):
     """
 
     def _init(self, **kwargs):
-        self.chatbot = self._gedis_server.chatbot
+        self.chatbot = self.package.gedis_server.chatbot
 
         # check self.chatbot.chatflows for the existing chatflows
         # all required commands are here
