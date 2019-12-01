@@ -5,16 +5,32 @@ Threebot is pluggable application server based on [openresty](https://openresty.
 - [Wiki system](./docs/wikis/README.md)
 - [Chat](./ThreeBotPackages/zerobot/chat/wiki/README.md)
 - [Multisite blog](./ThreeBotPackages/threebot/blog/wiki/README.md)
-- [Alerta](./ThreeBotPackages/zerobot/alerta/wiki/README.md)
-- [MyJobs Dashboard](./ThreeBotPackages/zerobot/myjobs/wiki/README.md)
+- [Alerta](./ThreeBotPackages/zerobot/alerta_ui/wiki/README.md)
+- [MyJobs Dashboard](./ThreeBotPackages/zerobot/myjobs_ui/wiki/README.md)
 - [Pastebin](./ThreeBotPackages/demo/pastebin/wiki/README.md)
-- [Package Manager](./ThreeBotPackages/zerobot/packages_manager/wiki/README.md)
+- [Package Manager](./ThreeBotPackages/zerobot/packagemanager/wiki/README.md)
 - [Webhooks](./ThreeBotPackages/zerobot/webhooks/wiki/README.md)
 - [BCDBFS](https://github.com/threefoldtech/jumpscaleX_core/blob/development/docs/BCDB/README.md)
-- [Gedis Server](./ThreeBotPackages/zerobot/webinterface/wiki/README.md)
+- [API Server](./ThreeBotPackages/zerobot/webinterface/wiki/README.md)
 
 
-As we mentioned, ThreebotServer can be extended with `packages`
+## Starting the server
+using  `j.servers.threebot.local_start_default()`.
+
+This will give you a ready shell in the same process where you can interact with your threebot:
+
+```
+*****************************
+*** 3BOTSERVER IS RUNNING ***
+*****************************
+
+*** file: /sandbox/lib/jumpscale/Jumpscale/servers/threebot/ThreebotServer.py
+*** function: start [linenr:295]
+
+JSX>
+```
+The server starts with `base`, `webinterface`, `myjobs_ui`, `packagemanager` packages by default
+
 
 ## What is a package
 
