@@ -1,15 +1,7 @@
 from Jumpscale import j
 
-__version__ = "0.0.1"
-
 
 class Package(j.baseclasses.threebot_package):
-    def _init(self, **kwargs):
-        self.branch = kwargs["package"].branch or "master"
-
-    def prepare(self):
-        pass
-
     def start(self):
         """
         called when the 3bot starts

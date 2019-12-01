@@ -1,11 +1,8 @@
 [source]
 name = "fileserver"
 description = "TBD"
-threebot = "threefold"
+threebot = "threebot"
 version = "1.0.0"
-
-[actor]
-namespace = "threebot"
 
 [[bcdbs]]
 namespace = "threebot"

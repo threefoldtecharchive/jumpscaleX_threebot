@@ -1,0 +1,10 @@
+[source]
+name = "workloads"
+description = "TBD"
+threebot = "tfgrid"
+version = "1.0.0"
+
+[[bcdbs]]
+namespace = "workloads"
+type = "zdb"
+instance = "default"

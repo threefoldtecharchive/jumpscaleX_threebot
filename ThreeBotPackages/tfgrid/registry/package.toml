@@ -1,13 +1,10 @@
 [source]
 name = "registry"
 description = "Register any type of information"
-threebot = "threefold"
+threebot = "tfgrid"
 version = "1.0.0"
 
-[actor]
-namespace = "tfgrid"
-
 [[bcdbs]]
-namespace = "tfgrid"
+namespace = "registry"
 type = "zdb"
 instance = "default"

@@ -1,0 +1,10 @@
+[source]
+name = "ibiza"
+description = ""
+threebot = "jumpscale"
+version = "1.0.0"
+
+[[bcdbs]]
+namespace = "test"
+type = "zdb"
+instance = "default"

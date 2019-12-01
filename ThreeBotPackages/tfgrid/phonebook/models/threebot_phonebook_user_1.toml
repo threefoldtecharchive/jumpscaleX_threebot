@@ -1,4 +1,4 @@
-@url = threebot.phonebook.user.1
+@url = user.1
 @acl = false
 name** = ""                              #e.g. kristof.ibiza or kristof.3bot
 email** = ""                             #optional, not required

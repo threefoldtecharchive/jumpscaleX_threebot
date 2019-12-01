@@ -5,9 +5,10 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-    @property
-    def bcdb(self):
-        return self._package.threebot_server.bcdb_get("caldav")
+    def prepare(self):
+        j.builders.runtimes.python3.pip_package_install("filetype")
+        j.builders.runtimes.python3.pip_package_install("vobject")
+        j.builders.runtimes.python3.pip_package_install("caldav")
 
     def start(self):
         """
@@ -43,13 +44,6 @@ class Package(j.baseclasses.threebot_package):
 
         locations.configure()
         website.configure()
-
-    def stop(self):
-        """
-        called when the 3bot stops
-        :return:
-        """
-        pass
 
     def uninstall(self):
         """
