@@ -39,6 +39,8 @@ class package_manager(j.baseclasses.threebot_actor):
 
         def getfullname(p):
             tomlpath = j.sal.fs.joinPaths(j.clients.git.getContentPathFromURLorPath(p), "package.toml")
+            path = j.clients.git.getContentPathFromURLorPath(p)
+            name_from_path = j.sal.fs.getBaseName(path).lower().strip()
 
             if j.sal.fs.exists(tomlpath):
                 meta = j.data.serializers.toml.load(tomlpath)
@@ -162,12 +164,11 @@ class package_manager(j.baseclasses.threebot_actor):
         """
         packages = []
         for package in j.tools.threebot_packages.find():
-            # TODO: this does not seem to be ok, should use the main config in the package, not separate toml file
             if frontend:
-                mdp = j.sal.fs.joinPaths(package.path, "meta.toml")
+                mdp = j.sal.fs.joinPaths(package.path, "package.toml")
                 if j.sal.fs.exists(mdp):
                     metadata = j.data.serializers.toml.loads(j.sal.fs.readFile(mdp))
-                    if not metadata.get("frontend", False):
+                    if not metadata["source"].get("frontend", False):
                         continue
                 else:
                     continue

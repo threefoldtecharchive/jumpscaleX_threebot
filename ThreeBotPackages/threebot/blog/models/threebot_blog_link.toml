@@ -39,8 +39,6 @@ author_image = "" (S)
 post_image = "" (S)
 excerpt = "" (S)
 
-
-
 @url = blog
 name** = "" (S)
 git_repo_url** = "" (S)
