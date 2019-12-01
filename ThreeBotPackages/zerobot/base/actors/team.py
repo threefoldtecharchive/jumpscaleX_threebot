@@ -73,7 +73,7 @@ class team(j.baseclasses.threebot_actor):
         self.path = j.clients.git.getContentPathFromURLorPath(REPO, pull=True)
 
     @j.baseclasses.actor_method
-    def list_members(self, projects, contribution_types, user_session):
+    def list_members(self, projects, contribution_types, user_session=None, schema_in=None, schema_out=None):
         """
         ```in
             projects = (LI)

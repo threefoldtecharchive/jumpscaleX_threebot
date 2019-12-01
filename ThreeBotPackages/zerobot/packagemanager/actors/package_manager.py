@@ -67,6 +67,7 @@ class package_manager(j.baseclasses.threebot_actor):
         try:
             package.install()
             package.save()
+            package.start()
         except Exception as e:
             self._log_error(str(e), exception=e)
             return f"Could not add package {package.name}: {e}"
