@@ -1,10 +1,6 @@
-// let EXEC_OBJ = {
-//     "namespace": "zerobot.webinterface",
-//     "actor": "chatbot",
-//     "headers": {
-//         "response_type": "json"
-//     },
-// }
+let my_vars = {
+    "sessionid": "",
+}
 
 
 var stringContentGenerate = function (message, kwargs, idx) {
@@ -208,13 +204,11 @@ var generateSlide = function (message) {
     }
 
     function work_get() {
-        // EXEC_OBJ['command'] = "work_get";
-        // delete EXEC_OBJ['args']['result'];
-        // // Ignore work_report response and wait for getting next question
-        packageGedisClient.zerobot.webinterface.actors.chatbot.work_get().then(function (res) {
-            let results = JSON.parse(res);
-            generateSlide(results);
-        });
+        packageGedisClient.zerobot.webinterface.actors.chatbot.work_get({ "sessionid": my_vars.sessionid }).then(resp => {
+            return resp.json().then(function (parsedJson) {
+                generateSlide(parsedJson);
+            });
+        })
     }
 
     function next(value, spinner) {
@@ -227,11 +221,9 @@ var generateSlide = function (message) {
             });
         }
         if (value !== null) {
-            // EXEC_OBJ['command'] = "work_report";
-            // EXEC_OBJ['args']['result'] = value;
-            packageGedisClient.zerobot.webinterface.actors.chatbot.work_report(result = value).then(function (res) {
-                work_get(res);
-            });
+            packageGedisClient.zerobot.webinterface.actors.chatbot.work_report({ "sessionid": my_vars.sessionid, "result": value }).then(function (res) {
+                work_get();
+            })
         } else {
             work_get();
         }
@@ -343,22 +335,21 @@ var generateSlide = function (message) {
     });
 }
 
-// EXEC_OBJ["command"] = "session_new";
-// // TOPIC is set through etlua template
-// EXEC_OBJ["args"] = {
-//     "topic": TOPIC,
-//     "query_params": QS,
 
-// };
-packageGedisClient.zerobot.webinterface.actors.chatbot.session_new(TOPIC, QS).then(function (session_results_params) {
-    console.log(">>>>>", session_results_params)
-    let session_results = JSON.parse(session_results_params.json());
-    // EXEC_OBJ['command'] = "work_get";
-    // EXEC_OBJ['args'] = {
-    //     "sessionid": res['sessionid']
-    // }
-    packageGedisClient.zerobot.webinterface.actors.chatbot.work_get(sessionid = session_results['sessionid']).then(function (work_get_res) {
-        let work_get_results = JSON.parse(work_get_res.json());
-        generateSlide(work_get_results);
+let seach_res = packageGedisClient.zerobot.webinterface.actors.chatbot.session_new({ "topic": TOPIC, "query_params": QS }).then(resp => {
+    return resp.json().then(function (resp) {
+        work_get_results(resp)
+        return resp;
     });
-});
+
+})
+
+// load main chat
+function work_get_results(session_id_resp) {
+    packageGedisClient.zerobot.webinterface.actors.chatbot.work_get({ "sessionid": session_id_resp['sessionid'] }).then(resp => {
+        return resp.json().then(function (parsedJson) {
+            my_vars.sessionid = session_id_resp.sessionid
+            generateSlide(parsedJson);
+        });
+    })
+}

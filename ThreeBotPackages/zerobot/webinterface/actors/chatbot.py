@@ -13,7 +13,7 @@ class chatbot(j.baseclasses.threebot_actor):
         # all required commands are here
 
     @j.baseclasses.actor_method
-    def work_get(self, sessionid, user_session=None):
+    def work_get(self, sessionid, schema_out=None, user_session=None):
         """
         ```in
         sessionid = "" (S)
@@ -23,7 +23,7 @@ class chatbot(j.baseclasses.threebot_actor):
         return json.dumps(res)
 
     @j.baseclasses.actor_method
-    def work_report(self, sessionid, result, user_session=None):
+    def work_report(self, sessionid, result, schema_out=None, user_session=None):
         """
         ```in
         sessionid = "" (S)
@@ -34,7 +34,7 @@ class chatbot(j.baseclasses.threebot_actor):
         return
 
     @j.baseclasses.actor_method
-    def session_alive(self, sessionid, schema_out, user_session=None):
+    def session_alive(self, sessionid, schema_out=None, user_session=None):
         # TODO:*1 check if greenlet is alive
         pass
 
@@ -43,15 +43,16 @@ class chatbot(j.baseclasses.threebot_actor):
         return "PONG"
 
     @j.baseclasses.actor_method
-    def session_new(self, topic, query_params, user_session=None):
+    def session_new(self, topic, query_params, schema_out=None, user_session=None):
         """
         ```in
         topic = "" (S)
         query_params = "" (S)
         ```
         """
-        return json.dumps(self.chatbot.session_new(topic, query_params))
+        self._log_info(f"Reuqest reached from {topic} and {query_params}")
+        return json.dumps(self.chatbot.session_new(topic=topic, query_params=query_params))
 
     @j.baseclasses.actor_method
-    def chatflows_list(self, user_session=None):
+    def chatflows_list(self, schema_out=None, user_session=None):
         return self.chatbot.chatflows_list()
