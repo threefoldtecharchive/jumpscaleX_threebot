@@ -53,6 +53,7 @@ class package_manager(j.baseclasses.threebot_actor):
 
         name = getfullname(p)
 
+        package = None
         if git_url:
             package = j.tools.threebot_packages.get(name=name, giturl=git_url)
         elif path:
@@ -68,6 +69,7 @@ class package_manager(j.baseclasses.threebot_actor):
             package.install()
             package.save()
             package.start()
+            package.actors_reload()
         except Exception as e:
             self._log_error(str(e), exception=e)
             return f"Could not add package {package.name}: {e}"
