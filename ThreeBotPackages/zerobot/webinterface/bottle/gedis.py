@@ -72,19 +72,12 @@ def get_actor(client, name, retry=True):
 @app.route("/gedis/http/<name>/<cmd>", method=["post", "get", "options"])
 @enable_cors
 def gedis_http(name, cmd, threebot_name=None, package_name=None):
-    namespace = "default"
+    if threebot_name and package_name:
+        fullname = f"{threebot_name}.{package_name}"
+        client = j.clients.gedis.get(name=f"{fullname}_client", package_name=fullname, port=8901)
+    else:
+        client = j.client.gedis.get()
 
-    if package_name:
-        if threebot_name:
-            package_name = f"{threebot_name}.{package_name}"
-
-        try:
-            package = j.tools.threebot_packages.get(package_name)
-            namespace = package.actor.namespace
-        except j.exceptions.NotFound:
-            pass
-
-    client = j.clients.gedis.get(name="main_gedis_threebot", namespace=namespace, port=8901)
     actor = get_actor(client, name)
     if not actor:
         response.status = 404
