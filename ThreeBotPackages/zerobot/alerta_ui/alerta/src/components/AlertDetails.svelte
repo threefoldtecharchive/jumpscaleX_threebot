@@ -8,7 +8,7 @@
 <ul class="list-group">
   <li class="list-group-item">
     <b>ID :</b>
-    <a href="/threefold/alerta_ui/{myAlert.id}">{myAlert.id}</a>
+    <a href="/zerobot/alerta_ui/{myAlert.id}">{myAlert.id}</a>
   </li>
   <li class="list-group-item">
     <b>Severity :</b>
