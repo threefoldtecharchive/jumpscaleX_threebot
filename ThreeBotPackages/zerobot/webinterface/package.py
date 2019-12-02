@@ -24,6 +24,15 @@ class Package(j.baseclasses.threebot_package):
             # PROXY for gedis HTTP
             locations = website.locations.get(name="webinterface_locations")
 
+            package_actors_location = locations.locations_proxy.new()
+            package_actors_location.name = "package"
+            package_actors_location.path_url = "~* /(.*)/(.*)/actors/(.*)/(.*)$"
+            package_actors_location.ipaddr_dest = "127.0.0.1"
+            package_actors_location.port_dest = 9999
+            package_actors_location.path_dest = ""
+            package_actors_location.type = "http"
+            package_actors_location.scheme = "http"
+
             proxy_location = locations.locations_proxy.new()
             proxy_location.name = "webinterface"
             proxy_location.path_url = "/"
@@ -52,7 +61,7 @@ class Package(j.baseclasses.threebot_package):
 
             website_location = locations.locations_proxy.new()
             website_location.name = "chatwikiactorcatchall"
-            website_location.path_url = "~* /(.*)/(.*)/(chat|wiki|actors)"
+            website_location.path_url = "~* /(.*)/(.*)/(chat|wiki)"
             website_location.ipaddr_dest = "127.0.0.1"
             website_location.port_dest = 9999
 
