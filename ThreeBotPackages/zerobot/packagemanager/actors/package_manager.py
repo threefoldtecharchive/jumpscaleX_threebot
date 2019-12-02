@@ -39,8 +39,8 @@ class package_manager(j.baseclasses.threebot_actor):
 
         def getfullname(p):
             tomlpath = j.sal.fs.joinPaths(j.clients.git.getContentPathFromURLorPath(p), "package.toml")
-            path = j.clients.git.getContentPathFromURLorPath(p)
-            name_from_path = j.sal.fs.getBaseName(path).lower().strip()
+            # path = j.clients.git.getContentPathFromURLorPath(p)
+            # name_from_path = j.sal.fs.getBaseName(path).lower().strip()
 
             if j.sal.fs.exists(tomlpath):
                 meta = j.data.serializers.toml.load(tomlpath)
@@ -67,6 +67,7 @@ class package_manager(j.baseclasses.threebot_actor):
         try:
             package.install()
             package.save()
+            package.start()
         except Exception as e:
             self._log_error(str(e), exception=e)
             return f"Could not add package {package.name}: {e}"

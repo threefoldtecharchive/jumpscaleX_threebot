@@ -17,7 +17,6 @@ Accepts the following parameters:
 
 ## Examples
 
-
 ```
 JSX> cl = j.clients.gedis.get(name="threebot", port=8901, namespace="default")
 system__system
