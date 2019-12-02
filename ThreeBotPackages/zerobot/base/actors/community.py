@@ -31,7 +31,7 @@ class community(j.baseclasses.threebot_actor):
         self.path = j.clients.git.getContentPathFromURLorPath(REPO, pull=True)
 
     @j.baseclasses.actor_method
-    def list_partners(self, user_session):
+    def list_partners(self, user_session=None, schema_in=None, schema_out=None):
         """
         """
 

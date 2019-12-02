@@ -1,9 +1,9 @@
 # Threebot Application Server
 
-Threebot is pluggable application server based on [openresty](https://openresty.org/en/) and gevent servers and comes with lots of goodies by default
+Threebot is a pluggable application server based on [openresty](https://openresty.org/en/) and gevent servers and comes with lots of goodies by default
 
 - [Wiki system](./docs/wikis/README.md)
-- [Chat](./ThreeBotPackages/zerobot/chat/wiki/README.md)
+- [Chat](./ThreeBotPackages/zerobot/webinterface/wiki/chatbot/README.md)
 - [Multisite blog](./ThreeBotPackages/threebot/blog/wiki/README.md)
 - [Alerta](./ThreeBotPackages/zerobot/alerta_ui/wiki/README.md)
 - [MyJobs Dashboard](./ThreeBotPackages/zerobot/myjobs_ui/wiki/README.md)
@@ -15,7 +15,7 @@ Threebot is pluggable application server based on [openresty](https://openresty.
 
 
 ## Starting the server
-using  `j.servers.threebot.local_start_default()`.
+Using  `j.servers.threebot.local_start_default()`.
 
 This will give you a ready shell in the same process where you can interact with your threebot:
 
@@ -29,12 +29,12 @@ This will give you a ready shell in the same process where you can interact with
 
 JSX>
 ```
-The server starts with `base`, `webinterface`, `myjobs_ui`, `packagemanager` packages by default
+The server starts with `base`, `webinterface`, `myjobs_ui`, and `packagemanager` packages by default
 
 
 ## What is a package
 
-Package is an extension to ThreebotServer and it is driven using `package.py` file which controls the life cycle of the application, configurations (prepare) , start, stop .. etc
+Package is an extension to ThreebotServer and it is driven using `package.py` file which controls the life cycle of the application, including configurations (prepare) , start, stop .. etc
 
 
 ## Creating a new package
@@ -55,7 +55,7 @@ hello/
 ```
 
 ## Registering package (using package manager)
-After starting the server with recommended way is to use package manager (it's implemented as a package too and loaded by default):
+After starting the server with the recommended way, the package created can be added using the package manager (It's implemented as a package too and loaded by default):
 
 Directly from threebot shell:
 
@@ -73,24 +73,25 @@ JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldt
 ```
 
 ## Package structure
-- models directory registers the model on the package loading. no need to manually add the models
-- actors directory is registered automatically when loading the package no need to manually add actors, can be accessed via http at `3BOT_URL/<threefold_name>/<package_name>/actors/<actor_name>/<actor_method>`.
-- wiki directory is loaded automatically and can be accessed via, can be accessd via `3BOT_URL/<threefold_name>/<package_name>/wiki`.
-- chatflows directory is loaded automatically, can be access via `3BOT_URL/<threefold_name>/<package_name>/chat`.
+- **Models directory** registers the model on the package loading. There is no need to manually add the models
+- **Actors directory** is registered automatically when loading the package. There is no need to manually add actors, they can be accessed via http at `3BOT_URL/<threefold_name>/<package_name>/actors/<actor_name>/<actor_method>`.
+- **Wiki directory** is loaded automatically and can be accessed via `3BOT_URL/<threefold_name>/<package_name>/wiki`.
+- **Chatflows directory** is loaded automatically, can be access via `3BOT_URL/<threefold_name>/<package_name>/chat`.
 
-- package.py  where you define your package logic
-- package.toml  define package information, bcdb and actors namespaces...
+- **package.py**  is where the  package logic is defined.
 
-- for packages that need their own bcdb, you need to override bcdb property like this
+    For packages that need their own bcdb, you need to override bcdb property like this
 
-```python
-class Package(j.baseclasses.threebot_package):
-    @property
-    def bcdb(self):
-        return self.threebot_server.bcdb_get("your_name")
+    ```python
+    class Package(j.baseclasses.threebot_package):
+        @property
+        def bcdb(self):
+            return self.threebot_server.bcdb_get("your_name")
 
-    ...
-```
+        ...
+    ```
+- **package.toml**  is where the package information is defined, such as bcdb's and actors' namespaces.
+
 
 ## Example package.toml
 
@@ -180,10 +181,10 @@ class pastebin(j.baseclasses.threebot_actor):
         return res
 
 ```
-- the actors of your registered packages are exposed on http endpoint `<threebot_name>/<package name>/actors/<actor_name>/<method_name>`.
+- The actors of your registered packages are exposed on http endpoint `<threebot_name>/<package name>/actors/<actor_name>/<method_name>`.
 
-- if you want to communicate over websocket (unrecommended) use `gedis/websocket`
-- http/websocket clients available [here](https://github.com/threefoldtech/jumpscaleX_weblibs/tree/development/static/gedis) as well
+- If you want to communicate over websocket (unrecommended) use `gedis/websocket`
+- http/websocket clients are available [here](https://github.com/threefoldtech/jumpscaleX_weblibs/tree/development/static/gedis) as well
 
 or if you want to use pure http client, here's an example in javascript
 ```javascript
@@ -207,14 +208,14 @@ like:
 `packageGedisClient.threefold.alerta_ui.actors.alerta.list_alerts()`
 
 # Locations
-As you already figured out we use `openresty` for running applications and proxying requests based on their locations. There're multiple types
+As you already figured out we use `openresty` for running applications and proxying requests based on their locations. There're multiple types:
 
 Auto-created locations are registered under `<threebot_name>/<package_name>`.
 
 ### Static:
 Used to serve static assets directly (should use that for your css, js, images).
 
-The following example creates a `/static` location to server some static files with [weblibs](https://github.com/threefoldtech/jumpscaleX_weblibs).
+The following example creates a `/static` location to serve some static files with [weblibs](https://github.com/threefoldtech/jumpscaleX_weblibs).
 
 ```python
 class Package(j.baseclasses.threebot_package):
@@ -236,7 +237,7 @@ class Package(j.baseclasses.threebot_package):
 ### Proxy
 To `proxy` to requests on certain location to a running server.
 
-The following examples creates a proxy on `/calendar` which will redirect requests to `0.0.0.0:8851/`, note `ipaddr_dest`, `port_dest`, `path_dest` and `schema` as these are very important for the proxy to work properly.
+The following examples creates a proxy on `/calendar` which will redirect requests to `0.0.0.0:8851/`, make sure of `ipaddr_dest`, `port_dest`, `path_dest` and `schema` as these are very important for the proxy to work properly.
 
 ```python
 class Package(j.baseclasses.threebot_package):
@@ -320,14 +321,14 @@ class Package(j.baseclasses.threebot_package):
 ```
 
 # Conventions for Webapps
-- If package has `frontend` directory, SPA location will be created with the name of the package as `<threebot_name>/<package_name>`.
+- If package has a `frontend` directory, SPA location will be created with the name of the package as `<threebot_name>/<package_name>`.
 
-- If package has `html` directory, Static location will be created with the name of the package as `<threebot_name>/<package_name>`.
+- If package has a `html` directory, Static location will be created with the name of the package as `<threebot_name>/<package_name>`.
 
 
 # Webinterface package
 
-[Webinterface](https://github.com/threefoldtech/jumpscaleX_threebot/blob/c58b3db99095a8a9635c75ac7f82647947a9d110/ThreeBotPackages/threebot/webinterface) package is always registered when starting your threebot responsible for
+[Webinterface](https://github.com/threefoldtech/jumpscaleX_threebot/blob/c58b3db99095a8a9635c75ac7f82647947a9d110/ThreeBotPackages/threebot/webinterface) package is always registered when starting your threebot. It is responsible for
 - exposing http endpoints for actors
 - exposing websocket endpoints for actors
 - exposing bcdbfs endpoints

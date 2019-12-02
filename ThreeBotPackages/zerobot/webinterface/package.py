@@ -2,7 +2,7 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-    def prepare(self):
+    def setup_locations(self):
         """
         ports & paths used for threebotserver
         see: {DIR_BASE}/code/github/threefoldtech/jumpscaleX_core/docs/3Bot/web_environment.md
@@ -61,6 +61,8 @@ class Package(j.baseclasses.threebot_package):
     def start(self):
 
         # add the main webapplication
+
+        self.setup_locations()
 
         from threebot_packages.zerobot.webinterface.bottle.gedis import app
 
