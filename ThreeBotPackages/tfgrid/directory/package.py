@@ -29,9 +29,11 @@ class Package(j.baseclasses.threebot_package):
 
     def sync_directory(self):
         sync_dir = j.tools.codeloader.load(path=os.path.join(self.package_root, "jobs", "sync_directory.py"))
-        job = j.servers.myjobs.schedule(sync_dir)
+        queues = ["tfgrid_directory_sync"]
+
+        job = j.servers.myjobs.schedule(sync_dir, return_queues=queues)
         try:
-            job.wait()
+            j.servers.myjobs.wait_queues(queue_names=queues, size=len([job.id]))
         except Exception as e:
             j.errorhandler.exception_handle(e, die=False)
 
