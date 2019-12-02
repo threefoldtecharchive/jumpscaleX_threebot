@@ -2,7 +2,7 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-    def prepare(self):
+    def setup_locations(self):
         """
         ports & paths used for threebotserver
         see: {DIR_BASE}/code/github/threefoldtech/jumpscaleX_core/docs/3Bot/web_environment.md
@@ -33,15 +33,6 @@ class Package(j.baseclasses.threebot_package):
             proxy_location.type = "http"
             proxy_location.scheme = "http"
 
-            package_actors_location = locations.locations_proxy.new()
-            package_actors_location.name = "package"
-            package_actors_location.path_url = "~* /(.*)/(.*)/actors/(.*)/(.*)$"
-            package_actors_location.ipaddr_dest = "127.0.0.1"
-            package_actors_location.port_dest = 9999
-            package_actors_location.path_dest = ""
-            package_actors_location.type = "http"
-            package_actors_location.scheme = "http"
-
             url = "https://github.com/threefoldtech/jumpscaleX_weblibs"
             weblibs_path = j.clients.git.getContentPathFromURLorPath(url, pull=False)
             weblibs_location = locations.locations_static.new()
@@ -59,11 +50,19 @@ class Package(j.baseclasses.threebot_package):
             website_location.path_url = "/wikistatic"
             website_location.path_location = f"{self._dirpath}/static"
 
+            website_location = locations.locations_proxy.new()
+            website_location.name = "chatwikiactorcatchall"
+            website_location.path_url = "~* /(.*)/(.*)/(chat|wiki|actors)"
+            website_location.ipaddr_dest = "127.0.0.1"
+            website_location.port_dest = 9999
+
             website.configure()
 
     def start(self):
 
         # add the main webapplication
+
+        self.setup_locations()
 
         from threebot_packages.zerobot.webinterface.bottle.gedis import app
 

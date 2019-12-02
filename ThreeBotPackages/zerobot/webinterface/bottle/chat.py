@@ -5,8 +5,6 @@ from .rooter import env, app, get_ws_url
 
 @app.route("/<threebot_name>/<package_name>/chat", method=["get"])
 def gedis_http_chat(threebot_name, package_name):
-    print(f"request load chats for {threebot_name}.{package_name}")
-
     try:
         package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
     except j.exceptions.NotFound:
@@ -21,8 +19,6 @@ def gedis_http_chat(threebot_name, package_name):
 
 @app.route("/<threebot_name>/<package_name>/chat/<chat_name>", method=["get"])
 def gedis_http_chat(threebot_name, package_name, chat_name):
-    print(f"request load chat {chat_name} for {threebot_name}.{package_name}")
-
     session = request.environ.get("beaker.session", {})
     try:
         package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
