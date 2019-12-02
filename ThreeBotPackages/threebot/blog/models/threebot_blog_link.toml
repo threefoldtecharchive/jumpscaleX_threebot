@@ -1,9 +1,9 @@
-
-@url = link
-title** = "" (S)
-link = "" (S)
-page = "" (S)
-faclass = "" (S)
+@url = blog
+name** = "" (S)
+git_repo_url** = "" (S)
+metadata = (O) !metadata
+posts =  (LO) !post
+pages = (LO) !post
 
 @url = metadata
 blog_name** = "" (S)
@@ -25,7 +25,6 @@ allow_navbar = true (B)
 allow_footer = true (B)
 posts_per_page = (I)
 
-
 @url = post
 title** = "" (S)
 slug** = "" (S)
@@ -39,11 +38,8 @@ author_image = "" (S)
 post_image = "" (S)
 excerpt = "" (S)
 
-
-
-@url = blog
-name** = "" (S)
-git_repo_url** = "" (S)
-metadata = (O) !metadata
-posts =  (LO) !post
-pages = (LO) !post
+@url = link
+title** = "" (S)
+link = "" (S)
+page = "" (S)
+faclass = "" (S)

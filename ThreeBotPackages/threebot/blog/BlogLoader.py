@@ -184,13 +184,15 @@ class BlogLoader(j.baseclasses.object):
     def _load_blog(self):
 
         self.dest = j.clients.git.pullGitRepo(self.repo_url)
-        bcdb = j.data.bcdb.system
+        bcdb = j.data.bcdb.threebot
         bcdb.models_add(
-            path=j.core.tools.text_replace("{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog/models")
+            path=j.core.tools.text_replace(
+                "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog/models"
+            )
         )
-        self.post_model = bcdb.model_get(url="jumpscale.blog.post")
+        self.post_model = bcdb.model_get(url="threebot.blog.post")
 
-        blog_model = bcdb.model_get(url="jumpscale.blog")
+        blog_model = bcdb.model_get(url="threebot.blog")
 
         # dirs = j.sal.fs.listDirsInDir(dest)
         files = j.sal.fs.listFilesInDir(self.dest)
