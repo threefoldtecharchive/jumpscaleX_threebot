@@ -3,11 +3,9 @@ from Jumpscale import j
 
 class nodes(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-
-        bcdb = j.data.bcdb.get("tf_directory")
-        self.node_model = bcdb.model_get(url="tfgrid.node.2")
-        self.farm_model = bcdb.model_get(url="tfgrid.directory.farm.1")
-
+        self.node_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.node.2")
+        self.farm_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.farm.1")
+        
     def _find(self, node_id):
         nodes = self.node_model.find(node_id=node_id)
         if len(nodes) <= 0:
@@ -18,11 +16,11 @@ class nodes(j.baseclasses.threebot_actor):
     def add(self, node, schema_out=None, user_session=None):
         """
         ```in
-        node = (O) !tfgrid.node.2
+        node = (O) !tfgrid.directory.node.2
         ```
 
         ```out
-        node = (O) !tfgrid.node.2
+        node = (O) !tfgrid.directory.node.2
         ```
 
         """
@@ -61,7 +59,7 @@ class nodes(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        nodes = (LO) !tfgrid.node.2
+        nodes = (LO) !tfgrid.directory.node.2
         ```
         """
 
@@ -110,7 +108,7 @@ class nodes(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        node = (O) !tfgrid.node.2
+        node = (O) !tfgrid.directory.node.2
         ```
         """
         node = self._find(node_id)
@@ -125,7 +123,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         ```in
         node_id = (S)
-        resource = (O) !tfgrid.node.resource.amount.1
+        resource = (O) !tfgrid.directory.node.resource.amount.1
         ```
 
         """
@@ -144,7 +142,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         ```in
         node_id = (S)
-        resource = (O) !tfgrid.node.resource.amount.1
+        resource = (O) !tfgrid.directory.node.resource.amount.1
         ```
         """
         node = self._find(node_id)
@@ -163,7 +161,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         ```in
         node_id = (S)
-        resource = (O) !tfgrid.node.resource.amount.1
+        resource = (O) !tfgrid.directory.node.resource.amount.1
         ```
         """
 
@@ -182,7 +180,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         ```in
         node_id = (S)
-        proof = (O) !tfgrid.node.proof.1
+        proof = (O) !tfgrid.directory.node.proof.1
         ```
         """
         node = self._find(node_id)
@@ -207,7 +205,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         ```in
         node_id = (S)
-        ifaces = (LO) !tfgrid.node.iface.1
+        ifaces = (LO) !tfgrid.directory.node.iface.1
         ```
         """
 
@@ -223,7 +221,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         ```in
         node_id = (S)
-        public = (O) !tfgrid.node.public_iface.1
+        public = (O) !tfgrid.directory.node.public_iface.1
         ```
         """
 

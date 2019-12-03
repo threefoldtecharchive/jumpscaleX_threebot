@@ -17,12 +17,14 @@ def rid_from_gwid(workload_id):
 
 class workload_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        bcdb = j.data.bcdb.get("tf_workloads")
-        self.reservation_model = bcdb.model_get(url="tfgrid.workloads.reservation.1")
-        self.signature_model = bcdb.model_get(url="tfgrid.workloads.reservation.signing.signature.1")
+        self.reservation_model = j.threebot.packages.tfgrid.workloads.bcdb.model_get(
+            url="tfgrid.workloads.reservation.1"
+        )
+        self.signature_model = j.threebot.packages.tfgrid.workloads.bcdb.model_get(
+            url="tfgrid.workloads.reservation.signing.signature.1"
+        )
         self.workload_schema = j.data.schema.get_from_url("tfgrid.workloads.reservation.workload.1")
-        tb_bcdb = j.data.bcdb.get("threebot_phonebook")
-        self.user_model = tb_bcdb.model_get(url="tfgrid.workloads.phonebook.user.1")
+        self.user_model = j.threebot.packages.tfgrid.phonebook.bcdb.model_get(url="tfgrid.workloads.phonebook.user.1")
         self.nacl = j.data.nacl.default
 
         index_table = j.threebot.package.workloadmanager.reservation_index_model()
