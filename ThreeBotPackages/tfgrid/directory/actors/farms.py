@@ -7,7 +7,7 @@ _re_name = re.compile(r"^[A-Za-z0-9\ _\-]+$")
 
 class farms(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        self.farm_model = self.bcdb.model_get(url="tfgrid.directory.farm.1")
+        self.farm_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.farm.1")
 
     def _by_id(self, farm_id):
         try:

@@ -8,7 +8,7 @@ NONE = 2147483647
 
 class phonebook(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        self.phonebook_model = self.bcdb.model_get(url="tfgrid.phonebook.user.1")
+        self.phonebook_model = j.threebot.packages.tfgrid.phonebook.bcdb.model_get(url="tfgrid.phonebook.user.1")
 
     @j.baseclasses.actor_method
     def wallet_create(self, name, schema_out=None, user_session=None):
