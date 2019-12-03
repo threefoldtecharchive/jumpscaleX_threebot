@@ -1,6 +1,7 @@
 from Jumpscale import j
 
 
+# FIXME use a wiki loading tool instead of duplicating this into every single wiki package.
 def load_wiki(**kwargs):
     wiki = j.tools.markdowndocs.load(path=kwargs["url"], name=kwargs["repo"])
     wiki.write()
@@ -9,10 +10,6 @@ def load_wiki(**kwargs):
 class Package(j.baseclasses.threebot_package):
     def _init(self):
         self.branch = "master"
-
-    @property
-    def bcdb(self):
-        return j.data.bcdb.system
 
     def load(self):
 
