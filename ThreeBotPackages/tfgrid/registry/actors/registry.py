@@ -8,8 +8,11 @@ NONE = 2147483647
 
 class registry(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        self.registration_model = self.bcdb.model_get(url="tfgrid.registry.entry.1")
-        self.threebot_data_model = self.bcdb.model_get(url="tfgrid.registry.entry.data.1")
+
+        self.package = j.threebot.packages.tfgrid.registry
+
+        self.registration_model = self.package.bcdb_model_get(url="entry.1")
+        self.threebot_data_model = self.package.bcdb_model_get(url="entry.data.1")
 
     @j.baseclasses.actor_method
     def register(
@@ -63,7 +66,7 @@ class registry(j.baseclasses.threebot_actor):
             else:
                 new_data_model = input_object.registered_info_encrypted
 
-        new_object = self.bcdb.model_get(url="tfgrid.registry.entry.data.1").new()
+        new_object = self.package.bcdb_model_get(url="entry.data.1").new()
         new_object.authors = input_object.authors
         new_object.readers = input_object.readers
         new_object.registered_info_format = input_object.registered_info_format
