@@ -3,7 +3,6 @@
 
 ## Documents
 
-
 !!!gpdf("https://docs.google.com/document/d/1TiuVr9xhoAiAqZD0GTMvxphS8oY2CkjM3V2iWIS-p1M/edit")
 
 
