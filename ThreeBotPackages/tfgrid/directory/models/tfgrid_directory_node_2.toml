@@ -1,7 +1,7 @@
 
 @url = node.2
 node_id** = (S)
-node_id_v1** = (S)
+node_id_v1 = (S)
 farm_id** = (I)
 os_version** = (S)
 #parameters = (dict)
