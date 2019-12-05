@@ -117,70 +117,105 @@ instance = "default"
 
 Packages does the lifecycle management of your application
 
+typical `package.py` should look like 
+
 ```python
 from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-    def start(self):
-        """
-        called when the 3bot starts
-        :return:
-        """
-        server = self.openresty
-        server.install(reset=False)
-        server.configure()
-
-        website = server.get_from_port(443)
-
-        locations = website.locations.get("pastebin_locations")
-
-        website_location = locations.locations_spa.new()
-        website_location.name = "pastebin"
-        website_location.path_url = "/"
-        website_location.use_jumpscale_weblibs = False
-        fullpath = j.sal.fs.joinPaths(self.package_root, "html/")
-        website_location.path_location = fullpath
-
-        locations.configure()
-        website.configure()
-
+    pass
 
 ```
+
+In case you wanted to do more, creating proxies, special locations .. etc it may look like the following
+
+```python
+from Jumpscale import j
+
+
+class Package(j.baseclasses.threebot_package):
+    def setup_locations(self):
+        """
+        ports & paths used for threebotserver
+        see: {DIR_BASE}/code/github/threefoldtech/jumpscaleX_core/docs/3Bot/web_environment.md
+        will start bottle server web interface which include (gedis http interface, gedis websocket interface and
+        bcdbfs web server)
+        endpoints:
+        "/web/gedis/http"       >    gedis htto interface
+        "/web/gedis/websocket"  >    gedis websocket interface
+        "/web/bcdbfs"           >    bcdbfs web server
+        "/weblibs"              >    static jumpscale weblibs files
+        """
+
+        self.openresty.configure()
+
+        # get our main webserver
+        for port in (443, 80):
+            website = self.openresty.get_from_port(port)
+
+            # PROXY for gedis HTTP
+            locations = website.locations.get(name="webinterface_locations")
+
+            package_actors_location = locations.locations_proxy.new()
+            package_actors_location.name = "package"
+            package_actors_location.path_url = "~* /(.*)/(.*)/actors/(.*)/(.*)$"
+            package_actors_location.ipaddr_dest = "127.0.0.1"
+            package_actors_location.port_dest = 9999
+            package_actors_location.path_dest = ""
+            package_actors_location.type = "http"
+            package_actors_location.scheme = "http"
+
+            ## more code omitted.
+
+
+            website.configure()
+
+    def start(self):
+
+        # add the main webapplication
+
+        self.setup_locations()
+
+        from threebot_packages.zerobot.webinterface.bottle.gedis import app
+
+        self.gevent_rack.bottle_server_add(name="bottle_web_interface", port=9999, app=app, websocket=True)
+        # self.gevent_rack.webapp_root = webapp
+
+```
+
+
 
 ## APIs (actors)
 
 ```python
 from Jumpscale import j
 
-
-class pastebin(j.baseclasses.threebot_actor):
+class alerta(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
+        self.alert_model = j.tools.alerthandler.model
 
-        from random import choice
-
-        paste_schema = """
-        @url = jumpscale.pastebin.paste
-        code = "" (S)
+    @j.baseclasses.actor_method
+    def get_alert(self, alert_id, schema_out=None, user_session=None):
         """
+        ```in
+        alert_id = (I)
+        ```
 
-        self.paste_model = j.data.bcdb.system.model_get(schema=paste_schema)
-        for i in range(10):
-            paste = self.paste_model.new()
-            paste.code = """print("hello")"""
+        """
+        res = self.alert_model.find(id=alert_id)
+        if res:
+            return j.data.serializers.json.dumps(res[0]._ddict)
+        return "{}"
 
-    def get_paste(self, paste_id, schema_out=None, user_session=None):
-        paste = j.data.serializers.json.dumps(self.paste_model.get(paste_id)._ddict)
-        return paste
-
-    def new_paste(self, code, schema_out=None, user_session=None):
-        paste = self.paste_model.new()
-        paste.code = code
-        paste.save()
-        res = j.data.serializers.json.dumps(paste._ddict)
-        return res
+    @j.baseclasses.actor_method
+    def list_alerts(self, schema_out=None, user_session=None):
+        alerts = j.data.serializers.json.dumps({"alerts": [alert._ddict for alert in self.alert_model.find()]})
+        return alerts
 
 ```
+- actors should be decorated with `@j.baseclasses.actor_method` so you can access it directly from threebot shell.
+
 - The actors of your registered packages are exposed on http endpoint `<threebot_name>/<package name>/actors/<actor_name>/<method_name>`.
 
 - If you want to communicate over websocket (unrecommended) use `gedis/websocket`
