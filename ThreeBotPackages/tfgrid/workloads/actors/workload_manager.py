@@ -24,7 +24,7 @@ class workload_manager(j.baseclasses.threebot_actor):
             url="tfgrid.workloads.reservation.signing.signature.1"
         )
         self.workload_schema = j.data.schema.get_from_url("tfgrid.workloads.reservation.workload.1")
-        self.user_model = j.threebot.packages.tfgrid.phonebook.bcdb.model_get(url="tfgrid.workloads.phonebook.user.1")
+        self.user_model = j.threebot.packages.tfgrid.phonebook.bcdb.model_get(url="tfgrid.phonebook.user.1")
         self.nacl = j.data.nacl.default
 
         index_table = j.threebot.package.workloadmanager.reservation_index_model()
