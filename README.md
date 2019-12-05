@@ -29,8 +29,7 @@ This will give you a ready shell in the same process where you can interact with
 
 JSX>
 ```
-The server starts with `base`, `webinterface`, `myjobs_ui`, and `packagemanager` packages by default
-
+The server starts with `base`, `webinterface`, `myjobs_ui`, `oauth2`, `alerta_ui` and `packagemanager` packages by default.
 
 ## What is a package
 
@@ -43,15 +42,16 @@ You can create a new package using `package-new` jsx subcommand to scaffold a ne
 ```
 3BOTDEVEL:3bot:tmp: jsx package-new --name hello
 3BOTDEVEL:3bot:tmp: tree hello/
-hello/
+hello
 ├── actors
 │   └── hello.py
 ├── chatflows
 │   └── hello.py
+├── HelloFactory.py
 ├── models
 ├── package.py
+├── package.toml
 └── wiki
-
 ```
 
 ## Registering package (using package manager)
@@ -117,7 +117,7 @@ instance = "default"
 
 Packages does the lifecycle management of your application
 
-typical `package.py` should look like 
+typical `package.py` should look like
 
 ```python
 from Jumpscale import j
