@@ -1,7 +1,7 @@
 #is the location, 1 specific farm
 @url = farm.1
 threebot_id** = (I)
-iyo_organization** = (S) # for backward compatibility
+iyo_organization = (S) # for backward compatibility
 name** = (S)
 wallet_addresses = (LS)
 location = (O) !location.1
