@@ -1,6 +1,6 @@
 # Gpdf
 
-This macro can be used to generate pdf download link from google docs link, supported types are documents, spreadsheets and presentations.
+This macro can be used to generate pdf viewer from google docs link, supported types are documents, spreadsheets and presentations.
 
 
 ### Syntax:
