@@ -13,6 +13,8 @@ Threebot is a pluggable application server based on [openresty](https://openrest
 - [BCDBFS](https://github.com/threefoldtech/jumpscaleX_core/blob/development/docs/BCDB/README.md)
 - [API Server](./ThreeBotPackages/zerobot/webinterface/wiki/README.md)
 
+## Installation
+Threebot is part of [JumpscaleX](https://github.com/threefoldtech/jumpscaleX_core). Make sure to follow the [installation instructions](https://github.com/threefoldtech/jumpscaleX_core/blob/development/docs/Installation/README.md) 
 
 ## Starting the server
 Using  `j.servers.threebot.local_start_default()`.
