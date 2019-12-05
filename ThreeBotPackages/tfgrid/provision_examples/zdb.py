@@ -9,7 +9,7 @@ def deploy_zdbs():
     me = j.tools.threebot.me.default
 
     # list all nodes that have 10 GiB of SSD
-    nodes = explorer.actors_default.nodes.list(sru=10).nodes
+    nodes = explorer.actors_all.nodes.list(sru=10).nodes
     node_1 = nodes[0]
     node_2 = nodes[1]
 
@@ -45,12 +45,12 @@ def deploy_zdbs():
     reservation.customer_signature = me.nacl.sign_hex(reservation.json.encode())
 
     print("sending reservation")
-    resp = explorer.actors_default.workload_manager.reservation_register(reservation)
+    resp = explorer.actors_all.workload_manager.reservation_register(reservation)
     print("reservation sent. ID: %s" % resp.id)
     print("wait for reservation to be deployed")
     time.sleep(20)
 
-    reservation = explorer.actors_default.workload_manager.reservation_get(resp.id)
+    reservation = explorer.actors_all.workload_manager.reservation_get(resp.id)
     for i, result in enumerate(reservation.results):
         if result.state == "ERROR":
             print(f"failed to zdb {i}: {result.message}")
