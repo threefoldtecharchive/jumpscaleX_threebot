@@ -41,7 +41,7 @@ def gedis_http_wiki(threebot_name, package_name, wiki_name):
         return abort(404)
 
     ws_url = get_ws_url()
-    return env.get_template("wiki/wiki/index.html").render(name=wiki_name, metadata=get_metadata(wiki_name), url=ws_url)
+    return env.get_template("wiki/index.html").render(name=wiki_name, metadata=get_metadata(wiki_name), url=ws_url)
 
 
 @app.route("/wiki/gdrive/<doc_type>/<guid1>")
