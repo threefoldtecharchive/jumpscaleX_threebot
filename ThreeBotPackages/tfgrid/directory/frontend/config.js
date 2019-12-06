@@ -1,5 +1,4 @@
 export default ({
-  // tfApiUrl: 'https://radar.threefold.io/api/'
-  tfApiUrl: 'https://explorer.testnet.grid.tf/web/gedis/http/',
-  tfExplorerUrl: 'https://explorer.threefoldtoken.com/explorer'
+  tfApiUrl: 'https://explorer.testnet.grid.tf/tfgrid/directory/actors/',
+  tfExplorerUrl: 'https://explorer.threefoldtoken.com/explorer',
 })

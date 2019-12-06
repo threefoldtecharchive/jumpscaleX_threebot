@@ -13,7 +13,7 @@ class farm_1_model(j.baseclasses.threebot_actor):
         """
         ```in
         threebot_id** = (i)
-        iyo_organization** = (s) # for backward compatibility
+        iyo_organization = (s) # for backward compatibility
         name** = (s)
         wallet_addresses = (ls)
         location = (o) !tfgrid.directory.location.1

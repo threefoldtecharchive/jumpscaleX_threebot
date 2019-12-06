@@ -13,7 +13,7 @@ class node_2_model(j.baseclasses.threebot_actor):
         """
         ```in
         node_id** = (s)
-        node_id_v1** = (s)
+        node_id_v1 = (s)
         farm_id** = (i)
         os_version** = (s)
         #parameters = (dict)
