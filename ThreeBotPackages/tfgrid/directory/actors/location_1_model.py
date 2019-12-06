@@ -12,11 +12,11 @@ class location_1_model(j.baseclasses.threebot_actor):
     def new(self,schema_out=None, user_session=None,**kwargs):
         """
         ```in
-        city** = (s)
-        country** = (s)
-        continent** = (s)
-        latitude** = (f)
-        longitude** = (f)
+        city = (s)
+        country = (s)
+        continent = (s)
+        latitude = (f)
+        longitude = (f)
         ```
         ```out
         res = (O) !tfgrid.directory.location.1
