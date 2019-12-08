@@ -1,11 +1,11 @@
 [source]
-name = "communityapp"
+name = "community_app"
 description = ""
 threebot = "threefold"
 version = "1.0.0"
 
 
 [[bcdbs]]
-namespace = "threefold"
+namespace = "community_app"
 type = "zdb"
 instance = "default"
