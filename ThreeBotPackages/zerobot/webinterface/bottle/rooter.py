@@ -1,10 +1,20 @@
 from bottle import Bottle, abort, post, request, response, run
 from Jumpscale import j
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+import bottle
+
+try:
+    from beaker.middleware import SessionMiddleware
+except (ModuleNotFoundError, ImportError):
+    j.builders.runtimes.python3.pip_package_install("beaker")
+    from beaker.middleware import SessionMiddleware
+
+
+app = Bottle()
 
 # to check beaker session
-app = Bottle()
-# app = j.tools.oauth_proxy.get_session_middleware(app)
+session_opts = {"session.type": "file", "session.data_dir": "./data", "session.auto": True}
+app_with_session = SessionMiddleware(app, session_opts)
 
 templates_path = j.sal.fs.joinPaths(j.sal.fs.getDirName(__file__), "..", "templates")
 env = Environment(loader=FileSystemLoader(templates_path), autoescape=select_autoescape(["html", "xml"]))
