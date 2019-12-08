@@ -1,11 +1,10 @@
-@url = blog
+@url = threebot.blog.blog
 name** = "" (S)
-git_repo_url** = "" (S)
-metadata = (O) !metadata
-posts =  (LO) !post
-pages = (LO) !post
+metadata = (O) !threebot.blog.metadata
+posts =  (LO) !threebot.blog.post
+pages = (LO) !threebot.blog.post
 
-@url = metadata
+@url = threebot.blog.metadata
 blog_name** = "" (S)
 blog_title** = "JSX blog" (S)
 blog_description = "JSX blog description" (S)
@@ -17,15 +16,15 @@ url = "" (S)
 posts_dir = "posts"
 github_username = "" (S)
 github_repo_url** = "" (S)
-nav_links = (LO)      !link
-sidebar_social_links = (LO) !link
-sidebar_links = (LO)  !link
+nav_links = (LO)      !threebot.blog.link
+sidebar_social_links = (LO) ! threebot.blog.link
+sidebar_links = (LO)  !threebot.blog.link
 allow_disqus = true (B)
 allow_navbar = true (B)
 allow_footer = true (B)
 posts_per_page = (I)
 
-@url = post
+@url = threebot.blog.post
 title** = "" (S)
 slug** = "" (S)
 content = "" (S)
@@ -38,7 +37,7 @@ author_image = "" (S)
 post_image = "" (S)
 excerpt = "" (S)
 
-@url = link
+@url = threebot.blog.link
 title** = "" (S)
 link = "" (S)
 page = "" (S)

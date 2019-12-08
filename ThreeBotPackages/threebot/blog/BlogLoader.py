@@ -28,6 +28,9 @@ class BlogLoader(j.baseclasses.object):
         self.blog_name = blog_name
         self.repo_url = repo_url
         self.post_model = post_model
+        self.package = j.tools.threebot_packages.get(
+            path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog/"
+        )
 
     def _remove_date(self, filename):
         return re.sub(r"(\d+\-)+", "", filename)
@@ -182,17 +185,12 @@ class BlogLoader(j.baseclasses.object):
                 self.blog.save()
 
     def _load_blog(self):
-
         self.dest = j.clients.git.pullGitRepo(self.repo_url)
-        bcdb = j.data.bcdb.threebot
-        bcdb.models_add(
-            path=j.core.tools.text_replace(
-                "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog/models"
-            )
-        )
+        bcdb = j.data.bcdb.get("threebot_ZDB_threebot")
+        bcdb.models_add(path=j.core.tools.text_replace(f"{self.package.path}/models"))
         self.post_model = bcdb.model_get(url="threebot.blog.post")
 
-        blog_model = bcdb.model_get(url="threebot.blog")
+        blog_model = bcdb.model_get(url="threebot.blog.blog")
 
         # dirs = j.sal.fs.listDirsInDir(dest)
         files = j.sal.fs.listFilesInDir(self.dest)
