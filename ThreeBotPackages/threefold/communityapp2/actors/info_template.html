@@ -1,0 +1,15 @@
+<h1>Welcome {{username}} !!</h1>
+<ul>
+    {% for space in spaces %}
+    <blockquote>{{space["name"]}}</blockquote>
+    {% for post in latestnews[space["id"]] %}
+    <table>
+        <td> - {{ post }} </td>
+    </table>
+    {% endfor %}
+    {% endfor %}
+</ul>
+<h1>{{notfound}}</h1>
+<a href="{{url}}">
+    <h1>{{join}}</h1>
+</a>
