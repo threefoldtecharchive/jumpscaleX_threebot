@@ -1,4 +1,4 @@
-<img style="float: right;width: 162px;" src="logo.svg">
+<img style="float: right;width: 162px;" src="/community/logo.svg">
 ##  Impact Tree
 ```
 !!!dynamic_content

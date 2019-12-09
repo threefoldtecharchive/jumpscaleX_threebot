@@ -26,7 +26,7 @@ class Package(j.baseclasses.threebot_package):
 
             gedis_bcdbfs_proxy_location = locations.locations_proxy.new()
             gedis_bcdbfs_proxy_location.name = "gedis_bcdbfs"
-            gedis_bcdbfs_proxy_location.path_url = "~* ^/(gedis|bcdbfs|wiki|docsites)"
+            gedis_bcdbfs_proxy_location.path_url = "~* ^/(gedis|bcdbfs|wiki|docsites|auth)"
             gedis_bcdbfs_proxy_location.ipaddr_dest = "127.0.0.1"
             gedis_bcdbfs_proxy_location.port_dest = 9999
             gedis_bcdbfs_proxy_location.path_dest = ""
@@ -64,9 +64,9 @@ class Package(j.baseclasses.threebot_package):
 
         self.setup_locations()
 
-        from threebot_packages.zerobot.webinterface.bottle.gedis import app
+        from threebot_packages.zerobot.webinterface.bottle.rooter import app_with_session
 
-        self.gevent_rack.bottle_server_add(name="bottle_web_interface", port=9999, app=app, websocket=True)
+        self.gevent_rack.bottle_server_add(name="bottle_web_interface", port=9999, app=app_with_session, websocket=True)
         # self.gevent_rack.webapp_root = webapp
 
     def test(self, port=None, prefix="web", scheme="https"):

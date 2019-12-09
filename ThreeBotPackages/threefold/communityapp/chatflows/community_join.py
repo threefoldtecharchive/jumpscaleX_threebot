@@ -152,5 +152,5 @@ ThreeFold Team
     bot.md_show(res)
     gevent.sleep(1)
     if not result:
-        bot.redirect("/chat/session/community_join")
-    bot.redirect("/community/wiki")
+        bot.redirect("/threefold/community_app/chat/community_join")
+    bot.redirect("/threefold/community_app/wiki/threefold.community_app/")

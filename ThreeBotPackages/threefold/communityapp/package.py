@@ -24,16 +24,20 @@ class Package(j.baseclasses.threebot_package):
         server.install(reset=False)
         server.configure()
 
-        website = server.get_from_port(443)
 
-        locations = website.locations.get("community_location")
+        for port in [80, 443]:
+            website = server.get_from_port(port)
 
-        website_location = locations.locations_spa.new()
-        website_location.name = "community"
-        website_location.path_url = "/community"
-        website_location.use_jumpscale_weblibs = True
-        fullpath = j.sal.fs.joinPaths(self.package_root, "static/")
-        website_location.path_location = fullpath
+            locations = website.locations.get("community_location")
+            # adding blogs static assests
 
-        locations.configure()
-        website.configure()
+            website_location = locations.locations_static.new()
+            website_location.name = "community"
+            website_location.name = f"/community"
+            website_location.path_url = f"/community"
+            fullpath = j.sal.fs.joinPaths(self.package_root, "static/")
+            website_location.use_jumpscale_weblibs = True
+            website_location.path_location = fullpath
+
+            locations.configure()
+            website.configure()

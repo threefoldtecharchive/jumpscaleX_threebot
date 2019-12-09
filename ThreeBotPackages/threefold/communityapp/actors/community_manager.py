@@ -11,7 +11,7 @@ class community_manager(j.baseclasses.threebot_actor):
         self.links = []
         self.ids = []
         self.start = True
-        self.check_referral("admin@3bot.com", "", "admin", "admin")  # refrral code for admin
+        self.check_referral(email="admin@3bot.com", referral="", name="admin", bot_invited="admin")  # refrral code for admin
 
     @j.baseclasses.actor_method
     def community_join(self, user_email, spaces, user_session=None):
@@ -68,17 +68,14 @@ class community_manager(j.baseclasses.threebot_actor):
         except:
             print("Wrong Mail")
 
-    @j.baseclasses.actor_method
     def set_current_user(self, user, schema_out=None, user_session=None):
         self.current_user = user.decode()
 
-    @j.baseclasses.actor_method
     def spaces_list(self, schema_out=None, user_session=None):
         spaces = self.freeflow_client.spaces.list()
         spaces = spaces["results"]
         return [space["name"] for space in spaces]
 
-    @j.baseclasses.actor_method
     def get_node_structure(self, schema_out=None, user_session=None):
         if not self.ids and not self.start:
             user = self.model.find(email=self.current_user)
@@ -100,7 +97,6 @@ class community_manager(j.baseclasses.threebot_actor):
             self.links.append((user[0].name, i.name))
         return self.get_node_structure()
 
-    @j.baseclasses.actor_method
     def get_nodes(self, node, main_user=None):
         d = {}
         if node == main_user:
@@ -112,11 +108,9 @@ class community_manager(j.baseclasses.threebot_actor):
             d["children"] = [self.get_nodes(child) for child in children]
         return d
 
-    @j.baseclasses.actor_method
     def get_children(self, node):
         return [x[1] for x in self.links if x[0] == node]
 
-    @j.baseclasses.actor_method
     def count_children(self, node):
         if not node:
             return 1
@@ -241,7 +235,7 @@ class community_manager(j.baseclasses.threebot_actor):
         else:
             user = users[0]
         return user.referral_code
-        
+
     @j.baseclasses.actor_method
     def info_get(self, name, schema_out=None, user_session=None):
         """
