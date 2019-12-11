@@ -76,7 +76,7 @@ def gedis_http(name, cmd, threebot_name=None, package_name=None):
         fullname = f"{threebot_name}.{package_name}"
         client = j.clients.gedis.get(name=f"{fullname}_client", package_name=fullname, port=8901)
     else:
-        client = j.client.gedis.get()
+        client = j.clients.gedis.get()
 
     actor = get_actor(client, name)
     if not actor:

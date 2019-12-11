@@ -24,23 +24,20 @@ class Package(j.baseclasses.threebot_package):
             # PROXY for gedis HTTP
             locations = website.locations.get(name="webinterface_locations")
 
-            package_actors_location = locations.locations_proxy.new()
-            package_actors_location.name = "package"
-            package_actors_location.path_url = "~* /(.*)/(.*)/actors/(.*)/(.*)$"
-            package_actors_location.ipaddr_dest = "127.0.0.1"
-            package_actors_location.port_dest = 9999
-            package_actors_location.path_dest = ""
-            package_actors_location.type = "http"
-            package_actors_location.scheme = "http"
+            gedis_bcdbfs_proxy_location = locations.locations_proxy.new()
+            gedis_bcdbfs_proxy_location.name = "gedis_bcdbfs"
+            gedis_bcdbfs_proxy_location.path_url = "~* ^/(gedis|bcdbfs|wiki|docsites|auth)"
+            gedis_bcdbfs_proxy_location.ipaddr_dest = "127.0.0.1"
+            gedis_bcdbfs_proxy_location.port_dest = 9999
+            gedis_bcdbfs_proxy_location.path_dest = ""
+            gedis_bcdbfs_proxy_location.type = "http"
+            gedis_bcdbfs_proxy_location.scheme = "http"
 
-            proxy_location = locations.locations_proxy.new()
-            proxy_location.name = "webinterface"
-            proxy_location.path_url = "/"
-            proxy_location.ipaddr_dest = "127.0.0.1"
-            proxy_location.port_dest = 9999
-            proxy_location.path_dest = "/"
-            proxy_location.type = "http"
-            proxy_location.scheme = "http"
+            chat_wiki_proxy_location = locations.locations_proxy.new()
+            chat_wiki_proxy_location.name = "chat_wiki_actors"
+            chat_wiki_proxy_location.path_url = "~* ^/(.*)/(.*)/(chat|wiki|actors)"
+            chat_wiki_proxy_location.ipaddr_dest = "127.0.0.1"
+            chat_wiki_proxy_location.port_dest = 9999
 
             url = "https://github.com/threefoldtech/jumpscaleX_weblibs"
             weblibs_path = j.clients.git.getContentPathFromURLorPath(url, pull=False)
@@ -49,21 +46,15 @@ class Package(j.baseclasses.threebot_package):
             weblibs_location.path_url = "/weblibs"
             weblibs_location.path_location = f"{weblibs_path}/static"
 
-            website_location = locations.locations_static.new()
-            website_location.name = "chatstatic"
-            website_location.path_url = "/chatstatic"
-            website_location.path_location = f"{self._dirpath}/static"
+            chat_static_location = locations.locations_static.new()
+            chat_static_location.name = "chat_static"
+            chat_static_location.path_url = "/staticchat"
+            chat_static_location.path_location = f"{self._dirpath}/static"
 
-            website_location = locations.locations_static.new()
-            website_location.name = "wikistatic"
-            website_location.path_url = "/wikistatic"
-            website_location.path_location = f"{self._dirpath}/static"
-
-            website_location = locations.locations_proxy.new()
-            website_location.name = "chatwikiactorcatchall"
-            website_location.path_url = "~* /(.*)/(.*)/(chat|wiki)"
-            website_location.ipaddr_dest = "127.0.0.1"
-            website_location.port_dest = 9999
+            wiki_static_location = locations.locations_static.new()
+            wiki_static_location.name = "wiki_static"
+            wiki_static_location.path_url = "/staticwiki"
+            wiki_static_location.path_location = f"{self._dirpath}/static"
 
             website.configure()
 
@@ -73,9 +64,9 @@ class Package(j.baseclasses.threebot_package):
 
         self.setup_locations()
 
-        from threebot_packages.zerobot.webinterface.bottle.gedis import app
+        from threebot_packages.zerobot.webinterface.bottle.rooter import app_with_session
 
-        self.gevent_rack.bottle_server_add(name="bottle_web_interface", port=9999, app=app, websocket=True)
+        self.gevent_rack.bottle_server_add(name="bottle_web_interface", port=9999, app=app_with_session, websocket=True)
         # self.gevent_rack.webapp_root = webapp
 
     def test(self, port=None, prefix="web", scheme="https"):

@@ -9,9 +9,6 @@ class Package(j.baseclasses.threebot_package):
         server.install(reset=False)
 
     def start(self):
-        # This should be cleaned up, but it works for now.
-        self.bcdb.models_add(path=self.package_root + "/models")
-        self.gedis_server.actors_add(path=self.package_root + "/actors")
 
         server = self.openresty
         server.configure()

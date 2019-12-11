@@ -1,0 +1,31 @@
+
+
+@url = reservation.container.1
+#unique id inside the reservation is an autoincrement
+workload_id = (I)
+#links to unique node on the TFGrid
+node_id = (S)
+flist = (S)
+hub_url = (S)
+#env variables
+environment = (dict)
+#the process to start
+entrypoint = (S)
+#corex yes or no
+interactive = true (B)
+volumes = (LO) !reservation.container.mount.1
+network_connection = (LO) !reservation.network.connection.1
+#where to send the statistics too
+stats_aggregator = (LO) !reservation.statsaggregator.1
+#id of threebot who is the farmer
+farmer_tid = (I)
+
+
+
+@url = reservation.container.mount.1
+volume_id = (S)
+mountpoint = (S)
+
+@url = reservation.network.connection.1
+network_id = (S)
+ipaddress = (ipaddress)

@@ -11,7 +11,7 @@ jQuery(document).ready(function () {
     /*
         Fullscreen background
     */
-    $.backstretch("/chatstatic/chat/img/backgrounds/1.jpg");
+    $.backstretch("/staticchat/chat/img/backgrounds/1.jpg");
 
     $('#top-navbar-1').on('shown.bs.collapse', function () {
         $.backstretch("resize");
