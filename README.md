@@ -76,6 +76,7 @@ JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldt
 
 ## Package structure
 - **Models directory** registers the model on the package loading. There is no need to manually add the models
+
     _note_: Crud model actors are automatically generated and added to the package actors, to disable this option add `disable_crud = true` to the package.toml file
 - **Actors directory** is registered automatically when loading the package. There is no need to manually add actors, they can be accessed via http at `3BOT_URL/<threefold_name>/<package_name>/actors/<actor_name>/<actor_method>`.
 - **Wiki directory** is loaded automatically and can be accessed via `3BOT_URL/<threefold_name>/<package_name>/wiki`.
