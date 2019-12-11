@@ -72,7 +72,7 @@ class package_manager(j.baseclasses.threebot_actor):
             package.actors_reload()
         except Exception as e:
             self._log_error(str(e), exception=e)
-            return f"Could not add package {package.name}: {e}"
+            raise
 
         # reload openresty configuration
         package.openresty.reload()

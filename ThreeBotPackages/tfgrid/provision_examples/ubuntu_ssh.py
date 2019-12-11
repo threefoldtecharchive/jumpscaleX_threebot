@@ -26,7 +26,7 @@ def deploy_ubuntu_container():
     explorer = j.clients.threebot.explorer
     me = j.tools.threebot.me.default
 
-    nodes = explorer.actors_default.nodes.list().nodes
+    nodes = explorer.actors_all.nodes.list().nodes
     selected_node = find_node_public(nodes)
     if selected_node is None:
         raise j.exceptions.NotFound("no node found with public ipv6")
@@ -86,7 +86,7 @@ def deploy_ubuntu_container():
     reservation.customer_signature = me.nacl.sign_hex(reservation.json.encode())
 
     print("sending reservation")
-    # resp = explorer.actors_default.workload_manager.reservation_register(reservation)
+    # resp = explorer.actors_all.workload_manager.reservation_register(reservation)
     # print("reservation sent. ID: %s" % resp.id)
     print("use this template to configure the wg-quick config of your laptop:")
     print(

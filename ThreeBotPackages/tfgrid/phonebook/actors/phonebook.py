@@ -40,11 +40,12 @@ class phonebook(j.baseclasses.threebot_actor):
         return o
 
     @j.baseclasses.actor_method
-    def name_register(self, name=None, pubkey=None, wallet_name=None, schema_out=None, user_session=None):
+    def name_register(self, name=None, email=None, pubkey=None, wallet_name=None, schema_out=None, user_session=None):
         """
 
         ```in
         name = (S)
+        email = (S)
         wallet_name = (S)
         pubkey = (S)
         ```
@@ -77,7 +78,7 @@ class phonebook(j.baseclasses.threebot_actor):
             raise j.exceptions.JSBUG("more then 1 should never be the case")
         else:
             # is a new one, signature not known yet
-            u = self.phonebook_model.new(name=name, pubkey=pubkey)
+            u = self.phonebook_model.new(name=name, pubkey=pubkey, email=email)
             u.save()
         return u
 

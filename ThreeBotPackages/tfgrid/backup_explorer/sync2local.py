@@ -36,5 +36,5 @@ download()
 # cl.executor.download("/sandbox/cfg/bcdb_config", "/sandbox/cfg/bcdb_config")
 # cl.executor.download("/sandbox/cfg/jumpscale_config.toml", "/sandbox/cfg/jumpscale_config.toml")
 
-# j.clients.threebot.explorer.actors_default.workload_manager.reservations_list()
-# j.clients.threebot.explorer.actors_default.nodes.list()
+# j.clients.threebot.explorer.actors_all.workload_manager.reservations_list()
+# j.clients.threebot.explorer.actors_all.nodes.list()
