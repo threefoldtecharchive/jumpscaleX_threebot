@@ -14,7 +14,7 @@ Threebot is a pluggable application server based on [openresty](https://openrest
 - [API Server](./ThreeBotPackages/zerobot/webinterface/wiki/README.md)
 
 ## Installation
-Threebot is part of [JumpscaleX](https://github.com/threefoldtech/jumpscaleX_core). Make sure to follow the [installation instructions](https://github.com/threefoldtech/jumpscaleX_core/blob/development/docs/Installation/README.md) 
+Threebot is part of [JumpscaleX](https://github.com/threefoldtech/jumpscaleX_core). Make sure to follow the [installation instructions](https://github.com/threefoldtech/jumpscaleX_core/blob/development/docs/Installation/README.md)
 
 ## Starting the server
 Using  `j.servers.threebot.local_start_default()`.
@@ -76,6 +76,7 @@ JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldt
 
 ## Package structure
 - **Models directory** registers the model on the package loading. There is no need to manually add the models
+    _note_: Crud model actors are automatically generated and added to the package actors, to disable this option add `disable_crud = true` to the package.toml file
 - **Actors directory** is registered automatically when loading the package. There is no need to manually add actors, they can be accessed via http at `3BOT_URL/<threefold_name>/<package_name>/actors/<actor_name>/<actor_method>`.
 - **Wiki directory** is loaded automatically and can be accessed via `3BOT_URL/<threefold_name>/<package_name>/wiki`.
 - **Chatflows directory** is loaded automatically, can be access via `3BOT_URL/<threefold_name>/<package_name>/chat`.
@@ -104,6 +105,7 @@ name = "alerta_ui"
 description = "alerting system for jumpscale"
 threebot = "threefold"
 version = "1.0.0"
+disable_crud = true #optional
 
 [actor]
 namespace = "zerobot"
