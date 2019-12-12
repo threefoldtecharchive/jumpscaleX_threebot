@@ -11,7 +11,7 @@ class Package(j.baseclasses.threebot_package):
         for port in [80, 443]:
             website = server.get_from_port(port)
 
-            locations = website.locations.get("blogs_locations")
+            locations = website.locations.get(f"blogs_locations_{port}")
             # adding blogs static assests
             blog_model = self.bcdb.model_get(url="jumpscale.blog")
             for blog in blog_model.find():
