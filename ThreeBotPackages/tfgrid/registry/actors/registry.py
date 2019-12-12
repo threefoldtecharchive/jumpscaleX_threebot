@@ -13,6 +13,23 @@ class registry(j.baseclasses.threebot_actor):
 
         self.registration_model = self.package.bcdb_model_get(url="entry.1")
         self.threebot_data_model = self.package.bcdb_model_get(url="entry.data.1")
+        self.threebot_encrypted_data_model = self.package.bcdb_model_get(url="entry.data_encrypted.1")
+
+    @j.baseclasses.actor_method
+    def get_meta_entry_data(self, schema_out=None, user_session=None):
+        """
+        returns meta data about the register schema in text format.
+        """
+
+        return self.threebot_data_model.schema.text
+
+    @j.baseclasses.actor_method
+    def get_meta_encrypted_data(self, schema_out=None, user_session=None):
+        """
+        returns meta data about the register schema in text format.
+        """
+
+        return self.threebot_encrypted_data_model.schema.text
 
     @j.baseclasses.actor_method
     def register(
@@ -325,42 +342,19 @@ class registry(j.baseclasses.threebot_actor):
                 # decode the data to from the format that the data was saved with
                 decoded_data = self.__decode_data(str(model.registered_info_format), model.registered_info)
                 decoded_data_list.append(decoded_data)
-
         if registered_info_format == "JSXSCHEMA":
-            encoded_data = self.__encode_data(registered_info_format, decoded_data_list)
-            res = str(self.__decode_data(registered_info_format, encoded_data))
+            for item in decoded_data_list:
+                encoded_data = self.__encode_data(registered_info_format, item)
+                res.append(str(self.__decode_data(registered_info_format, encoded_data)))
         else:
-            res = self.__encode_data(registered_info_format, decoded_data_list._ddict)
-
-        # if not output in res:
-        #     res.append(output)
-
-        if len(res) > 50:
-            raise j.exceptions.Input("Can not return results is > 50")
+            decoded_data_list = [item._ddict for item in decoded_data_list]
+            res = self.__encode_data(registered_info_format, decoded_data_list)
 
         out = schema_out.new()
         out.res = res
         return out
 
-    @j.baseclasses.actor_method
-    def validate_signature(
-        self, tid=None, verifykey=None, payload=None, signature=None, schema_out=None, user_session=None
-    ):
-        """
-        ```in
-        tid = (I)
-        name = (S)
-        email = (S)
-        payload = (S)
-        signature = (BIN)
-        verifykey = (BIN)
-        ```
-
-        ```out
-        is_valid = (B)
-        ```
-        """
-
+    def validate_signature(self, tid=None, verifykey=None, payload=None, signature=None):
         nacl = j.data.nacl.get()
         is_valid = nacl.verify(payload, verify_key=verifykey, signature=signature)
         return is_valid
