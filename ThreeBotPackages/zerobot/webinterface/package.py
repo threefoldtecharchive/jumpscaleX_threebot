@@ -22,7 +22,7 @@ class Package(j.baseclasses.threebot_package):
             website = self.openresty.get_from_port(port)
 
             # PROXY for gedis HTTP
-            locations = website.locations.get(name="webinterface_locations")
+            locations = website.locations.get(name=f"webinterface_locations_{port}")
 
             gedis_bcdbfs_proxy_location = locations.locations_proxy.new()
             gedis_bcdbfs_proxy_location.name = "gedis_bcdbfs"
