@@ -64,11 +64,11 @@ class painter(j.baseclasses.threebot_actor):
     def example4(self, wallet, schema_out=None, user_session=None):
         """
         ```in
-        wallet = (O) !ibiza.wallet
+        wallet = (O) !jumpscale.ibiza.ibiza.wallet
         ```
 
         ```out
-        result = (O) !ibiza.wallet
+        result = (O) !jumpscale.ibiza.ibiza.wallet
         custom = (S)
         ```
         """

@@ -4,7 +4,7 @@ from Jumpscale import j
 class contacts(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
         bcdb = j.data.bcdb.get("contacts")
-        self.contact_model = bcdb.model_get(url="contact.1")
+        self.contact_model = bcdb.model_get(url="threebot.contacts.contact.1")
 
     def _get_contact(self, contact_id):
         try:
@@ -21,11 +21,11 @@ class contacts(j.baseclasses.threebot_actor):
     def put(self, contact, schema_out=None, user_session=None):
         """
         ```in
-        contact = (O) !contact.1
+        contact = (O) !threebot.contacts.contact.1
         ```
 
         ```out
-        contact  = (O) !contact.1
+        contact  = (O) !threebot.contacts.contact.1
         ```
         """
         self._validate_contact(contact)
@@ -49,7 +49,7 @@ class contacts(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        contact = (O) !contact.1
+        contact = (O) !threebot.contacts.contact.1
         ```
         """
         return self._get_contact(contact_id)
@@ -63,7 +63,7 @@ class contacts(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        contacts = (LO) !contact.1
+        contacts = (LO) !threebot.contacts.contact.1
         ```
         """
 

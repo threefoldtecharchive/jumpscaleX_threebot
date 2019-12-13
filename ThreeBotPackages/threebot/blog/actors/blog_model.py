@@ -13,9 +13,9 @@ class blog_model(j.baseclasses.threebot_actor):
         ```in
         name** = "" (S)
         git_repo_url** = "" (S)
-        metadata = (O) !metadata
-        posts =  (LO) !post
-        pages = (LO) !post
+        metadata = (O) !threebot.blog.metadata
+        posts =  (LO) !threebot.blog.post
+        pages = (LO) !threebot.blog.post
 
         ```
         ```out
