@@ -1,16 +1,16 @@
 #is the location, 1 specific farm
-@url = farm.1
+@url = tfgrid.directory.farm.1
 threebot_id** = (I)
 iyo_organization = (S) # for backward compatibility
 name** = (S)
 wallet_addresses = (LS)
 location = (O) !location.1
 email = (email)
-resource_prices = (LO) !node.resource.price.1
+resource_prices = (LO) !tfgrid.directory.node.resource.price.1
 # original /48 allocation of the farm
 prefix_zero = (iprange)
 
-@url = node.resource.price.1
+@url = tfgrid.directory.node.resource.price.1
 currency = "EUR,USD,TFT,AED,GBP" (E)
 cru = (F)
 mru = (F)

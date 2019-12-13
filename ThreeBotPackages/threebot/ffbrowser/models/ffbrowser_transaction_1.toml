@@ -1,6 +1,5 @@
-@url = ffbrowser.transaction.1
+@url = threebot.ffbrowser.ffbrowser.transaction.1
 @acl = false
 from_addr** = ""
 to_addr** = ""
 amount = 0
-

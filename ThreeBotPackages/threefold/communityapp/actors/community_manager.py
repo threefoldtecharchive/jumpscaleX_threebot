@@ -4,7 +4,7 @@ from Jumpscale import j
 class community_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.bcdb = j.data.bcdb.get("tf_community_app")
-        self.model = self.bcdb.model_get(url="threefold.community.user.1")
+        self.model = self.bcdb.model_get(url="threefold.communityapp.threefold.community.user.1")
         self.current_user = ""
         self.FFP = "http://10.102.71.171:8280/"
         self.freeflow_client = j.clients.freeflowpages.get()

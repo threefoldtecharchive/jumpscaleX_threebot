@@ -1,19 +1,19 @@
-@url = threefold.community.interest.1
+@url = threefold.communityapp.threefold.community.interest.1
 name = "" (S)
 remark = "" (S)
 
-@url = threefold.community.freeflow.space.1
+@url = threefold.communityapp.threefold.community.freeflow.space.1
 name = "" (S)
 url = "" (S)
 
-@url = threefold.community.user.1
+@url = threefold.communityapp.threefold.community.user.1
 name** = (S)
 email** = (S)
 referral_code** = (S)
 country = (S)
 invited_by** = (I)  #userid
 registration_date = (D)
-interests = (LO) !threefold.community.interest.1
-freeflow_spaces = (LO) !threefold.community.freeflow.space.1
+interests = (LO) !threefold.communityapp.threefold.community.interest.1
+freeflow_spaces = (LO) !threefold.communityapp.threefold.community.freeflow.space.1
 remark_threefold = ""
 remark_member = ""

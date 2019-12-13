@@ -1,3 +1,3 @@
-@url = tft.explorer.wallet.info.ss.1
+@url = threefold.tft_explorer.tft.explorer.wallet.info.ss.1
 object_id** = 0 (I)
 multi_signature_wallet_object_ids = (LI)

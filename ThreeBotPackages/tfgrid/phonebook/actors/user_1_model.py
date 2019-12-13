@@ -101,3 +101,18 @@ class user_1_model(j.baseclasses.threebot_actor):
     def destroy(self, schema_out=None, user_session=None):
         assert user_session.admin  # for now only allow admin
         return self.model.destroy()
+
+    @j.baseclasses.actor_method
+    def count(self, schema_out=None, user_session=None):
+        assert user_session.admin  # for now only allow admin
+        return self.model.count()
+
+    @j.baseclasses.actor_method
+    def exists(self, object_id=None, schema_out=None, user_session=None):
+        """
+        ```in
+        object_id = 0
+        ```
+        """
+        assert user_session.admin  # for now only allow admin
+        return self.model.exists(object_id)

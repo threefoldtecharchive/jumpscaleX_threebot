@@ -1,4 +1,4 @@
-@url = tft.explorer.transaction.1
+@url = threefold.tft_explorer.tft.explorer.transaction.1
 object_id** = 0 (I)
 parent_block_object_id = 0 (I)
 version = 0 (I)
@@ -10,6 +10,6 @@ fee_payout = (O) !tft.explorer.transaction.payout.fee.info.1
 arbitrary_data = "" (S)
 encoded_extension_data = "" (S)
 
-@url = tft.explorer.transaction.payout.fee.info.1
+@url = threefold.tft_explorer.tft.explorer.transaction.payout.fee.info.1
 payout_output_object_id = 0 (I)
 payout_values = (LN)
