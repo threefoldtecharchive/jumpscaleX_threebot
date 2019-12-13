@@ -5,7 +5,7 @@ import re
 
 class threetransfer(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        self.shortlink_model = self.bcdb.model_get(url="threetransfer.shortlink.1")
+        self.shortlink_model = self.bcdb.model_get(url="threebot.fileserver.threetransfer.shortlink.1")
 
     def _check_file_exists(self, path, version=4):
         path = j.sal.fs.joinPaths("/", path)
@@ -24,11 +24,11 @@ class threetransfer(j.baseclasses.threebot_actor):
     def link(self, shortlink, schema_out=None, user_session=None):
         """
         ```in
-        shortlink = (O) !threetransfer.shortlink.1
+        shortlink = (O) !threebot.fileserver.threetransfer.shortlink.1
         ```
 
         ```out
-        shortlink = (O) !threetransfer.shortlink.1
+        shortlink = (O) !threebot.fileserver.threetransfer.shortlink.1
         ```
         """
 
@@ -55,7 +55,7 @@ class threetransfer(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        file = (O) !threetransfer.shortlink.1
+        file = (O) !threebot.fileserver.threetransfer.shortlink.1
         ```
         """
 

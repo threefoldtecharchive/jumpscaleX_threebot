@@ -17,7 +17,7 @@ class mail(j.baseclasses.threebot_actor):
     def send(self, mail, schema_out=None, user_session=None):
         """
         ```in
-        mail = (O) !email.message.1
+        mail = (O) !threebot.mail.email.attachement.1
         ```
         ```out
         success = (B)
@@ -148,7 +148,7 @@ class mail(j.baseclasses.threebot_actor):
     def receive(self, mail, schema_out=None, user_session=None):
         """
         ```in
-        mail = (O) !email.message.1
+        mail = (O) !threebot.mail.email.attachement.1
         ```
         ```out
         success = (B)

@@ -25,7 +25,7 @@ class apps(j.baseclasses.threebot_actor):
     def put(self, app, schema_out=None, user_session=None):
         """
         ```in
-        app = (O) !appstore.app.1
+        app = (O) !threebot.appstore.app.1
         ```
         """
 
@@ -42,7 +42,7 @@ class apps(j.baseclasses.threebot_actor):
     def get(self, schema_out=None, user_session=None):
         """
         ```out
-        apps = (LO) !appstore.app.1
+        apps = (LO) !threebot.appstore.app.1
         ```
         """
         out = schema_out.new()
