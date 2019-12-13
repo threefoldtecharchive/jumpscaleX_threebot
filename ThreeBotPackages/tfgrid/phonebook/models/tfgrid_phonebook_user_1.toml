@@ -1,4 +1,4 @@
-@url = user.1
+@url = tfgrid.phonebook.user.1
 @acl = false
 name** = ""                              #e.g. kristof.ibiza or kristof.3bot
 email** = ""                             #optional, not required

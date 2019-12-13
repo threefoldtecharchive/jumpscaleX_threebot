@@ -1,5 +1,5 @@
 # used by the explorer to aggregate some chain facts
-@url = tft.explorer.chain.aggregated.facts.1
+@url = threefold.tft_explorer.tft.explorer.chain.aggregated.facts.1
 total_coins = "0" (N)
 total_coins_locked = "0" (N)
 total_block_stakes = "0" (N)

@@ -1,4 +1,4 @@
-@url = tft.explorer.block.1
+@url = threefold.tft_explorer.tft.explorer.block.1
 object_id** = 0 (I)
 parent_object_id = 0 (I)
 height = 0 (I)

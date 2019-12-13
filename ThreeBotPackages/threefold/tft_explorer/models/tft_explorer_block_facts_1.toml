@@ -1,5 +1,5 @@
 # snapshot of chain facts after applying the block
-@url = tft.explorer.block.facts.1
+@url = threefold.tft_explorer.tft.explorer.block.facts.1
 object_id = 0 (I)
 target = "" (S)
 difficulty = 0 (N)

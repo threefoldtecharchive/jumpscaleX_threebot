@@ -5,7 +5,7 @@ class {{shorturl}}_model(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         #get bcdb from package
         self.bcdb = j.data.bcdb.system
-        self.model = self.bcdb.model_get(url="{{model.schema.url}}")
+        self.model = self.bcdb.model_get(url="zerobot.system_bcdb.{{model.schema.url}}")
 
 
     @j.baseclasses.actor_method
