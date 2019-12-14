@@ -5,7 +5,7 @@ class jumpscale_startupcmd_1_model(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         # get bcdb from package
         self.bcdb = j.data.bcdb.system
-        self.model = self.bcdb.model_get(url="jumpscale.startupcmd.1")
+        self.model = self.bcdb.model_get(url="zerobot.system_bcdb.jumpscale.startupcmd.1")
 
     @j.baseclasses.actor_method
     def new(self, schema_out=None, user_session=None, **kwargs):
