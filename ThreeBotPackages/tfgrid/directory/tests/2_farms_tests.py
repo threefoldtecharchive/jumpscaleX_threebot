@@ -11,7 +11,7 @@ def main(self=None):
     try:
         bcdb = j.data.bcdb.get("tf_directory")
     except:
-        bcdb = j.data.bcdb.new("tf_directory")
+        bcdb = j.data.bcdb.get("tf_directory")
 
     path = os.path.dirname(os.path.dirname(__file__))
     bcdb.models_add(os.path.join(path, "models"))
