@@ -24,6 +24,7 @@ class jumpscale_openresty_server_1_model(j.baseclasses.threebot_actor):
         time_refresh = (t)
         time_stop = (t)
 
+
         ```
         ```out
         res = (O) !jumpscale.openresty.server.1

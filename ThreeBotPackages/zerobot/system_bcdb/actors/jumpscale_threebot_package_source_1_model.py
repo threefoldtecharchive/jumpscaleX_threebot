@@ -16,6 +16,7 @@ class jumpscale_threebot_package_source_1_model(j.baseclasses.threebot_actor):
         description = ""
         version = "" (s)
 
+
         ```
         ```out
         res = (O) !jumpscale.threebot.package.source.1

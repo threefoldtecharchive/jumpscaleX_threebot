@@ -15,7 +15,7 @@ class farm_1_model(j.baseclasses.threebot_actor):
         iyo_organization = (s) # for backward compatibility
         name** = (s)
         wallet_addresses = (ls)
-        location = (o) !location.1
+        location = (o) !tfgrid.directory.location.1
         email = (email)
         resource_prices = (lo) !tfgrid.directory.node.resource.price.1
         # original /48 allocation of the farm

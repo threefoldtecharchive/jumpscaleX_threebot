@@ -14,7 +14,8 @@ class Package(j.baseclasses.threebot_package):
         return "\n        ".join(lines)
 
     def prepare(self):
-        models = list(j.data.bcdb.system.models)
+        models = list(j.data.bcdb.system.models.values())
+
         for model in models:
             model_url = model.schema.url
             if "bcdb" in model_url:

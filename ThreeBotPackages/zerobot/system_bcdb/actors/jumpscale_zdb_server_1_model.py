@@ -18,6 +18,7 @@ class jumpscale_zdb_server_1_model(j.baseclasses.threebot_actor):
         executor = "tmux"
         mode = "seq"
 
+
         ```
         ```out
         res = (O) !jumpscale.zdb.server.1
