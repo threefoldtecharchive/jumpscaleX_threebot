@@ -20,6 +20,7 @@ class jumpscale_gedis_server_model(j.baseclasses.threebot_actor):
         ssl_certfile = "" (s)
         # actors_data = (ls)
 
+
         ```
         ```out
         res = (O) !jumpscale.gedis.server

@@ -49,6 +49,8 @@ class system(j.baseclasses.threebot_actor):
         if isinstance(package_name, bytes):
             package_name = package_name.decode()
         # j.threebot.package_get
+        if "." not in package_name:
+            raise j.exceptions.Input("there should be . in package name, now:'%s'" % package_name)
         threebotauthor, package_name_short = package_name.split(".", 1)
         p = j.threebot.package_get(threebotauthor, package_name_short)
         p.actors  # will reload actors

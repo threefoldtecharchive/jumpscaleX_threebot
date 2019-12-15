@@ -39,6 +39,7 @@ class jumpscale_startupcmd_1_model(j.baseclasses.threebot_actor):
         time_stop = (t)
 
 
+
         ```
         ```out
         res = (O) !jumpscale.startupcmd.1

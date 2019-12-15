@@ -15,6 +15,7 @@ class jumpscale_rdb_client_model(j.baseclasses.threebot_actor):
         nsname = "" (s)
         type = "rdb" (s)
 
+
         ```
         ```out
         res = (O) !jumpscale.rdb.client

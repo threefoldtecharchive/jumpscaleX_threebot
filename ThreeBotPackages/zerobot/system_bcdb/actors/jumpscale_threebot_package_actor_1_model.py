@@ -13,6 +13,7 @@ class jumpscale_threebot_package_actor_1_model(j.baseclasses.threebot_actor):
         ```in
         namespace = ""
 
+
         ```
         ```out
         res = (O) !jumpscale.threebot.package.actor.1

@@ -17,6 +17,7 @@ class jumpscale_sonic_server_1_model(j.baseclasses.threebot_actor):
         adminsecret_ = "123456" (s)
         timeout = 300
 
+
         ```
         ```out
         res = (O) !jumpscale.sonic.server.1
