@@ -8,3 +8,5 @@ version = "1.0.0"
 namespace = "threebot"
 type = "zdb"
 instance = "default"
+
+#TODO: make sure we don't load automatically, we don't need like this

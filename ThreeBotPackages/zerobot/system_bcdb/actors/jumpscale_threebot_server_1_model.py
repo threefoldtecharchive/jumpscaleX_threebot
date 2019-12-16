@@ -14,7 +14,8 @@ class jumpscale_threebot_server_1_model(j.baseclasses.threebot_actor):
         name** = "main" (s)
         executor = tmux,corex (e)
         adminsecret_ = ""  (s)
-        state = "init,installed"
+        state = "init,installed" (e)
+
 
         ```
         ```out

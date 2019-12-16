@@ -1,7 +1,7 @@
 from Jumpscale import j
 
 
-class base(j.baseclasses.threebot_actor):
+class explorer_proxy(j.baseclasses.threebot_actor):
     def _return_format(self, out):
         return getattr(out, f"_{self.format}")
 
@@ -26,7 +26,7 @@ class base(j.baseclasses.threebot_actor):
         # TODO: not working !!!
 
         assert isinstance(seed_encrypted, bytes)
-        toencode = "%s:%s" % (seed, j.core.myenv.config["THREEBOT_ID"])
+        toencode = "%s:%s" % (seed_encrypted, j.core.myenv.config["THREEBOT_ID"])
         signature = j.tools.threebot.sign_data(toencode.encode())
         out.server_id = j.core.myenv.config["THREEBOT_ID"]
         return self._return_format(out)

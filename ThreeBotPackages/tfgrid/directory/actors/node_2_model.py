@@ -35,6 +35,7 @@ class node_2_model(j.baseclasses.threebot_actor):
         #following info is not usable for provisioning, its convenience info for the farmer
         #e.g. to know which interface names there are
         #is only the physical interfaces where a cable is attached (info only)
+
         ```
         ```out
         res = (O) !tfgrid.directory.node.2

@@ -27,6 +27,7 @@ class reservation_1_model(j.baseclasses.threebot_actor):
         epoch = (t)
         results = (lo) !tfgrid.workloads.reservation.result.1
 
+
         ```
         ```out
         res = (O) !tfgrid.workloads.reservation.1

@@ -6,3 +6,5 @@ All of these actors are registered under `default` namespace, to work with any o
 ```
 JSX> cl = j.clients.gedis.get(name="threebot", port=8901, namespace="default")
 ```
+
+#TODO: wrong

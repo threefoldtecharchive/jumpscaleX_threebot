@@ -17,6 +17,7 @@ class location_1_model(j.baseclasses.threebot_actor):
         latitude = (f)
         longitude = (f)
 
+
         ```
         ```out
         res = (O) !tfgrid.directory.location.1
