@@ -190,12 +190,7 @@ class package_manager(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        actors = (LO) !threebot.packagemanager.actordef.1
-
-        @url = threebot.packagemanager.actordef.1
-        package_name = ""
-        actor_name = ""
-
+        actors = (LO) !zerobot.packagemanager.actordef.1
         ```
         """
         pass
