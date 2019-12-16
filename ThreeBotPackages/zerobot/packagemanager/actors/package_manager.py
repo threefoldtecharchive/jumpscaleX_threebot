@@ -182,7 +182,8 @@ class package_manager(j.baseclasses.threebot_actor):
         out.packages = packages
         return out
 
-    def actors_list(self, package_name=None):
+    @j.baseclasses.actor_method
+    def actors_list(self, package_name=None, schema_out=None, user_session=None):
         """
         if not packagename then all
         ```in
@@ -193,5 +194,18 @@ class package_manager(j.baseclasses.threebot_actor):
         actors = (LO) !zerobot.packagemanager.actordef.1
         ```
         """
-        pass
-        # TODO:
+
+        def actors_add_from_package(package, schema_out):
+            actor_res = schema_out.actors.new()
+            actor_res.package_name = package.name
+            actor_res.actor_names = package.actor_names
+
+        out = schema_out.new()
+        if package_name:
+            package = j.tools.threebot_packages.get(name=package_name)
+            actors_add_from_package(package, out)
+        else:
+            for package in j.tools.threebot_packages.find():
+                actors_add_from_package(package, out)
+
+        return out
