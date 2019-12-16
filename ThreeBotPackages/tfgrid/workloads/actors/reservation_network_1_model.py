@@ -21,6 +21,7 @@ class reservation_network_1_model(j.baseclasses.threebot_actor):
         farmer_tid = (i)
 
 
+
         ```
         ```out
         res = (O) !tfgrid.workloads.reservation.network.1

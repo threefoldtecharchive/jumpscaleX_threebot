@@ -20,6 +20,7 @@ class reservation_result_1_model(j.baseclasses.threebot_actor):
         message = "" (s)
         epoch = (t)
 
+
         ```
         ```out
         res = (O) !tfgrid.workloads.reservation.result.1

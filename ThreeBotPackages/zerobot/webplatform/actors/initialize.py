@@ -10,6 +10,8 @@ TESTNET_DOMAIN = "testnet.grid.tf"
 THREEBOT_DOMAIN = f"3bot.{TESTNET_DOMAIN}"
 EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
 
+# TODO: what is the purpose of this actor, where used?
+
 
 class initialize(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):

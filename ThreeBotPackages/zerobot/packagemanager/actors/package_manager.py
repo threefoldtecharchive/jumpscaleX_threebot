@@ -181,3 +181,22 @@ class package_manager(j.baseclasses.threebot_actor):
         out = schema_out.new()
         out.packages = packages
         return out
+
+    def actors_list(self, package_name=None):
+        """
+        if not packagename then all
+        ```in
+        package_name = (S)
+        ```
+
+        ```out
+        actors = (LO) !threebot.packagemanager.actordef.1
+
+        @url = threebot.packagemanager.actordef.1
+        package_name = ""
+        actor_name = ""
+
+        ```
+        """
+        pass
+        # TODO:

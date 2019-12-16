@@ -10,7 +10,7 @@ STATIC_DIR = j.core.tools.text_replace("{DIR_BASE}/var/gdrive/static")
 doctypes_map = {"document": "drive", "spreadsheets": "drive", "presentation": "drive", "slide": "slides"}
 
 
-class gdrive(j.baseclasses.threebot_actor):
+class wiki_gdrive_manager(j.baseclasses.threebot_actor):
     @j.baseclasses.actor_method
     def file_get(self, doctype, guid1, guid2, schema_out=None, user_session=None):
         """

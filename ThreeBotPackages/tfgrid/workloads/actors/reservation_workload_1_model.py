@@ -20,6 +20,7 @@ class reservation_workload_1_model(j.baseclasses.threebot_actor):
         signature = (s)
         to_delete = (b)
 
+
         ```
         ```out
         res = (O) !tfgrid.workloads.reservation.workload.1

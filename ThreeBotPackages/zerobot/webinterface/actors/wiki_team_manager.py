@@ -65,7 +65,7 @@ def get_data(path, projects=None, contribution_types=None):
     return data
 
 
-class team(j.baseclasses.threebot_actor):
+class wiki_team_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.path = None
 
