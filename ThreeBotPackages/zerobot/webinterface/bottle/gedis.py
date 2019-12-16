@@ -123,3 +123,4 @@ def index(url):
         abort(404)
     response.headers["Content-Type"] = mimetypes.guess_type(url)[0]
     return file
+
