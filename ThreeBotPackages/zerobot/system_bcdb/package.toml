@@ -1,3 +1,5 @@
+status = "disabled"
+
 [source]
 name = "system_bcdb"
 description = "serves crud actors for all system models"
