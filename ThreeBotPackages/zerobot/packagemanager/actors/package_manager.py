@@ -69,6 +69,7 @@ class package_manager(j.baseclasses.threebot_actor):
             package.install()
             package.save()
             package.start()
+            package.models
             package.actors_reload()
         except Exception as e:
             self._log_error(str(e), exception=e)
@@ -186,26 +187,33 @@ class package_manager(j.baseclasses.threebot_actor):
     def actors_list(self, package_name=None, schema_out=None, user_session=None):
         """
         if not packagename then all
+        only lists the one which are installed
+
         ```in
         package_name = (S)
         ```
 
         ```out
         actors = (LO) !zerobot.packagemanager.actordef.1
+
+        @url = zerobot.packagemanager.actordef.1
+        package_name = ""
+        actor_name = ""
         ```
         """
-
-        def actors_add_from_package(package, schema_out):
-            actor_res = schema_out.actors.new()
-            actor_res.package_name = package.name
-            actor_res.actor_names = package.actor_names
-
-        out = schema_out.new()
+        r = schema_out.new()
         if package_name:
             package = j.tools.threebot_packages.get(name=package_name)
-            actors_add_from_package(package, out)
+            if package.status in ["installed"]:
+                actordef = r.actors.new()
+                actordef.package_name = package.name
+                actordef.actor_name = name
         else:
             for package in j.tools.threebot_packages.find():
-                actors_add_from_package(package, out)
-
-        return out
+                if package.status in ["installed"]:
+                    actor_names = list(package.actors.keys())
+                    for name in actor_names:
+                        actordef = r.actors.new()
+                        actordef.package_name = package.name
+                        actordef.actor_name = name
+        return r
