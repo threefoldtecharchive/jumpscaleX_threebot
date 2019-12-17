@@ -5,7 +5,7 @@ class nodes(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.node_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.node.2")
         self.farm_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.farm.1")
-        
+
     def _find(self, node_id):
         nodes = self.node_model.find(node_id=node_id)
         if len(nodes) <= 0:
@@ -20,7 +20,7 @@ class nodes(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        node = (O) !tfgrid.directory.node.2
+        !tfgrid.directory.node.2
         ```
 
         """
@@ -108,12 +108,12 @@ class nodes(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        node = (O) !tfgrid.directory.node.2
+        !tfgrid.directory.node.2
         ```
         """
         node = self._find(node_id)
         if not node:
-            raise j.exceptions.NotFound("node %s not found" % id)
+            raise j.exceptions.NotFound("node %s not found" % node_id)
         if not proofs:
             node.proofs = []
         return node
