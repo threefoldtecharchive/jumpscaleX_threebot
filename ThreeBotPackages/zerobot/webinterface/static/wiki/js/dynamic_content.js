@@ -1,5 +1,7 @@
-function callActorAndRender(actor, method, args, containerId, isMarkdown) {
-    localGedisClient.actors[actor][method](args).then(response => {
+function callActorAndRender(package, actor, method, args, containerId, isMarkdown) {
+    let threebotName, packageName;
+    [threebotName, packageName] = package.split(".");
+    packageGedisClient[threebotName][packageName].actors[actor][method](args).then(response => {
         response.json().then(data => {
             let container = $(`#container_${containerId}`);
             let spinner = $(`#spinner_${containerId}`);

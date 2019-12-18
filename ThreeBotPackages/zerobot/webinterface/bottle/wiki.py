@@ -1,7 +1,7 @@
-from bottle import Bottle, abort, post, request, response, run, redirect
+from bottle import Bottle, abort, post, request, response, run, redirect, static_file
 from Jumpscale import j
-from JumpscaleLibs.tools.markdowndocs.Doc import Doc
-from JumpscaleLibs.tools.markdowndocs.DocSite import DocSite
+from Jumpscale.tools.threegit.Doc import Doc
+from Jumpscale.tools.threegit.DocSite import DocSite
 from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
 from .rooter import env, app, get_ws_url
 import mimetypes
@@ -37,7 +37,7 @@ def gedis_http_wiki(threebot_name, package_name, wiki_name):
         print(f"couldn't load wiki {wiki_name} for {threebot_name}.{package_name}")
         abort(404)
     docsite_path = j.sal.fs.joinPaths("/docsites", wiki_name)
-    if not j.sal.bcdbfs.exists(docsite_path):
+    if not j.sal.fs.exists(docsite_path):
         return abort(404)
 
     ws_url = get_ws_url()
@@ -47,9 +47,9 @@ def gedis_http_wiki(threebot_name, package_name, wiki_name):
 @app.route("/wiki/gdrive/<doc_type>/<guid1>")
 @app.route("/wiki/gdrive/<doc_type>/<guid1>/<guid2>")
 def gdrive_handler(doc_type, guid1, guid2=""):
-    cl = j.clients.gedis.get("wiki_gdrive_client", port=8901)
+    cl = j.clients.gedis.get("wiki_gdrive_client", port=8901, package_name="zerobot.webinterface")
     try:
-        ret = cl.actors.gdrive.file_get(doc_type, guid1, guid2)
+        ret = cl.actors.wiki_gdrive_manager.file_get(doc_type, guid1, guid2)
         if not ret.error_code:
             return redirect(ret.res)
         return env.get_template("wiki/gdrive_error.html").render(code=ret.error_code, message=ret.error_message)
@@ -65,7 +65,7 @@ def get_document(docsite_name, relative_path):
     """get the source document of relative_path inside a docsite
 
     This source document will be inside the repository directory,
-    and not the processed output at /docsites (bcdbfs)
+    and not the processed output at /docsites (sal/fs)
 
     :param docsite_name: docsite name
     :type docsite_name: str
@@ -91,28 +91,37 @@ def get_document(docsite_name, relative_path):
             return Doc(path=doc_path, name=doc_filename.rstrip(".md"), docsite=docsite)
 
 
-@app.route("/docsites/<name>/<path:re:.+>")
+@app.route("/3git/wikis/<filepath:re:.+>")
 @enable_cors
-def docsite_handler(name, path):
-    docsite_path = j.sal.fs.joinPaths("/docsites", name)
-    full_path = j.sal.fs.joinPaths(docsite_path, path)
+def threegit_handler(filepath):
+    print("filepath: ", filepath)
+    fullpath = j.sal.fs.joinPaths("/docsites", filepath)
+    print(f"fullpath {fullpath}")
+    return static_file(filepath, root="/docsites")
 
-    if not j.sal.bcdbfs.exists(docsite_path):
-        return abort(404)
 
-    try:
-        content = j.sal.bcdbfs.file_read(full_path)
-    except j.exceptions.NotFound:
-        return abort(404)
+# @app.route("/docsites/<name>/<path:re:.+>")
+# @enable_cors
+# def docsite_handler(name, path):
+#     docsite_path = j.sal.fs.joinPaths("/docsites", name)
+#     full_path = j.sal.fs.joinPaths(docsite_path, path)
 
-    if j.sal.fs.getFileExtension(full_path).lower() == "md":
-        # try to reload, but get original doc object first
-        doc = get_document(name, path)
-        if doc:
-            # reload only in case it has dynamic_content or an error
-            if "!!!dynamic_content" in doc.markdown_source.lower() or "error in" in content.decode().lower():
-                doc.write()
-                content = doc.markdown
+#     if not j.sal.fs.exists(docsite_path):
+#         return abort(404)
 
-    response.headers["Content-Type"] = mimetypes.guess_type(path)[0]
-    return content
+#     try:
+#         content = j.sal.fs.readFile(full_path)
+#     except j.exceptions.NotFound:
+#         return abort(404)
+
+#     if j.sal.fs.getFileExtension(full_path).lower() == "md":
+#         # try to reload, but get original doc object first
+#         doc = get_document(name, path)
+#         if doc:
+#             # reload only in case it has dynamic_content or an error
+#             if "!!!dynamic_content" in doc.markdown_source.lower() or "error in" in content.decode().lower():
+#                 doc.write()
+#                 content = doc.markdown
+
+#     response.headers["Content-Type"] = mimetypes.guess_type(path)[0]
+#     return content
