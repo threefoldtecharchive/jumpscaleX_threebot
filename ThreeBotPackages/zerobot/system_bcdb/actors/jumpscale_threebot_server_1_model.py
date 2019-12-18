@@ -3,31 +3,30 @@ from Jumpscale import j
 
 class jumpscale_threebot_server_1_model(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        #get bcdb from package
+        # get bcdb from package
         self.bcdb = j.data.bcdb.system
         self.model = self.bcdb.model_get(url="zerobot.system_bcdb.jumpscale.threebot_server.1")
 
-
     @j.baseclasses.actor_method
-    def new(self,schema_out=None, user_session=None,**kwargs):
+    def new(self, schema_out=None, user_session=None, **kwargs):
         """
         ```in
         name** = "main" (s)
         executor = tmux,corex (e)
         adminsecret_ = ""  (s)
         state = "init,installed" (e)
-        
-        
+
+
         ```
         ```out
         res = (O) !jumpscale.threebot_server.1
         ```
         """
-        assert user_session.admin #for now only allow admin
+        assert user_session.admin  # for now only allow admin
         return self.model.set_dynamic(kwargs)
 
     @j.baseclasses.actor_method
-    def set(self, object_id=None,values=None ,schema_out=None, user_session=None):
+    def set(self, object_id=None, values=None, schema_out=None, user_session=None):
         """
         ```in
         object_id = 0
@@ -38,7 +37,7 @@ class jumpscale_threebot_server_1_model(j.baseclasses.threebot_actor):
         ```
         """
         # TODO: use user_session for authentication
-        assert user_session.admin #for now only allow admin
+        assert user_session.admin  # for now only allow admin
         obj = self.model.get(object_id)
 
         for key, val in values.items():
@@ -47,9 +46,8 @@ class jumpscale_threebot_server_1_model(j.baseclasses.threebot_actor):
 
         return obj
 
-
     @j.baseclasses.actor_method
-    def get_by_name(self, name=None,schema_out=None, user_session=None):
+    def get_by_name(self, name=None, schema_out=None, user_session=None):
         """
         ```in
         name = (S)
@@ -58,11 +56,11 @@ class jumpscale_threebot_server_1_model(j.baseclasses.threebot_actor):
         res = (O) !jumpscale.threebot_server.1
         ```
         """
-        assert user_session.admin #for now only allow admin
+        assert user_session.admin  # for now only allow admin
         return self.model.get_by_name(name)
 
     @j.baseclasses.actor_method
-    def get(self, object_id=None,schema_out=None, user_session=None):
+    def get(self, object_id=None, schema_out=None, user_session=None):
         """
         ```in
         object_id = 0
@@ -71,11 +69,11 @@ class jumpscale_threebot_server_1_model(j.baseclasses.threebot_actor):
         res = (O) !jumpscale.threebot_server.1
         ```
         """
-        assert user_session.admin #for now only allow admin
+        assert user_session.admin  # for now only allow admin
         return self.model.get(object_id)
 
     @j.baseclasses.actor_method
-    def find(self, query=None,schema_out=None, user_session=None):
+    def find(self, query=None, schema_out=None, user_session=None):
         """
         ```in
         query = (dict)
@@ -84,24 +82,23 @@ class jumpscale_threebot_server_1_model(j.baseclasses.threebot_actor):
         res = (LO) !jumpscale.threebot_server.1
         ```
         """
-        assert user_session.admin #for now only allow admin
+        assert user_session.admin  # for now only allow admin
         return self.model.find(query)
 
     @j.baseclasses.actor_method
-    def delete(self, object_id=None,schema_out=None, user_session=None):
+    def delete(self, object_id=None, schema_out=None, user_session=None):
         """
         ```in
         object_id = 0
         ```
         """
-        assert user_session.admin #for now only allow admin
+        assert user_session.admin  # for now only allow admin
         obj = self.model.get(object_id)
         obj.delete()
 
-
     @j.baseclasses.actor_method
     def destroy(self, schema_out=None, user_session=None):
-        assert user_session.admin #for now only allow admin
+        assert user_session.admin  # for now only allow admin
         return self.model.destroy()
 
     @j.baseclasses.actor_method

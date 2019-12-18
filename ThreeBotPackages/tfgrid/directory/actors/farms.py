@@ -66,7 +66,7 @@ class farms(j.baseclasses.threebot_actor):
         farm = (O) !tfgrid.directory.farm.1
         ```
         ```out
-        farm = (O) !tfgrid.directory.farm.1
+        !tfgrid.directory.farm.1
         ```
         """
         self._by_id(farm_id)
@@ -83,7 +83,7 @@ class farms(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        farm = (O) !tfgrid.directory.farm.1
+        !tfgrid.directory.farm.1
         ```
         """
 
