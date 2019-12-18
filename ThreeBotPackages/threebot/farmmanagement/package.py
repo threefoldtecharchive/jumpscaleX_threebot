@@ -2,9 +2,6 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-    def _init(self, **kwargs):
-        self.db = self._package.threebot_server.bcdb_get("tft_explorer")
-
     def prepare(self):
         """
         is called at install time

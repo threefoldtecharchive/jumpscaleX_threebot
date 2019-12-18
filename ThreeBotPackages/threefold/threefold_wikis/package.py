@@ -8,7 +8,7 @@ def load_wiki(**kwargs):
 
 
 class Package(j.baseclasses.threebot_package):
-    def _init(self):
+    def _init(self, **kwargs):
         self.branch = "master"
 
     def load(self):

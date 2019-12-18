@@ -1,7 +1,6 @@
 import uuid
 import datetime
 from Jumpscale import j
-import vobject
 
 
 class addressbook(j.baseclasses.threebot_actor):
@@ -13,6 +12,8 @@ class addressbook(j.baseclasses.threebot_actor):
         self.addressbook_model = self.bcdb.model_get(url="threebot.calendar.addressbook.1")
 
     def _get_vcard_from_contact(self, contact):
+        import vobject
+
         vcard = vobject.vCard()
 
         uid_ = str(uuid.uuid4())

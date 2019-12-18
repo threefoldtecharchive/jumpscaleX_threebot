@@ -11,9 +11,9 @@ class registry(j.baseclasses.threebot_actor):
 
         self.package = j.threebot.packages.tfgrid.registry
 
-        self.registration_model = self.package.bcdb_model_get(url="entry.1")
-        self.threebot_data_model = self.package.bcdb_model_get(url="entry.data.1")
-        self.threebot_encrypted_data_model = self.package.bcdb_model_get(url="entry.data_encrypted.1")
+        self.registration_model = self.package.bcdb_model_get(url="tfgrid.registry.entry.1")
+        self.threebot_data_model = self.package.bcdb_model_get(url="tfgrid.registry.entry.data.1")
+        self.threebot_encrypted_data_model = self.package.bcdb_model_get(url="tfgrid.registry.entry.data_encrypted.1")
 
     @j.baseclasses.actor_method
     def get_meta_entry_data(self, schema_out=None, user_session=None):

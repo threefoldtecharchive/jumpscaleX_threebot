@@ -1,7 +1,9 @@
 import uuid
 import time
-import caldav
-import vobject
+
+# FIXME:  these packages need to be added to installation first
+# import caldav
+# import vobject
 import datetime
 from Jumpscale import j
 

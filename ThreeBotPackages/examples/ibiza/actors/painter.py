@@ -17,7 +17,7 @@ class painter(j.baseclasses.threebot_actor):
     def example1(self, addr, schema_out=None, user_session=None):
         """
         ```out
-        !ibiza.wallet
+        !jumpscale.ibiza.ibiza.wallet
         ```
         """
         w = schema_out.new()
@@ -28,11 +28,11 @@ class painter(j.baseclasses.threebot_actor):
     def example2(self, wallet, schema_out=None, user_session=None):
         """
         ```in
-        wallet = (O) !ibiza.wallet
+        wallet = (O) !jumpscale.ibiza.ibiza.wallet
         ```
 
         ```out
-        !ibiza.wallet
+        !jumpscale.ibiza.ibiza.wallet
         ```
 
         """

@@ -6,7 +6,7 @@ class token(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.market = self.bcdb.model_get(url="tfgrid.token.market.1")
         self.capacity = self.bcdb.model_get(url="tfgrid.token.capacity.1")
-        self.tokens = self.bcdb.model_get(url="tfgrid.token.token.price.1")
+        self.tokens = self.bcdb.model_get(url="tfgrid.token.price.1")
 
     @j.baseclasses.actor_method
     def get_market(self, schema_out=None, user_session=None):
@@ -40,7 +40,7 @@ class token(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        prices = (LO) !tfgrid.token.token.price.1
+        prices = (LO) !tfgrid.token.price.1
         ```
         """
         prices = self.tokens.find(timeframe=str(price_timeframe))

@@ -115,7 +115,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
         name = (S)
         ```
         ```out
-        res = (LO) !tfgrid.network.networkresult.1
+        res = (LO) !tfgrid.network.result.1
         ```
         """
         out = schema_out.new()

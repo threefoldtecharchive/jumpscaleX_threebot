@@ -6,7 +6,7 @@ coin_input_object_ids = (LI)
 coin_output_object_ids = (LI)
 block_stake_input_object_ids = (LI)
 block_stake_output_object_ids = (LI)
-fee_payout = (O) !tft.explorer.transaction.payout.fee.info.1
+fee_payout = (O) !threefold.tft_explorer.tft.explorer.transaction.payout.fee.info.1
 arbitrary_data = "" (S)
 encoded_extension_data = "" (S)
 

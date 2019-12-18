@@ -11,7 +11,10 @@ class community_manager(j.baseclasses.threebot_actor):
         self.links = []
         self.ids = []
         self.start = True
-        self.check_referral("admin@3bot.com", "", "admin", "admin")  # refrral code for admin
+        # FIXME:
+        #   1- actor methods only accept keyword arguments
+        #   2- is this correct?
+        # self.check_referral("admin@3bot.com", "", "admin", "admin")  # refrral code for admin
 
     # def community_join(self, user_name, community_name, user_session=None):
     @j.baseclasses.actor_method
