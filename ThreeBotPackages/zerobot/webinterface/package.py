@@ -26,7 +26,7 @@ class Package(j.baseclasses.threebot_package):
 
             gedis_bcdbfs_proxy_location = locations.locations_proxy.new()
             gedis_bcdbfs_proxy_location.name = "gedis_bcdbfs"
-            gedis_bcdbfs_proxy_location.path_url = "~* ^/(gedis|bcdbfs|wiki|docsites|auth)"
+            gedis_bcdbfs_proxy_location.path_url = "~* ^/(3git|gedis|bcdbfs|auth|wiki)"
             gedis_bcdbfs_proxy_location.ipaddr_dest = "127.0.0.1"
             gedis_bcdbfs_proxy_location.port_dest = 9999
             gedis_bcdbfs_proxy_location.path_dest = ""
