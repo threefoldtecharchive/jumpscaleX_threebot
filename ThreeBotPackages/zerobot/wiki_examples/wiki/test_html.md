@@ -57,9 +57,10 @@
 
 ```
 !!!dynamic_content
+package = "zerobot.wiki_examples"
 actor = "html_test"
 method = "hello"
-name = "John doe"
+name_ = "John doe"
 
 ```
 
@@ -70,8 +71,9 @@ name = "John doe"
 
 ```
 !!!dynamic_content
+package = "zerobot.wiki_examples"
 actor = "html_test"
 method = "hello_markdown"
-name = "John doe"
+name_ = "John doe"
 markdown = True
 ```

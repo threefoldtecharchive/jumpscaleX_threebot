@@ -47,9 +47,9 @@ def gedis_http_wiki(threebot_name, package_name, wiki_name):
 @app.route("/wiki/gdrive/<doc_type>/<guid1>")
 @app.route("/wiki/gdrive/<doc_type>/<guid1>/<guid2>")
 def gdrive_handler(doc_type, guid1, guid2=""):
-    cl = j.clients.gedis.get("wiki_gdrive_client", port=8901)
+    cl = j.clients.gedis.get("wiki_gdrive_client", port=8901, package_name="zerobot.webinterface")
     try:
-        ret = cl.actors.gdrive.file_get(doc_type, guid1, guid2)
+        ret = cl.actors.wiki_gdrive_manager.file_get(doc_type, guid1, guid2)
         if not ret.error_code:
             return redirect(ret.res)
         return env.get_template("wiki/gdrive_error.html").render(code=ret.error_code, message=ret.error_message)
