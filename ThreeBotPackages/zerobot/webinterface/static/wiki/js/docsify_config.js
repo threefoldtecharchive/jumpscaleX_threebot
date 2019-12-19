@@ -3,7 +3,7 @@ mermaid.initialize({ startOnLoad: false });
 
 function docsifyConfig(name, repo) {
     basePath = location.protocol + "//" + location.hostname + "/3git/wikis/" + name;
-    imagesPath = location.protocol + "//" + location.hostname + "/3git/";
+    imagesPath = location.protocol + "//" + location.hostname + "/3git/wikis/";
     TeamWidget.avatarPrefix = basePath;
 
     window.$docsify = {
