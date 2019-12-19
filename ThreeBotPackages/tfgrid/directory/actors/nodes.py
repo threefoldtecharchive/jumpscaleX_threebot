@@ -80,10 +80,10 @@ class nodes(j.baseclasses.threebot_actor):
             values.append(farm_id)
 
         lt_fields = {
-            "total_resources_cru": cru,
-            "total_resources_mru": mru,
-            "total_resources_sru": sru,
-            "total_resources_hru": hru,
+            "total_resources__cru": cru,
+            "total_resources__mru": mru,
+            "total_resources__sru": sru,
+            "total_resources__hru": hru,
         }
         for field, value in lt_fields.items():
             if value > -1:
