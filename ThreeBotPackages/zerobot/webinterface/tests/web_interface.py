@@ -9,7 +9,6 @@ class web_interface(j.baseclasses.object):
         kosmos `j.tools.packages.webinterface.test()'
         :return:
         """
-        j.debug()
         base_url = "0.0.0.0"
         if port:
             base_url = base_url + f":{port}"
