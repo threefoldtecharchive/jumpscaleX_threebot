@@ -129,7 +129,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         node = self._find(node_id)
         if not node:
-            raise j.exceptions.NotFound("node %s not found" % id)
+            raise j.exceptions.NotFound("node %s not found" % node_id)
         node.total_resources.mru = resource.mru
         node.total_resources.cru = resource.cru
         node.total_resources.hru = resource.hru
@@ -147,7 +147,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         node = self._find(node_id)
         if not node:
-            raise j.exceptions.NotFound("node %s not found" % id)
+            raise j.exceptions.NotFound("node %s not found" % node_id)
         node.reserved_resources.mru = resource.mru
         node.reserved_resources.cru = resource.cru
         node.reserved_resources.hru = resource.hru
@@ -167,7 +167,7 @@ class nodes(j.baseclasses.threebot_actor):
 
         node = self._find(node_id)
         if not node:
-            raise j.exceptions.NotFound("node %s not found" % id)
+            raise j.exceptions.NotFound("node %s not found" % node_id)
         node.used_resources.mru = resource.mru
         node.used_resources.cru = resource.cru
         node.used_resources.hru = resource.hru
@@ -185,7 +185,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         node = self._find(node_id)
         if not node:
-            raise j.exceptions.NotFound("node %s not found" % id)
+            raise j.exceptions.NotFound("node %s not found" % node_id)
 
         proof.hardware_hash = hash_proof(proof.hardware)
         proof.disk_hash = hash_proof(proof.disks)
@@ -211,7 +211,7 @@ class nodes(j.baseclasses.threebot_actor):
 
         node = self._find(node_id)
         if not node:
-            raise j.exceptions.NotFound("node %s not found" % id)
+            raise j.exceptions.NotFound("node %s not found" % node_id)
         node.ifaces = ifaces
         node.save()
         return True
@@ -227,7 +227,7 @@ class nodes(j.baseclasses.threebot_actor):
 
         node = self._find(node_id)
         if not node:
-            raise j.exceptions.NotFound("node %s not found" % id)
+            raise j.exceptions.NotFound("node %s not found" % node_id)
 
         node.public_config = public
         node.save()
@@ -243,7 +243,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         node = self._find(node_id)
         if not node:
-            raise j.exceptions.NotFound("node %s not found" % id)
+            raise j.exceptions.NotFound("node %s not found" % node_id)
 
         node.uptime = uptime
         node.updated = j.data.time.epoch
@@ -259,7 +259,7 @@ class nodes(j.baseclasses.threebot_actor):
         """
         node = self._find(node_id)
         if not node:
-            raise j.exceptions.NotFound("node %s not found" % id)
+            raise j.exceptions.NotFound("node %s not found" % node_id)
 
         node.wg_ports = ports
         node.save()
