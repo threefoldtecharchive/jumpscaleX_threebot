@@ -4,7 +4,7 @@ from Jumpscale import j
 class web_interface(j.baseclasses.object):
     __jslocation__ = "j.tools.packages.webinterface"
 
-    def test(self, port=None, prefix="web", scheme="https"):
+    def test(self, port=None, prefix="", scheme="http"):
         """
         kosmos `j.tools.packages.webinterface.test()'
         :return:
@@ -18,7 +18,7 @@ class web_interface(j.baseclasses.object):
 
         url = f"{scheme}://{base_url}"
 
-        # gedis_client = j.servers.threebot.local_start_default()
+        j.servers.threebot.local_start_default(background=True)
         gedis_client = j.clients.gedis.get(
             name="default", host="127.0.0.1", port=8901, package_name="zerobot.packagemanager"
         )
@@ -29,24 +29,12 @@ class web_interface(j.baseclasses.object):
             )
         )
         gedis_client.reload()
-
-        print("testing fs")
-        static_files_path = j.core.tools.text_replace(
-            "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_core/JumpscaleCore/servers/gedis/pytests/test_package"
-        )
-        j.sal.fs.writeFile(f"{static_files_path}/test", "hello world", append=False)
-        assert j.clients.http.get(f"{url}/test_package/test", verify=False) == "hello world"
-        print("fs OK")
-
         print("testing gedis http")
-        j.sal.fs.writeFile("/test", "hello world")
-        # TODO: check also the content
         assert (
             j.clients.http.post(
-                f"{url}/gedis/http/actor/echo",
+                f"{url}/zerobot/test_package/actors/actor/echo",
                 data=b'{"args":{"_input":"hello world"}}',
                 headers={"Content-Type": "application/json"},
-                verify=False,
             )
             .read()
             .decode()
@@ -74,5 +62,5 @@ class web_interface(j.baseclasses.object):
         print("gedis websocket OK")
 
         print("tearDown")
-        gedis_client.actors.package_manager.package_delete("test_package")
+        gedis_client.actors.package_manager.package_delete("zerobot.test_package")
         j.servers.threebot.default.stop()
