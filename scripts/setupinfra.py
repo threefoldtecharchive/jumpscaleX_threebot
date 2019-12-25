@@ -191,7 +191,7 @@ def configure_tcprouter(executor):
     configure_systemd_unit(executor, "tcprouter", path=f"{tcprouterpath} -config {configpath}")
 
 
-configure_redis(j.tools.executorLocal, MASTERIP)
+configure_redis(j.tools.executor.local, MASTERIP)
 j.sal.nettools.waitConnectionTest(MASTERIP, 6378)
 
 rediscli = j.clients.redis.get(MASTERIP, port=6378)
@@ -272,4 +272,3 @@ for endpoint in client.actors.gridnetwork.network_endpoint_find("3botnetwork").r
 for executor in clients:
     if executor.sshclient.addr not in existingendpoints:
         client.actors.gridnetwork.network_endpoint_add("3botnetwork", executor.sshclient.name)
-
