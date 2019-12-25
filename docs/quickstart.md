@@ -318,3 +318,21 @@ class Package(j.baseclasses.threebot_package):
 
   - [backend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/examples/vuejs/README.md)
   - [frontend](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/examples/vuejs/newproject/README.md)
+
+## Reloading wiki
+
+To reload a wiki of a certain package, you can call `load_wiki`, which will try to check for last changes in git history, to redo from scratch, you can pass `reset=True`.
+
+Example of reloading the wiki of `zerobot.wiki_examples`:
+
+```
+JSX> p = j.tools.threebot_packages.get("zerobot.wiki_examples")
+JSX> p.load_wiki()
+```
+
+
+Redo from scratch (process all files again, not only changed ones):
+
+```
+JSX> p.load_wiki(reset=True)
+```
