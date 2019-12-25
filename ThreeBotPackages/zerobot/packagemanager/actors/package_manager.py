@@ -61,6 +61,8 @@ class package_manager(j.baseclasses.threebot_actor):
         else:
             raise j.exceptions.Input("need to have git_url or path to package")
 
+        g = j.threebot.packages.__dict__[package.source.threebot]
+        g.__dict__[package.source.name.replace(".", "__")] = package
         assert j.tools.threebot_packages.exists(name=package.name)
 
         if reload is False and package.status in ["installed"]:
