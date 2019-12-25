@@ -175,9 +175,6 @@ def stress_explorer(count=100, interactive=True):
         reservation = cl.workload_manager.reservation_get(reservation.id)
         assert reservation.next_action == "CREATE"
 
-        import ipdb
-
-        ipdb.set_trace()
         # TEST03: LIST RESERVATION
         reservations = cl.workload_manager.reservations_list(node_id=node_id).reservations
         assert len(reservations) == 1
