@@ -1,5 +1,6 @@
 import binascii
 import click
+import gevent
 import time
 
 from nacl import signing
@@ -118,7 +119,8 @@ def stress_explorer(count=100, interactive=True):
 
     # create a reservation for each node
     print("*********************** creating reservations ********************")
-    for node_id in node_ids:
+
+    def create_reservation(node_id):
         print(f"creating reservations for {node_id}")
         reservation = {}
         reservation["customer_tid"] = tbots["stress_customer"].id
@@ -206,6 +208,12 @@ def stress_explorer(count=100, interactive=True):
         reservation = cl.workload_manager.reservation_get(reservation.id)
         assert reservation.next_action == "DELETE"
 
+    greenlets = []
+    for node_id in node_ids:
+        greenlets.append(gevent.spawn(create_reservation, node_id=node_id))
+
+    gevent.wait(greenlets)
+
 
 @click.command(name="send-heartbeats", help="send heart beats from all the nodes on the explorer every ten mins")
 @click.option("--rounds", help="number of rounds", default=6)
@@ -256,7 +264,7 @@ def cleanup():
                 try:
                     reservation_model.get(reservation_id).delete()
                 except j.exceptions.NotFound:
-                    pass
+                    print(f"reservation {reservation_id} not found")
             try:
                 node.delete()
             except j.exceptions.NotFound:
@@ -269,7 +277,7 @@ def cleanup():
             try:
                 farm.delete()
             except j.exceptions.NotFound:
-                continue
+                print(f"farm {farm.id} not found")
 
     print("*********************** deleting users ********************")
     names = ["stress_customer", "stress_signer", "stress_farmer"]
@@ -279,7 +287,7 @@ def cleanup():
             try:
                 users[0].delete()
             except j.exceptions.NotFound:
-                pass
+                print(f"user {users[0].id} not found")
 
 
 if __name__ == "__main__":
