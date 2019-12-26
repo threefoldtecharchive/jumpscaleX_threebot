@@ -2,7 +2,7 @@
 
 Threebot is pluggable application server based on [openresty](https://openresty.org/en/) and gevent servers and comes with lots of goodies by default
 
-- [Wiki system](./docs/wikis/README.md)
+- [Wiki system](./wikis/README.md)
 - [Chat](../ThreeBotPackages/zerobot/chat/wiki/README.md)
 - [Multisite blog](../ThreeBotPackages/threebot/blog/wiki/README.md)
 - [Alerta](../ThreeBotPackages/zerobot/alerta/wiki/README.md)
