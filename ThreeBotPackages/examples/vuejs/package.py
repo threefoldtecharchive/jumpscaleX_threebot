@@ -48,7 +48,7 @@ class Package(j.baseclasses.threebot_package):
 
         for port in (443, 80):
             website = server.get_from_port(port)
-            locations = website.locations.get(f"{self.mylocation}_locations")
+            locations = website.locations.get(f"{self.mylocation}_locations_{port}")
             website_location = locations.locations_spa.new()
             website_location.name = self.mylocation
             if self.DEV:

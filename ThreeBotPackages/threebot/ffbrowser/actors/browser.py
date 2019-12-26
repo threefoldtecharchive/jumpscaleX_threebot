@@ -6,7 +6,7 @@ from io import BytesIO
 class browser(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
         bcdb = j.data.bcdb.get("ffbrowser")
-        self.tft_ex_t = bcdb.model_get(url="ffbrowser.transaction.1")
+        self.tft_ex_t = bcdb.model_get(url="threebot.ffbrowser.transaction.1")
 
     @j.baseclasses.actor_method
     def get_cookie(self, text, schema_out=None, user_session=None):

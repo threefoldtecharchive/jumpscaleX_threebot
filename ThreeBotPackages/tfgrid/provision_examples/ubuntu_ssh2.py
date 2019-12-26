@@ -35,7 +35,7 @@ def deploy_ubuntu_container():
     _, wg_private_encrypted, wg_public = j.tools.wireguard.generate_zos_keys(node.public_key_hex)
     wg_port = find_free_wg_port(node)
 
-    reservation_model = j.data.schema.get_from_url("tfgrid.reservation.1")
+    reservation_model = j.data.schema.get_from_url("tfgrid.workloads.reservation.1")
 
     reservation = reservation_model.new()
     reservation.customer_tid = me.tid

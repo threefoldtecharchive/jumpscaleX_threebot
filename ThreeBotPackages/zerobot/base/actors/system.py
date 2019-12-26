@@ -41,14 +41,24 @@ class system(j.baseclasses.threebot_actor):
     def actors_add_path(self, path, user_session=None):
         self._gedis_server.actors_add(path)
 
-    def api_meta_get(self, user_session=None):
+    def api_meta_get(self, package_name=None, user_session=None):
         """
         return the api meta information
 
         """
+        if isinstance(package_name, bytes):
+            package_name = package_name.decode()
+        # j.threebot.package_get
+        if "." not in package_name:
+            raise j.exceptions.Input("there should be . in package name, now:'%s'" % package_name)
+        threebotauthor, package_name_short = package_name.split(".", 1)
+        p = j.threebot.package_get(threebotauthor, package_name_short)
+        p.actors  # will reload actors
+        keys = [item for item in self._gedis_server.cmds_meta.keys() if item.startswith(package_name)]
         res = {"cmds": {}}
-        for key, item in self._gedis_server.cmds_meta.items():
-            res["cmds"][key] = item.data._data
+        for key in keys:
+            val = self._gedis_server.cmds_meta[key]
+            res["cmds"][key] = val.data._data
         return j.data.serializers.msgpack.dumps(res)
 
     # def filemonitor_paths(self, schema_out=None, user_session=None):

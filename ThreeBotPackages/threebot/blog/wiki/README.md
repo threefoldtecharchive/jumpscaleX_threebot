@@ -162,7 +162,7 @@ pages = (LO) !jumpscale.blog.post
 check [actors](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/blog/actors/blog.py)
 
 
-blog actor is responsible for 
+blog actor is responsible for
 - retrieving blog metadata
 - get posts
 - get pages
@@ -170,7 +170,7 @@ blog actor is responsible for
 - get page by slug
 - get tags
 - get posts by tag
-- search 
+- search
 
 ```
 from Jumpscale import j

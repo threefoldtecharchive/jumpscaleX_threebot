@@ -10,11 +10,13 @@ TESTNET_DOMAIN = "testnet.grid.tf"
 THREEBOT_DOMAIN = f"3bot.{TESTNET_DOMAIN}"
 EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
 
+# TODO: what is the purpose of this actor, where used?
+
 
 class initialize(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
         self.package = j.threebot.packages.zerobot.webplatform
-        self.user_model = self.package.bcdb_model_get(url="user.1")
+        self.user_model = self.package.bcdb_model_get(url="zerobot.webplatform.user.1")
 
     def _validate_user(self, user):
         for field in ["bot_name", "public_key", "location"]:

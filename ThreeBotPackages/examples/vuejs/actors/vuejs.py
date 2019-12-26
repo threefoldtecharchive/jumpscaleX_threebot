@@ -6,7 +6,7 @@ class vuejs(j.baseclasses.threebot_actor):
         """
         specify the models you will need in the actor to get/save data into
         """
-        self.vuejs_model = self.bcdb.model_get(url="jumpscale.vuejs.test")
+        self.vuejs_model = self.bcdb.model_get(url="jumpscale.examples_vuejs.test")
 
     @j.baseclasses.actor_method
     def ping(self, user_session=None):

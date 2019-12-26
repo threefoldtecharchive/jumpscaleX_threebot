@@ -1,5 +1,6 @@
 @url = threebot.blog.blog
 name** = "" (S)
+git_repo_url** = "" (S)
 metadata = (O) !threebot.blog.metadata
 posts =  (LO) !threebot.blog.post
 pages = (LO) !threebot.blog.post
@@ -17,7 +18,7 @@ posts_dir = "posts"
 github_username = "" (S)
 github_repo_url** = "" (S)
 nav_links = (LO)      !threebot.blog.link
-sidebar_social_links = (LO) ! threebot.blog.link
+sidebar_social_links = (LO) !threebot.blog.link
 sidebar_links = (LO)  !threebot.blog.link
 allow_disqus = true (B)
 allow_navbar = true (B)

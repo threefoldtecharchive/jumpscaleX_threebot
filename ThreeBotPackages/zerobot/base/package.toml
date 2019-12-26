@@ -1,6 +1,6 @@
 [source]
 name = "base"
-description = "contains the base actors and chatflows"
+description = "contains the system actors for each explorer"
 threebot = "zerobot"
 version = "1.0.0"
 

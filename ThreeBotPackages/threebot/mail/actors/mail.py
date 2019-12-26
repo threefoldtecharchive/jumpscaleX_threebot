@@ -10,14 +10,16 @@ from JumpscaleLibs.servers.mail.imap.bcdbmailbox import BCDBMailboxdir
 
 class mail(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        models = j.servers.imap.get_models()
-        self.bcdb_mailbox = BCDBMailboxdir(models)
+        # FIXME:
+        # models = j.servers.imap.get_models()
+        # self.bcdb_mailbox = BCDBMailboxdir(models)
+        pass
 
     @j.baseclasses.actor_method
     def send(self, mail, schema_out=None, user_session=None):
         """
         ```in
-        mail = (O) !email.message.1
+        mail = (O) !threebot.mail.email.attachement.1
         ```
         ```out
         success = (B)
@@ -148,7 +150,7 @@ class mail(j.baseclasses.threebot_actor):
     def receive(self, mail, schema_out=None, user_session=None):
         """
         ```in
-        mail = (O) !email.message.1
+        mail = (O) !threebot.mail.email.attachement.1
         ```
         ```out
         success = (B)

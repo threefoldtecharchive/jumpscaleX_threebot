@@ -1,7 +1,7 @@
 from Jumpscale import j
 
 
-class content_wiki(j.baseclasses.threebot_actor):
+class wiki_content(j.baseclasses.threebot_actor):
     @j.baseclasses.actor_method
     def reload(self, wiki_name, user_session, schema_out):
         """

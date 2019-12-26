@@ -4,14 +4,17 @@ from Jumpscale import j
 class community_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.bcdb = j.data.bcdb.get("tf_community_app")
-        self.model = self.bcdb.model_get(url="threefold.community.user.1")
+        self.model = self.bcdb.model_get(url="threefold.communityapp.threefold.community.user.1")
         self.current_user = ""
         self.FFP = "http://10.102.71.171:8280/"
         self.freeflow_client = j.clients.freeflowpages.get()
         self.links = []
         self.ids = []
         self.start = True
-        self.check_referral("admin@3bot.com", "", "admin", "admin")  # refrral code for admin
+        # FIXME:
+        #   1- actor methods only accept keyword arguments
+        #   2- is this correct?
+        # self.check_referral("admin@3bot.com", "", "admin", "admin")  # refrral code for admin
 
     # def community_join(self, user_name, community_name, user_session=None):
     @j.baseclasses.actor_method

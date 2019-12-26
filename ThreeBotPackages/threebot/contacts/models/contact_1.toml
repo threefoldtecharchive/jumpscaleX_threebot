@@ -1,10 +1,10 @@
-@url = contact.1
+@url = threebot.contacts.contact.1
 @acl = false
 firstname** =""
 lastname** = ""
-phone_numbers =  (LO) !contact.phone.1
-addresses =  (LO) !contact.addresses.1
-email = "" (LO) !contact.email.1
+phone_numbers =  (LO) !threebot.contacts.contact.phone.1
+addresses =  (LO) !threebot.contacts.contact.addresses.1
+email = "" (LO) !threebot.contacts.contact.email.1
 picture= ""
 birthdate= ""
 website=""
@@ -14,7 +14,7 @@ favorite=(B)
 tags= (LS)
 
 
-@url = contact.phone.1
+@url = threebot.contacts.contact.phone.1
 @acl = false
 number** = ""
 extensions= ""
@@ -22,7 +22,7 @@ description= ""
 priority= ""
 type= ""
 
-@url = contact.addresses.1
+@url = threebot.contacts.contact.addresses.1
 building_number = ""
 street_number= ""
 street_name** =""
@@ -33,6 +33,6 @@ state_province= ""
 country** = ""
 other_detail= ""
 
-@url = contact.email.1
+@url = threebot.contacts.contact.email.1
 email = ""
 description = ""

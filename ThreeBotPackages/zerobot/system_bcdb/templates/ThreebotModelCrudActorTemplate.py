@@ -1,25 +1,21 @@
 from Jumpscale import j
 
 
-class location_1_model(j.baseclasses.threebot_actor):
+class {{shorturl}}_model(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         #get bcdb from package
-        self.bcdb = self.package.bcdb
-        self.model = self.bcdb.model_get(url="tfgrid.directory.location.1")
+        self.bcdb = j.data.bcdb.system
+        self.model = self.bcdb.model_get(url="zerobot.system_bcdb.{{model.schema.url}}")
 
 
     @j.baseclasses.actor_method
     def new(self,schema_out=None, user_session=None,**kwargs):
         """
         ```in
-        city = (s)
-        country = (s)
-        continent = (s)
-        latitude = (f)
-        longitude = (f)
+        {{fields_schema}}
         ```
         ```out
-        res = (O) !tfgrid.directory.location.1
+        res = (O) !{{model.schema.url}}
         ```
         """
         assert user_session.admin #for now only allow admin
@@ -33,7 +29,7 @@ class location_1_model(j.baseclasses.threebot_actor):
         values = (dict)
         ```
         ```out
-        res = (O) !tfgrid.directory.location.1
+        res = (O) !{{model.schema.url}}
         ```
         """
         # TODO: use user_session for authentication
@@ -54,7 +50,7 @@ class location_1_model(j.baseclasses.threebot_actor):
         name = (S)
         ```
         ```out
-        res = (O) !tfgrid.directory.location.1
+        res = (O) !{{model.schema.url}}
         ```
         """
         assert user_session.admin #for now only allow admin
@@ -67,7 +63,7 @@ class location_1_model(j.baseclasses.threebot_actor):
         object_id = 0
         ```
         ```out
-        res = (O) !tfgrid.directory.location.1
+        res = (O) !{{model.schema.url}}
         ```
         """
         assert user_session.admin #for now only allow admin
@@ -80,7 +76,7 @@ class location_1_model(j.baseclasses.threebot_actor):
         query = (dict)
         ```
         ```out
-        res = (LO) !tfgrid.directory.location.1
+        res = (LO) !{{model.schema.url}}
         ```
         """
         assert user_session.admin #for now only allow admin
@@ -102,3 +98,18 @@ class location_1_model(j.baseclasses.threebot_actor):
     def destroy(self, schema_out=None, user_session=None):
         assert user_session.admin #for now only allow admin
         return self.model.destroy()
+
+    @j.baseclasses.actor_method
+    def count(self, schema_out=None, user_session=None):
+        assert user_session.admin  # for now only allow admin
+        return self.model.count()
+
+    @j.baseclasses.actor_method
+    def exists(self, object_id=None, schema_out=None, user_session=None):
+        """
+        ```in
+        object_id = 0
+        ```
+        """
+        assert user_session.admin  # for now only allow admin
+        return self.model.exists(object_id)

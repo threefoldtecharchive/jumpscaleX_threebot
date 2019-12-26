@@ -1,24 +1,26 @@
 from Jumpscale import j
 
 
-class link_model(j.baseclasses.threebot_actor):
+class ibiza_1_model(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         # get bcdb from package
         self.bcdb = self.package.bcdb
-        self.model = self.bcdb.model_get(url="threebot.blog.link")
+        self.model = self.bcdb.model_get(url="jumpscale.ibiza.ibiza.1")
 
     @j.baseclasses.actor_method
     def new(self, schema_out=None, user_session=None, **kwargs):
         """
         ```in
-        title** = "" (S)
-        link = "" (S)
-        page = "" (S)
-        faclass = "" (S)
+        jwt = "" (s)                # jwt token
+        addr**= ""                   # address
+        ipaddr = (ipaddr)           # ip address
+        email = "" (s)              # email address
+        username = "" (s)           # user name
+
 
         ```
         ```out
-        res = (O) !threebot.blog.link
+        res = (O) !jumpscale.ibiza.ibiza.1
         ```
         """
         assert user_session.admin  # for now only allow admin
@@ -32,7 +34,7 @@ class link_model(j.baseclasses.threebot_actor):
         values = (dict)
         ```
         ```out
-        res = (O) !threebot.blog.link
+        res = (O) !jumpscale.ibiza.ibiza.1
         ```
         """
         # TODO: use user_session for authentication
@@ -52,7 +54,7 @@ class link_model(j.baseclasses.threebot_actor):
         name = (S)
         ```
         ```out
-        res = (O) !threebot.blog.link
+        res = (O) !jumpscale.ibiza.ibiza.1
         ```
         """
         assert user_session.admin  # for now only allow admin
@@ -65,7 +67,7 @@ class link_model(j.baseclasses.threebot_actor):
         object_id = 0
         ```
         ```out
-        res = (O) !threebot.blog.link
+        res = (O) !jumpscale.ibiza.ibiza.1
         ```
         """
         assert user_session.admin  # for now only allow admin
@@ -78,7 +80,7 @@ class link_model(j.baseclasses.threebot_actor):
         query = (dict)
         ```
         ```out
-        res = (LO) !threebot.blog.link
+        res = (LO) !jumpscale.ibiza.ibiza.1
         ```
         """
         assert user_session.admin  # for now only allow admin

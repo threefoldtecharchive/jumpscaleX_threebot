@@ -13,7 +13,7 @@ def deploy_zdbs():
     node_1 = nodes[0]
     node_2 = nodes[1]
 
-    reservation_model = j.data.schema.get_from_url("tfgrid.reservation.1")
+    reservation_model = j.data.schema.get_from_url("tfgrid.workloads.reservation.1")
 
     reservation = reservation_model.new()
     reservation.customer_tid = me.tid

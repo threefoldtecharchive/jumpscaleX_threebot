@@ -1,8 +1,10 @@
 from Jumpscale import j
 
 
-class sonic(j.baseclasses.threebot_actor):
-    def query(self, name, text, schema_out=None, user_session=None):
+class wiki(j.baseclasses.threebot_actor):
+
+    # REMARK: was query before
+    def find(self, name, text, schema_out=None, user_session=None):
         """
         ```in
         name = "" (S)

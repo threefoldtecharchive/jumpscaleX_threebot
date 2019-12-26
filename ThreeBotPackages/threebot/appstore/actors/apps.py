@@ -3,7 +3,7 @@ from Jumpscale import j
 
 class apps(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        self.model = self.bcdb.model_get(url="app.1")
+        self.model = self.bcdb.model_get(url="threebot.appstore.app.1")
 
     def _validate_app(self, app):
         for field in ["appname", "description", "image"]:
@@ -25,7 +25,7 @@ class apps(j.baseclasses.threebot_actor):
     def put(self, app, schema_out=None, user_session=None):
         """
         ```in
-        app = (O) !appstore.app.1
+        app = (O) !threebot.appstore.app.1
         ```
         """
 
@@ -42,7 +42,7 @@ class apps(j.baseclasses.threebot_actor):
     def get(self, schema_out=None, user_session=None):
         """
         ```out
-        apps = (LO) !appstore.app.1
+        apps = (LO) !threebot.appstore.app.1
         ```
         """
         out = schema_out.new()

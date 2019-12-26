@@ -69,10 +69,11 @@ class package_manager(j.baseclasses.threebot_actor):
             package.install()
             package.save()
             package.start()
+            package.models
             package.actors_reload()
         except Exception as e:
             self._log_error(str(e), exception=e)
-            return f"Could not add package {package.name}: {e}"
+            raise
 
         # reload openresty configuration
         package.openresty.reload()
@@ -181,3 +182,38 @@ class package_manager(j.baseclasses.threebot_actor):
         out = schema_out.new()
         out.packages = packages
         return out
+
+    @j.baseclasses.actor_method
+    def actors_list(self, package_name=None, schema_out=None, user_session=None):
+        """
+        if not packagename then all
+        only lists the one which are installed
+
+        ```in
+        package_name = (S)
+        ```
+
+        ```out
+        actors = (LO) !zerobot.packagemanager.actordef.1
+
+        @url = zerobot.packagemanager.actordef.1
+        package_name = ""
+        actor_name = ""
+        ```
+        """
+        r = schema_out.new()
+        if package_name:
+            package = j.tools.threebot_packages.get(name=package_name)
+            if package.status in ["installed"]:
+                actordef = r.actors.new()
+                actordef.package_name = package.name
+                actordef.actor_name = name
+        else:
+            for package in j.tools.threebot_packages.find():
+                if package.status in ["installed"]:
+                    actor_names = list(package.actors.keys())
+                    for name in actor_names:
+                        actordef = r.actors.new()
+                        actordef.package_name = package.name
+                        actordef.actor_name = name
+        return r

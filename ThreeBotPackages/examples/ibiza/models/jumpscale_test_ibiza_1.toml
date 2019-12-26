@@ -1,14 +1,6 @@
-@url = ibiza.1
+@url = jumpscale.ibiza.ibiza.1
 jwt = "" (S)                # JWT Token
 addr**= ""                   # Address
-ipaddr = (ipaddr)           # IP Address
-email = "" (S)              # Email address
-username = "" (S)           # User name
-
-
-@url = ibiza.wallet
-jwt = "" (S)                # JWT Token
-addr**= ""                  # Address
 ipaddr = (ipaddr)           # IP Address
 email = "" (S)              # Email address
 username = "" (S)           # User name

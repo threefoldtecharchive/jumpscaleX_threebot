@@ -19,7 +19,7 @@ class App(object):
         self._app = None
 
         if not j.data.bcdb.exists("fs"):
-            j.data.bcdb.new("fs")
+            j.data.bcdb.get("fs")
 
     @property
     def app(self):
