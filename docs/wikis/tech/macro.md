@@ -1,9 +1,9 @@
 # Macro
 A macro is a python function that get the document used in and any other parameters as input and return a new output.
 
-It should be placed into a python module with the same name, see [current macros](https://github.com/threefoldtech/jumpscaleX_libs/tree/development/JumpscaleLibs/tools/markdowndocs/macros).
+It should be placed into a python module with the same name, see [current macros](https://github.com/threefoldtech/jumpscaleX_core/tree/development/JumpscaleCore/tools/threegit/macros).
 
-All macros are loaded by default from this path `jumpscaleX_libs/JumpscaleLibs/tools/markdowndocs/macros`.
+All macros are loaded by default from this path `jumpscaleX_core/JumpscaleCore/tools/threegit/macros`.
 
 
 ## Example
