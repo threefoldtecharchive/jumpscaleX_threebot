@@ -89,6 +89,7 @@ class BlogLoader(j.baseclasses.object):
         self.blog.metadata.github_username = self.meta["github_username"]
         self.blog.metadata.posts_per_page = int(self.meta.get("posts_per_page", "3"))
         self.blog.metadata.github_repo_url = self.repo_url
+        self.blog.git_repo_url = self.repo_url
         self.blog.metadata.blog_name = self.blog_name
         self.blog.posts = []
         self.blog.save()
@@ -226,4 +227,3 @@ class BlogLoader(j.baseclasses.object):
         self.blog_name = blog_name
         self.repo_url = repo_url
         self._load_blog()
-

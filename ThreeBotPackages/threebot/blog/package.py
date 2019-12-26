@@ -24,5 +24,13 @@ class Package(j.baseclasses.threebot_package):
                     assets_path = j.sal.fs.joinPaths(j.sal.fs.getParent(blog.metadata.posts_dir), "assets")
                     website_location.path_location = assets_path
 
+            # blog spa (we will serve it at /blog) to be easy for people
+            website_location = locations.locations_spa.new()
+            website_location.name = "blog"
+            website_location.path_url = "/blog"
+            website_location.use_jumpscale_weblibs = False
+            fullpath = j.sal.fs.joinPaths(self.package_root, "html")
+            website_location.path_location = fullpath
+
             locations.configure()
             website.configure()
