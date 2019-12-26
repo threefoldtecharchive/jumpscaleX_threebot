@@ -7,7 +7,8 @@ import blogs from './_blogs';
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
-const BLOG_API = "/web/gedis/http/blog";
+axios.defaults.baseURL = "https://127.0.0.1";
+const BLOG_API = "https://127.0.0.1/web/gedis/http/blog";
 
 async function callActorWithArgs(actorCmd, actorArgs) {
 

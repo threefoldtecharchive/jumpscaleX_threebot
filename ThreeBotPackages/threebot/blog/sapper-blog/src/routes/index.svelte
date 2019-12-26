@@ -1,23 +1,8 @@
 <script context="module">
-  import axios from "axios";
-  axios.defaults.headers.post["Content-Type"] = "application/json";
-  const BLOG_API = "/web/gedis/http/blog";
-  export async function callActorWithArgs(actorCmd, actorArgs) {
-    let p = () =>
-      axios.post(`${BLOG_API}/${actorCmd}`, {
-        args: actorArgs
-      });
-
-    let resp = await p();
-    return new Promise((resolve, reject) => resolve(resp.data));
-  }
-
   export async function preload({ host, path, params, query }) {
-    let blogName = params.theuser;
     try {
-      const blogs = await callActorWithArgs("get_blogs", {
-        blog_name: blogName
-      });
+      const blogsResp = await this.fetch(`blog.json`);
+      const blogs = await blogsResp.json();
 
       return { blogs };
     } catch (error) {

@@ -1,36 +1,17 @@
 <script context="module">
-  import axios from "axios";
-  axios.defaults.headers.post["Content-Type"] = "application/json";
-
-  const BLOG_API = "/web/gedis/http/blog";
-  export async function callActorWithArgs(actorCmd, actorArgs) {
-    let p = () =>
-      axios.post(`${BLOG_API}/${actorCmd}`, {
-        args: actorArgs
-      });
-
-    let resp = await p();
-    return new Promise((resolve, reject) => resolve(resp.data));
-  }
-
   export async function preload({ host, path, params, query }) {
     try {
-      let blogName = params.theuser;
-      const pages = await callActorWithArgs("get_pages", {
-        blog_name: blogName
-      });
+      const pagesResp = await this.fetch(`${params.theuser}/pages.json`);
+      const pages = await pagesResp.json();
 
-      const metadata = await callActorWithArgs("get_metadata", {
-        blog_name: blogName
-      });
+      const metaResp = await this.fetch(`${params.theuser}/metadata.json`);
+      const metadata = await metaResp.json();
 
-      const tags = await callActorWithArgs("get_tags", {
-        blog_name: blogName
-      });
+      const tagsResp = await this.fetch(`${params.theuser}/tags.json`);
+      const tags = await tagsResp.json();
 
-      const allPosts = await callActorWithArgs("get_posts", {
-        blog_name: blogName
-      });
+      const postsResp = await this.fetch(`${params.theuser}/posts.json`);
+      const allPosts = await postsResp.json();
 
       // please notice it might be undefined
       // parseInt(undefined) > 0 -> false
@@ -38,7 +19,6 @@
       // because.. javascript `\-()-/`
 
       let posts = allPosts.slice(0, 3);
-
       return { pages, posts, metadata, tags };
     } catch (error) {
       console.log(error);
@@ -59,9 +39,7 @@
   export let posts = [];
   export let metadata = {};
   export let tags = [];
-
   import { stores } from "@sapper/app";
-  const { preloading, page, session } = stores();
 </script>
 
 <!-- {#await metadata then value}
