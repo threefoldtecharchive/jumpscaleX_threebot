@@ -17,7 +17,6 @@ class farms(j.baseclasses.threebot_actor):
 
     def _by_name(self, name):
         try:
-
             farms = self.farm_model.find(name=name)
             if not farms:
                 raise j.exceptions.NotFound()

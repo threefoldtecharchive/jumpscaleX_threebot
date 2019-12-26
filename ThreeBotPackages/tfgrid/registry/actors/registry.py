@@ -83,7 +83,7 @@ class registry(j.baseclasses.threebot_actor):
             else:
                 new_data_model = input_object.registered_info_encrypted
 
-        new_object = self.package.bcdb_model_get(url="entry.data.1").new()
+        new_object = self.package.bcdb_model_get(url="tfgrid.registry.entry.data.1").new()
         new_object.authors = input_object.authors
         new_object.readers = input_object.readers
         new_object.registered_info_format = input_object.registered_info_format
