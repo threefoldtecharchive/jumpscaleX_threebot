@@ -5,6 +5,7 @@ Docsites are a collection of markdown documents, images and data files that can 
 The tool pre-process the given markdown directory (it adds some extension to markdown like custom link format and macros), also, it verifies and follows all the links and download it if needed, so you end up having a static directory that can be served directly.
 
 Content:
+* [Loading wikis](#loading-wikis)
 * [Creating and adding a new package](#creating-and-adding-a-new-package)
 * [Reloading the wiki of any package](#reloading-the-wiki-of-any-package)
 * [Markdown extensions](#markdown-extensions)
