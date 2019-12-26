@@ -29,7 +29,7 @@ class Package(j.baseclasses.threebot_package):
             website_location.name = "blog"
             website_location.path_url = "/blog"
             website_location.use_jumpscale_weblibs = False
-            fullpath = j.sal.fs.joinPaths(self.package_root, "html")
+            fullpath = j.sal.fs.joinPaths(self.package_root, "frontend")
             website_location.path_location = fullpath
 
             locations.configure()
