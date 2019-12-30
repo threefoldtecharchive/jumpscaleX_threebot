@@ -4,7 +4,7 @@ import binascii
 
 class ThreeFoldRegistry(j.baseclasses.threebot_factory):
 
-    __jslocation__ = "j.threebot.package.threefold.registry"
+    __jslocation__ = "j.threebot_factories.package.threefold.registry"
     bcdb = j.data.bcdb.get("threebot_registery")
 
     def client_get(self):
@@ -12,7 +12,7 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         j.threebot.package.threefold.registry.client_get()
         :return:
         """
-        self.client = j.servers.threebot.local_start_default()
+        self.client = j.servers.threebot.start()
 
         return self.client
 

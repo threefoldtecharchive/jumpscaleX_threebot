@@ -5,7 +5,7 @@
 application is driven using `package.py` file which controls the life cycle of the application, configurations (prepare) , start, stop .. etc
 
 ## Starting threebot with registered packages
-- the recommended way is `j.servers.threebot.local_start_default()`.
+- the recommended way is `j.servers.threebot.start()`.
 
 - to simplify the development workflow you can start packages directly using their factories, for example:
     * `kosmos -p "j.threebot.package.alerta.start()"`

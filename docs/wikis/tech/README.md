@@ -20,7 +20,7 @@ Loading wiki is now done by default in any threebot package, you just need to cr
 First make sure you have a threebot server running using:
 
 ```
-3BOTDEVEL:3bot:~: kosmos -p 'j.servers.threebot.local_start_default()'
+3BOTDEVEL:3bot:~: kosmos -p 'j.servers.threebot.start()'
 ```
 
 ## Creating and adding a new package

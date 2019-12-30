@@ -230,7 +230,7 @@ print("Wating for DNS ...")
 j.sal.nettools.waitConnectionTest(THREEBOT_DOMAIN, 443, timeout=60)
 
 print("Start local 3bot")
-client = j.servers.threebot.local_start_default()
+client = j.servers.threebot.start()
 client.actors.package_manager.package_add(
     path=j.core.tools.text_replace(
         "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/namemanager"

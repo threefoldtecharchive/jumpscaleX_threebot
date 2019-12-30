@@ -6,7 +6,7 @@ code sharing system built using svelte and gedis actors
 ![pastebin2](./images/pastebin2.jpg)
 
 
-## Running 
+## Running
 
 - execute `kosmos -p 'j.threebot.package.pastebin.start()'`
 - server will start at `172.17.0.2/pastebin`
@@ -48,7 +48,7 @@ class Package(j.baseclasses.threebot_package):
 
 ## actors
 
-- `new_paste` : new_paste 
+- `new_paste` : new_paste
 - `get_paste`: get paste
 
 ```python3
@@ -92,7 +92,7 @@ from Jumpscale import j
 
 class PastebinDashboardFactory(j.baseclasses.object, j.baseclasses.testtools):
 
-    __jslocation__ = "j.threebot.package.pastebin"
+    __jslocation__ = "j.threebot_factories.package.pastebin"
 
     def install(self):
         server = j.servers.threebot.default
