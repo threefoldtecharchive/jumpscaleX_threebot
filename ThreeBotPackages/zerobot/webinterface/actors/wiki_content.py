@@ -14,22 +14,18 @@ class wiki_content(j.baseclasses.threebot_actor):
         j.tools.markdowndocs.reload(wiki_name)
 
     @j.baseclasses.actor_method
-    def load(self, wiki_name, wiki_url, pull, download, user_session, schema_out):
+    def load(self, wiki_name, wiki_url, reset=False, user_session=None, schema_out=None):
         """
         ```in
         wiki_name = (S)
         wiki_url = (S)
-        pull = false (B)
-        download = false (B)
+        reset = false (B)
         ```
         """
-
-        def load_wiki(wiki_name, wiki_url, pull=False, download=False):
-            wiki = j.tools.markdowndocs.load(path=wiki_url, name=wiki_name, pull=pull, download=download)
-            wiki.write()
+        from Jumpscale.tools.threegit.ThreeGit import load_wiki
 
         queues = ["content_wiki_load"]
         job = j.servers.myjobs.schedule(
-            load_wiki, return_queues=queues, wiki_name=wiki_name, wiki_url=wiki_url, pull=pull, download=download
+            load_wiki, return_queues=queues, wiki_name=wiki_name, wiki_path=wiki_url, reset=reset
         )
         j.servers.myjobs.wait_queues(queue_names=queues, size=len([job.id]))
