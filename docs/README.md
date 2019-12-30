@@ -41,13 +41,13 @@ hello/
 
 
 ## Starting zerobot with registered packages
-- the recommended way is `j.servers.threebot.local_start_default()`.
+- the recommended way is `j.servers.threebot.start()`.
 
 - to simplify the development workflow you can start packages directly using their factories, for example:
     * `kosmos -p "j.threebot.package.alerta.start()"`
 
 ## Starting threebot
-- the recommended way is `j.servers.threebot.local_start_default()`.
+- the recommended way is `j.servers.threebot.start()`.
 
 - to simplify the development workflow you can start packages directly using their factories, for example:
     * `kosmos -p "j.threebot.package.alerta.start()"`
@@ -57,7 +57,7 @@ After starting the server with recommended way, you can use the returned client 
 
 ```
 kosmos -p
-JSX> cl = j.servers.threebot.local_start_default()
+JSX> cl = j.servers.threebot.start()
 JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta')
 ```
 
@@ -96,7 +96,7 @@ from Jumpscale import j
 
 class PastebinFactory(j.baseclasses.threebot_factory):
 
-    __jslocation__ = "j.threebot.package.pastebin2"
+    __jslocation__ = "j.threebot_factories.package.pastebin2"
 ```
 
 ## Example package.py

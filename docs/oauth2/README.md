@@ -1,19 +1,19 @@
 ## Central Oauth2 server
 
-The central oauth2 server is responsable for handling all the authentication of the threebots 
+The central oauth2 server is responsable for handling all the authentication of the threebots
 
 ### Create your own oauth server
 to be able to host a central oauth server on your threebot you need to do the following step.
-- Configuare the oauth2 provider such as (Google, Facebook, Github) using ```oauth_provider``` client 
+- Configuare the oauth2 provider such as (Google, Facebook, Github) using ```oauth_provider``` client
 ```python
-# configure github 
+# configure github
 cl = j.clients.oauth_provider.get(
     name='github',
-    client_id='<client id>', 
-    client_secret= '<client secret>', 
-    access_token_url= 'https://github.com/login/oauth/access_token', 
-    authorize_url= 'https://github.com/login/oauth/authorize', 
-    redirect_url= '<your threebot url>/oauth/callback', 
+    client_id='<client id>',
+    client_secret= '<client secret>',
+    access_token_url= 'https://github.com/login/oauth/access_token',
+    authorize_url= 'https://github.com/login/oauth/authorize',
+    redirect_url= '<your threebot url>/oauth/callback',
     user_info_url= 'https://api.github.com/user',
     scope= '',
     user_info_fields=["email", "login"]
@@ -38,7 +38,7 @@ Now you are ready to add the ```oauth2``` package to your threebot and start to 
 - In order to protect your package endpoints you can easily choose any central oauth server to use, you need just to configure the ```oauth_proxy``` client in your threebot
 ```python
 cl = j.clients.oauth_proxy.get(
-    name='main', 
+    name='main',
     url="<authorize url of the central oauth server>",
     verify_key="<oauth proxy public key>" # you can get it from <oauth2 proxy url>/oauth/key
     providers=["github"]
@@ -78,10 +78,6 @@ def callback():
 app = oauth_app.app
 
 
-class TestFactory(j.baseclasses.threebot_factory):
-    __jslocation__ = "j.threebot.package.test"
 
-    def get_app(self):
-        return app
 
 ```

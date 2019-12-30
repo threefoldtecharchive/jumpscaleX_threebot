@@ -3,14 +3,14 @@ from Jumpscale import j
 
 class HelloWorldFactory(j.baseclasses.object, j.baseclasses.testtools):
 
-    __jslocation__ = "j.threebot.package.helloworld"
+    __jslocation__ = "j.threebot_factories.package.helloworld"
 
     def start(self):
         """
         kosmos 'j.threebot.package.helloworld.start()'
         :return:
         """
-        gedis_client = j.servers.threebot.local_start_default()
+        gedis_client = j.servers.threebot.start()
         gedis_client.actors.package_manager.package_add(path=self._dirpath)
 
     def test(self, name=""):
