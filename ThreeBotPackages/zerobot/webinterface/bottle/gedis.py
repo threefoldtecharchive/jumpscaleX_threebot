@@ -13,37 +13,37 @@ from .rooter import app
 #######################################
 ###### GEDIS WEBSOCKET ROUTES #########
 #######################################
-@app.route("/gedis/websocket", apply=[websocket])
-def gedis_websocket(ws):
-    # TODO: getting a gedis client should happen only once
-    client_gedis = j.clients.gedis.get("main", port=GEDIS_PORT)
-    while True:
-        message = ws.receive()
-        if message is not None:
-            data = json.loads(message)
-            commands = data["command"].split(".")
-            if data["command"].casefold() == "system.ping":
-                ws.send(j.data.serializers.json.dumps(client_gedis.ping()))
-                return
-            cl = getattr(client_gedis.actors, commands[0])
+# @app.route("/gedis/websocket", apply=[websocket])
+# def gedis_websocket(ws):
+#     # TODO: getting a gedis client should happen only once
+#     client_gedis = j.clients.gedis.get("main", port=GEDIS_PORT)
+#     while True:
+#         message = ws.receive()
+#         if message is not None:
+#             data = json.loads(message)
+#             commands = data["command"].split(".")
+#             if data["command"].casefold() == "system.ping":
+#                 ws.send(j.data.serializers.json.dumps(client_gedis.ping()))
+#                 return
+#             cl = getattr(client_gedis.actors, commands[0])
 
-            for attr in commands[1:]:
-                cl = getattr(cl, attr)
+#             for attr in commands[1:]:
+#                 cl = getattr(cl, attr)
 
-            args = data.get("args", {})
-            response = cl(**args)
-            if isinstance(response, dict):
-                ws.send(j.data.serializers.json.dumps(response))
-            elif hasattr(response, "_json"):
-                ws.send(j.data.serializers.json.dumps(response._ddict_hr))
-            elif isinstance(response, bytes):
-                ws.send(response.decode())
-            elif response is None:
-                ws.send("")
-            else:
-                ws.send(response)
-        else:
-            break
+#             args = data.get("args", {})
+#             response = cl(**args)
+#             if isinstance(response, dict):
+#                 ws.send(j.data.serializers.json.dumps(response))
+#             elif hasattr(response, "_json"):
+#                 ws.send(j.data.serializers.json.dumps(response._ddict_hr))
+#             elif isinstance(response, bytes):
+#                 ws.send(response.decode())
+#             elif response is None:
+#                 ws.send("")
+#             else:
+#                 ws.send(response)
+#         else:
+#             break
 
 
 #######################################
