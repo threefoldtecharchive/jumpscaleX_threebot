@@ -29,16 +29,12 @@ def wiki_list(threebot_name, package_name):
     )
 
 
+@app.route("/wiki/<wiki_name>", method=["get"])
 @app.route("/<threebot_name>/<package_name>/wiki/<wiki_name>", method=["get"])
-def wiki_by_name(threebot_name, package_name, wiki_name):
-    err = f"couldn't load wiki {wiki_name} for {threebot_name}.{package_name}"
-    try:
-        package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-    except Exception as e:
-        abort(404, str(e) + err)
-
+def wiki_by_name(wiki_name, threebot_name=None, package_name=None):
     docsite_path = j.sal.fs.joinPaths("/docsites", wiki_name)
     if not j.sal.fs.exists(docsite_path):
+        err = f"couldn't load wiki {wiki_name}, not found in /docsites"
         return abort(404, err)
 
     ws_url = get_ws_url()

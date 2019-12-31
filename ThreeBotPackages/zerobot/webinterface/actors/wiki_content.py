@@ -24,8 +24,5 @@ class wiki_content(j.baseclasses.threebot_actor):
         """
         from Jumpscale.tools.threegit.ThreeGit import load_wiki
 
-        queues = ["content_wiki_load"]
-        job = j.servers.myjobs.schedule(
-            load_wiki, return_queues=queues, wiki_name=wiki_name, wiki_path=wiki_url, reset=reset
-        )
-        j.servers.myjobs.wait_queues(queue_names=queues, size=len([job.id]))
+        job = j.servers.myjobs.schedule(load_wiki, wiki_name=wiki_name, wiki_path=wiki_url, reset=reset)
+        j.servers.myjobs.wait([job.id])
