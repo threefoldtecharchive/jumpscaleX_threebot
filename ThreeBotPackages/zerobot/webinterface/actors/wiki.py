@@ -1,4 +1,5 @@
 from Jumpscale import j
+from os.path import splitext
 
 
 class wiki(j.baseclasses.threebot_actor):
@@ -20,9 +21,12 @@ class wiki(j.baseclasses.threebot_actor):
         out = schema_out.new()
         res = []
         try:
-            res = j.sal.bcdbfs.search(text, location="/docsites/{}".format(name))
+            res = [
+                splitext(entry)[0].lower()
+                for entry in j.threebot.servers.sonic.default_client.query("docsites", name, text)
+                if "siderbar" not in entry
+            ]
         except Exception as e:
-            # TODO: check when sonic and bcdb are out of sync.
             print(e)
         out.res = res
         return out
