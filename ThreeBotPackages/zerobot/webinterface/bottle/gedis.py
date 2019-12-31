@@ -49,36 +49,38 @@ from .rooter import app
 #######################################
 ######## GEDIS HTTP ROUTES ############
 #######################################
-def get_actor(client, name, retry=True):
-    """try to get an actor from a gedis client
-
-    will reload the client and try again if the actor is not available
-
-    :param client: gedis client
-    :type client: GedisClient
-    :param name: actor name
-    :type name: str
-    :param retry: if set, will try to reload if actor is not found
-    :type retyr: bool
-    """
-    actor = getattr(client.actors, name, None)
-    if not actor and retry:
-        client.reload()
-        return get_actor(client, name, retry=False)
-    return actor
+# def get_actor(client, name, retry=True):
+#     """try to get an actor from a gedis client
+#
+#     will reload the client and try again if the actor is not available
+#
+#     :param client: gedis client
+#     :type client: GedisClient
+#     :param name: actor name
+#     :type name: str
+#     :param retry: if set, will try to reload if actor is not found
+#     :type retyr: bool
+#     """
+#     actor = getattr(client.actors, name, None)
+#     if not actor and retry:
+#         client.reload()
+#         return get_actor(client, name, retry=False)
+#     return actor
 
 
 @app.route("/<threebot_name>/<package_name>/actors/<name>/<cmd>", method=["post", "get", "options"])
 @app.route("/gedis/http/<name>/<cmd>", method=["post", "get", "options"])
 @enable_cors
 def gedis_http(name, cmd, threebot_name=None, package_name=None):
-    if threebot_name and package_name:
-        fullname = f"{threebot_name}.{package_name}"
-        client = j.clients.gedis.get(name=f"{fullname}_client", package_name=fullname, port=8901)
-    else:
-        client = j.clients.gedis.get()
+    if not threebot_name:
+        response.status = 400
+        return f"Need to specify threebotname in command {cmd} for gedis_http"
+    if not package_name:
+        response.status = 400
+        return f"Need to specify package_name in command {cmd} for gedis_http"
 
-    actor = get_actor(client, name)
+    actor = j.threebot.actor_get(author3bot=threebot_name, package_name=package_name, actor_name=name)
+
     if not actor:
         response.status = 404
         return f"Actor {name} does not exist"

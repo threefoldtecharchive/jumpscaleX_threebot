@@ -95,9 +95,9 @@ def get_document(docsite_name, relative_path):
 @app.route("/3git/wikis/<filepath:re:.+>")
 @enable_cors
 def threegit_handler(filepath):
-    print("filepath: ", filepath)
+    # print("filepath: ", filepath)
     fullpath = j.sal.fs.joinPaths("/docsites", filepath)
-    print(f"fullpath {fullpath}")
+    # print(f"fullpath {fullpath}")
     return static_file(filepath, root="/docsites")
 
 
