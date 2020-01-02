@@ -9,8 +9,9 @@ import traceback
 
 
 def get_metadata(docsite):
+    path = j.sal.fs.joinPaths(j.tools.threegit.get_docsite_path(docsite), ".data")
     try:
-        with open(f"/docsites/{docsite}/.data") as f:
+        with open(path) as f:
             return f.read()
     except FileNotFoundError:
         return "{}"
@@ -32,9 +33,11 @@ def wiki_list(threebot_name, package_name):
 @app.route("/wiki/<wiki_name>", method=["get"])
 @app.route("/<threebot_name>/<package_name>/wiki/<wiki_name>", method=["get"])
 def wiki_by_name(wiki_name, threebot_name=None, package_name=None):
-    docsite_path = j.sal.fs.joinPaths("/docsites", wiki_name)
+    docsite_path = j.tools.threegit.get_docsite_path(wiki_name)
     if not j.sal.fs.exists(docsite_path):
-        err = f"couldn't load wiki {wiki_name}, not found in /docsites"
+        err = f"""
+        couldn't load wiki {wiki_name}, not found in {j.tools.threegit.docsites_path}
+        Try to reload the wiki and try again"""
         return abort(404, err)
 
     ws_url = get_ws_url()
@@ -58,43 +61,40 @@ def gdrive_handler(doc_type, guid1, guid2=""):
         return result
 
 
-def get_document(docsite_name, relative_path):
-    """get the source document of relative_path inside a docsite
-
-    This source document will be inside the repository directory,
-    and not the processed output at /docsites (sal/fs)
-
-    :param docsite_name: docsite name
-    :type docsite_name: str
-    :param relative_path: relative path inside this docsite e.g. /terms/conditions.md
-    :type relative_path: str
-    :return: a document object
-    :rtype: Doc
-    """
-    try:
-        docsite = DocSite.get_from_name(docsite_name)
-    except j.exceptions.Base:
-        return
-
-    full_path = j.sal.fs.joinPaths(docsite.path, relative_path)
-    parent_dir = j.sal.fs.getDirName(full_path)
-    requested_filename = docsite._clean(j.sal.fs.getBaseName(full_path))
-
-    # as we only have the name of the output document, we will do a search
-    # for a possible match in filenames of the same parent directory
-    for doc_path in j.sal.fs.listFilesInDir(parent_dir):
-        doc_filename = docsite._clean(j.sal.fs.getBaseName(doc_path))
-        if doc_filename == requested_filename:
-            return Doc(path=doc_path, name=doc_filename.rstrip(".md"), docsite=docsite)
-
-
 @app.route("/3git/wikis/<filepath:re:.+>")
 @enable_cors
 def threegit_handler(filepath):
-    # print("filepath: ", filepath)
-    fullpath = j.sal.fs.joinPaths("/docsites", filepath)
-    # print(f"fullpath {fullpath}")
-    return static_file(filepath, root="/docsites")
+    return static_file(filepath, root=j.tools.threegit.docsites_path)
+
+
+# def get_document(docsite_name, relative_path):
+#     """get the source document of relative_path inside a docsite
+
+#     This source document will be inside the repository directory,
+#     and not the processed output at j.tools.threegit.docsites_path (sal/fs)
+
+#     :param docsite_name: docsite name
+#     :type docsite_name: str
+#     :param relative_path: relative path inside this docsite e.g. /terms/conditions.md
+#     :type relative_path: str
+#     :return: a document object
+#     :rtype: Doc
+#     """
+#     try:
+#         docsite = DocSite.get_from_name(docsite_name)
+#     except j.exceptions.Base:
+#         return
+
+#     full_path = j.sal.fs.joinPaths(docsite.path, relative_path)
+#     parent_dir = j.sal.fs.getDirName(full_path)
+#     requested_filename = docsite._clean(j.sal.fs.getBaseName(full_path))
+
+#     # as we only have the name of the output document, we will do a search
+#     # for a possible match in filenames of the same parent directory
+#     for doc_path in j.sal.fs.listFilesInDir(parent_dir):
+#         doc_filename = docsite._clean(j.sal.fs.getBaseName(doc_path))
+#         if doc_filename == requested_filename:
+#             return Doc(path=doc_path, name=doc_filename.rstrip(".md"), docsite=docsite)
 
 
 # @app.route("/docsites/<name>/<path:re:.+>")
