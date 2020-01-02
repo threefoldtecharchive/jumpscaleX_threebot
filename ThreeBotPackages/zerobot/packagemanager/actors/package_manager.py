@@ -9,12 +9,13 @@ class package_manager(j.baseclasses.threebot_actor):
         j.data.schema.get_from_text(j.tools.threebot_packages._model.schema.text)
 
     @j.baseclasses.actor_method
-    def package_add(self, git_url=None, path=None, reload=True, schema_out=None, user_session=None):
+    def package_add(self, git_url=None, path=None, reload=True, install=True, schema_out=None, user_session=None):
         """
         ```in
         git_url = ""
         path = ""
         reload = true (B)
+        install = true (B)
         ```
         can use a git_url or a path
         path needs to exist on the threebot server
@@ -65,22 +66,22 @@ class package_manager(j.baseclasses.threebot_actor):
         g.__dict__[package.source.name.replace(".", "__")] = package
         assert j.tools.threebot_packages.exists(name=package.name)
 
-        if reload is False and package.status in ["installed"]:
-            return "OK"
-        try:
+        if install:
+            package = j.tools.threebot_packages.get(name)
+            package.reload()
+
+        return "OK"
+
+    def _package_install(self, name, reload=False):
+        if reload or package.status not in ["installed"]:
             package.install()
             package.save()
             package.start()
             package.models
             package.actors_reload()
-        except Exception as e:
-            self._log_error(str(e), exception=e)
-            raise
-
         # reload openresty configuration
         package.openresty.reload()
-
-        return "OK"
+        return package
 
     @j.baseclasses.actor_method
     def package_delete(self, name, schema_out=None, user_session=None):
@@ -219,3 +220,25 @@ class package_manager(j.baseclasses.threebot_actor):
                         actordef.package_name = package.name
                         actordef.actor_name = name
         return r
+
+    @j.baseclasses.actor_method
+    def package_reload(self, package_name=None, reset=False, schema_out=None, user_session=None):
+        """
+        if not packagename then all
+        only reload the ones which are installed
+
+        ```in
+        package_name = (S)
+        reset = False (B)
+        ```
+        """
+
+        def do(package):
+            package.reload(reset=reset)
+
+        if package_name:
+            package = j.tools.threebot_packages.get(name=package_name)
+            do(package)
+        else:
+            for package in j.tools.threebot_packages.find():
+                do(package)
