@@ -1,29 +1,24 @@
+import re
 from Jumpscale import j
 
-
-# FIXME use a wiki loading tool instead of duplicating this into every single wiki package.
-def load_wiki(**kwargs):
-    wiki = j.tools.markdowndocs.load(path=kwargs["url"], name=kwargs["repo"])
-    wiki.write()
+MAIN_DOMAIN = r"wiki.tf"
+WIKIS = ["grid", "foundation", "tokens", "freeflowevents"]
 
 
 class Package(j.baseclasses.threebot_package):
-    def _init(self, **kwargs):
-        self.branch = "master"
+    def start(self):
+        for port in (443, 80):
+            for wiki in WIKIS:
+                website = self.openresty.websites.get(name=f"threefold_{wiki}_{port}")
+                website.port = port
+                website.domain = fr"(?<sub>{wiki})\.{re.escape(MAIN_DOMAIN)}"
+                website.ssl = port == 443
 
-    def load(self):
-
-        # TODO: load only relevant wikis
-        j.servers.myjobs.schedule(
-            load_wiki,
-            repo="tokens",
-            url="https://github.com/threefoldfoundation/info_tokens/tree/%s/docs" % self.branch,
-        )
-        j.servers.myjobs.schedule(
-            load_wiki,
-            repo="foundation",
-            url="https://github.com/threefoldfoundation/info_foundation/tree/%s/docs" % self.branch,
-        )
-        j.servers.myjobs.schedule(
-            load_wiki, repo="grid", url="https://github.com/threefoldfoundation/info_grid/tree/%s/docs" % self.branch
-        )
+                locations = website.locations.get(name=f"threefold_{wiki}_{port}")
+                redirect_location = locations.locations_custom.new()
+                redirect_location.name = f"wiki_from_hostname_{port}"
+                redirect_location.config = f"""
+                    return 301 $scheme://{MAIN_DOMAIN}/wiki/$sub;
+                """
+                locations.configure()
+                website.configure()

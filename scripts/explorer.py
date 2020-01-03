@@ -50,13 +50,7 @@ def cli():
 
 @click.command(name="stress-explorer", help="stress explorer by creating nodes and reservations")
 @click.option("--count", help="number of nodes and reservations to create", default=100)
-@click.option("--interactive", default=True)
 def stress_explorer(count=100, interactive=True):
-    if interactive and not j.tools.console.askYesNo(
-        "Are you sure you want to run a stress test against explorer? This will create a lot of dummy data on the explorer",
-        False,
-    ):
-        return
 
     cl = j.clients.threebot.explorer.actors_get("tfgrid.directory")
     # create a farmer
