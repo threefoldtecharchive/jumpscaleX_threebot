@@ -197,28 +197,70 @@ class package_manager(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        actors = (LO) !zerobot.packagemanager.actordef.1
+        packages = (LO) !zerobot.packagemanager.packagedef.1
 
-        @url = zerobot.packagemanager.actordef.1
+        @url = zerobot.packagemanager.packagedef.1
         package_name = ""
-        actor_name = ""
+        actor_names = [] (LS)
         ```
         """
+
+        def do(r, package):
+            if package.status not in ["installed"]:
+                package.install()
+            pdef = r.packages.new()
+            pdef.package_name = package.name
+            actor_names = list(package.actors.keys())
+            pdef.actor_names = actor_names
+            return r
+
         r = schema_out.new()
         if package_name:
             package = j.tools.threebot_packages.get(name=package_name)
-            if package.status in ["installed"]:
-                actordef = r.actors.new()
-                actordef.package_name = package.name
-                actordef.actor_name = name
+            r = do(r, package)
         else:
             for package in j.tools.threebot_packages.find():
-                if package.status in ["installed"]:
-                    actor_names = list(package.actors.keys())
-                    for name in actor_names:
-                        actordef = r.actors.new()
-                        actordef.package_name = package.name
-                        actordef.actor_name = name
+                r = do(r, package)
+        return r
+
+    @j.baseclasses.actor_method
+    def model_urls_list(self, package_name=None, schema_out=None, user_session=None):
+        """
+        if not packagename then all
+        only lists the one which are installed
+
+        ```in
+        package_name = (S)
+        ```
+
+        ```out
+        packages = (LO) !zerobot.packagemanager.packagedefmodel.1
+
+        @url = zerobot.packagemanager.packagedefmodel.1
+        package_name = ""
+        bcdb_name = ""
+        urls = [] (LS)
+        ```
+        """
+
+        def do(r, package):
+            if package.status not in ["installed"]:
+                package.install()
+            pdef = r.packages.new()
+            pdef.package_name = package.name
+            pdef.bcdb_name = package.bcdb.name
+            for m in package.models.values():
+                if m.schema.url not in pdef.urls:
+                    pdef.urls.append(m.schema.url)
+            return r
+
+        r = schema_out.new()
+        if package_name:
+            package = j.tools.threebot_packages.get(name=package_name)
+            r = do(r, package)
+        else:
+            for package in j.tools.threebot_packages.find():
+                r = do(r, package)
         return r
 
     @j.baseclasses.actor_method
