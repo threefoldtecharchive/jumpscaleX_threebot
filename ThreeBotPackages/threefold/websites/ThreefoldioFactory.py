@@ -3,7 +3,7 @@ from Jumpscale import j
 
 class WebsitesFactory(j.baseclasses.object, j.baseclasses.testtools):
 
-    __jslocation__ = "j.threebot.package.threefold_io"
+    __jslocation__ = "j.threebot_factories.package.threefold_io"
 
     def install(self, branch="development"):
         """

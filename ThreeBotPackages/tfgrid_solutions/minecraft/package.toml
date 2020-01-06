@@ -1,0 +1,10 @@
+[source]
+name = "minecraft"
+description = "Minecraft is a sandbox video game"
+threebot = "tfgrid"
+version = "1.0.0"
+
+[[bcdbs]]
+namespace = "tfgrid_solutions"
+type = "zdb"
+instance = "default"

@@ -1,27 +1,17 @@
 from Jumpscale import j
 
-__version__ = "0.0.1"
-
 
 class Package(j.baseclasses.threebot_package):
-    def _init(self, **kwargs):
-        self.branch = kwargs["package"].branch or "master"
-
-    def prepare(self):
-        pass
-
     def start(self):
         """
         called when the 3bot starts
         :return:
         """
         server = self.openresty
-        server.install(reset=False)
-        server.configure()
         for port in [80, 443]:
             website = server.get_from_port(port)
 
-            locations = website.locations.get("blogs_locations")
+            locations = website.locations.get(f"blogs_locations_{port}")
             # adding blogs static assests
             blog_model = self.bcdb.model_get(url="jumpscale.blog")
             for blog in blog_model.find():

@@ -3,21 +3,20 @@ from Jumpscale import j
 
 class IbizaTestFactory(j.baseclasses.object, j.baseclasses.testtools):
 
-    __jslocation__ = "j.threebot.package.ibiza"
+    __jslocation__ = "j.threebot_factories.package.ibiza"
 
     def client_get(self):
         """
         j.threebot.package.ibiza.client_get()
         :return:
         """
-        self.client = j.servers.threebot.local_start_default()
+        self.client = j.servers.threebot.start()
 
         self.client.actors.package_manager.package_add(
-            "ibiza",
-            git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/examples/ibiza",
+            git_url="https://github.com/threefoldtech/jumpscaleX_threebot/tree/master/ThreeBotPackages/examples/ibiza"
         )
 
-        self.client.reload(namespace="ibiza")
+        self.client.reload()
 
         return self.client
 

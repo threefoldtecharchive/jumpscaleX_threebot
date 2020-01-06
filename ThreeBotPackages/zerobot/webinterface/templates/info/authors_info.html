@@ -1,0 +1,18 @@
+{% extends "info/base.html" %}
+{% block title %}Authors Information{% endblock %}
+{% block content %}
+<!--Content-->
+<div class="d-flex flex-column align-items-center">
+    <!--Title-->
+    <div class="h1 font-weight-bold">
+        Authors
+    </div>
+
+    <!--Authors List-->
+    <div class="mt-3">
+        {% for author in authors %}
+        <div class="h3 font-weight-bold"><a href="/{{author}}/info">{{author}}</a> </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

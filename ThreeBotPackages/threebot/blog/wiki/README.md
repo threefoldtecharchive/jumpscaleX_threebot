@@ -7,7 +7,7 @@
 `j.tools.blog_loader.add_blog("xmon", "git@gitlab.com:xmonader/sample-blog-jsx.git")`
 
 2- Start the threebot server first in `kosmos` using:
-`cl = j.servers.threebot.local_start_default(web=True)`
+`cl = j.servers.threebot.start()`
 
 3- Add The blogs package:
 `cl.actors.package_manager.package_add(path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog")`
@@ -162,7 +162,7 @@ pages = (LO) !jumpscale.blog.post
 check [actors](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/blog/actors/blog.py)
 
 
-blog actor is responsible for 
+blog actor is responsible for
 - retrieving blog metadata
 - get posts
 - get pages
@@ -170,7 +170,7 @@ blog actor is responsible for
 - get page by slug
 - get tags
 - get posts by tag
-- search 
+- search
 
 ```
 from Jumpscale import j

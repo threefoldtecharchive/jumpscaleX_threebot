@@ -5,9 +5,9 @@ import time
 
 class document(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        bcdb = j.data.bcdb.get("fruum")
-        self.model = bcdb.model_get(url="jumpscale.fruum.document")
+        self.model = self.bcdb.model_get(url="jumpscale.fruum.document")
 
+    @j.baseclasses.actor_method
     def add(
         self,
         app_name,
@@ -93,30 +93,36 @@ class document(j.baseclasses.threebot_actor):
         d.save()
         return d._json
 
+    @j.baseclasses.actor_method
     def update(self, app_id=0, document=None, schema_out=None, user_session=None):
         pass
 
+    @j.baseclasses.actor_method
     def update_subtree(self, app_id=0, document=None, schema_out=None, user_session=None):
         pass
 
+    @j.baseclasses.actor_method
     def delete(self, app_id=0, document=None, schema_out=None, user_session=None):
         """
 
         """
         pass
 
+    @j.baseclasses.actor_method
     def archive(self, app_id=0, document=None, schema_out=None, user_session=None):
         """
 
         """
         pass
 
+    @j.baseclasses.actor_method
     def restore(self, app_id=0, document=None, schema_out=None, user_session=None):
         """
 
         """
         pass
 
+    @j.baseclasses.actor_method
     def get(self, app_id, name=None, schema_out=None, user_session=None):
         """
 
@@ -125,17 +131,21 @@ class document(j.baseclasses.threebot_actor):
         if docs:
             return docs[0]._json
 
+    @j.baseclasses.actor_method
     def mget(self, app_id=0, document_ids=[], schema_out=None, user_session=None):
         """
 
         """
         pass
 
+    @j.baseclasses.actor_method
     def get_children(self, app_id=0, document=None, schema_out=None, user_session=None):
         pass
 
+    @j.baseclasses.actor_method
     def watch(self, app_id, document, user, schema_out=None, user_session=None):
         pass
 
+    @j.baseclasses.actor_method
     def unwatch(self, app_id, document, user, schema_out=None, user_session=None):
         pass

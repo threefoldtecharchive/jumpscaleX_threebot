@@ -4,7 +4,7 @@ import binascii
 
 class ThreeFoldRegistry(j.baseclasses.threebot_factory):
 
-    __jslocation__ = "j.threebot.package.threefold.registry"
+    __jslocation__ = "j.threebot_factories.package.threefold.registry"
     bcdb = j.data.bcdb.get("threebot_registery")
 
     def client_get(self):
@@ -12,7 +12,7 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         j.threebot.package.threefold.registry.client_get()
         :return:
         """
-        self.client = j.servers.threebot.local_start_default(web=True)
+        self.client = j.servers.threebot.start()
 
         return self.client
 
@@ -32,7 +32,9 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         # . Start threebot server, add registery package, then reload the client.
         cl = self.client_get()
         cl.actors.package_manager.package_add(
-            path=j.core.tools.text_replace("{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/registry")
+            path=j.core.tools.text_replace(
+                "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/registry"
+            )
         )
         cl.reload()
         print(name)
@@ -65,7 +67,7 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
 
         # we should create 2 examples, one where we encrypt for multiple threebot identities (j.tools.threebot...)
         # non-encrypted example
-        scm1 = j.data.schema.get_from_url(url="threebot.registry.entry.data.1")
+        scm1 = j.data.schema.get_from_url(url="tfgrid.registry.entry.data.1")
         dataobj = self.bcdb.model_get(url=scm1.url).new()
         dataobj.authors = [first_author.tid]
         dataobj.schema_url = scm.url
@@ -89,14 +91,14 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         assert model == res
 
         # encrypted example
-        scm2 = j.data.schema.get_from_url(url="threebot.registry.entry.data.1")
+        scm2 = j.data.schema.get_from_url(url="tfgrid.registry.entry.data.1")
         dataobj2 = self.bcdb.model_get(url=scm2.url).new()
         dataobj2.authors = [first_author.tid]
         dataobj2.readers = [authorized_reader.tid]
         dataobj2.schema_url = scm.url
         dataobj2.format = dataobj2.format.WIKI
         dataobj2.description = "just a test"
-        encrypted_data_model = j.data.schema.get_from_url(url="threebot.registry.entry.data_encrypted.1").new()
+        encrypted_data_model = j.data.schema.get_from_url(url="tfgrid.registry.entry.data_encrypted.1").new()
         encrypted_data_model.tid = first_author.tid
         encrypted_data_model.data_ = model._data
         dataobj2.registered_info_encrypted = [encrypted_data_model]
@@ -125,4 +127,3 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         print(res.res)
 
         print("OK")
-

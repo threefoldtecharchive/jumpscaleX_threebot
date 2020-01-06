@@ -7,7 +7,7 @@ class CalenderActorsTests(BaseTest):
     @classmethod
     def setUpClass(cls):
         cls.info("start calendar server")
-        cl = j.servers.threebot.local_start_default(web=True)
+        cl = j.servers.threebot.start()
         cls.info("load calendar actors")
         path = j.core.tools.text_replace(
             "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/calendar"

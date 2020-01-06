@@ -2,11 +2,7 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-    @property
-    def bcdb(self):
-        return self.threebot_server.bcdb_get("users")
-
-    def prepare(self):
+    def setup_locations(self):
         """
         ports & paths used for threebotserver
         see: {DIR_BASE}/code/github/threefoldtech/jumpscaleX_core/docs/3Bot/web_environment.md
@@ -25,38 +21,50 @@ class Package(j.baseclasses.threebot_package):
         for port in (443, 80):
             website = self.openresty.get_from_port(port)
 
-            # start bottle server
-            app = j.servers.bottle_web.get_app()
-            self.rack_server.bottle_server_add(name="bottle_web_interface", port=9999, app=app, websocket=True)
-
             # PROXY for gedis HTTP
-            proxy_location = website.locations.get().locations_proxy.new()
-            proxy_location.name = "webinterface"
-            proxy_location.path_url = "/web/"
-            proxy_location.ipaddr_dest = "127.0.0.1"
-            proxy_location.port_dest = 9999
-            proxy_location.path_dest = "/"
-            proxy_location.type = "http"
-            proxy_location.scheme = "http"
+            locations = website.locations.get(name=f"webinterface_locations_{port}")
+
+            bottle_proxy_location = locations.locations_proxy.new()
+            bottle_proxy_location.name = "bottle_proxy"
+            bottle_proxy_location.path_url = "~* ^/(3git|gedis|bcdbfs|auth|wiki|info)"
+            bottle_proxy_location.ipaddr_dest = "127.0.0.1"
+            bottle_proxy_location.port_dest = 9999
+            bottle_proxy_location.path_dest = ""
+            bottle_proxy_location.type = "http"
+            bottle_proxy_location.scheme = "http"
+
+            chat_wiki_proxy_location = locations.locations_proxy.new()
+            chat_wiki_proxy_location.name = "chat_wiki_actors"
+            chat_wiki_proxy_location.path_url = "~* ^/(.*)/(.*)/(chat|wiki|actors|info)"
+            chat_wiki_proxy_location.ipaddr_dest = "127.0.0.1"
+            chat_wiki_proxy_location.port_dest = 9999
 
             url = "https://github.com/threefoldtech/jumpscaleX_weblibs"
             weblibs_path = j.clients.git.getContentPathFromURLorPath(url, pull=False)
-            weblibs_location = website.locations.get().locations_static.new()
+            weblibs_location = locations.locations_static.new()
             weblibs_location.name = "weblibs"
             weblibs_location.path_url = "/weblibs"
             weblibs_location.path_location = f"{weblibs_path}/static"
 
+            chat_static_location = locations.locations_static.new()
+            chat_static_location.name = "chat_static"
+            chat_static_location.path_url = "/staticchat"
+            chat_static_location.path_location = f"{self._dirpath}/static"
+
+            wiki_static_location = locations.locations_static.new()
+            wiki_static_location.name = "wiki_static"
+            wiki_static_location.path_url = "/staticwiki"
+            wiki_static_location.path_location = f"{self._dirpath}/static"
+
             website.configure()
 
     def start(self):
-        self.prepare()
-        self.gedis_server.actors_add(path=self.package_root + "/actors")
 
-    def stop(self):
-        pass
+        # add the main webapplication
 
-    def uninstall(self):
-        """
-        Remove Dependencies
-        """
-        j.builders.runtimes.python3.pip_package_uninstall("filetype")
+        self.setup_locations()
+
+        from threebot_packages.zerobot.webinterface.bottle.rooter import app_with_session
+
+        self.gevent_rack.bottle_server_add(name="bottle_web_interface", port=9999, app=app_with_session, websocket=True)
+        # self.gevent_rack.webapp_root = webapp

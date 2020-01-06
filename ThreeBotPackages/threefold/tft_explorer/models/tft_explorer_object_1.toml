@@ -1,4 +1,4 @@
-@url = tft.explorer.object.1
+@url = threefold.tft_explorer.tft.explorer.object.1
 object_type = 0 (I)
 object_version = 0 (I)
 object_hash** = "" (S)

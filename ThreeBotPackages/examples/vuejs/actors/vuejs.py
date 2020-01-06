@@ -6,14 +6,16 @@ class vuejs(j.baseclasses.threebot_actor):
         """
         specify the models you will need in the actor to get/save data into
         """
-        self.vuejs_model = j.data.bcdb.system.model_get(url="jumpscale.example.vuejs")
+        self.vuejs_model = self.bcdb.model_get(url="jumpscale.examples_vuejs.test")
 
+    @j.baseclasses.actor_method
     def ping(self, user_session=None):
         """
         example test actor method
         """
         return "pong"
 
+    @j.baseclasses.actor_method
     def add_person(self, name, job, aboutme, user_session=None):
         """
         data should be defined in schema in
@@ -29,6 +31,7 @@ class vuejs(j.baseclasses.threebot_actor):
         model.aboutme = aboutme
         model.save()
 
+    @j.baseclasses.actor_method
     def get_info(self, user_session=None):
         """
         example test method people data

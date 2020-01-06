@@ -17,12 +17,12 @@ class Package(j.baseclasses.threebot_package):
         server = self.openresty
         server.configure()
 
-        app = j.threebot.package.oauth2.get_app()
-        rack = j.servers.rack.get()
-        rack.bottle_server_add(name="oauth", port=8523, app=app)
+        from threebot_packages.zerobot.oauth2.bottle.Oauth2Bottle import app
+
+        j.threebot.servers.gevent_rack.bottle_server_add(name="oauth", port=8523, app=app)
         for port in (443, 80):
             website = server.get_from_port(port=port)
-            locations = website.locations.get("main_oauth2")
+            locations = website.locations.get(f"main_oauth2_{port}")
 
             proxy_location = locations.locations_proxy.new()
             proxy_location.name = "oauth"

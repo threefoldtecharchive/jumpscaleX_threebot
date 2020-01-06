@@ -5,36 +5,41 @@ class painter(j.baseclasses.threebot_actor):
     """
     """
 
+    @j.baseclasses.actor_method
     def echo(self, msg, schema_out=None, user_session=None):
         return msg
 
+    @j.baseclasses.actor_method
     def count(self, a, b, schema_out=None, user_session=None):
         return int(a) + int(b)
 
+    @j.baseclasses.actor_method
     def example1(self, addr, schema_out=None, user_session=None):
         """
         ```out
-        !jumpscale.test.ibiza.wallet
+        !jumpscale.ibiza.ibiza.wallet
         ```
         """
         w = schema_out.new()
         w.addr = addr
         return w
 
+    @j.baseclasses.actor_method
     def example2(self, wallet, schema_out=None, user_session=None):
         """
         ```in
-        wallet = (O) !jumpscale.test.ibiza.wallet
+        wallet = (O) !jumpscale.ibiza.ibiza.wallet
         ```
 
         ```out
-        !jumpscale.test.ibiza.wallet
+        !jumpscale.ibiza.ibiza.wallet
         ```
 
         """
         w = wallet
         return w
 
+    @j.baseclasses.actor_method
     def example3(self, a, b, c, schema_out=None, user_session=None):
         """
         ```in
@@ -55,14 +60,15 @@ class painter(j.baseclasses.threebot_actor):
         w.c = c
         return w
 
+    @j.baseclasses.actor_method
     def example4(self, wallet, schema_out=None, user_session=None):
         """
         ```in
-        wallet = (O) !jumpscale.test.ibiza.wallet
+        wallet = (O) !jumpscale.ibiza.ibiza.wallet
         ```
 
         ```out
-        result = (O) !jumpscale.test.ibiza.wallet
+        result = (O) !jumpscale.ibiza.ibiza.wallet
         custom = (S)
         ```
         """

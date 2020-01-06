@@ -3,9 +3,10 @@ from Jumpscale import j
 
 class provisioning(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        self.token = j.clients.digitalocean.provisioning.token_
+        self.token = j.clients.digitalocean.get("provisioning").token_
 
-    def threebot_create(self, name, user_session=None):
+    @j.baseclasses.actor_method
+    def threebot_create(self, name, schema_out=None, user_session=None):
         """
         ```in
         name = (S)
@@ -18,7 +19,8 @@ class provisioning(j.baseclasses.threebot_actor):
         machine = deployer.machines.get_available()
         machine.threebot_deploy()
 
-    def threebot_registration(self, name, doublename, email, description, user_session=None):
+    @j.baseclasses.actor_method
+    def threebot_registration(self, name, doublename, email, description, schema_out=None, user_session=None):
         """
         ```in
         name = (S)

@@ -1,0 +1,10 @@
+[source]
+name = "phonebook"
+description = "TBD"
+threebot = "tfgrid"
+version = "1.0.0"
+
+[[bcdbs]]
+namespace = "phonebook"
+type = "zdb"
+instance = "default"

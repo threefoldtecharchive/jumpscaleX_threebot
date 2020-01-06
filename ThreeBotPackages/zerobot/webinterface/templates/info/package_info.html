@@ -1,0 +1,64 @@
+{% extends "info/base.html" %} 
+{% block title %}Package Information{% endblock %}
+{% block content %}
+<!--Content-->
+<div class="d-flex flex-column align-items-center">
+    <!--Package-->
+    <div class="d-flex flex-column align-items-center">
+        <!--Package-title-->
+        <div>
+            <h2 class="text-center">Package Information</h2>
+        </div>
+
+        <!--Package Info-->
+        <div class="row d-flex flex-column mx-3 mx-md-0 align-items-center mt-2">
+            <div class="h5">{{package.name}}</div>
+            <div class="h5">{{package.status}}</div>
+            <div class="h5">{{package.source.description}}</div>
+            <div class="h5">V.{{package.source.version}}</div>
+        </div>
+    </div>
+    <!--package Details-->
+    <div>
+        <!--Package chats-->
+        <div class="row mt-5">
+            <div class="d-flex">
+                <div>
+                    <div class="card border-primary" style="border-radius:1.25rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{package.name}} Chats</h5>
+                            <div class="card-body d-flex flex-column align-items-center">
+                                {% if package.chat_names %} {% for item in package.chat_names %}
+                                <div> <a href="/{{package.source.threebot}}/{{package.source.name}}/chat" class="card-link">{{item}}</a></div>
+                                {% endfor %} {% else %}
+                                <div>There is no chats. {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Package Wikis-->
+        <div class="row mt-5">
+            <div class="d-flex">
+                <div>
+                    <div class="card border-primary" style="border-radius:1.25rem; !important">
+                        <div class="card-body">
+                            <h5 class="card-title">{{package.name}} Wikis</h5>
+                            <div class="card-body d-flex flex-column align-items-center">
+                                {% if package.wiki_names %} {% for item in package.wiki_names %}
+                                <div> <a href="/{{package.source.threebot}}/{{package.source.name}}/wiki" class="card-link">{{item}}</a> </div>
+                                {% endfor %}{% else %}
+                                <div>There is no wikis. {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

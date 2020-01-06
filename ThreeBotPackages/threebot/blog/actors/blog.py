@@ -3,8 +3,9 @@ from Jumpscale import j
 
 class blog(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        self.blog_model = j.data.bcdb.system.model_get(url="jumpscale.blog")
+        self.blog_model = self.package.bcdb.model_get(url="threebot.blog.blog")
 
+    @j.baseclasses.actor_method
     def get_blogs(self, user_session=None):
         blogs = []
         for blog in self.blog_model.find():
@@ -19,6 +20,7 @@ class blog(j.baseclasses.threebot_actor):
                 blogs.append(blog.name)
         return blogs
 
+    @j.baseclasses.actor_method
     def get_metadata(self, blog_name, user_session=None):
         """
         ```in
@@ -33,6 +35,7 @@ class blog(j.baseclasses.threebot_actor):
             return j.data.serializers.json.dumps(found_blog.metadata._ddict)
         return {}
 
+    @j.baseclasses.actor_method
     def get_posts(self, blog_name, page=0, user_session=None):
         """
         ```in
@@ -47,6 +50,7 @@ class blog(j.baseclasses.threebot_actor):
             res = [p._ddict for p in found_blog.posts]
             return j.data.serializers.json.dumps(res)
 
+    @j.baseclasses.actor_method
     def get_pages(self, blog_name, page=0, user_session=None):
         """
         ```in
@@ -83,6 +87,7 @@ class blog(j.baseclasses.threebot_actor):
         if found_blog:
             return found_blog.pages
 
+    @j.baseclasses.actor_method
     def get_post_by_slug(self, blog_name, slug, user_session=None):
         """
         ```in
@@ -98,6 +103,7 @@ class blog(j.baseclasses.threebot_actor):
             else:
                 return {}
 
+    @j.baseclasses.actor_method
     def get_posts_by_tag(self, blog_name, tag, page=0, user_session=None):
         """
         ```in
@@ -114,6 +120,7 @@ class blog(j.baseclasses.threebot_actor):
                 posts.append(post._ddict)
         return j.data.serializers.json.dumps(posts)
 
+    @j.baseclasses.actor_method
     def get_tags(self, blog_name, user_session=None):
         """
         ```in
@@ -131,6 +138,7 @@ class blog(j.baseclasses.threebot_actor):
         tags = list(tags)
         return j.data.serializers.json.dumps(tags)
 
+    @j.baseclasses.actor_method
     def search(self, blog_name, query, user_session=None):
         """
         ```in

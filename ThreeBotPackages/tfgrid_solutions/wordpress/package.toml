@@ -1,0 +1,11 @@
+[source]
+name = "wordpress"
+description = "A content managemet system (CMS)"
+threebot = "tfgrid"
+version = "1.0.0"
+
+
+[[bcdbs]]
+namespace = "tfgrid_solutions"
+type = "zdb"
+instance = "default"

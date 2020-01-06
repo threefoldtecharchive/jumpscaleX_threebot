@@ -1,72 +1,131 @@
 # Docsites:
 
-Docsites are a collection of markdown documents, images and data files that can be generated using jumpscale `markdowndocs` tool.
+Docsites are a collection of markdown documents, images and data files that can be generated using jumpscale `3git` tool.
 
 The tool pre-process the given markdown directory (it adds some extension to markdown like custom link format and macros), also, it verifies and follows all the links and download it if needed, so you end up having a static directory that can be served directly.
 
-The output is written to bcdb filesystem under `/docsites`, it's also indexed in `sonic` server, so search is available by default.
+Content:
+* [Loading wikis](#loading-wikis)
+* [Creating and adding a new package](#creating-and-adding-a-new-package)
+* [Reloading the wiki of any package](#reloading-the-wiki-of-any-package)
+* [Markdown extensions](#markdown-extensions)
+* [Writing your own macro](#writing-you-own-macro)
+* [Setting up gdrive and service account](#setting-up-gdrive-and-service-account)
 
-### Markdown extensions:
+## Loading wikis
+
+Loading wiki is now done by default in any threebot package, you just need to create a new package and add your content inside `wiki` directory of this package. When this package is added to threebot server via `package_manager` for example, it will load the content and process it automatically using `3git` tool.
+
+
+First make sure you have a threebot server running using:
+
+```
+3BOTDEVEL:3bot:~: kosmos -p 'j.servers.threebot.start()'
+```
+
+## Creating and adding a new package
+
+You can create a new package with the default directory structure using:
+
+```
+3BOTDEVEL:3bot:~: jsx package-new --name test --dest .
+```
+
+This will result in the following tree:
+
+```
+3BOTDEVEL:3bot:~: tree test
+test
+├── actors
+│   └── test.py
+├── chatflows
+│   └── test.py
+├── models
+├── package.py
+├── package.toml
+├── TestFactory.py
+└── wiki
+
+4 directories, 5 files
+```
+
+Before adding content, make sure this package directory is a git repository with at least a single commit, because `3git` tool keep track of the changes using `git` and only process changed files every time, you simply do:
+
+```
+3BOTDEVEL:3bot:test: git init .
+Initialized empty Git repository in /root/test/.git/
+3BOTDEVEL:3bot:test: git add .
+3BOTDEVEL:3bot:test: git commit -m "init"
+```
+
+Then, adding for example `_sidebar.md`, `README.md` and `test.md` documents with any content:
+
+```
+3BOTDEVEL:3bot:~: tree test/wiki/
+test/wiki/
+├── README.md
+├── _sidebar.md
+└── test.md
+
+0 directories, 3 files
+```
+
+After filling `wiki` directory with content, you can add the package now via threebot package manager:
+
+```
+3BOTDEVEL:3bot:~: kosmos -p
+JSX> cl = j.clients.gedis.get("pm", port=8901, package_name="zerobot.packagemanager")
+LOAD CONFIG BCDB
+JSX> cl.actors.package_manager.package_add(path="/root/test")
+b'OK'
+```
+
+Now to navigate to the wiki in the browser, need to know the package name and parent threebot name (they can be specified inside `package.toml`)
+
+```
+3BOTDEVEL:3bot:~: cat test/package.toml
+
+[source]
+name = "test"
+description = "mypackage"
+threebot = "mybot"
+version = "1.0.0"
+
+
+[[bcdbs]]
+namespace = "mybot"
+type = "zdb"
+instance = "default"
+```
+
+Opening the browser to `http://<threebot or container address>/mybot/test/wiki` and you will find loaded wikis (may take some time to load).
+
+![screenshot.png](images/wikis_home.png)
+
+Inside the wiki:
+
+![screenshot.png](images/wiki_sample.png)
+
+
+## Reloading the wiki of any package
+
+To reload a wiki of a specific package, you just need to get an instance from this package (make sure it was added before).
+
+```
+JSX> p = j.tools.threebot_packages.get("mybot.test")
+LOAD CONFIG BCDB
+JSX> p.load_wiki(reset=True)
+** START DATA PROCESSOR FOR :myjobs
+```
+
+## Markdown extensions:
 
 * [Custom link format](../links.md)
 * [Macros](../macros/)
 * [Inline HTML](../html.md)
 
-## Loading wikis
-
-First make sure you have a threebot server running ` kosmos -p 'j.servers.threebot.local_start_default()'`
-
-then load your wikis in one of two ways using `jsx wiki_load` or the markdowndocs tool
-
-
-### jsx wiki_load
-
-the following command can be used to load a wiki using its url
-
-```
-jsx wiki-load -u https://github.com/threefoldtech/jumpscaleX_threebot/tree/development/docs/wikis/examples/docs -n examples -f
-```
-
-- `-u` or `--url` : docsite url
-- `-n` or `--name`: wiki name to be used in the url `/wiki/wiki_name`
-- `-f` to load in foreground if not it'll use myjobs in the background
-
-
-Opening the browser to `/wiki` and you will find loaded wikis (may take some time to load).
-
-![screenshot.png](images/wikis_home.png)
-
-
-### Markdowndocs loader
-
-Given a markdown documents directory (a link to repository), the tool will pull, pre-process and generate the docsite.
-You can find some markdown docs examples [here](../examples).
-
-Usage example:
-
-```python
-url = "https://github.com/threefoldtech/jumpscaleX_threebot/tree/development/docs/wikis/examples/docs"
-docsite = j.tools.markdowndocs.load(url, name="test_example")
-docsite.write()
-```
-
-This will pull the repo at the branch specified, then generate a docsite at `/docsites/test_example` in bcdb file system.
-
-Jumpscale job queue can be used too to load docsites in background, see [threefold wikis](https://github.com/threefoldtech/jumpscaleX_threebot/tree/development/ThreeBotPackages/threefold/threefold_wikis) package.
-
-> Note: the wiki package will be loaded by default.
-
-
-Then open your browser with 3bot/container hostname at `https:<hostname>/wiki/<your_docsite_name>`.
-
-## Reload wiki
-
-First make sure you have a threebot server running ` kosmos -p 'j.servers.threebot.local_start_default()'`
-
-using `jsx wiki-reload -n "your-wiki-name"` ex. foundation, testwikis .. this will look for the changes in the repo locally, if not will pull it from github and update the changes.
-
-
-
+## Writing you own macro
+[Macros](../macro) can extend markdown, we have different types of macros to do many operations, also, you can write your own macro as [described here](macro.md).
 
 ## Setting up gdrive and service account
 
@@ -74,6 +133,3 @@ Gdrive extension and `gslide/slideshow` macros require google service account cr
 
 * [Service account](service_account.md)
 * [GDrive](gdrive.md) serve your google documents, sheets and slides directly from wikis.
-
-## Writing you own macro
-[Macros](../macro) can extend markdown, we have different types of macros to do many operations, also, you can write your own macro as [described here](macro.md).

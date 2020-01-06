@@ -46,12 +46,12 @@ class App(object):
         # }
         self.TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJsb2NhbGUiOiJlbiIsInZpZXdNb2RlIjoibW9zYWljIiwicGVybSI6eyJhZG1pbiI6dHJ1ZSwiZXhlY3V0ZSI6dHJ1ZSwiY3JlYXRlIjp0cnVlLCJyZW5hbWUiOnRydWUsIm1vZGlmeSI6dHJ1ZSwiZGVsZXRlIjp0cnVlLCJzaGFyZSI6ZmFsc2UsImRvd25sb2FkIjp0cnVlfSwiY29tbWFuZHMiOltdLCJsb2NrUGFzc3dvcmQiOmZhbHNlfSwiZXhwIjoxNTY2OTEyNzc2MzMsImlhdCI6MTU2NjkwNTU3NiwiaXNzIjoiRmlsZSBCcm93c2VyIn0.GaBiL_MeqDev0695MRqE3RhmGatouIT4BtlvpTI4P1A"
 
-        @self.app.route("/api/login", method="post")
+        @self.app.route("/fileserver/api/login", method="post")
         def login():
             response.set_header("Content-Type", "cty")
             return self.TOKEN
 
-        @self.app.route("/api/renew", method="post")
+        @self.app.route("/fileserver/api/renew", method="post")
         def renew():
             response.set_header("X-Renew-Token", "true")
             response.set_header("Content-Type", "cty")
@@ -61,7 +61,7 @@ class App(object):
         def static(path):
             return static_file(path, root="%s/static" % self.root)
 
-        @self.app.route("/api/resources/<dir:path>/", method="post")
+        @self.app.route("/fileserver/api/resources/<dir:path>/", method="post")
         def create_dir(dir):
             dir = j.sal.fs.joinPaths("/", dir).rstrip("/")
             override = request.GET.get("override") == "true"
@@ -79,7 +79,7 @@ class App(object):
             response.set_header("Content-Type", "text/plain; charset=utf-8")
             return "200 OK"
 
-        @self.app.route("/api/resources/<dir:path>/", method="delete")
+        @self.app.route("/fileserver/api/resources/<dir:path>/", method="delete")
         def delete_dir(dir):
             dir = j.sal.fs.joinPaths("/", dir).rstrip("/")
             if j.sal.bcdbfs.dir_exists(dir):
@@ -95,7 +95,7 @@ class App(object):
             response.set_header("Content-Type", "text/plain; charset=utf-8")
             return "409 Conflict"
 
-        @self.app.route("/api/resources/<path:re:.*>", method="post")
+        @self.app.route("/fileserver/api/resources/<path:re:.*>", method="post")
         def upload_file(path):
             file = j.sal.fs.joinPaths("/", path)
             override = request.GET.get("override") == "true"
@@ -143,7 +143,90 @@ class App(object):
             response.set_header("Content-Type", "text/plain; charset=utf-8")
             return "200 OK"
 
-        @self.app.route("/api/resources/<path:re:.*>", method="put")
+        @self.app.route("/fileserver/api/threetransfer/<path:re:.*>", method="post")
+        def upload_threetransfer(path):
+            file = j.sal.fs.joinPaths("/", path)
+
+            def create(file):
+                content_type = "text/plain"
+                if request.body.seek(0, 2) == 0:
+                    self.db.file_create_empty(file)
+                else:
+                    request.body.seek(0)
+                    buff = request.body.read(1024)
+                    request.body.seek(0)
+                    mtype = filetype.guess(buff)
+
+                    if mtype:
+                        content_type = mtype.mime
+                    else:
+                        x = mimetypes.MimeTypes()
+                        types = {}
+                        for l in x.types_map:
+                            types.update(l)
+                        ct = types.get("." + j.sal.fs.getFileExtension(file))
+                        if ct:
+                            content_type = ct
+                    filename = "{}".format(file)
+                    self.db.file_write(filename, request.body, append=True, create=True)
+
+                obj = self.db._file_model.get_by_name(name=filename)
+                obj.content_type = content_type
+                obj.epoch = int(time.time())
+                obj.save()
+
+            #if exists do nothing
+
+            create(file)
+
+            
+            response.set_header("X-Content-Type-Options", "nosniff")
+            response.set_header("X-Renew-Token", "true")
+            response.set_header("Etag", "15bed3cb4c34f4360")
+            response.set_header("Content-Type", "text/plain; charset=utf-8")
+            return "200 OK"
+
+        @self.app.route("/fileserver/api/threetransferdownload/<identifier:re:.*>")
+        def threetransfer_download(identifier):
+            """
+            single file or single dir
+            """
+            bcdb = j.data.bcdb.get("threetransfer")
+            shortlink_model = bcdb.model_get(url="threetransfer.shortlink.1")
+
+            files = shortlink_model.find(identifier=identifier)
+
+            file = ""
+            if files:
+                file = files[0].url
+            else:
+                raise j.exception.Value("The identifier %s does not exist" % identifier)
+            path = j.sal.fs.joinPaths("/", file)
+            # download single file
+            inline = request.GET.get("inline") == "true"
+            obj = self.db._file_model.get_by_name(name=path)
+
+            response.set_header("X-Renew-Token", "true")
+
+            filename = obj.name
+            if filename[0] == "/":
+                filename = filename[1:]
+            response.set_header("filename", filename) 
+
+            response.set_header("Content-Type", "application/octet-stream")
+            
+
+            filetype = obj.content_type
+            response.set_header("Content-Type", filetype)
+            if inline:
+                response.set_header("Content-Disposition", "inline")
+                response.set_header("Accept-Ranges", "bytes")
+            else:
+                #response.set_header("Content-Disposition", "attachment; filename=utf-8" "%s" % j.sal.fs.getBaseName(file))
+                response.set_header("Content-Disposition", 'attachment; filename="myfile.txt"')
+            return self.db.file_read(path)
+
+        @self.app.route("/fileserver/api/resources/<path:re:.*>", method="put")
         def create_file(path):
             def create(file):
                 buff = request.body.read(1024)
@@ -191,7 +274,7 @@ class App(object):
             response.set_header("Content-Type", "text/plain; charset=utf-8")
             return "200 OK"
 
-        @self.app.route("/api/resources/<path:re:.*>", method="delete")
+        @self.app.route("/fileserver/api/resources/<path:re:.*>", method="delete")
         def delete_file(path):
             file = j.sal.fs.joinPaths("/", path)
 
@@ -209,7 +292,7 @@ class App(object):
             response.set_header("Content-Type", "text/plain; charset=utf-8")
             return "409 Conflict"
 
-        @self.app.route("/api/resources/<dir:path>/", method="patch")
+        @self.app.route("/fileserver/api/resources/<dir:path>/", method="patch")
         def dir_copy_rename_move(dir):
             src = j.sal.fs.joinPaths("/", dir)
             action = request.GET.get("action")
@@ -232,7 +315,7 @@ class App(object):
             response.set_header("X-Renew-Token", "true")
             return "200 OK"
 
-        @self.app.route("/api/resources/<path:re:.*>", method="patch")
+        @self.app.route("/fileserver/api/resources/<path:re:.*>", method="patch")
         def file_copy_rename_move(path):
             file = j.sal.fs.joinPaths("/", path)
             action = request.GET.get("action")
@@ -255,7 +338,7 @@ class App(object):
             response.set_header("X-Renew-Token", "true")
             return "200 OK"
 
-        @self.app.route("/api/resources/<path:re:.*>", method="get", name="list")
+        @self.app.route("/fileserver/api/resources/<path:re:.*>", method="get", name="list")
         def resources(path=""):
             def get_type(content_type):
                 if "text" in content_type:
@@ -359,7 +442,7 @@ class App(object):
                 }
             )
 
-        @self.app.route("/api/users")
+        @self.app.route("/fileserver/api/users")
         def users():
             return json.dumps(
                 [
@@ -388,7 +471,7 @@ class App(object):
                 ]
             )
 
-        @self.app.route("/api/raw/<file:path>")
+        @self.app.route("/fileserver/api/raw/<file:path>")
         def download_single(file):
             """
             single file or single dir
@@ -414,7 +497,7 @@ class App(object):
                 )
             return self.db.file_read(path)
 
-        @self.app.route("/api/raw/", name="download_many")
+        @self.app.route("/fileserver/api/raw/", name="download_many")
         def download_many(files=None):
             """
             full directory (recursive) or many files

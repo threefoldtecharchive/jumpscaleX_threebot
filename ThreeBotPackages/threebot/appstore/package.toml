@@ -1,0 +1,10 @@
+[source]
+name = "appstore"
+description = "TBD"
+threebot = "threebot"
+version = "1.0.0"
+
+[[bcdbs]]
+namespace = "threebot"
+type = "zdb"
+instance = "default"

@@ -1,19 +1,19 @@
 import uuid
 import datetime
 from Jumpscale import j
-import vobject
 
 
 class addressbook(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.base_url = "http://{}:{}@127.0.0.1:8851"
         self.client = None
-        bcdb = j.data.bcdb.get("caldav")
-        self.book_model = bcdb.model_get(url="tf.caldav.addressbook.1")
-        self.contact_model = bcdb.model_get(url="tf.caldav.contact.1")
-        self.addressbook_model = bcdb.model_get(url="tf.caldav.addressbook.1")
+        self.book_model = self.bcdb.model_get(url="threebot.calendar.addressbook.1")
+        self.contact_model = self.bcdb.model_get(url="threebot.calendar.contact.1")
+        self.addressbook_model = self.bcdb.model_get(url="threebot.calendar.addressbook.1")
 
     def _get_vcard_from_contact(self, contact):
+        import vobject
+
         vcard = vobject.vCard()
 
         uid_ = str(uuid.uuid4())
@@ -143,6 +143,7 @@ class addressbook(j.baseclasses.threebot_actor):
 
         return vcard
 
+    @j.baseclasses.actor_method
     def login(self, username, password, user_session=None):
         """
         ```in
@@ -160,13 +161,14 @@ class addressbook(j.baseclasses.threebot_actor):
         if not self.client:
             raise j.exceptions.Runtime("Use login method to enable the actor")
 
+    @j.baseclasses.actor_method
     def add(self, addressbook, schema_out=None, user_session=None):
         """
         ```in
-        addressbook = (O) !tf.caldav.addressbook.1
+        addressbook = (O) !threebot.calendar.addressbook.1
         ```
         ```out
-        addressbook = (O) !tf.caldav.addressbook.1
+        addressbook = (O) !threebot.calendar.addressbook.1
         ```
         """
         self._verify_client()
@@ -187,13 +189,14 @@ class addressbook(j.baseclasses.threebot_actor):
         output.addressbook = a
         return output
 
+    @j.baseclasses.actor_method
     def get(self, addressbook_id, schema_out=None, user_session=None):
         """
         ```in
         addressbook_id = (S)
         ```
         ```out
-        calendar = !tf.caldav.addressbook.1
+        calendar = !threebot.calendar.addressbook.1
         ```
         """
         self._verify_client()
@@ -202,6 +205,7 @@ class addressbook(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound(f"Couldn't find addressbook with id: {addressbook_id}")
         return addressbooks[0]
 
+    @j.baseclasses.actor_method
     def delete(self, addressbook_id, user_session=None):
         """
         ```in
@@ -216,7 +220,7 @@ class addressbook(j.baseclasses.threebot_actor):
     def list(self, schema_out=None, user_session=None):
         """
         ```out
-        addressbooks = (LO) !tf.caldav.addressbook.1
+        addressbooks = (LO) !threebot.calendar.addressbook.1
         ```
         """
         self._verify_client()
@@ -224,13 +228,14 @@ class addressbook(j.baseclasses.threebot_actor):
         output.addressbooks = self.book_model.find()
         return output
 
+    @j.baseclasses.actor_method
     def add_contact(self, contact, schema_out=None, user_session=None):
         """
         ```in
-        contact = (O) !tf.caldav.contact.1
+        contact = (O) !threebot.calendar.contact.1
         ```
         ```out
-        contact = (O) !tf.caldav.contact.1
+        contact = (O) !threebot.calendar.contact.1
         ```
         """
         self._verify_client()
@@ -243,13 +248,14 @@ class addressbook(j.baseclasses.threebot_actor):
 
         return self.contact_model.find(item_id=item_id)[0]
 
+    @j.baseclasses.actor_method
     def get_contact(self, contact_id, schema_out=None, user_session=None):
         """
         ```in
         contact_id = (S)
         ```
         ```out
-        contact = (O) !tf.caldav.contact.1
+        contact = (O) !threebot.calendar.contact.1
         ```
         """
         self._verify_client()
@@ -258,6 +264,7 @@ class addressbook(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound(f"Couldn't find contact with id: {contact_id}")
         return contacts[0]
 
+    @j.baseclasses.actor_method
     def delete_contact(self, contact_id, user_session=None):
         """
         ```in
@@ -271,13 +278,14 @@ class addressbook(j.baseclasses.threebot_actor):
         contact = contacts[0]
         self.client.delete_vcard(f"/{self.user}/{contact.addressbook_id}/{contact.item_id}", None)
 
+    @j.baseclasses.actor_method
     def list_contacts(self, contact, schema_out=None, user_session=None):
         """
         ```in
-        contact = (O) !tf.caldav.contact.1
+        contact = (O) !threebot.calendar.contact.1
         ```
         ```out
-        contacts = (LO) !tf.caldav.contact.1
+        contacts = (LO) !threebot.calendar.contact.1
         ```
         """
         output = schema_out.new()
@@ -386,13 +394,14 @@ class addressbook(j.baseclasses.threebot_actor):
         output.contacts = result
         return output
 
+    @j.baseclasses.actor_method
     def update_contact(self, contact, schema_out=None, user_session=None):
         """
         ```in
-        contact = (O) !tf.caldav.contact.1
+        contact = (O) !threebot.calendar.contact.1
         ```
         ```out
-        contact = (O) !tf.caldav.contact.1
+        contact = (O) !threebot.calendar.contact.1
         ```
         """
         contacts = self.contact_model.find(contact_id=contact.contact_id)

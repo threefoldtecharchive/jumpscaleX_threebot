@@ -1,4 +1,4 @@
-@url = tft.explorer.wallet.balance.1
+@url = threefold.tft_explorer.tft.explorer.wallet.balance.1
 object_id** = 0 (I)
 coins_unlocked** = 0 (N)
 coins_locked** = 0 (N)

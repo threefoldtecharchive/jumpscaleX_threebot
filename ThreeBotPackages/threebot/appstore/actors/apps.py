@@ -1,20 +1,9 @@
 from Jumpscale import j
 
-# SCHEMA = """
-# @url = appstore.app.1
-# appname** = (S)
-# installed = (B)
-# description = (S)
-# image = (S)
-# """
-
 
 class apps(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        bcdb = j.data.bcdb.get("appstore")
-        # bcdb = j.threebot.bcdb.appstore
-        self.model = bcdb.model_get(url="appstore.app.1")
-        # self.model = bcdb.model_get(schema=SCHEMA)
+        self.model = self.bcdb.model_get(url="threebot.appstore.app.1")
 
     def _validate_app(self, app):
         for field in ["appname", "description", "image"]:
@@ -27,6 +16,7 @@ class apps(j.baseclasses.threebot_actor):
         except j.exceptions.NotFound:
             raise j.exceptions.NotFound("App %s not found" % app_id)
 
+    @j.baseclasses.actor_method
     def new(self, schema_out=None, user_session=None):
         app = self.model.new()
         return app
@@ -35,7 +25,7 @@ class apps(j.baseclasses.threebot_actor):
     def put(self, app, schema_out=None, user_session=None):
         """
         ```in
-        app = (O) !appstore.app.1
+        app = (O) !threebot.appstore.app.1
         ```
         """
 
@@ -51,8 +41,8 @@ class apps(j.baseclasses.threebot_actor):
     @j.baseclasses.actor_method
     def get(self, schema_out=None, user_session=None):
         """
-        ```out 
-        apps = (LO) !appstore.app.1
+        ```out
+        apps = (LO) !threebot.appstore.app.1
         ```
         """
         out = schema_out.new()
@@ -60,12 +50,3 @@ class apps(j.baseclasses.threebot_actor):
         for app in self.model.iterate():
             out.apps.append(app)
         return out
-
-
-# a = apps()
-# print(a.get())
-# app = a.new()
-# app.appname = "sss"
-# app.description = "ss"
-# app.image = "ssssssss"
-# a.put(app=app)

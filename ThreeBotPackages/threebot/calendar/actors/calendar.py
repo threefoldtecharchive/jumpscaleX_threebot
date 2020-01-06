@@ -1,7 +1,9 @@
 import uuid
 import time
-import caldav
-import vobject
+
+# FIXME:  these packages need to be added to installation first
+# import caldav
+# import vobject
 import datetime
 from Jumpscale import j
 
@@ -11,8 +13,8 @@ class calendar(j.baseclasses.threebot_actor):
         self.base_url = "http://{}:{}@127.0.0.1:8851"
         self.client = None
         bcdb = j.data.bcdb.get("caldav")
-        self.calendar_model = bcdb.model_get(url="tf.caldav.calendar.1")
-        self.event_model = bcdb.model_get(url="tf.caldav.event.1")
+        self.calendar_model = bcdb.model_get(url="threebot.calendar.calendar.1")
+        self.event_model = bcdb.model_get(url="threebot.calendar.event.1")
 
     def _verfiy_time(self, dtstart, dtend, user_session=None):
         if not (dtstart and dtend):
@@ -20,6 +22,7 @@ class calendar(j.baseclasses.threebot_actor):
         if dtstart > dtend:
             raise j.exceptions.Input("dtstart needs to be before dtend")
 
+    @j.baseclasses.actor_method
     def login(self, username, password, user_session=None):
         """
         ```in
@@ -42,13 +45,14 @@ class calendar(j.baseclasses.threebot_actor):
         if raise_error:
             raise j.exceptions.NotFound(f"Couldn't find calendar with id: {cal_id}")
 
+    @j.baseclasses.actor_method
     def add(self, calendar, schema_out=None, user_session=None):
         """
         ```in
-        calendar = (O) !tf.caldav.calendar.1
+        calendar = (O) !threebot.calendar.calendar.1
         ```
         ```out
-        calendar = (O) !tf.caldav.calendar.1
+        calendar = (O) !threebot.calendar.calendar.1
         ```
         """
         self._verify_client()
@@ -67,13 +71,14 @@ class calendar(j.baseclasses.threebot_actor):
         output.calendar = c
         return output
 
+    @j.baseclasses.actor_method
     def get(self, calendar_id, schema_out=None, user_session=None):
         """
         ```in
         calendar_id = (S)
         ```
         ```out
-        calendar = !tf.caldav.calendar.1
+        calendar = !threebot.calendar.calendar.1
         ```
         """
         self._verify_client()
@@ -82,6 +87,7 @@ class calendar(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound(f"Couldn't find calendar with id: {calendar_id}")
         return calendars[0]
 
+    @j.baseclasses.actor_method
     def delete(self, calendar_id, user_session=None):
         """
         ```in
@@ -93,10 +99,11 @@ class calendar(j.baseclasses.threebot_actor):
         if calendar:
             calendar.delete()
 
+    @j.baseclasses.actor_method
     def list(self, schema_out=None, user_session=None):
         """
         ```out
-        calendars = (LO) !tf.caldav.calendar.1
+        calendars = (LO) !threebot.calendar.calendar.1
         ```
         """
         self._verify_client()
@@ -104,13 +111,14 @@ class calendar(j.baseclasses.threebot_actor):
         output.calendars = self.calendar_model.find()
         return output
 
+    @j.baseclasses.actor_method
     def add_event(self, event, schema_out=None, user_session=None):
         """
         ```in
-        event = (O) !tf.caldav.event.1
+        event = (O) !threebot.calendar.event.1
         ```
         ```out
-        event = (O) !tf.caldav.event.1
+        event = (O) !threebot.calendar.event.1
         ```
         This actor method is used to add event (only used to add invitation)
         """
@@ -135,13 +143,14 @@ class calendar(j.baseclasses.threebot_actor):
         calendar.add_event(cal_object.serialize())
         return self.event_model.find(item_id=f"{event.item_id}.ics")[0]
 
+    @j.baseclasses.actor_method
     def get_event(self, event_id, schema_out=None, user_session=None):
         """
         ```in
         event_id = (S)
         ```
         ```out
-        events = (O) !tf.caldav.event.1
+        events = (O) !threebot.calendar.event.1
         ```
         """
         events = self.event_model.find(item_id=event_id)
@@ -149,13 +158,14 @@ class calendar(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound(f"Couldn't find event with id: {event_id}")
         return events[0]
 
+    @j.baseclasses.actor_method
     def list_events(self, event, schema_out=None, user_session=None):
         """
         ```in
-        event = (O) !tf.caldav.event.1
+        event = (O) !threebot.calendar.event.1
         ```
         ```out
-        events = (LO) !tf.caldav.event.1
+        events = (LO) !threebot.calendar.event.1
         ```
         """
         output = schema_out.new()
@@ -189,6 +199,7 @@ class calendar(j.baseclasses.threebot_actor):
         output.events = result
         return output
 
+    @j.baseclasses.actor_method
     def delete_event(self, calendar_id, event_id, user_session=None):
         """
         ```in
@@ -204,13 +215,14 @@ class calendar(j.baseclasses.threebot_actor):
         except caldav.error.NotFoundError:
             pass
 
+    @j.baseclasses.actor_method
     def edit_event(self, event, schema_out=None, user_session=None):
         """
         ```in
-        event = (O) !tf.caldav.event.1
+        event = (O) !threebot.calendar.event.1
         ```
         ```out
-        event = (O) !tf.caldav.event.1
+        event = (O) !threebot.calendar.event.1
         ```
         """
         self._verify_client()

@@ -4,13 +4,14 @@ from Jumpscale import j
 class users(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
         bcdb = j.data.bcdb.get("users")
-        self.user_model = bcdb.model_get(url="user.1")
+        self.user_model = bcdb.model_get(url="threebot.initialize.user.1")
 
     def _validate_user(self, user):
         for field in ["bot_name", "public_key", "location"]:
             if not getattr(user, field):
                 raise j.exceptions.Value("%s is required" % field)
 
+    @j.baseclasses.actor_method
     def list(self, bot_name, public_key, referrer, schema_out=None, user_session=None):
         """
         ```in
@@ -20,7 +21,7 @@ class users(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        users = (LO) !user.1
+        users = (LO) !threebot.initialize.user.1
         ```
         """
 
@@ -35,14 +36,15 @@ class users(j.baseclasses.threebot_actor):
             out.users.append(user)
         return out
 
+    @j.baseclasses.actor_method
     def add(self, user, schema_out=None, user_session=None):
         """
         ```in
-        user = (O) !user.1  
+        user = (O) !threebot.initialize.user.1
         ```
 
         ```out
-        user  = (O) !user.1
+        user  = (O) !threebot.initialize.user.1
         ```
         """
 

@@ -6,7 +6,7 @@ This macro is used to generate [inline html](../html.md) by fetching/rendering t
 ### Syntax:
 
 ```
-!!!dynamic_content("actor", "method", arg1=...)
+!!!dynamic_content("threebot.package", "actor", "method", arg1=...)
 ```
 
 or using toml (inside a code block)
@@ -14,6 +14,7 @@ or using toml (inside a code block)
 ````
 ```
 !!!dynamic_content
+package = "threebot.package_name"
 actor = "actor"
 method = "method"
 arg1 = ...
@@ -73,9 +74,10 @@ We can call hello every time the page/document gets loaded as follows:
 ````
 ```
 !!!dynamic_content
+pacakge = "zerobot.wiki_examples"
 actor = "html_test"
 method = "hello"
-name = "John doe"
+name_ = "John doe"
 ```
 ````
 
@@ -91,9 +93,10 @@ To render returned content as **markdown**, use `markdown` option:
 ````
 ```
 !!!dynamic_content
+pacakge = "zerobot.wiki_examples"
 actor = "html_test"
 method = "hello_markdown"
-name = "John doe"
+name_ = "John doe"
 markdown = True
 ```
 ````

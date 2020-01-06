@@ -3,9 +3,9 @@ from Jumpscale import j
 
 class application(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        self.bcdb = j.data.bcdb.get("fruum")
         self.model = self.bcdb.model_get(url="jumpscale.fruum.application")
 
+    @j.baseclasses.actor_method
     def auth(self, app_name, username, password, schema_out=None, user_session=None):
         """
         ```in
@@ -53,34 +53,40 @@ class application(j.baseclasses.threebot_actor):
                 }
             )
 
+    @j.baseclasses.actor_method
     def add(self, app_name, schema_out=None, user_session=None):
         app = self.model.new()
         app.name = app_name
         app.save()
 
+    @j.baseclasses.actor_method
     def update(self, application, schema_out=None, user_session=None):
         """
 
         """
         pass
 
+    @j.baseclasses.actor_method
     def get(self, app_id=0, schema_out=None, user_session=None):
         """
 
         """
         pass
 
+    @j.baseclasses.actor_method
     def delete(self, application=None, schema_out=None, user_session=None):
         """
 
         """
         pass
 
+    @j.baseclasses.actor_method
     def reset_users(self, application=None, schema_out=None, user_session=None):
         """
 
         """
         pass
 
+    @j.baseclasses.actor_method
     def list(self, schema_out=None, user_session=None):
         pass

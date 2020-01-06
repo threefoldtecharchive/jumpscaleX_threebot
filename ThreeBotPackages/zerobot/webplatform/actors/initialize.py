@@ -10,17 +10,20 @@ TESTNET_DOMAIN = "testnet.grid.tf"
 THREEBOT_DOMAIN = f"3bot.{TESTNET_DOMAIN}"
 EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
 
+# TODO: what is the purpose of this actor, where used?
+
 
 class initialize(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        bcdb = j.data.bcdb.get("users")
-        self.user_model = bcdb.model_get(url="user.1")
+        self.package = j.threebot.packages.zerobot.webplatform
+        self.user_model = self.package.bcdb_model_get(url="zerobot.webplatform.user.1")
 
     def _validate_user(self, user):
         for field in ["bot_name", "public_key", "location"]:
             if not getattr(user, field):
                 raise j.exceptions.Value("%s is required" % field)
 
+    @j.baseclasses.actor_method
     def get(self, bot_name, public_key, referrer, schema_out=None, user_session=None):
         """
         ```in
@@ -30,7 +33,7 @@ class initialize(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        users = (LO) !user.1
+        users = (LO) !zerobot.webplatform.user.1
         ```
         """
 
@@ -45,6 +48,7 @@ class initialize(j.baseclasses.threebot_actor):
             out.users.append(user)
         return out
 
+    @j.baseclasses.actor_method
     def name(self, schema_out=None, user_session=None):
         """
         ```out
@@ -57,14 +61,15 @@ class initialize(j.baseclasses.threebot_actor):
 
         return out
 
+    @j.baseclasses.actor_method
     def add(self, user, schema_out=None, user_session=None):
         """
         ```in
-        user = (O) !user.1
+        user = (O) !zerobot.webplatform.user.1
         ```
 
         ```out
-        user  = (O) !user.1
+        user  = (O) !zerobot.webplatform.user.1
         ```
         """
 
@@ -85,6 +90,7 @@ class initialize(j.baseclasses.threebot_actor):
         else:
             raise Exception("Already initialized.")
 
+    @j.baseclasses.actor_method
     def reseed(self, words, user_session):
         """
         ```in

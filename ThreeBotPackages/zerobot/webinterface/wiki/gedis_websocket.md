@@ -1,2 +1,1 @@
-# Gedis Websocket interface 
-
+# Gedis Websocket interface

@@ -11,19 +11,22 @@ Central monitoring system built using sapper and gedis actors (with jumpscale al
 - install frontend dependencies `cd alerta && npm install`
 - build frontend `./build_frontend.sh`
 - execute `kosmos -p 'j.threebot.package.alerta.start()'`
-- server will start at `172.17.0.2/alerta`
+- server will start at `172.17.0.2/zerobot/alerta`
 
 ## The package file
 
-Cee [package.py](package.py) where the following is done:
+See [package.py](../package.py) where the following is done
 
 - create openresty server on a port
 - create a location to serve static files (or a proxy).
 - add actors and expose them via gedis http interface
 
+
+Note that base package do some automatic loading at creation of locations.
+
 ## Actors
 
-See [actors](actors), for example we have alerta actor with the following methods:
+See [actors](../actors), for example we have alerta actor with the following methods:
 
 - `list_alerts` : list all alerts
 - `list_alerts_by_env`: get alerts by environment
@@ -48,11 +51,6 @@ JSX> anew.actors.alerta.new_alert(
 res                 : True
 ```
 
-
-## Factory
-
-A factory to start alerta package, see [AlertaFactory.py](../AlertaFactory.py).
-
 ## Alert handler integration
 
 Alerta can view exceptions raised inside jumpscale, by setting up alert handler tool
@@ -68,4 +66,3 @@ JSX> raise j.exceptions.NotImplemented('this one is not implemented', level=10)
 ```
 
 Then refresh alerta page to see it!
-

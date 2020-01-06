@@ -1,0 +1,48 @@
+<section class="contacts">
+  <!-- <v-toolbar class="transparent elevation-0">
+  </v-toolbar> -->
+  <v-row class="pa-2 fill-height">
+    <v-flex md12 class="px-4">
+      <v-card class="fill-height">
+        <v-container class="pt-0 fill-height">
+          <v-row class="fill-height">
+            <v-flex md4 class="right-border">
+              <v-toolbar class="primary" dark>
+                <v-row class="mx-4 pt-5">
+                  <v-flex md4>
+                    <v-select value="Name" dense :items="sortingSelection"></v-select>
+                    <!-- <v-checkbox></v-checkbox> -->
+                  </v-flex>
+                  <v-flex md3>
+
+                  </v-flex>
+                  <v-flex md5>
+                    <v-text-field prepend-icon="fas fa-search" label="Search"></v-text-field>
+                  </v-flex>
+                </v-row>
+              </v-toolbar>
+              <div class="pa-0"
+                style="position: relative; width: 100%; height: 100%; overflow: auto; min-height: 100px;">
+                <div style="position: absolute; height:100%; width: 100%;" class="pa-3">
+                  <v-list two-line>
+                    <v-list-item-group>
+                      <template v-for="(index) in 100">
+                        <contact-list-item :contact="item" :key="index" @click="openContact = item" />
+                        <v-divider></v-divider>
+                      </template>
+                    </v-list-item-group>
+                  </v-list>
+                </div>
+              </div>
+
+              <v-divider vertical></v-divider>
+            </v-flex>
+            <v-flex md8>
+              <full-contact :contact="openContact" v-if="openContact" />
+            </v-flex>
+          </v-row>
+        </v-container>
+      </v-card>
+    </v-flex>
+  </v-row>
+</section>

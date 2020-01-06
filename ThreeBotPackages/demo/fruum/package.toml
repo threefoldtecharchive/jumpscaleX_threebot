@@ -1,0 +1,11 @@
+[source]
+name = "fruum"
+description = "TBD"
+threebot = "jumpscale"
+version = "1.0.0"
+
+
+[[bcdbs]]
+namespace = "demo"
+type = "zdb"
+instance = "default"

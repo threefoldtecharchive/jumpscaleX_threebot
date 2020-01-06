@@ -10,13 +10,16 @@ from JumpscaleLibs.servers.mail.imap.bcdbmailbox import BCDBMailboxdir
 
 class mail(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        models = j.servers.imap.get_models()
-        self.bcdb_mailbox = BCDBMailboxdir(models)
+        # FIXME:
+        # models = j.servers.imap.get_models()
+        # self.bcdb_mailbox = BCDBMailboxdir(models)
+        pass
 
+    @j.baseclasses.actor_method
     def send(self, mail, schema_out=None, user_session=None):
         """
         ```in
-        mail = (O) !email.message.1
+        mail = (O) !threebot.mail.email.attachement.1
         ```
         ```out
         success = (B)
@@ -30,6 +33,7 @@ class mail(j.baseclasses.threebot_actor):
         out.success = True
         return out
 
+    @j.baseclasses.actor_method
     def list(self, date_from=None, date_to=None, user_session=None):
         """
         ```in
@@ -49,12 +53,14 @@ class mail(j.baseclasses.threebot_actor):
         mails = self.bcdb_mailbox.get_messages()
         return json.dumps([o._ddict for o in mails])
 
+    @j.baseclasses.actor_method
     def list_folders(self, user_session=None):
         """
         """
         folders = self.bcdb_mailbox.list_folders()
         return folders
 
+    @j.baseclasses.actor_method
     def create_folder(self, name, schema_out=None, user_session=None):
         """
         ```in
@@ -70,6 +76,7 @@ class mail(j.baseclasses.threebot_actor):
         out.success = True
         return out
 
+    @j.baseclasses.actor_method
     def update_folder_name(self, old_name, new_name, schema_out=None, user_session=None):
         """
         ```in
@@ -86,6 +93,7 @@ class mail(j.baseclasses.threebot_actor):
         out.success = True
         return out
 
+    @j.baseclasses.actor_method
     def move_message(self, mail_id, folder_name, schema_out=None, user_session=None):
         """
         ```in
@@ -104,6 +112,7 @@ class mail(j.baseclasses.threebot_actor):
         out.success = True
         return out
 
+    @j.baseclasses.actor_method
     def delete(self, mail_id, schema_out=None, user_session=None):
         """
         ```in
@@ -119,6 +128,7 @@ class mail(j.baseclasses.threebot_actor):
         out.success = True
         return out
 
+    @j.baseclasses.actor_method
     def update_priority(self, mail_id, priority, schema_out=None, user_session=None):
         """
         ```in
@@ -136,10 +146,11 @@ class mail(j.baseclasses.threebot_actor):
         out.success = True
         return out
 
+    @j.baseclasses.actor_method
     def receive(self, mail, schema_out=None, user_session=None):
         """
         ```in
-        mail = (O) !email.message.1
+        mail = (O) !threebot.mail.email.attachement.1
         ```
         ```out
         success = (B)

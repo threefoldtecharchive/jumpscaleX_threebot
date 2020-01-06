@@ -8,9 +8,9 @@ NONE = 2147483647
 
 class phonebook(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        self.bcdb = self._bcdb_get("threebot_phonebook")
-        self.phonebook_model = self.bcdb.model_get(url="threebot.phonebook.user.1")
+        self.phonebook_model = j.threebot.packages.tfgrid.phonebook.bcdb.model_get(url="tfgrid.phonebook.user.1")
 
+    @j.baseclasses.actor_method
     def wallet_create(self, name, schema_out=None, user_session=None):
         """
 
@@ -39,17 +39,19 @@ class phonebook(j.baseclasses.threebot_actor):
         o.wallet_addr = wallet.address
         return o
 
-    def name_register(self, name=None, pubkey=None, wallet_name=None, schema_out=None, user_session=None):
+    @j.baseclasses.actor_method
+    def name_register(self, name=None, email=None, pubkey=None, wallet_name=None, schema_out=None, user_session=None):
         """
 
         ```in
         name = (S)
+        email = (S)
         wallet_name = (S)
         pubkey = (S)
         ```
 
         ```out
-        !threebot.phonebook.user.1
+        !tfgrid.phonebook.user.1
         ```
 
         is the first step of a registration, this is the step where money is involved.
@@ -76,10 +78,11 @@ class phonebook(j.baseclasses.threebot_actor):
             raise j.exceptions.JSBUG("more then 1 should never be the case")
         else:
             # is a new one, signature not known yet
-            u = self.phonebook_model.new(name=name, pubkey=pubkey)
+            u = self.phonebook_model.new(name=name, pubkey=pubkey, email=email)
             u.save()
         return u
 
+    @j.baseclasses.actor_method
     def record_register(
         self,
         tid=None,
@@ -105,7 +108,7 @@ class phonebook(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        !threebot.phonebook.user.1
+        !tfgrid.phonebook.user.1
         ```
 
         this is the 2nd step
@@ -156,6 +159,7 @@ class phonebook(j.baseclasses.threebot_actor):
         u.save()
         return u
 
+    @j.baseclasses.actor_method
     def get(self, tid=None, name=None, email=None, die=True, schema_out=None, user_session=None):
         """
         ```in
@@ -166,7 +170,7 @@ class phonebook(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        !threebot.phonebook.user.1
+        !tfgrid.phonebook.user.1
         ```
         """
         if tid and not tid == NONE:
@@ -192,6 +196,7 @@ class phonebook(j.baseclasses.threebot_actor):
 
         return jsxobject
 
+    @j.baseclasses.actor_method
     def validate_signature(
         self, tid=None, name=None, email=None, payload=None, signature=None, schema_out=None, user_session=None
     ):
@@ -203,7 +208,7 @@ class phonebook(j.baseclasses.threebot_actor):
         payload = (S)
         signature = (S)
         ```
-        
+
         ```out
         is_valid = (B)
         ```
@@ -214,6 +219,7 @@ class phonebook(j.baseclasses.threebot_actor):
         out.is_valid = is_valid
         return out
 
+    @j.baseclasses.actor_method
     def update_public_key(self, tid, new_pubkey, signature, schema_out=None, user_session=None):
         """
         ```in
@@ -223,7 +229,7 @@ class phonebook(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        user = (O) !threebot.phonebook.user.1
+        user = (O) !tfgrid.phonebook.user.1
         ```
         """
         try:
