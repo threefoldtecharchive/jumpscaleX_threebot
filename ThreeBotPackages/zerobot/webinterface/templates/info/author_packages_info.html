@@ -1,28 +1,17 @@
-<!DOCTYPE html>
-<html lang="">
-
-<head>
-    {% block head %}
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Home{% endblock %}</title>
-
-    <!-- Bootstrap CSS -->
-
-    <link rel="stylesheet" href="/weblibs/bootstrap4/bootstrap.min.css">
-
-    <link rel="stylesheet" href="/staticchat/home/css/fonts.css">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="/weblibs/fontawesome4/css/fontawesome.min.css"> {% endblock %}
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/staticchat/home/css/style.css">
-
-</head>
-
-<body>
-    <h1>Author packages info</h1>
-</body>
-
-</html>
+{% extends "info/base.html" %}
+{% block title %}Author Packages{% endblock %}
+{% block content %}
+<!--Content-->
+<div class="d-flex flex-column align-items-center">
+    <!--Author Info-->
+    <div class="h1 font-weight-bold">
+        {{author_name}} Author
+    </div>
+    <!--Packages List-->
+    <div class="mt-3">
+        {% for item in packages_names %}
+        <div class="h3 font-weight-bold"><a href="/{{author_name}}/{{item}}/info">{{item}}</a> </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

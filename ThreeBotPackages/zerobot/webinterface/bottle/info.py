@@ -12,9 +12,11 @@ def get_authors_info():
 
 @app.route("/<author_name>/info", method=["get"])
 def get_author_packages_info(author_name):
-    author = getattr(j.threebot.packages, author_name)
-    packages = author.__dict__.keys()
-    return env.get_template("info/author_packages_info.html").render(packages=packages)
+    packages = getattr(j.threebot.packages, author_name)
+    packages_names = packages.__dict__.keys()
+    return env.get_template("info/author_packages_info.html").render(
+        packages_names=packages_names, author_name=author_name
+    )
 
 
 @app.route("/<author_name>/<package_name>/info", method=["get"])
