@@ -25,7 +25,7 @@ class Package(j.baseclasses.threebot_package):
             locations = website.locations.get(name=f"webinterface_locations_{port}")
 
             bottle_proxy_location = locations.locations_proxy.new()
-            bottle_proxy_location.name = "gedis_bcdbfs"
+            bottle_proxy_location.name = "bottle_proxy"
             bottle_proxy_location.path_url = "~* ^/(3git|gedis|bcdbfs|auth|wiki|info)"
             bottle_proxy_location.ipaddr_dest = "127.0.0.1"
             bottle_proxy_location.port_dest = 9999
