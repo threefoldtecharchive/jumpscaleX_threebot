@@ -24,30 +24,18 @@ class Package(j.baseclasses.threebot_package):
             # PROXY for gedis HTTP
             locations = website.locations.get(name=f"webinterface_locations_{port}")
 
-            gedis_bcdbfs_proxy_location = locations.locations_proxy.new()
-            gedis_bcdbfs_proxy_location.name = "gedis_bcdbfs"
-            gedis_bcdbfs_proxy_location.path_url = "~* ^/(3git|gedis|bcdbfs|auth|wiki)"
-            gedis_bcdbfs_proxy_location.ipaddr_dest = "127.0.0.1"
-            gedis_bcdbfs_proxy_location.port_dest = 9999
-            gedis_bcdbfs_proxy_location.path_dest = ""
-            gedis_bcdbfs_proxy_location.type = "http"
-            gedis_bcdbfs_proxy_location.scheme = "http"
+            bottle_proxy_location = locations.locations_proxy.new()
+            bottle_proxy_location.name = "gedis_bcdbfs"
+            bottle_proxy_location.path_url = "~* ^/(3git|gedis|bcdbfs|auth|wiki|info)"
+            bottle_proxy_location.ipaddr_dest = "127.0.0.1"
+            bottle_proxy_location.port_dest = 9999
+            bottle_proxy_location.path_dest = ""
+            bottle_proxy_location.type = "http"
+            bottle_proxy_location.scheme = "http"
 
             chat_wiki_proxy_location = locations.locations_proxy.new()
             chat_wiki_proxy_location.name = "chat_wiki_actors"
             chat_wiki_proxy_location.path_url = "~* ^/(.*)/(.*)/(chat|wiki|actors|info)"
-            chat_wiki_proxy_location.ipaddr_dest = "127.0.0.1"
-            chat_wiki_proxy_location.port_dest = 9999
-
-            chat_wiki_proxy_location = locations.locations_proxy.new()
-            chat_wiki_proxy_location.name = "info_packages_endpoints"
-            chat_wiki_proxy_location.path_url = "~* ^/(.*)/info"
-            chat_wiki_proxy_location.ipaddr_dest = "127.0.0.1"
-            chat_wiki_proxy_location.port_dest = 9999
-
-            chat_wiki_proxy_location = locations.locations_proxy.new()
-            chat_wiki_proxy_location.name = "info_authors_endpoints"
-            chat_wiki_proxy_location.path_url = "~* ^/info"
             chat_wiki_proxy_location.ipaddr_dest = "127.0.0.1"
             chat_wiki_proxy_location.port_dest = 9999
 
