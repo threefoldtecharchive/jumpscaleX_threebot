@@ -68,7 +68,7 @@ class package_manager(j.baseclasses.threebot_actor):
 
         if install:
             package = j.tools.threebot_packages.get(name)
-            package.reload()
+            package.reload(reset=reload)
 
         return "OK"
 
