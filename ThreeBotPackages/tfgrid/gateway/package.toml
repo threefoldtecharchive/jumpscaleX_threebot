@@ -1,0 +1,5 @@
+[source]
+name = "gateway"
+description = "Gateway over tcprouter and coredns"
+threebot = "tfgrid"
+version = "1.0.0"
