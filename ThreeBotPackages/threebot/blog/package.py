@@ -18,7 +18,6 @@ class Package(j.baseclasses.threebot_package):
                 if blog.name:
                     blog_name = blog.name
                     website_location = locations.locations_static.new()
-                    website_location.name = "blogs"
                     website_location.name = f"blog_{blog_name}_assets"
                     website_location.path_url = f"/blog_{blog_name}/assets"
                     assets_path = j.sal.fs.joinPaths(j.sal.fs.getParent(blog.metadata.posts_dir), "assets")

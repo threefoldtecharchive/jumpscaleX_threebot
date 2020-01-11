@@ -1,15 +1,23 @@
 <script context="module">
+    import {
+        getPages
+    } from "../../_api";
+
+
   export async function preload({ params, query }) {
     // the `slug` parameter is available because
     // this file is called [slug].svelte
-    const res = await this.fetch(`${params.theuser}/pages/${params.slug}.json`);
-    const data = await res.json();
 
-    if (res.status === 200) {
-      return { thepage: data };
-    } else {
-      this.error(res.status, data.message);
-    }
+    let blogName = params.theuser;
+    let slug = params.slug;
+    let pages = await getPages(blogName)
+
+    const lookup = new Map();
+    pages.forEach(page => {
+      lookup.set(page.slug, JSON.stringify(page));
+    });
+    let mypage = lookup.get(slug);
+    return { thepage: JSON.parse(mypage) };
   }
 </script>
 

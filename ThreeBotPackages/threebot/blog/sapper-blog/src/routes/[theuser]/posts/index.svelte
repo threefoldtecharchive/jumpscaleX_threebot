@@ -1,4 +1,9 @@
 <script context="module">
+
+import {
+    getPosts, getMetadata
+} from "../../_api"
+
   export async function preload({ host, path, params, query }) {
     console.log("params in posts index", JSON.stringify(params));
 
@@ -7,7 +12,7 @@
       this.redirect(302, `${params.theuser}/posts?page=1`);
     }
 
-    let resp = await this.fetch(`${params.theuser}/posts.json`);
+    let allPosts = await getPosts(params.theuser);
 
     // please notice it might be undefined
     // parseInt(undefined) > 0 -> false
@@ -18,12 +23,10 @@
       pageNum--;
     }
 
-    let allPosts = await resp.json();
     console.log(allPosts.length);
     // console.log("parsed blogs ", allPosts);
     let totalPostsLength = allPosts.length;
-    const metaResp = await this.fetch(`${params.theuser}/metadata.json`);
-    const metadata = await metaResp.json();
+    const metadata = await getMetadata(params.theuser);
 
     let per_page = metadata.posts_per_page || 5;
     let begin = pageNum * per_page;

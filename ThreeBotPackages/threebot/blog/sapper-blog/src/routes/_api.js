@@ -4,10 +4,19 @@ import posts from './_posts';
 import tags from './_tags';
 import pages from './_pages';
 import blogs from './_blogs';
+
+//when we export this api will work in browser, so process will be undefined
+// TODO: production is 0, development is 1
+var process = process || {
+    env: { DEV: "0" },
+    version: []
+  };
+
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
-const BLOG_API = "http://127.0.0.1/threebot/blog/actors/blog";
+const BLOG_API = "/threebot/blog/actors/blog";
+
 
 async function callActorWithArgs(actorCmd, actorArgs) {
 

@@ -1,8 +1,12 @@
 <script context="module">
+import {
+    getBlogs
+} from "./_api"
+
+
   export async function preload({ host, path, params, query }) {
     try {
-      const blogsResp = await this.fetch(`blog.json`);
-      const blogs = await blogsResp.json();
+      const blogs = await getBlogs();
 
       return { blogs };
     } catch (error) {

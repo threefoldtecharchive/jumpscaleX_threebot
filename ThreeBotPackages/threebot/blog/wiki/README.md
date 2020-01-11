@@ -7,12 +7,25 @@
 `j.tools.blog_loader.add_blog("xmon", "git@gitlab.com:xmonader/sample-blog-jsx.git")`
 
 2- Start the threebot server first in `kosmos` using:
-`cl = j.servers.threebot.local_start_default()`
+`j.servers.threebot.local_start_3bot()`
 
-3- Add The blogs package:
-`cl.actors.package_manager.package_add(path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog")`
+3- Add The blog package using package manager:
 
-4- Build the fronend using
+```python
+gedis = j.clients.gedis.get("packagemanager", port=8901, package_name="zerobot.packagemanager")
+gedis.actors.package_manager.package_add("/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog")
+gedis.reload()
+```
+
+- to deal with the blog actors
+
+```python
+new_gedis = j.clients.gedis.get("blog", port=8901, package_name="threebot.blog")
+# then you will have all actors under blog
+new_gedis.actors.blog.get_blogs()
+```
+
+If you need to rebuild the fronend using
 
 ```bash
 bash build_blog.sh
@@ -116,45 +129,52 @@ TBD
 - post
 
 ```
+@url = threebot.blog.blog
+name** = "" (S)
+git_repo_url** = "" (S)
+metadata = (O) !threebot.blog.metadata
+posts =  (LO) !threebot.blog.post
+pages = (LO) !threebot.blog.post
 
-@url = jumpscale.blog.link
-title** = "" (S)
-link = "" (S)
-page = "" (S)
-faclass = "" (S)
-
-@url = jumpscale.blog.metadata
+@url = threebot.blog.metadata
 blog_name** = "" (S)
 blog_title** = "JSX blog" (S)
 blog_description = "JSX blog description" (S)
 author_name = "" (S)
 author_email = "" (S)
-author_image_filename = ""
+author_image = ""
 base_url = "" (S)
 url = "" (S)
 posts_dir = "posts"
 github_username = "" (S)
 github_repo_url** = "" (S)
-nav_links = (LO)      !jumpscale.blog.link
-sidebar_social_links = (LO) !jumpscale.blog.link
-sidebar_links = (LO)  !jumpscale.blog.link
+nav_links = (LO)      !threebot.blog.link
+sidebar_social_links = (LO) !threebot.blog.link
+sidebar_links = (LO)  !threebot.blog.link
+allow_disqus = true (B)
+allow_navbar = true (B)
+allow_footer = true (B)
+posts_per_page = (I)
 
-
-@url = jumpscale.blog.post
+@url = threebot.blog.post
 title** = "" (S)
 slug** = "" (S)
 content = "" (S)
 content_with_meta = "" (S)
 tags = (LS)
 published_at = "" (S)
+author_name = "" (S)
+author_email = "" (S)
+author_image = "" (S)
+post_image = "" (S)
+excerpt = "" (S)
 
+@url = threebot.blog.link
+title** = "" (S)
+link = "" (S)
+page = "" (S)
+faclass = "" (S)
 
-@url = jumpscale.blog
-name** = "" (S)
-git_repo_url** = "" (S)
-metadata = (O) !jumpscale.blog.metadata
-posts =  (LO) !jumpscale.blog.post
-pages = (LO) !jumpscale.blog.post
 ```
 
 ## Actors

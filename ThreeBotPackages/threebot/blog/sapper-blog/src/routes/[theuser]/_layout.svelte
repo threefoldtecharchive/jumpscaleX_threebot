@@ -1,24 +1,22 @@
 <script context="module">
+import {
+    getPosts, getPages, getMetadata, getTags
+} from "../_api.js";
+
   export async function preload({ host, path, params, query }) {
     try {
-      const pagesResp = await this.fetch(`${params.theuser}/pages.json`);
-      const pages = await pagesResp.json();
 
-      const metaResp = await this.fetch(`${params.theuser}/metadata.json`);
-      const metadata = await metaResp.json();
-
-      const tagsResp = await this.fetch(`${params.theuser}/tags.json`);
-      const tags = await tagsResp.json();
-
-      const postsResp = await this.fetch(`${params.theuser}/posts.json`);
-      const allPosts = await postsResp.json();
-
+      const pages = await getPages(params.theuser);
+      const metadata = await getMetadata(params.theuser);
+      const tags = await getTags(params.theuser);
+      const allPosts = await getPosts(params.theuser);
       // please notice it might be undefined
       // parseInt(undefined) > 0 -> false
       // parseInt(undefined) < 0 -> false
       // because.. javascript `\-()-/`
 
       let posts = allPosts.slice(0, 3);
+
       return { pages, posts, metadata, tags };
     } catch (error) {
       console.log(error);
@@ -39,7 +37,9 @@
   export let posts = [];
   export let metadata = {};
   export let tags = [];
+
   import { stores } from "@sapper/app";
+  const { preloading, page, session } = stores();
 </script>
 
 <!-- {#await metadata then value}

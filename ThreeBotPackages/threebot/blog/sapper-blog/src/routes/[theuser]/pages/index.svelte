@@ -1,11 +1,12 @@
 <script context="module">
-  export function preload({ params, query }) {
-    return this.fetch(`${params.theuser}/pages.json`)
-      .then(r => r.json())
-      .then(pages => {
-        console.log(params);
-        return { pages };
-      });
+
+import {
+    getPages
+} from '../../_api';
+
+  export async function preload({ params, query }) {
+    let pages = await getPages(params.theuser)
+    return { pages };
   }
 </script>
 

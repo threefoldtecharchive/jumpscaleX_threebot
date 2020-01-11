@@ -1,11 +1,5 @@
-// export function get(req, res) {
-//     let url = 'posts';
-//     let str = `Redirecting to ${url}`;
-//     console.log(str)
-//     res.writeHead(302, {
-//         Location: url,
-//         'Content-Type': 'text/plain',
-//         'Content-Length': str.length
-//     });
 
-// }
+export async function preload({ params }) {
+let theuser = params.theuser;
+return this.redirect(302, `${theuser}/posts?page=1`);
+}

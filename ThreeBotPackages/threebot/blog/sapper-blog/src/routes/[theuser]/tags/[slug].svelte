@@ -1,14 +1,25 @@
 <script context="module">
-  export function preload({ params }) {
-    try {
-      return this.fetch(`${params.theuser}/tags/${params.slug}.json`)
-        .then(request => request.json())
-        .then(posts => {
-          return { posts, tag: params.slug };
-        });
-    } catch (error) {
-      console.log(error);
-    }
+import {
+    getPosts
+} from "../../_api"
+
+  export async function preload({ params }) {
+    let slug = params.slug;
+    let allPosts = await getPosts(params.theuser);
+
+    const lookup = new Map()
+    allPosts.forEach(post => {
+        post.tags.forEach(tag => {
+            if (lookup.has(tag)) {
+                lookup.set(tag, [...lookup.get(tag), post])
+            } else {
+                lookup.set(tag, [post])
+            }
+        })
+    });
+
+    let posts = lookup.get(slug);
+    return {posts, tag: params.slug}
   }
 </script>
 

@@ -1,7 +1,7 @@
 <script>
-  import axios from "axios";
-
-  axios.defaults.headers.get["Content-Type"] = "application/json";
+    import {
+        search
+    } from "../routes/_api";
 
   import { stores } from "@sapper/app";
 
@@ -11,19 +11,10 @@
   let query = "";
   export let search_res = "";
 
-  const BLOG_API = `search.json`;
   export async function search_method(e) {
-    // if (!query) {
-    //   alert("empty search !");
-    // }
+
     e.preventDefault();
-    search_res = await axios.get(BLOG_API, {
-      params: {
-        blog_name: blogName,
-        query: query
-      }
-    });
-    search_res = search_res.data;
+    search_res = await search(blogName, query);
   }
   export function clear_results(e) {
     if (e.key === "Escape" || e.type === "click") {

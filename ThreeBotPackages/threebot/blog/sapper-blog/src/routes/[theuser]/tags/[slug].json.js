@@ -1,8 +1,7 @@
+
 import {
     getPosts
 } from "../../_api"
-
-
 
 
 export async function get(req, res, next) {
