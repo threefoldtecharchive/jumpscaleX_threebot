@@ -39,6 +39,12 @@ class Package(j.baseclasses.threebot_package):
             chat_wiki_proxy_location.ipaddr_dest = "127.0.0.1"
             chat_wiki_proxy_location.port_dest = 9999
 
+            package_info_location = locations.locations_proxy.new()
+            package_info_location.name = "package_author_info"
+            package_info_location.path_url = "~* ^/(.*)/info"
+            package_info_location.ipaddr_dest = "127.0.0.1"
+            package_info_location.port_dest = 9999
+
             url = "https://github.com/threefoldtech/jumpscaleX_weblibs"
             weblibs_path = j.clients.git.getContentPathFromURLorPath(url, pull=False)
             weblibs_location = locations.locations_static.new()
