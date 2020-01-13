@@ -21,11 +21,6 @@ cl.credfile = "{path_to_cred_file}"
 cl.save()
 ```
 
-2- Create the needed directories to store the files
-```bash
-mkdir -p /sandbox/var/gdrive/static/{document,spreadsheets,presentation,slide}
-```
-
 ## Setting up service account for google apis
 
 See how to setup a [service account](service_account.md) for different google apis, as it's required by other macros.
