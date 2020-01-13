@@ -6,13 +6,13 @@ import random
 redisconfig = """\
 bind {bindip}
 protected-mode yes
-port 6379
+port 6378
 tcp-backlog 511
 timeout 0
 tcp-keepalive 300
 daemonize no
 supervised no
-pidfile /var/run/redis_6379.pid
+pidfile /var/run/redis_6378.pid
 loglevel notice
 logfile ""
 always-show-logo yes
@@ -79,7 +79,7 @@ WantedBy=multi-user.target
 corednsconfig = """\
 {domain} 3bot {{
     redis  {{
-        address 127.0.0.1:6379
+        address 127.0.0.1:6378
     }}
 }}
 . {{
@@ -95,7 +95,7 @@ httpport = 80
 [server.dbbackend]
 type 	 = "redis"
 addr     = "127.0.0.1"
-port     = 6379
+port     = 6378
 refresh  = 10
 """
 
@@ -188,6 +188,7 @@ def configure_coredns(executor):
 def configure_redis(executor, privateip):
     print("  Configuring redis")
     dbpath = j.core.tools.text_replace("{DIR_BASE}/var/redis/")
+    j.sal.fs.createDir(dbpath)
     configpath = j.core.tools.text_replace("{DIR_BASE}/cfg/redis-jsx.conf")
     if privateip != MASTERIP:
         bindip = f"127.0.0.1 {privateip}"
@@ -195,7 +196,7 @@ def configure_redis(executor, privateip):
         bindip = privateip
     config = redisconfig.format(bindip=bindip, dbpath=dbpath)
     if privateip != MASTERIP:
-        config += f"\nslaveof {MASTERIP} 6379\n"
+        config += f"\nslaveof {MASTERIP} 6378\n"
     executor.file_write(configpath, config)
     configure_systemd_unit(executor, "redis-jsx", path=f"{redisserverpath} {configpath}")
 
@@ -208,14 +209,13 @@ def configure_tcprouter(executor):
 
 
 configure_redis(j.tools.executor.local, MASTERIP)
-j.sal.nettools.waitConnectionTest(MASTERIP, 6379)
+j.sal.nettools.waitConnectionTest(MASTERIP, 6378)
 
-rediscli = j.clients.redis.get(MASTERIP, port=6379)
+rediscli = j.clients.redis.get(MASTERIP, port=6378)
 tfgateway = j.tools.tf_gateway.get(rediscli)
 
-
 for x, region in enumerate(regions):
-    name = f"router{x+1}_staging"
+    name = f"router{x+1}Staging"
     sshname = f"do_{name}"
     if not do.droplet_exists(name):
         print(f"Droplet create {name}")
@@ -224,12 +224,14 @@ for x, region in enumerate(regions):
         print(f"Droplet get {name}")
         droplet = do._droplet_get(name)
 
-    j.clients.ssh.get(name=sshname, addr=droplet.ip_address, login="root", sshkey_name="default")
+    # j.clients.ssh.get(name=sshname, addr=droplet.ip_address, login="root", sshkey_name="default") TODO
+    j.clients.ssh.get(name=sshname, addr=droplet.ip_address, login="root")
     executor = j.tools.executor.ssh_get(sshname)
     clients.append(executor)
     for binary in (tcprouterserverpath, tcprouterclientpath, redisserverpath, corednspath):
         if not executor.exists(binary):
             print(f"  Copy {binary}")
+            executor.dir_ensure(j.core.tools.text_replace("{DIR_BASE}/bin"))
             executor.upload(binary, binary)
 
     privateip = f"192.168.99.{x + 1}"
@@ -250,9 +252,7 @@ client = j.servers.threebot.start(background=True)
 
 gedis_packagemanager = j.clients.gedis.get("packagemanager", port=8901, package_name="zerobot.packagemanager")
 gedis_packagemanager.actors.package_manager.package_add(
-    path=j.core.tools.text_replace(
-        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/namemanager"
-    )
+    path=j.core.tools.text_replace("{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/dns")
 )
 gedis_packagemanager.actors.package_manager.package_add(
     path=j.core.tools.text_replace(
