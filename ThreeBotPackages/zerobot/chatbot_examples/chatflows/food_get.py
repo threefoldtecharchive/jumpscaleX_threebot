@@ -7,8 +7,6 @@ def chat(bot):
     to call http://localhost:5050/chat/session/food_get
     """
 
-    j.shell()
-
     res = {}
     waittime = bot.int_ask("Wait time")
     bot.loading_show("progress", waittime)
