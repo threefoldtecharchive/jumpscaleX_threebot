@@ -1,7 +1,10 @@
 from Jumpscale import j
 
-# get gdrive client so google api dependency is installed
-cl = j.clients.gdrive.get("gdrive_macro_client", credfile=j.core.tools.text_replace("{DIR_BASE}/var/cred.json"))
+try:
+    # get gdrive client so google api dependency is installed
+    cl = j.clients.gdrive.get("gdrive_macro_client", credfile=j.core.tools.text_replace("{DIR_BASE}/var/cred.json"))
+except:
+    pass
 
 from googleapiclient.errors import HttpError as GoogleApiHTTPError
 
