@@ -119,24 +119,13 @@ if not j.sal.fs.exists(corednspath):
 
 # we want 3 routers
 project_name = "3bot Infra Staging"
-do = j.clients.digitalocean.get(
-    "setup_infra_do",
-    token_="6a334942c3b39e8a3544d58e6e3d398f3d8d21276ada7662fb219fde93bf5012",
-    project_name=project_name,
-)
+do = j.clients.digitalocean.get()
 size = "s-1vcpu-1gb"
 regions = do.digitalocean_region_names
 random.shuffle(regions)
 regions = regions[:3]
 if len(regions) < 3:
     raise j.exceptions.Runtime("Not enough regions")
-
-"""
-do = j.clients.digitalocean.get(token_="6a334942c3b39e8a3544d58e6e3d398f3d8d21276ada7662fb219fde93bf5012",project_name="3bot connect")
-
-def master_install():
-    d,ssh_cl=do.droplet_create(name="master", sshkey='Peter', region="ams3", image="ubuntu 18.04", size_slug="s-1vcpu-2gb", delete=delete)
-"""
 
 clients = []
 
@@ -213,13 +202,14 @@ j.sal.nettools.waitConnectionTest(MASTERIP, 6378)
 
 rediscli = j.clients.redis.get(MASTERIP, port=6378)
 tfgateway = j.tools.tf_gateway.get(rediscli)
-
 for x, region in enumerate(regions):
     name = f"router{x+1}Staging"
     sshname = f"do_{name}"
     if not do.droplet_exists(name):
         print(f"Droplet create {name}")
-        droplet, _ = do.droplet_create(name, "rana", region=region, size_slug=size, project_name=project_name)
+        droplet, _ = do.droplet_create(
+            name, "rana", region=region, size_slug=size, delete=False, project_name=project_name
+        )
     else:
         print(f"Droplet get {name}")
         droplet = do._droplet_get(name)
@@ -248,7 +238,7 @@ print("Wating for DNS ...")
 j.sal.nettools.waitConnectionTest(THREEBOT_DOMAIN, 443, timeout=60)
 
 print("Start local 3bot")
-client = j.servers.threebot.start(background=True)
+client = j.servers.threebot.local_start_explorer(background=True)
 
 gedis_packagemanager = j.clients.gedis.get("packagemanager", port=8901, package_name="zerobot.packagemanager")
 gedis_packagemanager.actors.package_manager.package_add(
@@ -256,27 +246,12 @@ gedis_packagemanager.actors.package_manager.package_add(
 )
 gedis_packagemanager.actors.package_manager.package_add(
     path=j.core.tools.text_replace(
-        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/gridnetwork"
+        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/network"
     )
 )
 gedis_packagemanager.actors.package_manager.package_add(
     path=j.core.tools.text_replace(
-        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/tfgrid_directory"
-    )
-)
-gedis_packagemanager.actors.package_manager.package_add(
-    path=j.core.tools.text_replace(
-        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/tfgrid_workloads"
-    )
-)
-gedis_packagemanager.actors.package_manager.package_add(
-    path=j.core.tools.text_replace(
-        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/provisioning"
-    )
-)
-gedis_packagemanager.actors.package_manager.package_add(
-    path=j.core.tools.text_replace(
-        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/phonebook"
+        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/threebot_provisioning"
     )
 )
 client.reload()
