@@ -2,7 +2,7 @@
 
 
 @url = jumpscale.bcdb.fs.dir.2
-nid = 0  #namespace id
+fs_nid = 0  #namespace id ( change from nid to fs_nid  because nid reserved word)
 name** = "" (S)
 files = (LI)
 dirs = (LI)
