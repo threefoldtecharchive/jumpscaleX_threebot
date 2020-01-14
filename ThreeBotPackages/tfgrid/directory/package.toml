@@ -1,6 +1,5 @@
 [source]
 name = "directory"
-description = "TBD"
 threebot = "tfgrid"
 version = "1.0.0"
 

@@ -66,7 +66,6 @@ class CHATBASE(j.baseclasses.object_config):
 
         self.meta.save()
 
-        self._data._autosave
         self._data.save()
 
     def _bcdb_selector(self):

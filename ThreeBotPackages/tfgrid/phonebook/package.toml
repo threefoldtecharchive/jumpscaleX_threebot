@@ -5,6 +5,7 @@ threebot = "tfgrid"
 version = "1.0.0"
 
 [[bcdbs]]
+name = "tfgrid.phonebook"
 namespace = "phonebook"
 type = "zdb"
 instance = "default"
