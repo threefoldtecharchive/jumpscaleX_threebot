@@ -1,0 +1,8 @@
+@url = threefold.simplemail.email.1
+email_from** = "" (S)
+email_to** = "" (S)
+subject** = "" (S)
+attachments = (LS)
+body** = "" (S)
+htmlbody** = "" (S)
+date** = (S)

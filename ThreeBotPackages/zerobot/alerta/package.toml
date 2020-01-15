@@ -6,5 +6,5 @@ version = "1.0.0"
 
 [[bcdbs]]
 name = "system.alerta"
-namespace = "alerta"
+namespace = ""
 type = "redis"
