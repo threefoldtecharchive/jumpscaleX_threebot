@@ -178,7 +178,7 @@ class package_manager(j.baseclasses.threebot_actor):
                     continue
 
             if status != "all":
-                if not str(package.status).lower() == str(status).lower():
+                if not package.status == status:
                     continue
 
             packages.append(package)
