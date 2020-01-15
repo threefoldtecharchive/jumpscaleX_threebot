@@ -155,9 +155,10 @@ class package_manager(j.baseclasses.threebot_actor):
         package.enable()
 
     @j.baseclasses.actor_method
-    def packages_list(self, frontend=False, schema_out=None, user_session=None):
+    def packages_list(self, status="all", frontend=False, schema_out=None, user_session=None):
         """
         ```in
+        status = "all,init,config,toinstall,installed,tostart,disabled,error" (E)
         frontend = (B) false  # list only frontend packages
         ```
 
@@ -174,6 +175,10 @@ class package_manager(j.baseclasses.threebot_actor):
                     if not metadata["source"].get("frontend", False):
                         continue
                 else:
+                    continue
+
+            if status != "all":
+                if not package.status == status:
                     continue
 
             packages.append(package)
