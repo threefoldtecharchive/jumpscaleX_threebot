@@ -2,9 +2,15 @@ from Jumpscale import j
 import ipaddress
 
 
+# consider a node up if it has received update during the last 10 minute
+def is_up(node):
+    ago = j.data.time.epoch - (60 * 10)
+    return node.updated > ago
+
+
 def find_node_public(nodes):
     # search a node that has a public ipv6 address
-    for node in nodes:
+    for node in filter(is_up, nodes):
         for iface in node.ifaces:
             for addr in iface.addrs:
                 ip = ipaddress.ip_interface(addr).ip
@@ -27,6 +33,7 @@ def deploy_ubuntu_container():
     me = j.tools.threebot.me.default
 
     nodes = explorer.actors_all.nodes.list().nodes
+    # import ipdb
     selected_node = find_node_public(nodes)
     if selected_node is None:
         raise j.exceptions.NotFound("no node found with public ipv6")
@@ -39,8 +46,8 @@ def deploy_ubuntu_container():
 
     reservation = reservation_model.new()
     reservation.customer_tid = me.tid
-    reservation.data_reservation.expiration_provisioning = j.data.time.epoch + (60 * 5)  # 5 minutes
-    reservation.data_reservation.expiration_reservation = j.data.time.epoch + (60 * 5)  # 5 minutes
+    reservation.data_reservation.expiration_provisioning = j.data.time.epoch + (60 * 10)  # 10 minutes
+    reservation.data_reservation.expiration_reservation = j.data.time.epoch + (60 * 10)  # 10 minutes
 
     # network
     network = reservation.data_reservation.networks.new()
@@ -62,7 +69,7 @@ def deploy_ubuntu_container():
     peer.iprange = "172.22.2.0/24"
     peer.allowed_iprange = ["100.64.22.2/32", "172.22.2.0/24"]
     # this is your wireguard public key from your laptop
-    peer.public_key = "VHrmA1licqbB5ysAOu/uIVyJfz4="
+    peer.public_key = "VHrmA1licqbB5y2UV2j/dMcqg3ymG0bAOu/uIVyJfz4="
 
     # # container
     cont = reservation.data_reservation.containers.new()
@@ -86,8 +93,8 @@ def deploy_ubuntu_container():
     reservation.customer_signature = me.nacl.sign_hex(reservation.json.encode())
 
     print("sending reservation")
-    # resp = explorer.actors_all.workload_manager.reservation_register(reservation)
-    # print("reservation sent. ID: %s" % resp.id)
+    resp = explorer.actors_all.workload_manager.reservation_register(reservation)
+    print("reservation sent. ID: %s" % resp.id)
     print("use this template to configure the wg-quick config of your laptop:")
     print(
         f"""
@@ -102,3 +109,7 @@ def deploy_ubuntu_container():
         PersistentKeepalive = 25
         """
     )
+
+
+if __name__ == "__main__":
+    deploy_ubuntu_container()
