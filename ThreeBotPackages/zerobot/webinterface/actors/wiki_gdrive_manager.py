@@ -2,7 +2,7 @@ from Jumpscale import j
 
 try:
     # get gdrive client so google api dependency is installed
-    cl = j.clients.gdrive.get("gdrive_macro_client", credfile=j.core.tools.text_replace("{DIR_BASE}/var/cred.json"))
+    cl = j.clients.gdrive.get("main")
 except:
     pass
 
