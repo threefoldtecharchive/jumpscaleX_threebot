@@ -41,11 +41,6 @@ class wiki_gdrive_manager(j.baseclasses.threebot_actor):
             out.error_message = f"invalid document type of '{doctype}', allowed types are {allowed_types}."
             return out
 
-        if not j.sal.fs.exists(cl.credfile):
-            out.error_code = 400
-            out.error_message = "service credential file is not found"
-            return out
-
         service_name = doctypes_map[doctype]
         try:
             parent_dir = j.sal.fs.joinPaths(STATIC_DIR, doctype)
