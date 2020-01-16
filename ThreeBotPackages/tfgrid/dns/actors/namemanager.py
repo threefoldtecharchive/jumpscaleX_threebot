@@ -10,24 +10,12 @@ MASTERIP = "192.168.99.254"  # ip addr of our master redis which has slaves on t
 
 class namemanager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        self._explorer = None
-        self._tfgateway = None
+        self.explorer = j.clients.gedis.get(
+            name="phonebook_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.phonebook"
+        )
 
-    @property
-    def explorer(self):
-        if self._explorer is None:
-            raise RuntimeError("should not use gedis client")
-            self._explorer = j.clients.gedis.get(host=EXPLORER_DOMAIN, port=8901)
-        return self._explorer
-
-    @property
-    def tfgateway(self):
-        if self._tfgateway is None:
-            raise RuntimeError("should not use gedis client")
-            redisclient = j.clients.redis.get(MASTERIP, port=6378)
-            # tf_gateway tool manages tcp forwarding & DNS
-            self._tfgateway = j.tools.tf_gateway.get(redisclient)
-        return self._tfgateway
+        redisclient = j.clients.redis.get(MASTERIP, port=6378)
+        self.tfgateway = j.tools.tf_gateway.get(redisclient)
 
     @j.baseclasses.actor_method
     def domain_register(self, doublename, privateip, signature, user_session=None):

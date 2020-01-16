@@ -30,17 +30,21 @@ class registration(j.baseclasses.threebot_actor):
             raise j.exceptions.Value("email can not be empty")
 
         nacl = j.data.nacl.default
-        explorer = j.clients.gedis.get(name="explorer", host=EXPLORER_DOMAIN, port=8901)
 
+        phonebook_explorer = j.clients.gedis.get(
+            name="phonebook_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.phonebook"
+        )
         # Request a new id from the public Phonebook
         pubkey = nacl.verify_key_hex
         wallet_name, _ = doublename.split(".")
-        explorer.actors.phonebook.wallet_create(name=wallet_name)
-        record = explorer.actors.phonebook.name_register(name=doublename, pubkey=pubkey, wallet_name=wallet_name)
+        phonebook_explorer.actors.phonebook.wallet_create(name=wallet_name)
+        record = phonebook_explorer.actors.phonebook.name_register(
+            name=doublename, pubkey=pubkey, wallet_name=wallet_name
+        )
         sender_signature_hex = j.data.nacl.payload_sign(
             record.id, doublename, email, "", description, pubkey, nacl=nacl
         )
-        explorer.actors.phonebook.record_register(
+        phonebook_explorer.actors.phonebook.record_register(
             tid=record.id,
             name=doublename,
             email=email,
@@ -52,9 +56,12 @@ class registration(j.baseclasses.threebot_actor):
         gridmanager_client = j.clients.gridnetwork.get("explorer")
         wireguard = gridmanager_client.network_connect("3botnetwork", doublename)
         # Request a record from the name manager
+        namemanager_explorer = j.clients.gedis.get(
+            name="namemanager_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.namemanager"
+        )
         privateip = wireguard.network_private.split("/")[0]
         signature = j.data.nacl.payload_sign(doublename, nacl=nacl)
-        explorer.actors.namemanager.domain_register(doublename, privateip, signature)
+        namemanager_explorer.actors.namemanager.domain_register(doublename, privateip, signature)
 
         content = "\n".join([f"nameserver {p.network_public}" for p in wireguard.peers_objects])
         j.sal.fs.writeFile("/etc/resolv.conf", content + "\n", append=False)
