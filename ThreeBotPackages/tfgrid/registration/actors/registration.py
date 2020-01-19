@@ -52,12 +52,16 @@ class registration(j.baseclasses.threebot_actor):
             pubkey=pubkey,
             sender_signature_hex=sender_signature_hex,
         )
+
+        gridnetwork_explorer = j.clients.gedis.get(
+            name="gridnetwork_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.network"
+        )
         # Request ip address from the grid manager
-        gridmanager_client = j.clients.gridnetwork.get("explorer")
+        gridmanager_client = j.clients.gridnetwork.get("gridnetwork_explorer")
         wireguard = gridmanager_client.network_connect("3botnetwork", doublename)
         # Request a record from the name manager
         namemanager_explorer = j.clients.gedis.get(
-            name="namemanager_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.namemanager"
+            name="namemanager_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.dns"
         )
         privateip = wireguard.network_private.split("/")[0]
         signature = j.data.nacl.payload_sign(doublename, nacl=nacl)
