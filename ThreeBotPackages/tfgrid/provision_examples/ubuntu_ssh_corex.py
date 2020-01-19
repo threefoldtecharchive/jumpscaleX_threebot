@@ -2,9 +2,15 @@ from Jumpscale import j
 import ipaddress
 
 
+# consider a node up if it has received update during the last 10 minute
+def is_up(node):
+    ago = j.data.time.epoch - (60 * 10)
+    return node.updated > ago
+
+
 def find_node_public(nodes):
     # search a node that has a public ipv6 address
-    for node in nodes:
+    for node in filter(is_up, nodes):
         for iface in node.ifaces:
             for addr in iface.addrs:
                 ip = ipaddress.ip_interface(addr).ip
@@ -21,7 +27,7 @@ def find_free_wg_port(node):
     return free.pop()
 
 
-def deploy_ubuntu_container():
+def deploy_ubuntu_container_corex():
     j.clients.threebot.explorer_addr_set("explorer.testnet.grid.tf")
     explorer = j.clients.threebot.explorer
     me = j.tools.threebot.me.default
@@ -74,11 +80,12 @@ def deploy_ubuntu_container():
     cont.storage_url = "zdb://hub.grid.tf:9900"
     cont.environment = {}
     cont.entrypoint = "/sbin/my_init"
+    # enable coreX on the container
     cont.interactive = True
 
     net = cont.network_connection.new()
     net.network_id = network.name
-    net.ipaddress = "172.22.1.10"
+    net.ipaddress = "172.22.1.11"
 
     print(reservation.data_reservation._json)
 
@@ -102,6 +109,3 @@ def deploy_ubuntu_container():
         PersistentKeepalive = 25
         """
     )
-
-
-deploy_ubuntu_container()
