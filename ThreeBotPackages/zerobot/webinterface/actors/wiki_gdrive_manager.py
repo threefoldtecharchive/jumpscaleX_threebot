@@ -2,7 +2,7 @@ from Jumpscale import j
 
 try:
     # get gdrive client so google api dependency is installed
-    cl = j.clients.gdrive.get("gdrive_macro_client", credfile=j.core.tools.text_replace("{DIR_BASE}/var/cred.json"))
+    cl = j.clients.gdrive.get("main")
 except:
     pass
 
@@ -39,11 +39,6 @@ class wiki_gdrive_manager(j.baseclasses.threebot_actor):
             out.error_code = -1
             allowed_types = ", ".join(doctypes_map.keys())
             out.error_message = f"invalid document type of '{doctype}', allowed types are {allowed_types}."
-            return out
-
-        if not j.sal.fs.exists(cl.credfile):
-            out.error_code = 400
-            out.error_message = "service credential file is not found"
             return out
 
         service_name = doctypes_map[doctype]
