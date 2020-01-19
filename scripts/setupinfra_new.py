@@ -178,6 +178,7 @@ def configure_redis(executor, privateip):
     print("  Configuring redis")
     dbpath = j.core.tools.text_replace("{DIR_BASE}/var/redis/")
     j.sal.fs.createDir(dbpath)
+    executor.execute(f"mkdir -p {dbpath}")
     configpath = j.core.tools.text_replace("{DIR_BASE}/cfg/redis-jsx.conf")
     if privateip != MASTERIP:
         bindip = f"127.0.0.1 {privateip}"
