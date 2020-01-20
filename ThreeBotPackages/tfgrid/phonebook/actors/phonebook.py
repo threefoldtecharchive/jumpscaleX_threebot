@@ -108,7 +108,7 @@ class phonebook(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        !tfgrid.phonebook.user.1
+        res = (O) !tfgrid.phonebook.user.1
         ```
 
         this is the 2nd step
@@ -170,7 +170,7 @@ class phonebook(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        !tfgrid.phonebook.user.1
+        res = (O) !tfgrid.phonebook.user.1
         ```
         """
         if tid and not tid == NONE:

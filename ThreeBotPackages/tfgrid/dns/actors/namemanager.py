@@ -25,7 +25,7 @@ class namemanager(j.baseclasses.threebot_actor):
         ```in
         doublename = (S) # 3bot doublename
         privateip = (S)
-        signature = (S) the signature of the payload "{doublename}"
+        signature = (S) #the signature of the payload "{doublename}"
         ```
         """
         result = self.explorer.actors.phonebook.validate_signature(
@@ -51,7 +51,7 @@ class namemanager(j.baseclasses.threebot_actor):
         ```in
         doublename = (S) # 3bot doublename
         subdomain = (S)
-        signature = (S) the signature of the payload "{doublename}"
+        signature = (S) #the signature of the payload "{doublename}"
         ```
         """
         result = self.explorer.actors.phonebook.validate_signature(

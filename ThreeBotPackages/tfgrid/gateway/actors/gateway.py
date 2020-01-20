@@ -6,13 +6,20 @@ class gateway(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         # QUESTION: should it work against local database or against remote one? as it's generic enough
         self._gateway = j.tools.tf_gateway.get(j.core.db)
+        self.explorer = j.clients.gedis.get(
+            name="phonebook_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.phonebook"
+        )
 
     @j.baseclasses.actor_method
     def domain_list(self, schema_out=None, user_session=None):
         return self._gateway.domain_list()
 
     @j.baseclasses.actor_method
+<<<<<<< HEAD
     def domain_exists(self, domain):
+=======
+    def domain_exists(self, domain, schema_out=None, user_session=None):
+>>>>>>> Fix namemanager, gateway,phonebook, and registration actors
         """
         ```in
         domain = (S)
@@ -67,7 +74,7 @@ class gateway(j.baseclasses.threebot_actor):
 
         """
         ```in
-        name
+        name = (S)
         domain = (S)
         host = (S)
         ```
@@ -84,9 +91,7 @@ class gateway(j.baseclasses.threebot_actor):
         domain = (S)
         host = (S)
         ```
-        """
-
-        """register NS record
+        register NS record
 
         :param name: name
         :type name: str
@@ -94,7 +99,6 @@ class gateway(j.baseclasses.threebot_actor):
         :type domain: str, optional
         :param host: host
         :type host: str
-
         """
         return self._gateway.domain_register_ns(name, domain, host)
 
@@ -104,7 +108,7 @@ class gateway(j.baseclasses.threebot_actor):
         ```in
         name = (S)
         domain = (S)
-        text (S)
+        text = (S)
         ```
         """
 
@@ -139,14 +143,90 @@ class gateway(j.baseclasses.threebot_actor):
         """
         return self._gateway.domain_register_srv(name, domain, host, port, priority, weight)
 
+<<<<<<< HEAD
     # TCP Router redis backend
     @j.baseclasses.actor_method
     def tcpservice_register(self, domain, client_secret="", schema_out=None, user_session=None):
+=======
+    @j.baseclasses.actor_method
+    def domain_register(self, threebot_name, privateip, signature, schema_out=None, user_session=None):
+        """
+        Registers a domain in coredns (needs to be authoritative)
+
+        ```in
+        threebot_name = (S) # 3bot threebot_name
+        privateip = (S)
+        signature = (S) #the signature of the payload "{threebot_name}"
+        ```
+        """
+        result = self.explorer.actors.phonebook.validate_signature(
+            name=threebot_name, payload=threebot_name, signature=signature
+        )
+        if not result.is_valid:
+            raise j.exceptions.Value("Invalid signature")
+
+        fqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
+        self._gateway.tcpservice_register(fqdn, privateip)
+        j.debug()
+        self._gateway.domain_register_cname("@", f"{threebot_name}.{THREEBOT_DOMAIN}", f"{THREEBOT_DOMAIN}.")
+        self._gateway.domain_register_cname(threebot_name, f"{threebot_name}.{THREEBOT_DOMAIN}", f"{THREEBOT_DOMAIN}.")
+        self._gateway.domain_register_a(threebot_name, f"{threebot_name}.{THREEBOT_PRIVATE_DOMAIN}", privateip)
+        return True
+
+    @j.baseclasses.actor_method
+    def subdomain_register(self, threebot_name, subdomain, signature, schema_out=None, user_session=None):
+        """
+        Registers a domain in coredns (needs to be authoritative)
+
+        ```in
+        threebot_name = (S) # 3bot threebot_name
+        subdomain = (S)
+        signature = (S) #the signature of the payload "{threebot_name}"
+        ```
+        """
+        result = self.explorer.actors.phonebook.validate_signature(
+            name=threebot_name, payload=threebot_name, signature=signature
+        )
+        if not result.is_valid:
+            raise j.exceptions.Value("Invalid signature")
+
+        if not self._gateway.domain_exists(f"{threebot_name}.{THREEBOT_DOMAIN}"):
+            raise j.exceptions.NotFound("domain name is not registered")
+
+        first, last = threebot_name.split(".")
+        record = self._gateway.subdomain_get(f"{last}.{THREEBOT_PRIVATE_DOMAIN}", first)
+        privateip = record["a"][0]["ip"]
+
+        fqdn = f"{subdomain}.{threebot_name}.{THREEBOT_DOMAIN}"
+        self._gateway.tcpservice_register(fqdn, fqdn, privateip)
+
+        threebot_namefqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
+        self._gateway.domain_register_cname("@", threebot_namefqdn, THREEBOT_DOMAIN)
+        self._gateway.domain_register_cname(subdomain, threebot_namefqdn, THREEBOT_DOMAIN)
+
+    ## TCP Router redis backend
+
+    @j.baseclasses.actor_method
+    def tcpservice_register(
+        self,
+        domain,
+        service_addr="",
+        service_port=443,
+        service_http_port=80,
+        client_secret="",
+        schema_out=None,
+        user_session=None,
+    ):
+>>>>>>> Fix namemanager, gateway,phonebook, and registration actors
         """
         ```in
          domain = (S)
          client_secret = (S)
         ```
         """
+<<<<<<< HEAD
         return self._gateway.tcpservice_register(domain=domain, client_secret=client_secret)
 
+=======
+        return self._gateway.tcpservice_register(domain, service_addr, service_port, service_http_port, client_secret)
+>>>>>>> Fix namemanager, gateway,phonebook, and registration actors
