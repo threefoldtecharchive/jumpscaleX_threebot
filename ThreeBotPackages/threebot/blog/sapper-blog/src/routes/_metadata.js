@@ -14,53 +14,53 @@ export default metadata = {
     "posts_dir": "/sandbox/code/gitlab/xmonader/sample-blog-jsx/posts",
     "github_username": "xmonader",
     "github_repo_url": "git@gitlab.com:xmonader/sample-blog-jsx.git",
-    "allow_disqus": true,
+    "allow_disqus": false,
     "nav_links": [{
         "title": "about",
         "link": "",
         "page": "about.md",
-        "faclass": ""
+        "img": ""
     }, {
         "title": "contact us",
         "link": "",
         "page": "contactus.md",
-        "faclass": ""
+        "img": ""
     }, {
         "title": "foundation link",
         "link": "https://threefold.io",
         "page": "",
-        "faclass": ""
+        "img": ""
     }],
     "sidebar_social_links": [{
         "title": "facebook",
         "link": "https://facebook.com/abc",
         "page": "",
-        "faclass": "fab fa-facebook"
+        "img": "img/facebook.svg"
     }, {
         "title": "github",
         "link": "https://github.com/abc",
         "page": "",
-        "faclass": "fab fa-github"
+        "img": "img/github.svg"
     }, {
         "title": "instagram",
         "link": "https://instagram.com",
         "page": "",
-        "faclass": "fab fa-instagram"
+        "img": "img/instagram.svg"
     }, {
         "title": "twitter",
         "link": "https://twitter.com",
         "page": "",
-        "faclass": "fab fa-twitter"
+        "img": "img/twitter.svg"
     }],
     "sidebar_links": [{
         "title": "google",
         "link": "https://google.com",
         "page": "",
-        "faclass": ""
+        "img": ""
     }, {
         "title": "yahoo",
         "link": "https://yahoo.com",
         "page": "",
-        "faclass": ""
+        "img": ""
     }]
 }

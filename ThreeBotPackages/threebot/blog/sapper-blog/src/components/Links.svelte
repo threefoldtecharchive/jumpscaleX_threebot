@@ -8,9 +8,9 @@
     {#each links as link}
       <li>
 
-        {#if link.faclass}
+        {#if link.img}
           <a href={link.link}>
-            <i class="{link.faclass} fa-3x" />
+            <img src={link.img} alt={link.img} style="height: 50px;width: 50px;">
           </a>
         {:else}
           <a href={link.link}>{link.title}</a>

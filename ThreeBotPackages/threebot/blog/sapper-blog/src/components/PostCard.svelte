@@ -38,38 +38,38 @@
 
   let summary = post.excerpt || excerptOf(mdtext);
   //   import { fly } from "svelte/transition";
+
+  export function format(inputDate) {
+    var date = new Date(inputDate);
+    if (!isNaN(date.getTime())) {
+      var day = date.getDate().toString();
+      var month = (date.getMonth() + 1).toString();
+      // Months use 0 index.
+
+      return (
+        (day[1] ? day : "0" + day[0]) +
+        "/" +
+        (month[1] ? month : "0" + month[0]) +
+        "/" +
+        date.getFullYear()
+      );
+    }
+  }
 </script>
 
 <div class="post col-xl-6">
   <div class="post-thumbnail text-center">
     <a rel="prefetch" href="{username}/posts/{post.slug}">
-
       <img
         src={post_image_link}
         onerror="this.src='img/blog-post-1.jpeg'"
         alt="..."
-        class="img-fluid"
-        style="max-height: 200px;" />
+        class="img-fluid" />
     </a>
   </div>
   <div class="post-details">
-    <div class="post-meta d-flex justify-content-between">
-      <!-- Change date format -->
-      <div class="date meta-last">{post.published_at}</div>
-      {#if post.tags.length}
-        <div class="category">
-          <Tags tags={post.tags} />
-        </div>
-      {/if}
-    </div>
-    <a rel="prefetch" href="{username}/posts/{post.slug}">
-      <h3 class="h4">{post.title}</h3>
-    </a>
-    {#if showExcerpt}
-      <p class="text-muted">{summary}..</p>
-    {/if}
-
-    <footer class="post-footer d-flex align-items-center">
+    <div
+      class="post-footer d-flex align-items-center flex-column flex-sm-row my-3">
       <a
         href="{username}/posts/{post.slug}"
         class="author d-flex align-items-center flex-wrap">
@@ -81,9 +81,33 @@
             class="img-fluid" />
         </div>
         <div class="title">
-          <span>{post.author_name}</span>
+          <span class="font-weight-bold">{post.author_name}</span>
         </div>
       </a>
-    </footer>
+      <div class="d-flex align-items-center ml-auto flex-wrap">
+        <!-- Change date format -->
+        <div class="date">
+          {format(post.published_at)}
+        </div>
+      </div>
+    </div>
+
+    <a rel="prefetch" href="{username}/posts/{post.slug}">
+      <h3 class="h4">{post.title}</h3>
+    </a>
+    {#if showExcerpt}
+      <p class="text-muted">{@html summary}..</p>
+    {/if}
+    <div class="widget tags d-flex justify-content-between">
+      {#if post.tags.length}
+        <ul class="list-inline">
+          {#each post.tags as tag}
+            <li class="list-inline-item">
+              <a href="{username}/tags/{tag}" class="tag">#{tag}</a>
+            </li>
+          {/each}
+        </ul>
+      {/if}
+    </div>
   </div>
 </div>

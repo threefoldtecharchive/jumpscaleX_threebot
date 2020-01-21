@@ -1,81 +1,101 @@
 /* your styles go here */
+
 .hero {
-  height: 550px;
+    height: 550px;
 }
+
 footer.main-footer {
-  padding: 30px 0 0;
+    padding: 30px 0 0;
 }
 
 section {
-  padding: 50px 0;
+    padding: 50px 0;
 }
 
 ul li.list-results {
-  display: block;
-  margin-right: 10px;
-  margin-bottom: 10px;
+    display: block;
+    margin-right: 10px;
+    margin-bottom: 10px;
 }
 
 ul {
-  padding: 0;
-  margin: 0;
-  list-style: none;
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
 
 ul li {
-  display: inline-block;
-  margin-right: 10px;
+    display: inline-block;
+    margin-right: 10px;
 }
+
 ul li i {
-  padding: 1px 3px;
-  border-radius: 5px;
+    padding: 1px 3px;
+    border-radius: 5px;
 }
+
 .fa-facebook {
-  color: #3b5998;
+    color: #3b5998;
 }
 
 .fa-github {
-  color: #333;
+    color: #333;
 }
 
 .fa-instagram {
-  color: #fff;
-  background: linear-gradient(
-    45deg,
-    #405de6,
-    #5851db,
-    #833ab4,
-    #c13584,
-    #e1306c,
-    #fd1d1d
-  );
+    color: #fff;
+    background: linear-gradient( 45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
 }
+
 .fa-twitter {
-  color: #1da1f2;
+    color: #1da1f2;
 }
 
 .fadeIn {
-  animation: fadeIn 1s;
+    animation: fadeIn 1s;
+}
+
+.post-thumbnail img {
+    height: 230px;
+}
+
+.post .avatar img {
+    height: 40px;
+    width: 40px;
+}
+
+.post .title::after,
+.post .date::after {
+    display: none;
+}
+
+.post-details .widget {
+    border: none;
+    padding: 0;
+}
+
+.blog-post {
+    padding-top: 0;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 .fadeOut {
-  animation: fadeOut 1s;
+    animation: fadeOut 1s;
 }
 
 @keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }

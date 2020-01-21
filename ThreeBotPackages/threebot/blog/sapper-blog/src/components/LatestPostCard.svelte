@@ -24,7 +24,7 @@
 
 {#each posts as post}
   <div class="blog-posts">
-    <a rel="prefetch" href="{username}/posts/{post.slug}">
+    <a href="{username}/posts/{post.slug}">
       <div class="item d-flex align-items-center">
         <div class="image">
           <img

@@ -8,9 +8,9 @@ import blogs from './_blogs';
 //when we export this api will work in browser, so process will be undefined
 // TODO: production is 0, development is 1
 var process = process || {
-    env: { DEV: "0" },
+    env: { DEV: "1" },
     version: []
-  };
+};
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
@@ -37,7 +37,7 @@ export function getMetadata(blogName) {
             })
         }
     } else {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             resolve(metadata)
         });
     }
@@ -53,9 +53,8 @@ export function getBlogs() {
 
     if (process.env.DEV !== "1") {
         return callActorWithArgs("get_blogs", {})
-    }
-    else {
-        return new Promise(function (resolve, reject) {
+    } else {
+        return new Promise(function(resolve, reject) {
             resolve(blogs)
         });
     }
@@ -71,7 +70,7 @@ export function getPosts(blogName) {
             })
         }
     } else {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             resolve(posts)
         });
     }
@@ -87,7 +86,7 @@ export function getTags(blogName) {
             })
         }
     } else {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             resolve(tags)
         });
     }
@@ -101,7 +100,7 @@ export function getPages(blogName) {
             })
         }
     } else {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             resolve(pages)
         });
     }
