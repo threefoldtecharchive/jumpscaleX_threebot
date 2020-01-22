@@ -2,7 +2,7 @@
   import Alerts from "../components/Alerts.svelte";
   import Spinner from "../components/Spinner.svelte";
   import Confirm from "../components/Confirm.svelte";
-  import { getAlerts, deleteAll } from "./data";
+  import { getAlerts, deleteAll, deleteAlert } from "./data";
   import { formatDate } from "./common";
   import { onMount } from "svelte";
 
@@ -132,6 +132,27 @@
       })
       .catch(err => {
         console.log("error while deleting all alerts", err);
+      });
+  }
+
+  function getIndexOfAlert(identifier) {
+    for (let i = 0; i < alerts.length; i++) {
+      if (alerts[i].identifier == identifier) return i;
+    }
+  }
+
+  function doDeleteAlert(event) {
+    let identifier = event.detail.identifier;
+
+    //Call gedis actor
+    deleteAlert(identifier)
+      .then(resp => {
+        let toBeDeletedArrayIndex = getIndexOfAlert(identifier);
+        alerts.splice(toBeDeletedArrayIndex, 1);
+        alerts = [...alerts];
+      })
+      .catch(err => {
+        console.log(err);
       });
   }
 </script>
@@ -320,7 +341,7 @@
     <!-- content here -->
     <div class="row">
       <div class="col-sm-12">
-        <Alerts {alerts} />
+        <Alerts {alerts} on:delete={doDeleteAlert} />
       </div>
     </div>
   {:else if !isAlertsLoaded && !isAllAlertsDeleted}

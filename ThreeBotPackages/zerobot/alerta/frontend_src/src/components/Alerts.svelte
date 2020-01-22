@@ -1,8 +1,8 @@
 <script>
-  import { deleteAlert } from "../routes/data";
   import AlertModal from "./AlertModal.svelte";
   import { ansiUp } from "../routes/common";
   import Confirm from "./Confirm.svelte";
+  import { createEventDispatcher } from "svelte";
 
   export let alerts;
   $: alerts;
@@ -15,23 +15,10 @@
     10: "DEBUG"
   };
 
-  function onDeleteAlert(identifier) {
-    //Call gedis actor
-    deleteAlert(identifier)
-      .then(resp => {
-        let toBeDeletedArrayIndex = getIndexOfAlert(identifier);
-        alerts.splice(toBeDeletedArrayIndex, 1);
-        alerts = [...alerts];
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
+  const dispatch = createEventDispatcher();
 
-  function getIndexOfAlert(identifier) {
-    for (let i = 0; i < alerts.length; i++) {
-      if (alerts[i].identifier == identifier) return i;
-    }
+  function dispatchDelete(identifier) {
+    dispatch("delete", { identifier: identifier });
   }
 </script>
 
@@ -142,7 +129,7 @@
                       <button
                         type="button"
                         class="btn btn-primary pointer"
-                        on:click={() => confirmThis(onDeleteAlert, myAlert.identifier)}>
+                        on:click={() => confirmThis(dispatchDelete, myAlert.identifier)}>
                         Delete
                       </button>
                     </Confirm>
