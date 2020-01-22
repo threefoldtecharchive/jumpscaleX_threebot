@@ -5,31 +5,32 @@
   export async function preload(page, session) {
     // the `slug` parameter is available because this file
     // is called [slug].svelte
-    const { id } = page.params;
-    return { id };
+    const { identifier } = page.params;
+    return { identifier };
   }
 </script>
 
 <script>
   import AlertDetails from "../../components/AlertDetails.svelte";
   import Spinner from "../../components/Spinner.svelte";
+  import levels from "../../components/Alerts.svelte";
   import { getAlert } from "../data";
   import { onMount } from "svelte";
 
-  export let id;
+  export let identifier;
   export let myAlert;
 
   onMount(async () => {
-    getAlert(id).then(resp => {
+    getAlert(identifier).then(resp => {
       myAlert = resp.data;
     });
   });
 </script>
 
 {#if myAlert}
-  {#if myAlert.id}
-    <AlertDetails {myAlert} />
-  {:else}Alert of {id} cannot be found{/if}
+  {#if myAlert.identifier}
+    <AlertDetails {myAlert} {levels} />
+  {:else}Alert of {identifier} cannot be found{/if}
 {:else}
   <Spinner />
 {/if}

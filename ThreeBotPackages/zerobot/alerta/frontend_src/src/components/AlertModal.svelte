@@ -2,6 +2,7 @@
   import AlertDetils from "./AlertDetails.svelte";
 
   export let myAlert;
+  export let levels;
   export let index;
 </script>
 
@@ -31,7 +32,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <AlertDetils {myAlert} />
+        <AlertDetils {myAlert} {levels} />
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
