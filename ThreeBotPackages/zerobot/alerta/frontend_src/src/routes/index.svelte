@@ -1,7 +1,8 @@
 <script>
   import Alerts from "../components/Alerts.svelte";
   import Spinner from "../components/Spinner.svelte";
-  import { getAlerts, deleteAll } from "./data";
+  import Confirm from "../components/Confirm.svelte";
+  import { getAlerts, deleteAll, deleteAlert } from "./data";
   import { formatDate } from "./common";
   import { onMount } from "svelte";
 
@@ -10,56 +11,53 @@
   let formattedAlerts = "";
   let currentFilteredAlerts;
   let isAlertsLoaded = false;
-  let servicesLoading = true;
   let isAllAlertsDeleted = false;
-  const environments = [
-    { id: "all", name: "All", selected: true },
-    { id: "production", name: "Production", selected: false },
-    { id: "staging", name: "Staging", selected: false },
-    { id: "development", name: "Development", selected: false },
-    { id: "infrastructure", name: "Infrastucture", selected: false }
-  ];
 
-  let services;
-  const severity = {
-    ALL: "ALL",
-    50: "CRITICAL",
-    40: "ERROR",
-    30: "WARNING",
-    15: "STDOUT",
-    10: "DEBUG"
+  const alertTypes = {
+    BUG: "BUG",
+    QUESTION: "QUESTION",
+    EVENT_SYSTEM: "EVENT (SYSTEM)",
+    EVENT_MONITOR: "EVENT (MONITOR_",
+    EVENT_OPERATOR: "EVENT (OPERATOR)"
   };
-  const messageTypes = {
-    ALL: "ALL",
-    ERROR: "ERROR",
-    INFORMATION: "INFORMATION",
-    WARNING: "WARNING"
+
+  const status = {
+    ALL: "",
+    OPEN: "OPEN",
+    CLOSED: "CLOSED",
+    NEW: "NEW",
+    REOPEN: "REOPEN"
   };
-  const status = { ALL: "ALL", OPEN: "OPEN", CLOSED: "CLOSED", NEW: "NEW" };
+
   let currentFilters = {
-    service: "ALL",
-    messageType: messageTypes.ALL,
+    alert_type: alertTypes.ALL,
     status: status.ALL
   };
 
   onMount(async () => {
-    updateAlerts("all");
+    updateAlerts("");
   });
 
+  function alertsAreEmpty() {
+    if (!alerts) {
+      return true;
+    }
+    return alerts.length == 0;
+  }
+
   //Get Data from the API
-  function updateAlerts(environment) {
+  function updateAlerts(alert_type) {
     isAlertsLoaded = false;
     isAllAlertsDeleted = false; //The alerts all available now and not deleted (reintialize the state)
     alerts = [];
 
-    getAlerts(environment)
+    getAlerts(alert_type)
       .then(response => {
         // handle success
-        let parsedJson = response.data.result;
+        let parsedJson = response.data;
         alerts = parsedJson.alerts;
         formattedAlerts = convertData(parsedJson.alerts);
         filterAlerts(formattedAlerts);
-        getServices();
         isAlertsLoaded = true;
       })
       .catch(err => {
@@ -68,10 +66,9 @@
       });
   }
 
-  function updateFilters(selectedService, selectedMessageType, selectedState) {
+  function updateFilters(selectedAlertType, selectedState) {
     currentFilters = {
-      service: selectedService,
-      messageType: selectedMessageType,
+      alertType: selectedAlertType,
       status: selectedState
     };
     filterAlerts(formattedAlerts);
@@ -81,55 +78,50 @@
     for (let i = 0; i < alerts.length; i++) {
       let alert = alerts[i];
 
-      alert.service = alert.service.toUpperCase();
       alert.status = alert.status.toUpperCase();
-      alert.messageType = alert.messageType.toUpperCase();
-      alert.severity = severity[alert.severity];
-      alert.time = formatDate(alert.time);
+      alert.alert_type = alertTypes[alert.alert_type.toUpperCase()];
+      alert.time_first = alert.time_first; //formatDate(alert.time_first);
+      alert.time_last = alert.time_last; //formatDate(alert.time_last);
     }
     return alerts;
   }
 
   function filterAlerts(filteredAlerts) {
-    if (currentFilters.service != "ALL")
-      filteredAlerts = filteredAlerts.filter(singelAlert => {
-        return singelAlert.service == currentFilters.service;
-      });
-    if (currentFilters.messageType != messageTypes.ALL)
-      filteredAlerts = filteredAlerts.filter(singelAlert => {
-        return singelAlert.messageType == currentFilters.messageType;
-      });
-    if (currentFilters.status != status.ALL)
-      filteredAlerts = filteredAlerts.filter(singelAlert => {
-        return singelAlert.status == currentFilters.status;
-      });
+    // if (currentFilters.alert_type != "ALL")
+    //   filteredAlerts = filteredAlerts.filter(singelAlert => {
+    //     return singelAlert.service == currentFilters.service;
+    //   });
+    // if (currentFilters.messageType != messageTypes.ALL)
+    //   filteredAlerts = filteredAlerts.filter(singelAlert => {
+    //     return singelAlert.messageType == currentFilters.messageType;
+    //   });
+    // if (currentFilters.status != status.ALL)
+    //   filteredAlerts = filteredAlerts.filter(singelAlert => {
+    //     return singelAlert.status == currentFilters.status;
+    //   });
     currentFilteredAlerts = filteredAlerts; //keeping the current filtered alerts
     alerts = filteredAlerts; //update the alerts to update the Rendering
+
+    return filterAlerts;
   }
 
   $: if (searchText) {
     searchAlertsText();
+  } else {
+    alerts = currentFilteredAlerts;
   }
   function searchAlertsText() {
     alerts = currentFilteredAlerts.filter(singleAlert => {
-      return singleAlert.text.includes(searchText);
+      return singleAlert.message.includes(searchText);
     });
   }
   function resetFilters() {
     currentFilters = {
-      service: "ALL",
-      messageType: messageTypes.ALL,
+      alert_type: alertTypes.ALL,
       status: status.ALL
     };
     document.getElementById("InputSearch").value = "";
     filterAlerts(formattedAlerts);
-  }
-  function getServices() {
-    servicesLoading = true;
-    services = formattedAlerts.map(singleAlert => singleAlert.service);
-    services = Array.from([...new Set(services)]); //Making services unique and convert it from set to array
-    services.unshift("ALL"); //Add "All" in the begining of the array
-    servicesLoading = false;
   }
 
   function deleteAllAlerts() {
@@ -140,6 +132,27 @@
       })
       .catch(err => {
         console.log("error while deleting all alerts", err);
+      });
+  }
+
+  function getIndexOfAlert(identifier) {
+    for (let i = 0; i < alerts.length; i++) {
+      if (alerts[i].identifier == identifier) return i;
+    }
+  }
+
+  function doDeleteAlert(event) {
+    let identifier = event.detail.identifier;
+
+    //Call gedis actor
+    deleteAlert(identifier)
+      .then(resp => {
+        let toBeDeletedArrayIndex = getIndexOfAlert(identifier);
+        alerts.splice(toBeDeletedArrayIndex, 1);
+        alerts = [...alerts];
+      })
+      .catch(err => {
+        console.log(err);
       });
   }
 </script>
@@ -174,35 +187,8 @@
             bind:value={searchText} />
 
         </div>
-        <!--[Services]-->
-        <!-- content here -->
-        <div class="dropdown mx-2">
-          <button
-            class="btn btn-light dropdown-toggle pointer"
-            type="button"
-            id="dropdownMenuButton"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-            disabled={servicesLoading}>
-            Services
-          </button>
-          {#if services && services.length > 0}
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              {#each services as service}
-                <!-- content here -->
-                <a
-                  class="dropdown-item"
-                  href="#"
-                  on:click={() => updateFilters(service, currentFilters.messageType, currentFilters.status)}>
-                  {service}
-                </a>
-              {/each}
-            </div>
-          {/if}
-        </div>
         <!--[Message-Type]-->
-        <div class="dropdown mx-2">
+        <!-- <div class="dropdown mx-2">
           <button
             class="btn btn-light dropdown-toggle pointer"
             type="button"
@@ -240,9 +226,9 @@
             </a>
 
           </div>
-        </div>
+        </div> -->
         <!--[Status]-->
-        <div class="dropdown mx-2">
+        <!-- <div class="dropdown mx-2">
           <button
             class="btn btn-light dropdown-toggle pointer"
             type="button"
@@ -280,10 +266,10 @@
             </a>
 
           </div>
-        </div>
+        </div> -->
 
         <!--[Reset-Filter]-->
-        <div class="mx-2">
+        <!-- <div class="mx-2">
           <button
             type="button"
             class="btn btn-light pointer"
@@ -291,22 +277,33 @@
             disabled={servicesLoading}>
             Reset Filters
           </button>
-        </div>
+        </div> -->
         <!--[Delete-Alerts]-->
         <div class="mx-2">
-          <button
-            type="button"
-            class="btn btn-light pointer"
-            on:click={() => deleteAllAlerts()}
-            disabled={servicesLoading}>
-            Delete Alerts
-          </button>
+          <Confirm
+            let:confirm={confirmThis}
+            confirmTitle="Delete all"
+            cancelTitle="Cancel">
+            <span slot="title">Delete all alerts?</span>
+            <span slot="description">
+              All alerts stored by alerta will be completely removed, are you
+              sure?
+            </span>
+
+            <button
+              type="button"
+              class="btn btn-primary pointer"
+              disabled={alerts ? alerts.length == 0 : false}
+              on:click={() => confirmThis(deleteAllAlerts)}>
+              Delete all
+            </button>
+          </Confirm>
         </div>
       </div>
     </div>
   </div>
   <!--[Tabs]-->
-  <div class="row mt-4">
+  <!-- <div class="row mt-4">
     <div class="col-sm-12 ml-4">
       <div>
         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
@@ -338,13 +335,13 @@
       </div>
 
     </div>
-  </div>
+  </div> -->
   <!--[Alerts]-->
   {#if alerts && alerts != '' && isAlertsLoaded && !isAllAlertsDeleted}
     <!-- content here -->
     <div class="row">
       <div class="col-sm-12">
-        <Alerts {alerts} />
+        <Alerts {alerts} on:delete={doDeleteAlert} />
       </div>
     </div>
   {:else if !isAlertsLoaded && !isAllAlertsDeleted}
