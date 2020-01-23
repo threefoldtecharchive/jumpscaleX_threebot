@@ -5,7 +5,8 @@ class gateway(j.baseclasses.threebot_actor):
     # COREDNS redis backend
     def _init(self, **kwargs):
         # QUESTION: should it work against local database or against remote one? as it's generic enough
-        self._gateway = j.tools.tf_gateway.get(j.core.db)
+        redisclient = j.clients.redis.get(MASTERIP, port=6378)
+        self._gateway = j.tools.tf_gateway.get(redisclient)
         self.explorer = j.clients.gedis.get(
             name="phonebook_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.phonebook"
         )
@@ -167,10 +168,9 @@ class gateway(j.baseclasses.threebot_actor):
 
         fqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
         self._gateway.tcpservice_register(fqdn, privateip)
-        j.debug()
         self._gateway.domain_register_cname("@", f"{threebot_name}.{THREEBOT_DOMAIN}", f"{THREEBOT_DOMAIN}.")
         self._gateway.domain_register_cname(threebot_name, f"{threebot_name}.{THREEBOT_DOMAIN}", f"{THREEBOT_DOMAIN}.")
-        self._gateway.domain_register_a(threebot_name, f"{threebot_name}.{THREEBOT_PRIVATE_DOMAIN}", privateip)
+        self._gateway.domain_register_a(threebot_name, f"{threebot_name}", privateip)
         return True
 
     @j.baseclasses.actor_method

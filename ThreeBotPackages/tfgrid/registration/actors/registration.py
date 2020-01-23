@@ -14,7 +14,7 @@ class registration(j.baseclasses.threebot_actor):
         self.format = "json"
 
     @j.baseclasses.actor_method
-    def register(self, threebot_name, email, description, user_session=None):
+    def register(self, threebot_name=None, email=None, description="", schema_out=None, user_session=None):
         """
         ```in
         threebot_name = (S)
@@ -38,7 +38,7 @@ class registration(j.baseclasses.threebot_actor):
         pubkey = nacl.verify_key_hex
         phonebook_explorer.actors.phonebook.wallet_create(name=threebot_name)
         record = phonebook_explorer.actors.phonebook.name_register(
-            name=threebot_name, pubkey=pubkey, wallet_name=threebot_name
+            name=threebot_name, pubkey=pubkey, email=email, wallet_name=threebot_name
         )
         sender_signature_hex = j.data.nacl.payload_sign(
             record.id, threebot_name, email, "", description, pubkey, nacl=nacl
@@ -66,13 +66,10 @@ class registration(j.baseclasses.threebot_actor):
         signature = j.data.nacl.payload_sign(threebot_name, nacl=nacl)
         gateway_explorer.actors.gateway.domain_register(threebot_name, privateip, signature)
 
-        content = "\n".join([f"nameserver {p.network_public}" for p in wireguard.peers_objects])
-        j.sal.fs.writeFile("/etc/resolv.conf", content + "\n", append=False)
-
-        print(f"Done, your url is: {threebot_name}.{THREEBOT_DOMAIN}")
+        print(f"Done, your url is: {threebot_name}.{TESTNET_DOMAIN}")
 
     @j.baseclasses.actor_method
-    def set_identity(self, tid, tname, email, pubkey, user_session):
+    def set_identity(self, tid=None, tname=None, email=None, pubkey=None, schema_out=None, user_session=None):
         """
         ```in
         tid = (I)
