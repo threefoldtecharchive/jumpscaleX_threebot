@@ -1,5 +1,13 @@
 from Jumpscale import j
 
+TESTNET_DOMAIN = "threebot.gateway.tf"
+THREEBOT_DOMAIN = f"{TESTNET_DOMAIN}"
+THREEBOT_PRIVATE_DOMAIN = "threebot"
+# EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
+EXPLORER_DOMAIN = "128.199.32.174"
+
+MASTERIP = "192.168.99.254"
+
 
 class gateway(j.baseclasses.threebot_actor):
     # COREDNS redis backend
@@ -16,11 +24,7 @@ class gateway(j.baseclasses.threebot_actor):
         return self._gateway.domain_list()
 
     @j.baseclasses.actor_method
-<<<<<<< HEAD
-    def domain_exists(self, domain):
-=======
     def domain_exists(self, domain, schema_out=None, user_session=None):
->>>>>>> Fix namemanager, gateway,phonebook, and registration actors
         """
         ```in
         domain = (S)
@@ -144,11 +148,6 @@ class gateway(j.baseclasses.threebot_actor):
         """
         return self._gateway.domain_register_srv(name, domain, host, port, priority, weight)
 
-<<<<<<< HEAD
-    # TCP Router redis backend
-    @j.baseclasses.actor_method
-    def tcpservice_register(self, domain, client_secret="", schema_out=None, user_session=None):
-=======
     @j.baseclasses.actor_method
     def domain_register(self, threebot_name, privateip, signature, schema_out=None, user_session=None):
         """
@@ -169,8 +168,7 @@ class gateway(j.baseclasses.threebot_actor):
         fqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
         self._gateway.tcpservice_register(fqdn, privateip)
         self._gateway.domain_register_cname("@", f"{threebot_name}.{THREEBOT_DOMAIN}", f"{THREEBOT_DOMAIN}.")
-        self._gateway.domain_register_cname(threebot_name, f"{threebot_name}.{THREEBOT_DOMAIN}", f"{THREEBOT_DOMAIN}.")
-        self._gateway.domain_register_a(threebot_name, f"{threebot_name}", privateip)
+        self._gateway.domain_register_a(threebot_name, f"{THREEBOT_DOMAIN}", privateip)
         return True
 
     @j.baseclasses.actor_method
@@ -207,26 +205,11 @@ class gateway(j.baseclasses.threebot_actor):
     ## TCP Router redis backend
 
     @j.baseclasses.actor_method
-    def tcpservice_register(
-        self,
-        domain,
-        service_addr="",
-        service_port=443,
-        service_http_port=80,
-        client_secret="",
-        schema_out=None,
-        user_session=None,
-    ):
->>>>>>> Fix namemanager, gateway,phonebook, and registration actors
+    def tcpservice_register(self, domain, client_secret="", schema_out=None, user_session=None):
         """
         ```in
          domain = (S)
          client_secret = (S)
         ```
         """
-<<<<<<< HEAD
         return self._gateway.tcpservice_register(domain=domain, client_secret=client_secret)
-
-=======
-        return self._gateway.tcpservice_register(domain, service_addr, service_port, service_http_port, client_secret)
->>>>>>> Fix namemanager, gateway,phonebook, and registration actors

@@ -4,9 +4,10 @@ import gevent
 from nacl.signing import SigningKey
 from nacl.encoding import HexEncoder
 
-TESTNET_DOMAIN = "testnet.grid.tf"
-THREEBOT_DOMAIN = f"3bot.{TESTNET_DOMAIN}"
-EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
+TESTNET_DOMAIN = "threebot.gateway.tf"
+THREEBOT_DOMAIN = f"threebot.{TESTNET_DOMAIN}"
+# EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
+EXPLORER_DOMAIN = "128.199.32.174"
 
 
 class registration(j.baseclasses.threebot_actor):

@@ -1,9 +1,9 @@
 from Jumpscale import j
 
-TESTNET_DOMAIN = "testnet.grid.tf"
-THREEBOT_DOMAIN = f"3bot.{TESTNET_DOMAIN}"
-THREEBOT_PRIVATE_DOMAIN = "3bot"
-EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
+TESTNET_DOMAIN = "threebot.gateway.tf"
+THREEBOT_DOMAIN = f"threebot.{TESTNET_DOMAIN}"
+THREEBOT_PRIVATE_DOMAIN = "threebot"
+EXPLORER_DOMAIN = "128.199.32.174"
 
 MASTERIP = "192.168.99.254"  # ip addr of our master redis which has slaves on the multiple entry points of the TFGrid
 
@@ -18,58 +18,55 @@ class namemanager(j.baseclasses.threebot_actor):
         self.tfgateway = j.tools.tf_gateway.get(redisclient)
 
     @j.baseclasses.actor_method
-    def domain_register(self, doublename, privateip, signature, user_session=None):
+    def domain_register(self, threebot_name, privateip, signature, schema_out=None, user_session=None):
         """
         Registers a domain in coredns (needs to be authoritative)
 
         ```in
-        doublename = (S) # 3bot doublename
+        threebot_name = (S) # 3bot threebot_name
         privateip = (S)
-        signature = (S) #the signature of the payload "{doublename}"
+        signature = (S) #the signature of the payload "{threebot_name}"
         ```
         """
         result = self.explorer.actors.phonebook.validate_signature(
-            name=doublename, payload=doublename, signature=signature
+            name=threebot_name, payload=threebot_name, signature=signature
         )
         if not result.is_valid:
             raise j.exceptions.Value("Invalid signature")
 
-        first, last = doublename.split(".")
-        fqdn = f"{doublename}.{THREEBOT_DOMAIN}"
+        fqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
         self.tfgateway.tcpservice_register(fqdn, privateip)
-
-        self.tfgateway.domain_register_cname("@", f"{last}.{THREEBOT_DOMAIN}", f"{THREEBOT_DOMAIN}.")
-        self.tfgateway.domain_register_cname(first, f"{last}.{THREEBOT_DOMAIN}", f"{THREEBOT_DOMAIN}.")
-        self.tfgateway.domain_register_a(first, f"{last}.{THREEBOT_PRIVATE_DOMAIN}", privateip)
+        self.tfgateway.domain_register_cname("@", f"{threebot_name}.{THREEBOT_DOMAIN}", f"{THREEBOT_DOMAIN}.")
+        self.tfgateway.domain_register_a(threebot_name, f"{THREEBOT_DOMAIN}", privateip)
         return True
 
     @j.baseclasses.actor_method
-    def subdomain_register(self, doublename, subdomain, signature, user_session=None):
+    def subdomain_register(self, threebot_name, subdomain, signature, schema_out=None, user_session=None):
         """
         Registers a domain in coredns (needs to be authoritative)
 
         ```in
-        doublename = (S) # 3bot doublename
+        threebot_name = (S) # 3bot threebot_name
         subdomain = (S)
-        signature = (S) #the signature of the payload "{doublename}"
+        signature = (S) #the signature of the payload "{threebot_name}"
         ```
         """
         result = self.explorer.actors.phonebook.validate_signature(
-            name=doublename, payload=doublename, signature=signature
+            name=threebot_name, payload=threebot_name, signature=signature
         )
         if not result.is_valid:
             raise j.exceptions.Value("Invalid signature")
 
-        if not self.tfgateway.domain_exists(f"{doublename}.{THREEBOT_DOMAIN}"):
+        if not self.tfgateway.domain_exists(f"{threebot_name}.{THREEBOT_DOMAIN}"):
             raise j.exceptions.NotFound("domain name is not registered")
 
-        first, last = doublename.split(".")
+        first, last = threebot_name.split(".")
         record = self.tfgateway.subdomain_get(f"{last}.{THREEBOT_PRIVATE_DOMAIN}", first)
         privateip = record["a"][0]["ip"]
 
-        fqdn = f"{subdomain}.{doublename}.{THREEBOT_DOMAIN}"
+        fqdn = f"{subdomain}.{threebot_name}.{THREEBOT_DOMAIN}"
         self.tfgateway.tcpservice_register(fqdn, fqdn, privateip)
 
-        doublenamefqdn = f"{doublename}.{THREEBOT_DOMAIN}"
-        self.tfgateway.domain_register_cname("@", doublenamefqdn, THREEBOT_DOMAIN)
-        self.tfgateway.domain_register_cname(subdomain, doublenamefqdn, THREEBOT_DOMAIN)
+        threebot_namefqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
+        self.tfgateway.domain_register_cname("@", threebot_namefqdn, THREEBOT_DOMAIN)
+        self.tfgateway.domain_register_cname(subdomain, threebot_namefqdn, THREEBOT_DOMAIN)

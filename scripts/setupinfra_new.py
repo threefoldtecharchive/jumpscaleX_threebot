@@ -104,7 +104,7 @@ tcprouterserverpath = j.core.tools.text_replace("{DIR_BASE}/bin/trs")
 redisserverpath = j.core.tools.text_replace("{DIR_BASE}/bin/redis-server")
 corednspath = j.core.tools.text_replace("{DIR_BASE}/bin/coredns")
 
-THREEBOT_DOMAIN = "3bot.testnet.grid.tf"
+THREEBOT_DOMAIN = "threebot.gateway.tf"
 MASTERIP = "192.168.99.254"
 MASTERPUBLIC = j.sal.nettools.getReachableIpAddress("8.8.8.8", 53)
 
