@@ -65,7 +65,7 @@ class registration(j.baseclasses.threebot_actor):
         )
         privateip = wireguard.network_private.split("/")[0]
         signature = j.data.nacl.payload_sign(threebot_name, nacl=nacl)
-        gateway_explorer.actors.gateway.domain_register(threebot_name, privateip, signature)
+        gateway_explorer.actors.gateway.domain_service_expose(threebot_name, privateip, signature)
 
         print(f"Done, your url is: {threebot_name}.{TESTNET_DOMAIN}")
 

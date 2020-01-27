@@ -149,7 +149,7 @@ class gateway(j.baseclasses.threebot_actor):
         return self._gateway.domain_register_srv(name, domain, host, port, priority, weight)
 
     @j.baseclasses.actor_method
-    def domain_register(self, threebot_name, privateip, signature, schema_out=None, user_session=None):
+    def domain_service_expose(self, threebot_name, privateip, signature, schema_out=None, user_session=None):
         """
         Registers a domain in coredns (needs to be authoritative)
 
