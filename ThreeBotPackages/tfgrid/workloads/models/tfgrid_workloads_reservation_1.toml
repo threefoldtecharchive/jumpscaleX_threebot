@@ -26,6 +26,7 @@ containers = (LO) !tfgrid.workloads.reservation.container.1
 volumes = (LO) !tfgrid.workloads.reservation.volume.1
 zdbs = (LO) !tfgrid.workloads.reservation.zdb.1
 networks = (LO) !tfgrid.workloads.reservation.network.1
+kubernetes = (LO) !tfgrid.workloads.reservation.k8s.1
 #till whe is request for provisioning valid, if not signed in required time then obsolete
 expiration_provisioning = (T)
 #till whe is reservation valid
