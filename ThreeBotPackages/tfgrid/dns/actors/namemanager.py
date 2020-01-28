@@ -1,9 +1,8 @@
 from Jumpscale import j
 
-TESTNET_DOMAIN = "threebot.gateway.tf"
-THREEBOT_DOMAIN = f"threebot.{TESTNET_DOMAIN}"
+THREEBOT_DOMAIN = j.core.myenv.config.get("THREEBOT_DOMAIN")
+EXPLORER_DOMAIN = j.core.myenv.config.get("EXPLORER_ADDR")
 THREEBOT_PRIVATE_DOMAIN = "threebot"
-EXPLORER_DOMAIN = "128.199.32.174"
 
 MASTERIP = "192.168.99.254"  # ip addr of our master redis which has slaves on the multiple entry points of the TFGrid
 
