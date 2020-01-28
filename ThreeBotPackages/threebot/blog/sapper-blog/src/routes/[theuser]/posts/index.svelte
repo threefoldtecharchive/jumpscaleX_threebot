@@ -1,8 +1,5 @@
 <script context="module">
-
-import {
-    getPosts, getMetadata
-} from "../../_api"
+  import { getPosts, getMetadata } from "../../_api";
 
   export async function preload({ host, path, params, query }) {
     console.log("params in posts index", JSON.stringify(params));

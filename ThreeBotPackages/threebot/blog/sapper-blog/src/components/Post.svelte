@@ -1,35 +1,39 @@
 <script>
   import showdown from "showdown";
   import Tags from "./Tags.svelte";
-  export let post;
   import { stores } from "@sapper/app";
   const { preloading, page, session } = stores();
   export let username = $page.params.theuser;
   export let metadata = {};
-  console.log(metadata)
+  export let post;
+  console.log(metadata);
   let converter = new showdown.Converter({ metadata: true });
   converter.setFlavor("github");
-  let mdtext = converter.makeHtml(post.content);
+  let mdtext, post_image_link, post_author_image_link;
 
-  let post_image = post.post_image;
-  let post_image_link = "";
+  $: {
+    mdtext = converter.makeHtml(post.content);
 
-  if (!post_image) {
-    post_image_link = "img/blog-post-1.jpeg";
-  } else if (!post_image.startsWith("http")) {
-    post_image_link = `/blog_${username}/assets/images/${post_image}`;
-  } else {
-    post_image_link = post_image;
-  }
+    let post_image = post.post_image;
+    post_image_link = "";
 
-  let post_author_image = post.author_image;
-  let post_author_image_link = "";
-  if (!post_author_image) {
-    post_author_image_link = "me.jpg";
-  } else if (!post_author_image.startsWith("http")) {
-    post_author_image_link = `/blog_${username}/assets/images/${post_author_image}`;
-  } else {
-    post_author_image_link = post_author_image;
+    if (!post_image) {
+      post_image_link = "img/blog-post-1.jpeg";
+    } else if (!post_image.startsWith("http")) {
+      post_image_link = `/blog_${username}/assets/images/${post_image}`;
+    } else {
+      post_image_link = post_image;
+    }
+
+    let post_author_image = post.author_image;
+    post_author_image_link = "";
+    if (!post_author_image) {
+      post_author_image_link = "me.jpg";
+    } else if (!post_author_image.startsWith("http")) {
+      post_author_image_link = `/blog_${username}/assets/images/${post_author_image}`;
+    } else {
+      post_author_image_link = post_author_image;
+    }
   }
 
   export function format(inputDate) {

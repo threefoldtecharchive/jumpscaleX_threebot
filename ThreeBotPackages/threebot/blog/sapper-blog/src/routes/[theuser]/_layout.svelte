@@ -1,11 +1,8 @@
 <script context="module">
-import {
-    getPosts, getPages, getMetadata, getTags
-} from "../_api.js";
+  import { getPosts, getPages, getMetadata, getTags } from "../_api.js";
 
   export async function preload({ host, path, params, query }) {
     try {
-
       const pages = await getPages(params.theuser);
       const metadata = await getMetadata(params.theuser);
       const tags = await getTags(params.theuser);
@@ -52,8 +49,11 @@ import {
 
 {#await pages}
   loading
-{:then value}
-  <Nav {segment} {metadata} pages={value} />
+{:then pagesvalue}
+  {#await metadata then metavalue}
+
+    <Nav {segment} {metavalue} pages={pagesvalue} />
+  {/await}
 {/await}
 <div>
   <div class="container">
@@ -64,8 +64,6 @@ import {
             <!-- post -->
             <slot />
           </div>
-          <!-- Pagination -->
-          <ListPagination />
         </div>
       </main>
 
@@ -74,6 +72,8 @@ import {
       </aside>
     </div>
   </div>
-  <Footer {metadata} />
+  {#await metadata then metavalue}
+    <Footer {metavalue} />
+  {/await}
 
 </div>

@@ -21,7 +21,9 @@
     <nav aria-label="Page navigation example">
       <ul class="pagination pagination-template d-flex justify-content-center">
         <li class="page-item {1 === page ? 'active' : ''}">
-          <a href="{objectPath}?page=1" class="page-link"><i class="fa fa-angle-left"></i></a>
+          <a href="{objectPath}?page=1" class="page-link">
+            <i class="fa fa-angle-left" />
+          </a>
         </li>
 
         {#if page > 1}
@@ -38,7 +40,7 @@
         {#if page < range.length}
           <li class="page-item {range.length === page - 1 ? 'active' : ''}">
             <a href="{objectPath}?page={range.length}" class="page-link">
-              <i class="fa fa-angle-right"></i>
+              <i class="fa fa-angle-right" />
             </a>
           </li>
         {/if}
@@ -46,7 +48,7 @@
         {#if page + 1 > range.length}
           <li class="page-item">
             <a href="{objectPath}?page={page}" class="page-link">
-              <i class="fa fa-angle-right"></i>
+              <i class="fa fa-angle-right" />
             </a>
           </li>
         {/if}
