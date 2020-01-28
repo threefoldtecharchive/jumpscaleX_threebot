@@ -4,10 +4,7 @@ import gevent
 from nacl.signing import SigningKey
 from nacl.encoding import HexEncoder
 
-TESTNET_DOMAIN = "threebot.gateway.tf"
-THREEBOT_DOMAIN = f"threebot.{TESTNET_DOMAIN}"
-# EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
-EXPLORER_DOMAIN = "128.199.32.174"
+EXPLORER_DOMAIN = j.core.myenv.config.get("EXPLORER_ADDR")
 
 
 class registration(j.baseclasses.threebot_actor):
@@ -67,7 +64,7 @@ class registration(j.baseclasses.threebot_actor):
         signature = j.data.nacl.payload_sign(threebot_name, nacl=nacl)
         gateway_explorer.actors.gateway.domain_service_expose(threebot_name, privateip, signature)
 
-        print(f"Done, your url is: {threebot_name}.{TESTNET_DOMAIN}")
+        print(f"Done, your url is: {threebot_name}.{EXPLORER_DOMAIN}")
 
     @j.baseclasses.actor_method
     def set_identity(self, tid=None, tname=None, email=None, pubkey=None, schema_out=None, user_session=None):
