@@ -37,7 +37,6 @@
   //     .splice(1)
   //     .join("\n")
   //     .slice(0, 300);
-
   summary = post.description || excerptOf(mdtext);
   //   import { fly } from "svelte/transition";
   export function format(inputDate) {

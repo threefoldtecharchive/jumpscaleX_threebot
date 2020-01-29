@@ -1,3 +1,2 @@
-const tags = ["lame", "markdown", "python", "java", "nim"];
-
-export default tags;
+let tags;
+export default tags = ['markdown', 'nim', 'python']
