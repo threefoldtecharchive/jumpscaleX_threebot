@@ -35,7 +35,6 @@
   console.log("component post", post);
   export let metadata;
   const { preloading, page, session } = stores();
-  export let username = $page.params.theuser;
   import { stores } from "@sapper/app";
 
   import Post from "../../../components/Post.svelte";

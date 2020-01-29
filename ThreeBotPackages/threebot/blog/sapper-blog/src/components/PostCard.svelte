@@ -2,7 +2,7 @@
   import showdown from "showdown";
   import Tags from "./Tags.svelte";
   import { excerptOf } from "../_helper.js";
-  export let post;
+  export let post = "";
   import { stores } from "@sapper/app";
   const { preloading, page, session } = stores();
   export let username = $page.params.theuser;
@@ -23,6 +23,7 @@
 
   let post_author_image = post.author_image;
   let post_author_image_link = "";
+  let summary = "";
   if (!post_author_image) {
     post_author_image_link = "me.jpg";
   } else if (!post_author_image.startsWith("http")) {
@@ -30,15 +31,15 @@
   } else {
     post_author_image_link = post_author_image;
   }
+
   //   let summary = mdtext
   //     .split("\n")
   //     .splice(1)
   //     .join("\n")
   //     .slice(0, 300);
 
-  let summary = post.excerpt || excerptOf(mdtext);
+  summary = post.excerpt || excerptOf(mdtext);
   //   import { fly } from "svelte/transition";
-
   export function format(inputDate) {
     var date = new Date(inputDate);
     if (!isNaN(date.getTime())) {
@@ -86,9 +87,7 @@
       </a>
       <div class="d-flex align-items-center ml-auto flex-wrap">
         <!-- Change date format -->
-        <div class="date">
-          {format(post.published_at)}
-        </div>
+        <div class="date">{format(post.published_at)}</div>
       </div>
     </div>
 
@@ -96,17 +95,22 @@
       <h3 class="h4">{post.title}</h3>
     </a>
     {#if showExcerpt}
-      <p class="text-muted">{@html summary}..</p>
+      <p class="text-muted">
+        {@html summary}
+        ..
+      </p>
     {/if}
     <div class="widget tags d-flex justify-content-between">
-      {#if post.tags.length}
-        <ul class="list-inline">
-          {#each post.tags as tag}
-            <li class="list-inline-item">
-              <a href="{username}/tags/{tag}" class="tag">#{tag}</a>
-            </li>
-          {/each}
-        </ul>
+      {#if post.tags}
+        {#if post.tags.length}
+          <ul class="list-inline">
+            {#each post.tags as tag}
+              <li class="list-inline-item">
+                <a href="{username}/tags/{tag}" class="tag">#{tag}</a>
+              </li>
+            {/each}
+          </ul>
+        {/if}
       {/if}
     </div>
   </div>
