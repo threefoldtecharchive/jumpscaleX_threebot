@@ -4,6 +4,7 @@ from JumpscaleLibs.data.markdown.mistune import markdown
 from os.path import dirname, abspath, join, splitext
 import re
 import unicodedata
+import requests
 
 
 def get_excerpt(content, maxlen=400):
@@ -185,6 +186,34 @@ class BlogLoader(j.baseclasses.object):
             if not post_obj in self.blog.pages:
                 self.blog.pages.append(post_obj)
                 self.blog.save()
+
+    def update_dummydata(self, blog_name=None):
+        """
+        update the static dummy files
+        :param blog_name:
+        :return:
+        """
+        blog_name = "blog" or blog_name
+        blog_path = "/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog/sapper-blog/src/routes/"
+
+        def _get_data(cmd_name):
+            base_url = "http://localhost/threebot/blog/actors/blog"
+            if cmd_name == "get_blogs":
+                res = requests.post(url=f"{base_url}/get_blogs")
+            else:
+                res = requests.post(url=f"{base_url}/{cmd_name}", json={"args": {"blog_name": blog_name}})
+            return res.json()
+
+        cmds = ["get_blogs", "get_metadata", "get_posts", "get_pages", "get_tags"]
+
+        for cmd in cmds:
+            res = _get_data(cmd)
+            data_name = cmd.split("get_")[1]  # ex: blogs, pages, posts
+            content = f"""let {data_name};
+export default {data_name} = {res}
+            """
+            j.sal.fs.writeFile(filename=f"{blog_path}_{data_name}.js", contents=content)
+            print(f"file {data_name} created successfully ")
 
     def _load_blog(self):
         self.dest = j.clients.git.pullGitRepo(self.repo_url)
