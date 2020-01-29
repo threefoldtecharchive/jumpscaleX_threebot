@@ -92,11 +92,25 @@ routerconfig = """\
 addr = "0.0.0.0"
 port = 443
 httpport = 80
+clientsport = 18000
 [server.dbbackend]
 type 	 = "redis"
 addr     = "127.0.0.1"
 port     = 6378
 refresh  = 10
+
+[server.services]
+    [server.services."www.python.org"]
+        addr = "151.101.240.223"
+        tlsport = 443
+
+    [server.services."www.ruby-lang.org"]
+        addr = "151.101.1.178"
+        tlsport = 443
+
+    [server.services."myserver.local"]
+        addr = "127.0.0.1"
+        httpport = 8000
 """
 
 tcprouterclientpath = j.core.tools.text_replace("{DIR_BASE}/bin/trc")
