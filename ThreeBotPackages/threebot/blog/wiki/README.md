@@ -31,6 +31,18 @@ If you need to rebuild the fronend using
 bash build_blog.sh
 ```
 
+- Make https requests
+
+```bash
+echo "Updataing blog static data"
+curl -i -XPOST localhost/threebot/blog/actors/blog/get_blogs -H "Content-Type: application/json"
+curl -i -XPOST localhost/threebot/blog/actors/blog/get_metadata --data '{"args":{"blog_name":"blog"}}' -H "Content-Type: application/json"
+curl -i -XPOST localhost/threebot/blog/actors/blog/get_posts --data '{"args":{"blog_name":"blog"}}' -H "Content-Type: application/json"
+curl -i -XPOST localhost/threebot/blog/actors/blog/get_pages --data '{"args":{"blog_name":"blog"}}' -H "Content-Type: application/json"
+curl -i -XPOST localhost/threebot/blog/actors/blog/get_tags --data '{"args":{"blog_name":"blog"}}' -H "Content-Type: application/json"
+echo "Done"
+```
+
 your blogs then should be accessible via `https://{yoursitename/ip}/blog`
 
 ## Blog structure

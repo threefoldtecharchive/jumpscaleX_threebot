@@ -110,7 +110,7 @@ class BlogLoader(j.baseclasses.object):
             if "title" in meta:
                 the_title = meta["title"][0]
             get_post = self.post_model.find(title=the_title)
-
+            post_description = meta.get("description", "")
             if get_post:
                 post_obj = get_post[0]
             else:
@@ -120,6 +120,7 @@ class BlogLoader(j.baseclasses.object):
             post_obj.slug = self._slugify(post_title)
             post_obj.content_with_meta = content
             post_obj.content = parsed.strip_meta(content)
+            post_obj.description = post_description
             if len(meta.get("tags", [])) > 0:
                 tags = meta.get("tags", [])[0]
                 tags = [t.strip() for t in tags.split(",")]
@@ -187,7 +188,7 @@ class BlogLoader(j.baseclasses.object):
 
     def _load_blog(self):
         self.dest = j.clients.git.pullGitRepo(self.repo_url)
-        bcdb = j.data.bcdb.get("threebot_ZDB_threebot")
+        bcdb = j.data.bcdb.get("threebot.blog")
         bcdb.models_add(path=j.core.tools.text_replace(f"{self.package.path}/models"))
         self.post_model = bcdb.model_get(url="threebot.blog.post")
 

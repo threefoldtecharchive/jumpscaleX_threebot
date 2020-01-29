@@ -38,7 +38,7 @@
   //     .join("\n")
   //     .slice(0, 300);
 
-  summary = post.excerpt || excerptOf(mdtext);
+  summary = post.description || excerptOf(mdtext);
   //   import { fly } from "svelte/transition";
   export function format(inputDate) {
     var date = new Date(inputDate);
