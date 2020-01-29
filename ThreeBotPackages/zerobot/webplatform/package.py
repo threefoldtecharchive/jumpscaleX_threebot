@@ -24,11 +24,3 @@ class Package(j.baseclasses.threebot_package):
         locations.configure()
         website.configure()
         website.save()
-
-    def stop(self):
-        pass
-
-    def uninstall(self):
-        """
-        Remove Dependencies
-        """

@@ -11,11 +11,14 @@ from selenium.webdriver.support import expected_conditions as EC
 from Jumpscale import j
 
 ALERTA_ACTOR = j.core.tools.text_replace(
-    "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/alerta")
+    "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/alerta"
+)
 BLOG_ACTOR = j.core.tools.text_replace(
-    "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog")
+    "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog"
+)
 PASTEBIN_ACTOR = j.core.tools.text_replace(
-    "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/demo/pastebin")
+    "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/demo/pastebin"
+)
 BLOG_EXAMPLE = "git@gitlab.com:xmonader/sample-blog-jsx.git"
 
 
@@ -27,7 +30,7 @@ class BaseTest(unittest.TestCase):
     def setUpClass(CLS):
         BaseTest.info("add packages actors.")
         BaseTest.blog_name = BaseTest.rand_string()
-        gedis_client = j.servers.threebot.local_start_default()
+        gedis_client = j.servers.threebot.start()
         BaseTest.add_actors(gedis_client)
         url = config["main"]["url"]
         BaseTest.browser = config["main"]["browser"]

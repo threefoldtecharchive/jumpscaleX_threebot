@@ -337,7 +337,7 @@ module.exports = {
         }
 
         try {
-          // Doubling checking if that data was actually saved and going to call the reseed API. 
+          // Doubling checking if that data was actually saved and going to call the reseed API.
           console.log(`Attempting to get data`)
           var initializationData = await window.initializeService.getInitializationData()
           console.log(initializationData)
@@ -345,7 +345,7 @@ module.exports = {
           if (initializationData.status === 200) {
             var reseed = await window.initializeService.reseed(this.threebotKeys.phrase)
 
-            // We will never receive a response from the reseeding function ... Find a way to handle this. 
+            // We will never receive a response from the reseeding function ... Find a way to handle this.
             if (reseed.status === 200) {
               console.log("Finished reseeding, we can continue!")
             }

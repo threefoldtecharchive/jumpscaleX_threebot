@@ -20,7 +20,7 @@ Loading wiki is now done by default in any threebot package, you just need to cr
 First make sure you have a threebot server running using:
 
 ```
-3BOTDEVEL:3bot:~: kosmos -p 'j.servers.threebot.local_start_default()'
+3BOTDEVEL:3bot:~: kosmos -p 'j.servers.threebot.start()'
 ```
 
 ## Creating and adding a new package
@@ -114,14 +114,14 @@ To reload a wiki of a specific package, you just need to get an instance from th
 ```
 JSX> p = j.tools.threebot_packages.get("mybot.test")
 LOAD CONFIG BCDB
-JSX> p.load_wiki(reset=True)
+JSX> p.wiki_load(reset=True)
 ** START DATA PROCESSOR FOR :myjobs
 ```
 
 ## Markdown extensions:
 
 * [Custom link format](../links.md)
-* [Macros](../macros/)
+* [Macros](../macro/)
 * [Inline HTML](../html.md)
 
 ## Writing you own macro

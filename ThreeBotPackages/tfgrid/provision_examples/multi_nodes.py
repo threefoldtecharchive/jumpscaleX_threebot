@@ -2,9 +2,14 @@ from Jumpscale import j
 import ipaddress
 
 
+def is_up(node):
+    ago = j.data.time.epoch - (60 * 10)
+    return node.updated > ago
+
+
 def find_node_public(nodes):
     # search a node that has a public ipv6 address
-    for node in nodes:
+    for node in filter(is_up, nodes):
         for iface in node.ifaces:
             for addr in iface.addrs:
                 ip = ipaddress.ip_interface(addr).ip
@@ -21,7 +26,7 @@ def find_free_wg_port(node):
     return free.pop()
 
 
-def deploy_ubuntu_container():
+def deploy_multi_node_network():
     j.clients.threebot.explorer_addr_set("explorer.testnet.grid.tf")
     explorer = j.clients.threebot.explorer
     me = j.tools.threebot.me.default
@@ -128,7 +133,7 @@ def deploy_ubuntu_container():
 
     # # container
     cont = reservation.data_reservation.containers.new()
-    cont.node_id = selected_nodes[1].node_id
+    cont.node_id = selected_nodes[1]["node"].node_id
     cont.workload_id = 2
     # This flist is a basic ubuntu flist that already have your ssh key authorized inside.
     # TODO: add link to flist manipulation tool
@@ -148,8 +153,8 @@ def deploy_ubuntu_container():
     reservation.customer_signature = me.nacl.sign_hex(reservation.json.encode())
 
     print("sending reservation")
-    # resp = explorer.actors_all.workload_manager.reservation_register(reservation)
-    # print("reservation sent. ID: %s" % resp.id)
+    resp = explorer.actors_all.workload_manager.reservation_register(reservation)
+    print("reservation sent. ID: %s" % resp.id)
     print("use this template to configure the wg-quick config of your laptop:")
     print(
         f"""
@@ -167,4 +172,4 @@ def deploy_ubuntu_container():
 
 
 if __name__ == "__main__":
-    deploy_ubuntu_container()
+    deploy_multi_node_network()

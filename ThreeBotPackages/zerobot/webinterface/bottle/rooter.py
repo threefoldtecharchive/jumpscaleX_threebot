@@ -36,3 +36,4 @@ def get_ws_url():
 from .chat import *
 from .gedis import *
 from .wiki import *
+from .info import *

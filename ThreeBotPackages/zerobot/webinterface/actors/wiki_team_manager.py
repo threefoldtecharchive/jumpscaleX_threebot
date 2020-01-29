@@ -73,12 +73,8 @@ class wiki_team_manager(j.baseclasses.threebot_actor):
         self.path = j.clients.git.getContentPathFromURLorPath(REPO, pull=True)
 
     @j.baseclasses.actor_method
-    def list_members(self, projects, contribution_types, user_session=None, schema_in=None, schema_out=None):
+    def list_members(self, projects, contribution_types, user_session=None, schema_out=None):
         """
-        ```in
-            projects = (LI)
-            contribution_types = (LI)
-        ```
         """
 
         def get_team_members():

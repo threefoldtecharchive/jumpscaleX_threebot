@@ -9,12 +9,16 @@ class package_manager(j.baseclasses.threebot_actor):
         j.data.schema.get_from_text(j.tools.threebot_packages._model.schema.text)
 
     @j.baseclasses.actor_method
-    def package_add(self, git_url=None, path=None, reload=True, schema_out=None, user_session=None):
+    def package_add(
+        self, git_url=None, path=None, reload=True, install=True, start=True, schema_out=None, user_session=None
+    ):
         """
         ```in
         git_url = ""
         path = ""
         reload = true (B)
+        install = true (B)
+        start = true (B)
         ```
         can use a git_url or a path
         path needs to exist on the threebot server
@@ -61,24 +65,17 @@ class package_manager(j.baseclasses.threebot_actor):
         else:
             raise j.exceptions.Input("need to have git_url or path to package")
 
-        g = j.threebot.packages.__dict__[package.source.threebot]
-        g.__dict__[package.source.name.replace(".", "__")] = package
+        j.threebot.servers.core._package_add(package)
+
         assert j.tools.threebot_packages.exists(name=package.name)
 
-        if reload is False and package.status in ["installed"]:
-            return "OK"
-        try:
+        if install or reload:
             package.install()
-            package.save()
+        package.reload(reset=reload)
+        if not install:
+            package.status = "toinstall"
+        if start:
             package.start()
-            package.models
-            package.actors_reload()
-        except Exception as e:
-            self._log_error(str(e), exception=e)
-            raise
-
-        # reload openresty configuration
-        package.openresty.reload()
 
         return "OK"
 
@@ -158,9 +155,10 @@ class package_manager(j.baseclasses.threebot_actor):
         package.enable()
 
     @j.baseclasses.actor_method
-    def packages_list(self, frontend=False, schema_out=None, user_session=None):
+    def packages_list(self, status="all", frontend=False, schema_out=None, user_session=None):
         """
         ```in
+        status = "all,init,config,toinstall,installed,tostart,disabled,error" (E)
         frontend = (B) false  # list only frontend packages
         ```
 
@@ -177,6 +175,10 @@ class package_manager(j.baseclasses.threebot_actor):
                     if not metadata["source"].get("frontend", False):
                         continue
                 else:
+                    continue
+
+            if status != "all":
+                if not package.status == status:
                     continue
 
             packages.append(package)
@@ -196,26 +198,90 @@ class package_manager(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        actors = (LO) !zerobot.packagemanager.actordef.1
+        packages = (LO) !zerobot.packagemanager.packagedef.1
 
-        @url = zerobot.packagemanager.actordef.1
+        @url = zerobot.packagemanager.packagedef.1
         package_name = ""
-        actor_name = ""
+        actor_names = [] (LS)
         ```
         """
+
+        def do(r, package):
+            if package.status not in ["installed"]:
+                package.install()
+            pdef = r.packages.new()
+            pdef.package_name = package.name
+            actor_names = list(package.actors.keys())
+            pdef.actor_names = actor_names
+            return r
+
         r = schema_out.new()
         if package_name:
             package = j.tools.threebot_packages.get(name=package_name)
-            if package.status in ["installed"]:
-                actordef = r.actors.new()
-                actordef.package_name = package.name
-                actordef.actor_name = name
+            r = do(r, package)
         else:
             for package in j.tools.threebot_packages.find():
-                if package.status in ["installed"]:
-                    actor_names = list(package.actors.keys())
-                    for name in actor_names:
-                        actordef = r.actors.new()
-                        actordef.package_name = package.name
-                        actordef.actor_name = name
+                r = do(r, package)
         return r
+
+    @j.baseclasses.actor_method
+    def model_urls_list(self, package_name=None, schema_out=None, user_session=None):
+        """
+        if not packagename then all
+        only lists the one which are installed
+
+        ```in
+        package_name = (S)
+        ```
+
+        ```out
+        packages = (LO) !zerobot.packagemanager.packagedefmodel.1
+
+        @url = zerobot.packagemanager.packagedefmodel.1
+        package_name = ""
+        bcdb_name = ""
+        urls = [] (LS)
+        ```
+        """
+
+        def do(r, package):
+            if package.status not in ["installed"]:
+                package.install()
+            pdef = r.packages.new()
+            pdef.package_name = package.name
+            pdef.bcdb_name = package.bcdb.name
+            for m in package.models.values():
+                if m.schema.url not in pdef.urls:
+                    pdef.urls.append(m.schema.url)
+            return r
+
+        r = schema_out.new()
+        if package_name:
+            package = j.tools.threebot_packages.get(name=package_name)
+            r = do(r, package)
+        else:
+            for package in j.tools.threebot_packages.find():
+                r = do(r, package)
+        return r
+
+    @j.baseclasses.actor_method
+    def package_reload(self, package_name=None, reset=False, schema_out=None, user_session=None):
+        """
+        if not packagename then all
+        only reload the ones which are installed
+
+        ```in
+        package_name = (S)
+        reset = False (B)
+        ```
+        """
+
+        def do(package):
+            package.reload(reset=reset)
+
+        if package_name:
+            package = j.tools.threebot_packages.get(name=package_name)
+            do(package)
+        else:
+            for package in j.tools.threebot_packages.find():
+                do(package)

@@ -22,7 +22,7 @@ class alerta(BaseTest):
     def test001_ALL_filter(self):
         """
         * test ALL filter *
-        - Get jobs page. 
+        - Get jobs page.
         - Click All filter , Check that it return all jobs.
         - Check that it has same value as all jobs value in summary table.
         """
@@ -38,7 +38,7 @@ class alerta(BaseTest):
     )
     def test002_environment_filters(self, filter_type, env_type):
         """
-        * test filters [Production, Development, Infrastucture ] in alerta page.*  
+        * test filters [Production, Development, Infrastucture ] in alerta page.*
         - Get alerts page.
         - Click filter , Check that it return right filtered alerta environment only .
         - Click reset filter, should return all alerts .
@@ -101,7 +101,7 @@ class alerta(BaseTest):
         * test  options ["Services", "Message type", "Status"] *
         - Get alerts page.
         - Get column of the filter.
-        - Click on filter .    
+        - Click on filter .
         - check every option option in this filter, Check that it return filterd alerta services.
         """
         self.info("Get column of the filter.")
@@ -154,7 +154,7 @@ class alerta(BaseTest):
         self.assertEqual("There is no alerts matching your criteria", self.find_element("no_alerts").text)
 
         self.info("Add some alerts.")
-        client = j.servers.threebot.local_start_default()
+        client = j.servers.threebot.start()
         for _ in range(5):
             client.actors.alerta.new_alert(
                 severity=10,

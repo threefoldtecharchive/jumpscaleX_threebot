@@ -5,7 +5,7 @@ THREEBOT_DOMAIN = f"3bot.{TESTNET_DOMAIN}"
 THREEBOT_PRIVATE_DOMAIN = "3bot"
 EXPLORER_DOMAIN = f"explorer.{TESTNET_DOMAIN}"
 
-MASTERIP = "192.168.99.254"
+MASTERIP = "192.168.99.254"  # ip addr of our master redis which has slaves on the multiple entry points of the TFGrid
 
 
 class namemanager(j.baseclasses.threebot_actor):
@@ -25,6 +25,7 @@ class namemanager(j.baseclasses.threebot_actor):
         if self._tfgateway is None:
             raise RuntimeError("should not use gedis client")
             redisclient = j.clients.redis.get(MASTERIP, port=6378)
+            # tf_gateway tool manages tcp forwarding & DNS
             self._tfgateway = j.tools.tf_gateway.get(redisclient)
         return self._tfgateway
 

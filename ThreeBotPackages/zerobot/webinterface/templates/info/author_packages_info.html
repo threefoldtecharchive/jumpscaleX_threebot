@@ -1,0 +1,17 @@
+{% extends "info/base.html" %}
+{% block title %}Author Packages{% endblock %}
+{% block content %}
+<!--Content-->
+<div class="d-flex flex-column align-items-center">
+    <!--Author Info-->
+    <div class="h1 font-weight-bold">
+        {{author_name}} Author
+    </div>
+    <!--Packages List-->
+    <div class="mt-3">
+        {% for item in packages_names %}
+        <div class="h3 font-weight-bold"><a href="/{{author_name}}/{{item}}/info">{{item}}</a> </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

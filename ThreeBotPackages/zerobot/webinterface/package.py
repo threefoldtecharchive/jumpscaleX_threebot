@@ -20,39 +20,37 @@ class Package(j.baseclasses.threebot_package):
         # get our main webserver
         for port in (443, 80):
             website = self.openresty.get_from_port(port)
-
             # PROXY for gedis HTTP
             locations = website.locations.get(name=f"webinterface_locations_{port}")
+            bottle_proxy_location = locations.get_location_proxy("bottle_proxy")
+            bottle_proxy_location.path_url = "~* ^/(3git|gedis|bcdbfs|auth|wiki|info)"
+            bottle_proxy_location.ipaddr_dest = "127.0.0.1"
+            bottle_proxy_location.port_dest = 9999
+            bottle_proxy_location.path_dest = ""
+            bottle_proxy_location.type = "http"
+            bottle_proxy_location.scheme = "http"
 
-            gedis_bcdbfs_proxy_location = locations.locations_proxy.new()
-            gedis_bcdbfs_proxy_location.name = "gedis_bcdbfs"
-            gedis_bcdbfs_proxy_location.path_url = "~* ^/(3git|gedis|bcdbfs|auth|wiki)"
-            gedis_bcdbfs_proxy_location.ipaddr_dest = "127.0.0.1"
-            gedis_bcdbfs_proxy_location.port_dest = 9999
-            gedis_bcdbfs_proxy_location.path_dest = ""
-            gedis_bcdbfs_proxy_location.type = "http"
-            gedis_bcdbfs_proxy_location.scheme = "http"
-
-            chat_wiki_proxy_location = locations.locations_proxy.new()
-            chat_wiki_proxy_location.name = "chat_wiki_actors"
-            chat_wiki_proxy_location.path_url = "~* ^/(.*)/(.*)/(chat|wiki|actors)"
+            chat_wiki_proxy_location = locations.get_location_proxy("chat_wiki_actors")
+            chat_wiki_proxy_location.path_url = "~* ^/(.*)/(.*)/(chat|wiki|actors|info)"
             chat_wiki_proxy_location.ipaddr_dest = "127.0.0.1"
             chat_wiki_proxy_location.port_dest = 9999
 
+            package_info_location = locations.get_location_proxy("package_author_info")
+            package_info_location.path_url = "~* ^/(.*)/info"
+            package_info_location.ipaddr_dest = "127.0.0.1"
+            package_info_location.port_dest = 9999
+
             url = "https://github.com/threefoldtech/jumpscaleX_weblibs"
             weblibs_path = j.clients.git.getContentPathFromURLorPath(url, pull=False)
-            weblibs_location = locations.locations_static.new()
-            weblibs_location.name = "weblibs"
+            weblibs_location = locations.get_location_static("weblibs")
             weblibs_location.path_url = "/weblibs"
             weblibs_location.path_location = f"{weblibs_path}/static"
 
-            chat_static_location = locations.locations_static.new()
-            chat_static_location.name = "chat_static"
+            chat_static_location = locations.get_location_static("chat_static")
             chat_static_location.path_url = "/staticchat"
             chat_static_location.path_location = f"{self._dirpath}/static"
 
-            wiki_static_location = locations.locations_static.new()
-            wiki_static_location.name = "wiki_static"
+            wiki_static_location = locations.get_location_static("wiki_static")
             wiki_static_location.path_url = "/staticwiki"
             wiki_static_location.path_location = f"{self._dirpath}/static"
 

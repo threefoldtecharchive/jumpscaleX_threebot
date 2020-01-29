@@ -3,7 +3,7 @@
 To start the package in `kosmos` use the following:
 
 ```python
-JSX> cl = j.servers.threebot.local_start_default()
+JSX> cl = j.servers.threebot.start()
 JSX> cl.actors.package_manager.package_add(path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/examples/vuejs/")
 ```
 
@@ -121,5 +121,5 @@ Create a package: check package creation instructions [Here](https://github.com/
   - Actors:
   Actors available in `actors/`, using the model we created to save/get data in bcdb.
   actors are the interface you talk to gedis/backend with, it takes schema in for the input parameters and out for return values.
-  
+
   example actor `actors/vuejs.py`

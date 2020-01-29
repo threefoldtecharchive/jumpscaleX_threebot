@@ -4,7 +4,7 @@ import gevent
 
 def chat(bot):
     """
-    to call http://localhost:5050/chat/session/food_get
+    to call http://localhost:5050/chat/session/food_get_form
     """
 
     res = {}

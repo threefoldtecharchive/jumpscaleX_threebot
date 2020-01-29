@@ -15,7 +15,7 @@ class Wiki(TestCase):
         LOGGER.info(message)
 
     def setUp(self):
-        self.gedis = j.servers.threebot.local_start_default(background=True)
+        self.gedis = j.servers.threebot.start(background=True)
 
     @classmethod
     def tearDownClass(cls):
@@ -127,7 +127,7 @@ class Wiki(TestCase):
 
         self.info("Remove the added test wiki.")
         gedis_client.actors.package_manager.package_delete("zerobot.wiki_examples")
-        j.sal.fs.remove("/docsites/zerobot.wiki_examples")
+        j.sal.fs.remove(j.sal.fs.joinPaths(j.tools.threegit.docsites_path, "zerobot.wiki_examples"))
 
         self.info("Check the added wiki, should not be found.")
         r = requests.get("http://127.0.0.1/3git/wikis/zerobot.wiki_examples/test_include.md")

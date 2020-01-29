@@ -41,13 +41,13 @@ hello/
 
 
 ## Starting zerobot with registered packages
-- the recommended way is `j.servers.threebot.local_start_default()`.
+- the recommended way is `j.servers.threebot.start()`.
 
 - to simplify the development workflow you can start packages directly using their factories, for example:
     * `kosmos -p "j.threebot.package.alerta.start()"`
 
 ## Starting threebot
-- the recommended way is `j.servers.threebot.local_start_default()`.
+- the recommended way is `j.servers.threebot.start()`.
 
 - to simplify the development workflow you can start packages directly using their factories, for example:
     * `kosmos -p "j.threebot.package.alerta.start()"`
@@ -57,7 +57,7 @@ After starting the server with recommended way, you can use the returned client 
 
 ```
 kosmos -p
-JSX> cl = j.servers.threebot.local_start_default()
+JSX> cl = j.servers.threebot.start()
 JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta')
 ```
 
@@ -96,7 +96,7 @@ from Jumpscale import j
 
 class PastebinFactory(j.baseclasses.threebot_factory):
 
-    __jslocation__ = "j.threebot.package.pastebin2"
+    __jslocation__ = "j.threebot_factories.package.pastebin2"
 ```
 
 ## Example package.py
@@ -311,6 +311,68 @@ Notice for chat package only cares about the `topic` not about the package name
 - exposing http endpoints for actors
 - exposing websocket endpoints for actors
 - exposing bcdbfs endpoints
+
+# Serving from domains
+
+To serve a website from domain directly, you need to create a new server config with this domain.
+If you need main server config, which is created by `webinterface` package to handle wikis, gedis and others, you should include it.
+
+Also, you can rewrite all requests of package route to `/` instead of `/<threebot name>/<package name>`, using rewrite directive like:
+
+```conf
+    location / {
+        rewrite ^(.+) /mythreebot/mypackage;
+    }
+```
+
+A full `package.py` example:
+
+```python
+import re
+from Jumpscale import j
+
+
+DOMAIN = "my.domain.test"
+
+
+class Package(j.baseclasses.threebot_package):
+    def start(self):
+        for port in (443, 80):
+            website = self.openresty.websites.get(f"my_website_{port}")
+            website.port = port
+            website.ssl = port == 443
+            website.domain = DOMAIN
+            locations = website.locations.get(name=f"my_website_{port}_locations")
+
+            include_location = locations.locations_custom.new()
+            include_location.name = f"my_website_includes_{port}"
+            # default website locations include wiki related locations
+            # so include them
+            default_website_name = self.openresty.get_from_port(port).name
+            include_location.config = f"""
+            include {website.path_cfg_dir}/{default_website_name}_locations/*.conf;
+
+            location / {{
+                rewrite ^(.+) /mythreebot/mypackage;
+            }}"""
+
+            locations.configure()
+            website.configure()
+
+```
+
+Here we get the name of the main website/server locations config (you can get it by doing `self.openresty.get_from_port`, and include all locations of it.
+
+```python
+    default_website_name = self.openresty.get_from_port(port).name
+    include_location.config = f"""
+    include {website.path_cfg_dir}/{default_website_name}_locations/*.conf;
+    ...
+```
+
+Some points to take care of:
+* If your website has a frontend/SPA, you need to set the base path to `/` (instead of `/<threebot name>/<package name>`).
+* when testing locally using `hosts` file, use `.test` as a top level domain, so that browsers don't ignore it.
 
 # Complete examples
 
