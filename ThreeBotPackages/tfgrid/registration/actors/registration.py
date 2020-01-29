@@ -5,6 +5,7 @@ from nacl.signing import SigningKey
 from nacl.encoding import HexEncoder
 
 EXPLORER_DOMAIN = j.core.myenv.config.get("EXPLORER_ADDR")
+THREEBOT_DOMAIN = j.core.myenv.config.get("THREEBOT_DOMAIN")
 
 
 class registration(j.baseclasses.threebot_actor):
@@ -62,9 +63,9 @@ class registration(j.baseclasses.threebot_actor):
         )
         privateip = wireguard.network_private.split("/")[0]
         signature = j.data.nacl.payload_sign(threebot_name, nacl=nacl)
-        gateway_explorer.actors.gateway.domain_service_expose(threebot_name, privateip, signature)
+        gateway_explorer.actors.gateway.domain_tcpservice_ip_expose(threebot_name, privateip, signature)
 
-        print(f"Done, your url is: {threebot_name}.{EXPLORER_DOMAIN}")
+        print(f"Done, your url is: {threebot_name}.{THREEBOT_DOMAIN}")
 
     @j.baseclasses.actor_method
     def set_identity(self, tid=None, tname=None, email=None, pubkey=None, schema_out=None, user_session=None):
