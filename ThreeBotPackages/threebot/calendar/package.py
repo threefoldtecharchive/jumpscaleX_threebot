@@ -1,6 +1,3 @@
-import sys
-import os
-
 from Jumpscale import j
 
 
@@ -16,16 +13,10 @@ class Package(j.baseclasses.threebot_package):
         :return:
         """
         # TODO: ADD REVERSE PROXY
-        sys.path.append(os.path.dirname(__file__))
-        import radicale
-        import logging
-
-        # radicale.log.logger.setLevel(logging.DEBUG)
-        from radicale import application
 
         rack = self.threebot_server.rack_server
 
-        rack.bottle_server_add(name="calendar", port=8851, app=application, strip_slash=False)
+        rack.bottle_server_add(name="calendar", port=8851, app=j.servers.radicale.wsgi_app, strip_slash=False)
         website = self.openresty.get_from_port(443)
 
         locations = website.locations.get("calendar")
