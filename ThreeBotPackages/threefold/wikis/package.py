@@ -13,6 +13,7 @@ TF_WIKIS_LINKS = {
     "grid": f"https://github.com/threefoldfoundation/info_grid/tree/{BRANCH}/docs",
     "foundation": f"https://github.com/threefoldfoundation/info_foundation/tree/{BRANCH}/docs",
     "tokens": f"https://github.com/threefoldfoundation/info_tokens/tree/{BRANCH}/docs",
+    "examples": f"https://github.com/threefoldtech/jumpscaleX_threebot/tree/development/docs/wikis/examples/docs",
 }
 
 
