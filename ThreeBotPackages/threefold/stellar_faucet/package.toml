@@ -1,0 +1,10 @@
+[source]
+name = "stellar_faucet"
+description = "Faucet for stellar tokens"
+threebot = "threefold"
+version = "0.0.1"
+
+# [[bcdbs]]
+# namespace = "demo"
+# type = "zdb"
+# instance = "default"
