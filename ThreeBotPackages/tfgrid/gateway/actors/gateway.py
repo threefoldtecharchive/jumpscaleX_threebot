@@ -149,4 +149,3 @@ class gateway(j.baseclasses.threebot_actor):
         ```
         """
         return self._gateway.tcpservice_register(domain=domain, client_secret=client_secret)
-
