@@ -6,8 +6,8 @@ class stellar_faucet(j.baseclasses.threebot_actor):
     def transfer(self, destination, schema_out=None, user_session=None):
         distributor = j.clients.stellar.get("distributor")
         distributor.network = "TEST"
-        distributor.secret = "SAU4LYLHOFEBC4OFWN75LINKLIQGEIADXOLAAPUZYKGJW6PDQRRM27NO"
+        distributor.secret = "SASF74IBJWIDGZ22WUXONXGHILZMBZENZTULYPU5C2ELGQV3YQ6D5X5S"
         try:
-            distributor.transfer(destination_address=destination, amount="100", asset="tft:GDCH626IWPCASGQJP6U7JYSB67VMDZWKWD47NTNUA2UWS2RK34GKRDJE")
+            distributor.transfer(destination_address=destination, amount="100", asset="tft:GDVT4IOGT4XRUHQTEEMC4JTTPOFFOVIIHJEIYBMBNHBSTS2OB6LEXPK7")
         except Exception as e:
             raise e

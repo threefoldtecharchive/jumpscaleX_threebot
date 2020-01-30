@@ -13,6 +13,7 @@
     "vue": "^2.6.10",
     "vue-property-decorator": "^8.3.0",
     "vue-router": "^3.1.5",
+    "vue-toasted": "^1.1.27",
     "vuetify": "^2.2.6",
     "vuetify-loader": "^1.4.3"
   },
