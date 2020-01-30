@@ -1,8 +1,16 @@
 import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+import Vuetify, { colors } from 'vuetify/lib'
 
 Vue.use(Vuetify)
 
-const opts = {}
 
-export default new Vuetify(opts)
+export default new Vuetify({
+    theme: {
+        dark: true,
+        themes: {
+            dark: {
+                primary: colors.purple.accent4,
+            }
+        }
+    },
+})

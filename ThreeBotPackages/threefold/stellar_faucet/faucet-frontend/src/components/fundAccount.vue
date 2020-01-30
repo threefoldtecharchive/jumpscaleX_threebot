@@ -13,6 +13,7 @@
             sm="8"
             md="4"
           >
+            <h1>Stellar Faucet</h1>
             <v-card class="elevation-12">
               <v-toolbar
                 color="primary"
@@ -24,7 +25,7 @@
               <v-card-text>
                 <v-form v-on:submit.prevent="fundAddress">
                   <v-text-field v-model="address" required placeholder="Address" />
-                  <p v-if="error">{{ error }}</p>
+                  <p v-if="error" id="errortext">This address probably does not exist or does not have a trustline with the issuer of our Stellar TFT (Testnet).</p>
                 </v-form>
               </v-card-text>
               <v-card-actions>
@@ -46,12 +47,11 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable no-console */
 import { fundAccount } from "../../actions/fundAccount"
 export default {
   data() {
     return {
-      error: "",
+      error: false,
       address: "",
       loading: false
     }
@@ -59,19 +59,27 @@ export default {
   methods: {
     fundAddress() {
       this.loading = true
+      this.error = false
       fundAccount(this.address)
         .then(res => {
           if (res.status == 200) {
             this.loading = false
             this.$toasted.success("Address funded successfully")
+          } else {
+            this.error = true
           }
         })
         .catch(() => {
+          this.error = true
           this.loading = false
-          this.$toasted.error("Something went wrong!")
         })
     }
   },
   name: "FundAccount"
 }
 </script>
+<style scoped>
+#errortext {
+  color: red;
+}
+</style>
