@@ -5,6 +5,11 @@ class nodes(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.node_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.node.2")
         self.farm_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.farm.1")
+        # ensure the database for uptime influxdb exists
+        self._inflxudb = j.clients.influxdb.get("default")
+        databases = [d["name"] for d in self._inflxudb.get_list_database()]
+        if self._inflxudb.database not in databases:
+            self._inflxudb.create_database(self._inflxudb.database)
 
     def _find(self, node_id):
         nodes = self.node_model.find(node_id=node_id)
@@ -248,6 +253,24 @@ class nodes(j.baseclasses.threebot_actor):
         node.uptime = uptime
         node.updated = j.data.time.epoch
         node.save()
+
+        self._inflxudb.write_points(
+            [
+                {
+                    "measurement": "node_capacity",
+                    "tags": {"node_id": node.node_id, "farmer": node.farm_id, "version": node.os_version,},
+                    "fields": {
+                        "cru": node.total_resources.cru,
+                        "mru": node.total_resources.mru,
+                        "hru": node.total_resources.hru,
+                        "sru": node.total_resources.sru,
+                        "longitude": node.location.longitude,
+                        "latitude": node.location.latitude,
+                        "uptime": node.uptime,
+                    },
+                }
+            ]
+        )
         return True
 
     def publish_wg_ports(self, node_id, ports, user_session=None):
