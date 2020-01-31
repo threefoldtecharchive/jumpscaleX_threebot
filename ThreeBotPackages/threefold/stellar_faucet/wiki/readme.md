@@ -6,8 +6,8 @@ A faucet for receiving Threefold Stellar tokens (TFT) on the Stellar testnet.
 
 You need following knowledge to start this server.
 
-- `distributorsecret`: is the secret key of the distributor account which holds all the Stellar TFT's.
-- `issueraddress`: is the address (public key) of the Stellar TFT issuer.
+- `secret`: is the secret key of the faucet account which holds the Stellar TFT's.
+- `issuer`: is the address (public key) of the Stellar TFT issuer.
 - `amount`: is the amount of token you wish to drip with each transfer in this faucet.
 
 ## Running
@@ -18,12 +18,12 @@ You need following knowledge to start this server.
 ```
 kosmos
 
-#set following environment variables
-j.core.myenv.config['distributorsecret'] = $distributorsecret
-j.core.myenv.config['issuer'] = $issueraddress
-j.core.myenv.config['amount'] = $amount
-
-j.core.myenv.state_save()
+faucet = j.clients.stellar_faucet.new(
+  name="faucet",
+  secret=$secret,
+  issuer=$issuer,
+  amount=$amount
+)
 
 j.servers.threebot.start()
 ```
