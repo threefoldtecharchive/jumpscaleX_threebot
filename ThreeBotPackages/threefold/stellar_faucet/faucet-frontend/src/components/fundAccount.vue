@@ -9,9 +9,9 @@
           justify="center"
         >
           <v-col
-            cols="12"
-            sm="8"
-            md="4"
+            cols="10"
+            sm="12"
+            md="6"
           >
             <h1>Stellar Faucet</h1>
             <v-card class="elevation-12">

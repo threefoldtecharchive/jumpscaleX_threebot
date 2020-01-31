@@ -1,4 +1,3 @@
-
 from Jumpscale import j
 import gevent
 
@@ -15,5 +14,3 @@ def chat(bot):
     # bot.md_show(res)
     # bot.redirect("https://threefold.me")
     pass
-
-    

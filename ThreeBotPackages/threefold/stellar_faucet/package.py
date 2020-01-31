@@ -1,4 +1,3 @@
-
 from Jumpscale import j
 
 
@@ -17,8 +16,5 @@ class Package(j.baseclasses.threebot_package):
         #     website_location.name = "stellar_faucet"
         #     website_location.path_url = "/stellar_faucet"
 
-
         #     locations.configure()
         #     website.configure()
-
-    
