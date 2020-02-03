@@ -20,6 +20,11 @@ class Package(j.baseclasses.threebot_package):
                 "branch": "3bot",
             },
             {"name": "incubaid", "giturl": "https://github.com/Incubaid/www_incubaid", "branch": "3bot"},
+            {
+                "name": "threefold_io",
+                "giturl": "https://github.com/threefoldfoundation/www_threefold.io_new/",
+                "branch": "3bot",
+            },
         ]
         for repo in repos:
             package = j.tools.threebot_packages.get(
