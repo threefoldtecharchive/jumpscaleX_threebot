@@ -18,7 +18,7 @@ class package_manager(j.baseclasses.threebot_actor):
         start=True,
         schema_out=None,
         user_session=None,
-        install_params=None,
+        install_kwargs=None,
     ):
         """
         ```in
@@ -27,7 +27,7 @@ class package_manager(j.baseclasses.threebot_actor):
         reload = true (B)
         install = true (B)
         start = true (B)
-        install_params= (dict)
+        install_kwargs= (dict)
 
         ```
         can use a git_url or a path
@@ -78,7 +78,7 @@ class package_manager(j.baseclasses.threebot_actor):
         assert j.tools.threebot_packages.exists(name=package.name)
 
         if install or reload:
-            package.install(kwargs=install_params)
+            package.install(install_kwargs=install_kwargs)
         package.reload(reset=reload)
         if not install:
             package.status = "toinstall"
