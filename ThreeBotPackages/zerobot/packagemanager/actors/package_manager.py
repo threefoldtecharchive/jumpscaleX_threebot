@@ -10,7 +10,15 @@ class package_manager(j.baseclasses.threebot_actor):
 
     @j.baseclasses.actor_method
     def package_add(
-        self, git_url=None, path=None, reload=True, install=True, start=True, schema_out=None, user_session=None
+        self,
+        git_url=None,
+        path=None,
+        reload=True,
+        install=True,
+        start=True,
+        schema_out=None,
+        user_session=None,
+        install_params=None,
     ):
         """
         ```in
@@ -19,6 +27,8 @@ class package_manager(j.baseclasses.threebot_actor):
         reload = true (B)
         install = true (B)
         start = true (B)
+        install_params= (dict)
+
         ```
         can use a git_url or a path
         path needs to exist on the threebot server
@@ -26,7 +36,6 @@ class package_manager(j.baseclasses.threebot_actor):
         it will not update if its already there
 
         """
-
         user_session.admin_check()  # means will give error when not an admin user
 
         if git_url and path:
@@ -56,7 +65,6 @@ class package_manager(j.baseclasses.threebot_actor):
                 raise j.exceptions.Input("could not find :%s" % tomlpath)
 
         name = getfullname(p)
-
         package = None
         if git_url:
             package = j.tools.threebot_packages.get(name=name, giturl=git_url)
@@ -70,7 +78,7 @@ class package_manager(j.baseclasses.threebot_actor):
         assert j.tools.threebot_packages.exists(name=package.name)
 
         if install or reload:
-            package.install()
+            package.install(kwargs=install_params)
         package.reload(reset=reload)
         if not install:
             package.status = "toinstall"
