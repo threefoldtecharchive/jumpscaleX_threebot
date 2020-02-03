@@ -2,6 +2,8 @@
 
 ## Installation
 
+- 
+- configure [google drive client](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/docs/wikis/tech/gdrive.md) `j.clients.gdrive.get_from_file("main","/sandbox/code/cred.json")`
 - Start threebot server
 
 ```python
