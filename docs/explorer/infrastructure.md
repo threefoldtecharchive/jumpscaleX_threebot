@@ -43,7 +43,6 @@ Wireguard is set up on the explorer machine where it is added in the redis priva
   - name_register(name, email, pubkey, wallet_name)
   - record_register(record_register(tid, name, email, ipaddr, description, pubkey)
 
-### Gridmanager threebot actor:
 
 ### Gateway threebot actor:
 
@@ -73,7 +72,6 @@ There is CoreDNS running on each DNS machine. CoreDNS is used to resolve the dom
 
 There is redis slave on each DNS machine where all the records saved in the redis master are mirrored to the slave and any changes are mirrored in all machines.
 
-### Routing Wireguard server:
 
 ## Threebot machines
 
@@ -81,7 +79,6 @@ There is redis slave on each DNS machine where all the records saved in the redi
 
 A machine that has jumpscale can act as a threebot machine where threebot server is started on it, and once the machine is registered via the explorer machine, the content being served can be accessible with the domain registered.
 
-### Threebot identity and registration:
 
 ## Demo
 
