@@ -97,7 +97,7 @@ class nodes(j.baseclasses.threebot_actor):
                 values.append(value)
 
         whereclause = " AND ".join(statements)
-        for row in self.node_model.query_model(fields, whereclause, values):
+        for row in self.node_model.query_model(fields=fields, whereclause=whereclause, values=values):
             node = self.node_model.get(row[0])
             if not proofs:
                 node.proofs = []
