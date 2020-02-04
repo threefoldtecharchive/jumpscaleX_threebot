@@ -1,2 +1,79 @@
-let metadata;
-export default metadata = {'blog_name': 'blog', 'blog_title': 'xmonader weblog', 'blog_description': 'let there be posts', 'author_name': 'ahmed', 'author_email': 'ahmed@there.com', 'author_image': 'me.jpg', 'base_url': '', 'url': '', 'posts_dir': '/sandbox/code/github/waleedhammam/test_blog/posts', 'github_username': 'xmonader', 'github_repo_url': 'https://github.com/waleedhammam/test_blog', 'nav_links': [{'title': 'about', 'link': '', 'page': 'about.md', 'faclass': ''}, {'title': 'contact us', 'link': '', 'page': 'contactus.md', 'faclass': ''}, {'title': 'foundation link', 'link': 'https://threefold.io', 'page': '', 'faclass': ''}], 'sidebar_social_links': [{'title': 'facebook', 'link': 'https://facebook.com/abc', 'page': '', 'faclass': ''}, {'title': 'github', 'link': 'https://github.com/abc', 'page': '', 'faclass': 'fab fa-github'}, {'title': 'instagram', 'link': 'https://instagram.com', 'page': '', 'faclass': 'fab fa-instagram'}, {'title': 'twitter', 'link': 'https://instagram.com', 'page': '', 'faclass': 'fab fa-twitter'}], 'sidebar_links': [{'title': 'google', 'link': 'https://google.com', 'page': '', 'faclass': ''}, {'title': 'yahoo', 'link': 'https://yahoo.com', 'page': '', 'faclass': ''}], 'allow_disqus': false, 'allow_navbar': true, 'allow_footer': true, 'posts_per_page': 5}
+const metadata = {
+    "blog_name": "blog",
+    "blog_title": "xmonader weblog",
+    "blog_description": "let there be posts",
+    "author_name": "ahmed",
+    "author_email": "ahmed@there.com",
+    "author_image": "me.jpg",
+    "base_url": "",
+    "url": "",
+    "posts_dir": "/sandbox/code/github/waleedhammam/test_blog/posts",
+    "github_username": "xmonader",
+    "github_repo_url": "https://github.com/waleedhammam/test_blog",
+    "nav_links": [
+        {
+            "title": "about",
+            "link": "",
+            "page": "about.md",
+            "faclass": ""
+        },
+        {
+            "title": "contact us",
+            "link": "",
+            "page": "contactus.md",
+            "faclass": ""
+        },
+        {
+            "title": "foundation link",
+            "link": "https://threefold.io",
+            "page": "",
+            "faclass": ""
+        }
+    ],
+    "sidebar_social_links": [
+        {
+            "title": "facebook",
+            "link": "https://facebook.com/abc",
+            "page": "",
+            "faclass": ""
+        },
+        {
+            "title": "github",
+            "link": "https://github.com/abc",
+            "page": "",
+            "faclass": "fab fa-github"
+        },
+        {
+            "title": "instagram",
+            "link": "https://instagram.com",
+            "page": "",
+            "faclass": "fab fa-instagram"
+        },
+        {
+            "title": "twitter",
+            "link": "https://instagram.com",
+            "page": "",
+            "faclass": "fab fa-twitter"
+        }
+    ],
+    "sidebar_links": [
+        {
+            "title": "google",
+            "link": "https://google.com",
+            "page": "",
+            "faclass": ""
+        },
+        {
+            "title": "yahoo",
+            "link": "https://yahoo.com",
+            "page": "",
+            "faclass": ""
+        }
+    ],
+    "allow_disqus": false,
+    "allow_navbar": true,
+    "allow_footer": true,
+    "posts_per_page": 5
+}
+
+export default metadata;
