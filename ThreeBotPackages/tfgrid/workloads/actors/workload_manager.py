@@ -11,7 +11,7 @@ def gwid(reservation_id, workload_id):
 def rid_from_gwid(workload_id):
     ss = workload_id.split("-")
     if len(ss) != 2:
-        raise j.exceptions.Input("global workload id %s has wrong format")
+        raise j.exceptions.Input(f"global workload id {workload_id} has wrong format")
     return int(ss[0]), int(ss[1])
 
 
@@ -505,13 +505,21 @@ class workload_manager(j.baseclasses.threebot_actor):
         return True
 
     @j.baseclasses.actor_method
-    def workload_deleted(self, workload_id):
+    def workload_deleted(self, workload_id, user_session):
         """
         Mark a workload as deleted
         this is called by a node once a workloads as been decommissioned
 
         ```in
-        workload_id = (I)
+        workload_id = (S)
         ```
         """
-        pass
+        rid, wid = rid_from_gwid(workload_id)
+
+        reservation = self._reservation_get(rid)
+        for i, r in enumerate(reservation.results):
+            if int(r.workload_id) == wid:
+                r.state = "deleted"
+
+        reservation.save()
+        return True
