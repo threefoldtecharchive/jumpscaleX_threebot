@@ -111,8 +111,9 @@ class BlogLoader(j.baseclasses.object):
             if "title" in meta:
                 the_title = meta["title"][0]
             get_post = self.post_model.find(title=the_title)
-            if "description" in meta:
-                post_description = meta.get("description", "")[0]
+            post_description = meta.get("description", "")
+            if post_description:
+                post_description = post_description[0]
             if get_post:
                 post_obj = get_post[0]
             else:
