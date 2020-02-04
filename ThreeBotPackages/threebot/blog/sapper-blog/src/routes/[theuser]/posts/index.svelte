@@ -54,11 +54,14 @@
 </svelte:head>
 
 {#await posts then value}
-  <PostList posts={value} {username} />
-  <ListPagination
-    articlesCount={totalPostsLength}
-    articlesPerPage={metadata.posts_per_page}
-    objectPath="/blog/{username}/posts"
-    page={pageNum} />
-
+  <div class="row">
+    <PostList posts={value} {username} />
+  </div>
+  <div class="row">
+    <ListPagination
+      articlesCount={totalPostsLength}
+      articlesPerPage={metadata.posts_per_page}
+      objectPath="/blog/{username}/posts"
+      page={pageNum} />
+  </div>
 {/await}

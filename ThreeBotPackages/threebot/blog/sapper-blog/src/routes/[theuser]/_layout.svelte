@@ -60,10 +60,8 @@
     <div class="row">
       <main class="posts-listing col-lg-8">
         <div class="container">
-          <div class="row">
-            <!-- post -->
-            <slot />
-          </div>
+          <!-- post -->
+          <slot />
         </div>
       </main>
 
