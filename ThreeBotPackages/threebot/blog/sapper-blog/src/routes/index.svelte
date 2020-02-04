@@ -1,14 +1,12 @@
 <script context="module">
-import {
-    getBlogs
-} from "./_api"
-
+  import { getBlogs, getMetadata } from "./_api";
 
   export async function preload({ host, path, params, query }) {
     try {
       const blogs = await getBlogs();
+      const metadata = await getMetadata(params.theuser);
 
-      return { blogs };
+      return { blogs, metadata };
     } catch (error) {
       console.log(error);
     }
@@ -24,6 +22,7 @@ import {
   import Header from "../components/Header.svelte";
 
   export let segment;
+  export let metadata = {};
 </script>
 
 <style>
@@ -65,7 +64,8 @@ import {
 <svelte:head>
   <title>Blogs</title>
 </svelte:head>
-<Nav {segment} />
+
+<Nav {segment} {metadata} />
 
 <BlogsList {blogs} />
 

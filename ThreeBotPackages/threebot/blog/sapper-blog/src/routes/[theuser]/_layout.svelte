@@ -52,7 +52,7 @@
 {:then pagesvalue}
   {#await metadata then metavalue}
 
-    <Nav {segment} {metavalue} pages={pagesvalue} />
+    <Nav {segment} metadata={metavalue} pages={pagesvalue} />
   {/await}
 {/await}
 <div>
