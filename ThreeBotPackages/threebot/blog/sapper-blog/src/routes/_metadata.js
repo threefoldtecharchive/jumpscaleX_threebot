@@ -10,8 +10,7 @@ const metadata = {
     "posts_dir": "/sandbox/code/github/waleedhammam/test_blog/posts",
     "github_username": "xmonader",
     "github_repo_url": "https://github.com/waleedhammam/test_blog",
-    "nav_links": [
-        {
+    "nav_links": [{
             "title": "about",
             "link": "",
             "page": "about.md",
@@ -30,34 +29,37 @@ const metadata = {
             "faclass": ""
         }
     ],
-    "sidebar_social_links": [
-        {
+    "sidebar_social_links": [{
             "title": "facebook",
             "link": "https://facebook.com/abc",
             "page": "",
-            "faclass": ""
-        },
-        {
-            "title": "github",
-            "link": "https://github.com/abc",
-            "page": "",
-            "faclass": "fab fa-github"
-        },
-        {
-            "title": "instagram",
-            "link": "https://instagram.com",
-            "page": "",
-            "faclass": "fab fa-instagram"
+            "faclass": "",
+            "img": "img/facebook.svg"
         },
         {
             "title": "twitter",
             "link": "https://instagram.com",
             "page": "",
-            "faclass": "fab fa-twitter"
-        }
-    ],
-    "sidebar_links": [
+            "faclass": "fab fa-twitter",
+            "img": "img/twitter.svg"
+        },
         {
+            "title": "linkedin",
+            "link": "https://www.linkedin.com/",
+            "page": "",
+            "faclass": "fab fa-instagram",
+            "img": "img/linkedin.svg"
+        },
+        {
+            "title": "github",
+            "link": "https://github.com/abc",
+            "page": "",
+            "faclass": "fab fa-github",
+            "img": "img/github.svg"
+        }
+
+    ],
+    "sidebar_links": [{
             "title": "google",
             "link": "https://google.com",
             "page": "",
