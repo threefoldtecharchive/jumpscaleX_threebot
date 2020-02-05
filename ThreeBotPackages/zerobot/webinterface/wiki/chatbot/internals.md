@@ -59,11 +59,35 @@ Pushing answers to chatbot on the last question is done using `work_report`
 
 
 ### GedisChatBot
-has all of the implementation details of getting questions, pushing questions, queues, also it's responsible for the primitive question types `int_ask`, `string_ask`, `captcha_ask`, `multi_choice`, `single_choice`, `drop_down_choice` , `autocomplete_drop_down`
+Has all of the implementation details of getting questions, pushing questions, queues, also it's responsible for the primitive question types `int_ask`, `string_ask`, `captcha_ask`, `multi_choice`, `single_choice`, `drop_down_choice` , `autocomplete_drop_down`.</br>
+These question types are used to allow for taking different types of input from the user going through the chatflow.
+
+Example for chatflow:
+
+```python
+def chat(bot):
+    res = {}
+
+    country = bot.drop_down_country("where do you want to eat?")
+    food = bot.string_ask("What do you need to eat?")
+    amount = bot.int_ask("Enter the amount you need to eat from %s in grams:" % food)
+    sides = bot.multi_choice("Choose your side dishes: ", ["rice", "fries", "saute", "mashed potato"])
+    drink = bot.single_choice("Choose your Drink: ", ["tea", "coffee", "lemon"])
+
+    res = """
+    # country {{country}}
+
+    # You have ordered:
+    - {{amount}} grams,sides {{sides}} and {{drink}} drink
+    ### Click next
+    for the final step which will redirect you to threefold.me
+    """
+    bot.template_render(res, **locals())
+```
 
 #### Validation
 
-Here's an example of validations required for a string input
+Some validations can be applied on the input taken from the user so that they are warned. This is helpful to validate certain restrictions before processing the data itself in the server. Here's an example of validations required for a string input
 
 ```python
     email = bot.string_ask("Enter email", validate={"required": True, "email": True}).strip()
