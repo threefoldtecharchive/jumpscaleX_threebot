@@ -2,6 +2,30 @@ from Jumpscale import j
 
 
 class alerta(j.baseclasses.threebot_actor):
+    def with_formatted_traceback(self, alert):
+        """return a dict with formatted traceback for any given alert
+
+        :param alert: alert object
+        :type alert: jumpscale.alerts.alert
+        :return: dict with alert info
+        :rtype: dict
+        """
+        alert_dict = alert._ddict_hr
+        if not alert.tracebacks:
+            return alert_dict
+
+        # re-populate tracebacks with formatted lines
+        tbs = []
+        for tb in alert.tracebacks:
+            tb_dict = {}
+            tb_dict["process_id"] = tb.process_id
+            tb_dict["threebot_name"] = tb.threebot_name
+            tb_dict["formatted"] = j.tools.alerthandler.format_traceback(tb)
+            tbs.append(tb_dict)
+
+        alert_dict["tracebacks"] = tbs
+        return alert_dict
+
     @j.baseclasses.actor_method
     def get_alert(self, identifier, schema_out=None, user_session=None):
         """
@@ -11,7 +35,8 @@ class alerta(j.baseclasses.threebot_actor):
         """
         res = j.tools.alerthandler.get(identifier)
         if res:
-            return j.data.serializers.json.dumps(res._ddict_hr)
+            alert_dict = self.with_formatted_traceback(res)
+            return j.data.serializers.json.dumps(alert_dict)
         return "{}"
 
     def _get_hr_json_from_list(self, method, *args, **kwargs):
@@ -24,7 +49,7 @@ class alerta(j.baseclasses.threebot_actor):
         """
         alerts = []
         for _, alert in method(*args, **kwargs):
-            alerts.append(alert._ddict_hr)
+            alerts.append(self.with_formatted_traceback(alert))
         return j.data.serializers.json.dumps({"alerts": alerts})
 
     @j.baseclasses.actor_method
@@ -38,6 +63,8 @@ class alerta(j.baseclasses.threebot_actor):
         cat = "" (S)
         ```
         """
+        if not cat.strip():
+            return self.list_alerts()
         return self._get_hr_json_from_list(j.tools.alerthandler.find, cat=cat)
 
     @j.baseclasses.actor_method
