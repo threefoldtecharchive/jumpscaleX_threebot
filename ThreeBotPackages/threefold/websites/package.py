@@ -8,23 +8,23 @@ class Package(j.baseclasses.threebot_package):
         cl.actors.package_manager.package_add(path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/websites/")
         """
         repos = [
-            {"name": "3bot_org", "giturl": "https://github.com/threefoldtech/www_3bot_org.git", "branch": "3bot"},
+            {"name": "www_3bot_org", "giturl": "https://github.com/threefoldtech/www_3bot_org.git", "branch": "3bot"},
             {
-                "name": "threefold_love",
+                "name": "www_threefold_love",
                 "giturl": "https://github.com/threefold-love/www_threefold_love",
                 "branch": "3bot",
             },
             {
-                "name": "threefold_tech",
+                "name": "www_threefold_tech",
                 "giturl": "https://github.com/threefoldtech/www_threefold.tech",
                 "branch": "3bot",
             },
-            {"name": "incubaid", "giturl": "https://github.com/Incubaid/www_incubaid", "branch": "3bot"},
-            {
-                "name": "threefold_io",
-                "giturl": "https://github.com/threefoldfoundation/www_threefold.io_new/",
-                "branch": "3bot",
-            },
+            {"name": "www_incubaid", "giturl": "https://github.com/Incubaid/www_incubaid", "branch": "3bot"},
+            # {
+            #     "name": "www_threefold_io",
+            #     "giturl": "https://github.com/threefoldfoundation/www_threefold.io_new/",
+            #     "branch": "3bot",
+            # },
         ]
         for repo in repos:
             package = j.tools.threebot_packages.get(
