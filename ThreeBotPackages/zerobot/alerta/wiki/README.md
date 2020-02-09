@@ -33,24 +33,6 @@ See [actors](../actors), for example we have alerta actor with the following met
 - `new_alert`: create new alert in system
 
 
-```
-JSX> anew = j.clients.gedis(...., port=8901)
-JSX> anew.actors.alerta.list_alerts()
-... a very long list
-JSX> anew.actors.alerta.new_alert(
-   severity=10,
-   status="new",
-   environment="ALL",
-   service="JSX",
-   resource="xmonader",
-   event="event 1",
-   value="n/a",
-   messageType="error",
-   text="rafir text")
-## actors.default.alerta.new_alert.16c54214bfcd2a5b61f789be085a1d14
-res                 : True
-```
-
 ## Alert handler integration
 
 Alerta can view exceptions raised inside jumpscale, by setting up alert handler tool
