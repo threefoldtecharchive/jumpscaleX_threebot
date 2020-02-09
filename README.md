@@ -70,7 +70,7 @@ Or through a client from another process:
 
 ```
 kosmos -p
-JSX> cl = j.clients.gedis.get(name="zerobot_client", port=8901, namespace="zerobot")
+JSX> cl = j.clients.gedis.get(name="pm", port=8901, package_name="zerobot.packagemanager")
 JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta')
 ```
 

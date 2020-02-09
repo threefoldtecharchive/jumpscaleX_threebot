@@ -1,28 +1,9 @@
-# Chat Package internal
+# Chat bot
 
+Chat now is a part of webinterface package.
 
-## Package structure
-
-```
-
-├── ChatFactory.py
-├── package.py
-├── README.md
-├── static
-│   ├── chat
-│   ├── home
-│   └── weblibs
-└── templates
-    └── chat
-        ├── error.html
-        ├── home.html
-        └── index.html
-        └── login.html
-```
-
-- package.py describes the package and the installation
-- static has the static assets for the chat
-- templates: templates used by bottle server to generate the UI
+- `static/chat`: has the static assets for the chat
+- `templates/chat`: templates used by bottle server to generate the UI
 
 
 ## Available actors
@@ -30,13 +11,13 @@
 
 ### Getting available chatflows
 
-[chatbot actor](https://github.com/threefoldtech/jumpscaleX_core/blob/0afdc7d212ee24c37e7c510a92e8ace051696516/JumpscaleCore/servers/threebot/base_actors/chatbot.py) is available as part of base actors
+[chatbot actor](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/zerobot/webinterface/actors/chatbot.py) is available as part of base actors
 
 ```python
 
 
 def _get_chatflows():
-    gedis_client = j.clients.gedis.get(port=8901)
+    gedis_client = j.clients.gedis.get("chat", port=8901, package_name="zerobot.webinterface")
     chatflows = gedis_client.actors.chatbot.chatflows_list()
     return [chatflow.decode() for chatflow in chatflows]
 ```
@@ -164,7 +145,7 @@ var generateSlide = function (res) {
 
 ## How GedisChatBot Works
 
-[GedisChatBot](https://github.com/threefoldtech/jumpscaleX_core/blob/0afdc7d212ee24c37e7c510a92e8ace051696516/JumpscaleCore/servers/gedis/GedisChatBot.py) is the one responsible for creating sessions and keeping track of them and of the loaded chatflows, and also for getting questions to a certain session by `session_id` `session_work_get` and receiving user's answer and giving it to a certain session by `session_id`
+[GedisChatBot](https://github.com/threefoldtech/jumpscaleX_core/blob/development/JumpscaleCore/servers/gedis/GedisChatBot.py) is the one responsible for creating sessions and keeping track of them and of the loaded chatflows, and also for getting questions to a certain session by `session_id` `session_work_get` and receiving user's answer and giving it to a certain session by `session_id`
 
 ### Session
 
