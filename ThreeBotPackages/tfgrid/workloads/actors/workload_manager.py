@@ -11,7 +11,7 @@ def gwid(reservation_id, workload_id):
 def rid_from_gwid(workload_id):
     ss = workload_id.split("-")
     if len(ss) != 2:
-        raise j.exceptions.Input("global workload id %s has wrong format")
+        raise j.exceptions.Input(f"global workload id {workload_id} has wrong format")
     return int(ss[0]), int(ss[1])
 
 
@@ -55,6 +55,9 @@ def iterate_over_workloads(obj):
     for _type in ["zdbs", "volumes", "containers", "networks"]:
         for workload in getattr(obj.data_reservation, _type):
             yield _type[:-1], workload
+    if hasattr(obj.data_reservation, "kubernetes"):
+        for workload in getattr(obj.data_reservation, "kubernetes"):
+            yield "kubernetes", workload
 
 
 class workload_manager(j.baseclasses.threebot_actor):
@@ -75,11 +78,6 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         self.reservation_model.IndexTable = index_table
         self.reservation_model.trigger_add(reservation_index_create())
-
-    def _iterate_over_workloads(self, obj):
-        for _type in ["zdbs", "volumes", "containers", "networks"]:
-            for workload in getattr(obj.data_reservation, _type):
-                yield _type[:-1], workload
 
     def _validate_signature(self, payload, signature, key):
         """
@@ -245,7 +243,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         wids = []
         for _type, w in workloads:
             wids.append(w.workload_id)
-            if _type in ["container", "zdb", "volume"] and not w.node_id:
+            if _type in ["container", "zdb", "volume", "kubernetes"] and not w.node_id:
                 raise j.exceptions.Value(f"workload {w.workload_id} has not a node_id set")
             elif _type == "network":
                 for r in w.network_resources:
@@ -339,7 +337,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         for reservation in reservations:
             for _type, workload in iterate_over_workloads(reservation):
                 if node_id:
-                    if _type in ["container", "zdb", "volume"] and workload.node_id != node_id:
+                    if _type in ["container", "zdb", "volume", "kubernetes"] and workload.node_id != node_id:
                         continue
                     if _type == "network" and node_id not in [
                         resource.node_id for resource in workload.network_resources
@@ -507,13 +505,21 @@ class workload_manager(j.baseclasses.threebot_actor):
         return True
 
     @j.baseclasses.actor_method
-    def workload_deleted(self, workload_id):
+    def workload_deleted(self, workload_id, user_session):
         """
         Mark a workload as deleted
-        this is called by a node once a workloads as been decomissioned
+        this is called by a node once a workloads as been decommissioned
 
         ```in
-        workload_id = (I)
+        workload_id = (S)
         ```
         """
-        pass
+        rid, wid = rid_from_gwid(workload_id)
+
+        reservation = self._reservation_get(rid)
+        for i, r in enumerate(reservation.results):
+            if int(r.workload_id) == wid:
+                r.state = "deleted"
+
+        reservation.save()
+        return True
