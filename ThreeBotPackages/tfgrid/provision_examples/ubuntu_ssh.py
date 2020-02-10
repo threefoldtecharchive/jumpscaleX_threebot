@@ -33,7 +33,6 @@ def deploy_ubuntu_container():
     me = j.tools.threebot.me.default
 
     nodes = explorer.actors_all.nodes.list().nodes
-    # import ipdb
     selected_node = find_node_public(nodes)
     if selected_node is None:
         raise j.exceptions.NotFound("no node found with public ipv6")
@@ -71,10 +70,17 @@ def deploy_ubuntu_container():
     # this is your wireguard public key from your laptop
     peer.public_key = "VHrmA1licqbB5y2UV2j/dMcqg3ymG0bAOu/uIVyJfz4="
 
+    # volume
+    volume = reservation.data_reservation.volumes.new()
+    volume.workload_id = 2
+    volume.size = 10
+    volume.type = "SSD"
+    volume.node_id = node.node_id
+
     # # container
     cont = reservation.data_reservation.containers.new()
     cont.node_id = node.node_id
-    cont.workload_id = 2
+    cont.workload_id = 3
     # This flist is a basic ubuntu flist that already have your ssh key authorized inside.
     # TODO: add link to flist manipulation tool
     cont.flist = "https://hub.grid.tf/zaibon/zaibon-ubuntu-ssh-0.0.2.flist"
@@ -86,6 +92,12 @@ def deploy_ubuntu_container():
     net = cont.network_connection.new()
     net.network_id = network.name
     net.ipaddress = "172.22.1.10"
+
+    vol = cont.volumes.new()
+    # here we reference the volume created in the same reservation
+    vol.workload_id = 3
+    vol.volume_id = f"-{volume.workload_id}"
+    vol.mountpoint = "/data"
 
     print(reservation.data_reservation._json)
 
