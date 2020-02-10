@@ -4,6 +4,8 @@ workload_id = (I)
 #links to unique node on the TFGrid
 node_id = (S)
 # defines the amount of vCpu, memory, and the disk size
+# size 1: 1 vCpu, 2 GiB RAM, 50 GB disk
+# size 2: 2 vCpu, 4 GiB RAM, 100 GB disk
 size = (I)
 network_id = (S)
 ipaddress = (ipaddress)
