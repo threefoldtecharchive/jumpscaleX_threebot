@@ -1,9 +1,10 @@
 # Content:
 - [What is a package](#what-is-a-package)
 - [Creating a new package](#creating-a-new-package)
-- [Registering package (using package manager)](#registering-package-(using-package-manager))
+- [Registering package](#registering-package)
 - [Package structure](#package-structure)
-- [More on locations](#more-on-locations)
+- [Locations](#more-on-locations)
+- [Authentication](#authentication)
 - [Example package.toml](#example-package.toml)
 - [Example package.py](#example-package.py)
 
@@ -32,7 +33,10 @@ hello
 └── wiki
 ```
 
-## Registering package (using package manager)
+## Registering package
+
+#### Using package manager actor
+
 After starting the server with the recommended way, the package created can be added using the package manager (It's implemented as a package too and loaded by default):
 
 Directly from threebot shell:
@@ -49,6 +53,11 @@ kosmos -p
 JSX> cl = j.clients.gedis.get(name="pm", port=8901, package_name="zerobot.packagemanager")
 JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/alerta')
 ```
+
+#### Using the package manager UI
+After starting threebot you can go to `3BOT_URL/zerobot/packagemanager`
+
+![packagemanager](../docs/images/packagemanager.jpg)
 
 ## Package structure
 - **Models directory** registers the model on the package loading. There is no need to manually add the models
@@ -72,11 +81,13 @@ JSX> cl.actors.package_manager.package_add(path='/sandbox/code/github/threefoldt
     ```
 - **package.toml**  is where the package information is defined, such as bcdb's and actors' namespaces.
 
-## More on locations
-Detailed types of locations that can be defined inside are documented [here](locations.md).
+## Locations
+Detailed types of `openresty/nginx` locations that can be defined inside are documented [here](locations.md).
+
+## Authentication
+We provide oauth2 proxy and clients, see [documentation](oauth2/README.md) of how you can use them inside your package.
 
 ## Example package.toml
-
 
 ```toml
 [source]
