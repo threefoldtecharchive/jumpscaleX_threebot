@@ -25,7 +25,7 @@
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link text-white" href="/zerobot/alerta_ui">
+          <a class="nav-link text-white" href="/zerobot/alerta">
             Home
             <span class="sr-only">(current)</span>
           </a>
