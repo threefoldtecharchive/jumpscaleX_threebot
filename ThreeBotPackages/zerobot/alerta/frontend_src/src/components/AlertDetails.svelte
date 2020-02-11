@@ -9,7 +9,7 @@
 <ul class="list-group">
   <li class="list-group-item">
     <b>ID :</b>
-    <a href="/zerobot/alerta_ui/{myAlert.identifier}">{myAlert.identifier}</a>
+    <a href="/zerobot/alerta/{myAlert.identifier}">{myAlert.identifier}</a>
   </li>
   <li class="list-group-item">
     <b>Type :</b>
