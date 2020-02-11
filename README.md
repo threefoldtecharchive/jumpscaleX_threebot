@@ -45,12 +45,12 @@ For a quick start, you can access myjobs
 
 Threebot sever can be extended using packages, see documentation on packages [here](docs/packages.md).
 
-### APIs
+#### APIs
 
 APIs can be added as actors to your package, which are exposed directly and can be accessed via http or using our `gedis` clients for python or javascript, see [documentation](docs/actors.md).
 
 
-### Openresty (nginx)
+#### Openresty (nginx)
 
 We use openresty (nginx) for serving requests. Inside a package, you can define different types of locations to handle these requests, for more information, check [documentation](docs/locations.md).
 
@@ -58,7 +58,7 @@ We use openresty (nginx) for serving requests. Inside a package, you can define 
 
 Some core functionality are being added as a package:
 
-### Webinterface package
+#### Webinterface package
 
 [Webinterface](https://github.com/threefoldtech/jumpscaleX_threebot/blob/c58b3db99095a8a9635c75ac7f82647947a9d110/ThreeBotPackages/threebot/webinterface) package is always registered when starting your threebot. It is responsible for
 
@@ -66,7 +66,7 @@ Some core functionality are being added as a package:
 - exposing websocket endpoints for actors
 - exposing bcdbfs endpoints
 
-### Complete examples
+#### Complete examples
 
 - Myjobs
 
@@ -78,9 +78,9 @@ Some core functionality are being added as a package:
     - [frontend](ThreeBotPackages/zerobot/alerta/frontend_src/README.md)
 
 - Pastebin
-  - [backend](ThreeBotPackages/demo/pastebin/README.md)
+  - [backend](ThreeBotPackages/demo/pastebin/wiki/README.md)
   - [frontend](ThreeBotPackages/demo/pastebin/pastebin/README.md)
 
 - VueJS
-  - [backend](ThreeBotPackages/examples/vuejs/README.md)
+  - [backend](ThreeBotPackages/examples/vuejs/wiki/README.md)
   - [frontend](ThreeBotPackages/examples/vuejs/newproject/README.md)
