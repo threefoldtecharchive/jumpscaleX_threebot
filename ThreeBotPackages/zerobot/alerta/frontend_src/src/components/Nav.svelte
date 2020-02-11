@@ -32,7 +32,7 @@
         </li>
       </ul>
       <span class="navbar-text text-white">
-        Cenral system to track all alerts
+        Central system to track all alerts
       </span>
     </div>
   </nav>
