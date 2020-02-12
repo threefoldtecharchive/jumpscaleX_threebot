@@ -111,14 +111,14 @@
     alerts = currentFilteredAlerts;
   }
   function searchAlertsText() {
-    searchText = searchText.toLocaleLowerCase();
+    const keyworkd = searchText.trim().toLocaleLowerCase();
 
     alerts = currentFilteredAlerts.filter(singleAlert => {
       const values = Object.values(singleAlert);
       let found = false;
       for (let value of values) {
         value = String(value).toLocaleLowerCase();
-        found |= value.includes(searchText);
+        found |= value.includes(keyworkd);
       }
       return found;
     });
