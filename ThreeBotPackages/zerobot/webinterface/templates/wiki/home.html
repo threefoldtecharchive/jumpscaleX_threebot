@@ -11,9 +11,10 @@
     <link rel="stylesheet" href="/weblibs/bootstrap4/bootstrap.min.css">
 
     <link rel="stylesheet" href="/staticwiki/home/css/fonts.css">
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/staticwiki/home/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<!-- Custom CSS -->
+<link rel="stylesheet" href="/staticwiki/home/css/style.css">
 </head>
 
 <body>
@@ -27,15 +28,24 @@
                 </div>
                 <div class="row">
                     <div class="col-sm text-center">
-
-
                         <h1>Wikis</h1>
                         <ul>
                             {% for wiki in wiki_names %}
-                            <li><a href="/{{threebot_name}}/{{package_name}}/wiki/{{wiki}}">{{wiki}}</a></li>
+                            <li>
+                                <div class="card">
+                                    <i id="spinner_{{wiki.replace('.', '_')}}" class="fa fa-circle-o-notch fa-spin"
+                                        style="font-size:42px; display: none;"></i>
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{wiki}}</h5>
+                                        <div class="row">
+                                            <a href="/wiki/{{wiki}}">View</a>
+                                            <a class="reload-button" onclick="reloadWiki('{{wiki}}')">Reload</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
                             {% endfor %}
                         </ul>
-
                     </div>
 
                 </div>
@@ -48,6 +58,11 @@
 
     <!-- Bootstrap JavaScript -->
     <script src="/weblibs/bootstrap4/bootstrap.min.js"></script>
+
+    <script src="/weblibs/gedis/gedis_package.js"></script>
+    <script src="/staticwiki/wiki/js/dynamic_content.js"></script>
+    <script src="/staticwiki/wiki/js/reload.js"></script>
+
 </body>
 
 </html>

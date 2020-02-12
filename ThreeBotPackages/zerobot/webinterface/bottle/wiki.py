@@ -17,14 +17,19 @@ def get_metadata(docsite):
         return "{}"
 
 
+@app.route("/wiki")
 @app.route("/<threebot_name>/<package_name>/wiki", method=["get"])
-def wiki_list(threebot_name, package_name):
-    try:
-        package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-    except j.exceptions.NotFound:
-        print(f"couldn't load wikis for {threebot_name}.{package_name}")
-        abort(404)
-    wiki_names = package.wiki_names
+def wiki_list(threebot_name=None, package_name=None):
+    if threebot_name and package_name:
+        try:
+            package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
+        except j.exceptions.NotFound:
+            print(f"couldn't load wikis for {threebot_name}.{package_name}")
+            abort(404)
+        wiki_names = package.wiki_names
+    else:
+        wiki_names = j.sal.fs.listDirsInDir(j.tools.threegit.docsites_path, dirNameOnly=True)
+
     return env.get_template("wiki/home.html").render(
         wiki_names=wiki_names, threebot_name=threebot_name, package_name=package_name
     )
@@ -32,7 +37,7 @@ def wiki_list(threebot_name, package_name):
 
 @app.route("/wiki/<wiki_name>", method=["get"])
 @app.route("/<threebot_name>/<package_name>/wiki/<wiki_name>", method=["get"])
-def wiki_by_name(wiki_name, threebot_name=None, package_name=None):
+def wiki_by_name(wiki_name=None, threebot_name=None, package_name=None):
     docsite_path = j.tools.threegit.get_docsite_path(wiki_name)
     if not j.sal.fs.exists(docsite_path):
         err = f"""
