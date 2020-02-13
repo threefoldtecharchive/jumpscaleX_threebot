@@ -5,6 +5,8 @@ class nodes(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.node_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.node.2")
         self.farm_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.farm.1")
+        # ensure the database for uptime influxdb exists
+        self._inflxudb = j.clients.influxdb.get("default")
 
     def _find(self, node_id):
         nodes = self.node_model.find(node_id=node_id)
@@ -92,7 +94,7 @@ class nodes(j.baseclasses.threebot_actor):
                 values.append(value)
 
         whereclause = " AND ".join(statements)
-        for row in self.node_model.query_model(fields, whereclause, values):
+        for row in self.node_model.query_model(fields=fields, whereclause=whereclause, values=values):
             node = self.node_model.get(row[0])
             if not proofs:
                 node.proofs = []
@@ -248,6 +250,24 @@ class nodes(j.baseclasses.threebot_actor):
         node.uptime = uptime
         node.updated = j.data.time.epoch
         node.save()
+
+        self._inflxudb.write_points(
+            [
+                {
+                    "measurement": "node_capacity",
+                    "tags": {"node_id": node.node_id, "farmer": node.farm_id, "version": node.os_version,},
+                    "fields": {
+                        "cru": float(node.total_resources.cru),
+                        "mru": float(node.total_resources.mru),
+                        "hru": float(node.total_resources.hru),
+                        "sru": float(node.total_resources.sru),
+                        "longitude": node.location.longitude,
+                        "latitude": node.location.latitude,
+                        "uptime": node.uptime,
+                    },
+                }
+            ]
+        )
         return True
 
     def publish_wg_ports(self, node_id, ports, user_session=None):
