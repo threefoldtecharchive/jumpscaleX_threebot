@@ -2,6 +2,10 @@ from Jumpscale import j
 
 
 class wiki_content(j.baseclasses.threebot_actor):
+    def _schedule(self, method, **kwargs):
+        job = j.servers.myjobs.schedule(method, **kwargs)
+        j.servers.myjobs.wait([job.id])
+
     @j.baseclasses.actor_method
     def reload(self, wiki_name, user_session=None, schema_out=None):
         """
