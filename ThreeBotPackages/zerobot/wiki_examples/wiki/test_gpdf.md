@@ -1,5 +1,6 @@
 # Test google pdf links to documents and presentations
 
+Note: this macros requires a [configured gdrive client](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/docs/wikis/tech/gdrive.md)  
 
 ## Documents
 
