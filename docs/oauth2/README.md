@@ -77,7 +77,4 @@ def callback():
 
 app = oauth_app.app
 
-
-
-
 ```
