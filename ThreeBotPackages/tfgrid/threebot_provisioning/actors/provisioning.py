@@ -1,4 +1,5 @@
 from Jumpscale import j
+import netaddr
 import ipaddress
 
 class provisioning(j.baseclasses.threebot_actor):
@@ -58,6 +59,23 @@ class provisioning(j.baseclasses.threebot_actor):
         free = ports - used
         return free.pop()
 
+    @j.baseclasses.actor_method
+    def check_ip_in_network(self, ip , network, schema_out=None, user_session=None):
+        """
+        ```in
+        ip = (S)
+        network = (S)
+        ```
+        ```out
+        check = (B)
+        ```
+        """
+        networks = netaddr.IPNetwork(network)
+        if netaddr.IPAddress(ip) in networks.iter_hosts():
+            return True
+        return False
+
+
     def key_pair_get(self):
         ex = j.tools.executor.get()
 
@@ -69,7 +87,7 @@ class provisioning(j.baseclasses.threebot_actor):
         return self.key_private_, self.key_public
 
     @j.baseclasses.actor_method
-    def deploy_ubuntu_container(self, name, email, ip_range , ip_address, pub_key, user_corex, password_corex, schema_out=None, user_session=None):
+    def generate_schema_container(self, name, email, ip_range , ip_address, pub_key, user_corex, password_corex, schema_out=None, user_session=None):
         """
         ```in
         name = (S)
@@ -109,10 +127,10 @@ class provisioning(j.baseclasses.threebot_actor):
         network.name = j.data.idgenerator.generateXCharID(16)
         network.iprange = ip_range
 
-        ip = ip_range.split("/")
-        ip_splits = ip[0].split(".")
-        network_number = int(ip_splits[2])
-        network1 = ip_splits[0]+"."+ip_splits[1]+"."+str(network_number+1) + "."+ip_splits[3]+"/24"
+        network_range = netaddr.IPNetwork(ip_range).ip
+        network_range += 256
+        network1 = str(network_range)+"/24"
+
         nr1 = network.network_resources.new()
 
         nr1.iprange = network1
@@ -121,14 +139,17 @@ class provisioning(j.baseclasses.threebot_actor):
         nr1.wireguard_public_key = wg_public
         nr1.wireguard_private_key_encrypted = wg_private_encrypted
 
-        network2 = ip_splits[0] + "." + ip_splits[1] + "." + str(network_number+2) + "." + ip_splits[3] + "/24"
+        network_range+= 256
+        network2 = str(network_range) + "/24"
+        ip = netaddr.IPAddress(network_range)
+        allwoed_ip = ip.words
 
         private_key, public_key = self.key_pair_get()
         # add a peer to the network, this peer is your laptop
         peer = nr1.peers.new()
         peer.iprange = network2
 
-        peer.allowed_iprange = ["100.64."+ip_splits[1]+"."+str(network_number+2)+"/32", network2]
+        peer.allowed_iprange = ["100.64."+str(allwoed_ip[1])+"."+str(allwoed_ip[2])+"/32", network2]
         # this is your wireguard public key from your laptop
         peer.public_key = public_key
 
@@ -146,36 +167,27 @@ class provisioning(j.baseclasses.threebot_actor):
         net.network_id = network.name
         net.ipaddress = ip_address
 
-        print(reservation.data_reservation._json)
-
         reservation.json = reservation.data_reservation._json
-        reservation.customer_signature = me.nacl.sign_hex(reservation.json.encode())
+        #TODO: find solution to generate signature
+        #reservation.customer_signature = me.nacl.sign_hex(reservation.json.encode())
 
-        return  reservation
-
-    @j.baseclasses.actor_method
-    def reservation(self, reservation, schema_out=None, user_session=None):
-        """
-        ```in
-        reservation = (json)
-        ```
-        """
-
-        resp = self.explorer.actors_all.workload_manager.reservation_register(reservation)
-        return  resp
-
-        #print("use this template to configure the wg-quick config of your laptop:")
+        resp =  self.reservation(reservation)
         #network_peer = "100.64."+ip_splits[2]+"."+ip_splits[3]+"/16"
         #print(
-        #    f"""
-        #        [Interface]
-        #        Address = 100.64.22.2/16, 172.22.2.0/16
-        #        PrivateKey = {private_key}
-        #        [Peer]
-        #        PublicKey = {public_key}
-        #        Endpoint = [{public_ip}]:{wg_port}
-        #        AllowedIPs = {ip_range}, {network_peer}
-        #        PersistentKeepalive = 25
-        #        """
-        #)
+        #   f"""
+        #       [Interface]
+        #       Address = 100.64.22.2/16, 172.22.2.0/16
+        #       PrivateKey = {private_key}
+        #       [Peer]
+        #       PublicKey = {public_key}
+        #       Endpoint = [{public_ip}]:{wg_port}
+        #       AllowedIPs = {ip_range}, {network_peer}
+        #       PersistentKeepalive = 25
+        #       """
+        # )
+
+
+    def reservation(self, reservation, schema_out=None, user_session=None):
+        resp = self.explorer.actors_all.workload_manager.reservation_register(reservation)
+        return  resp.id
 
