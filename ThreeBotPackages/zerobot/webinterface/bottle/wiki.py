@@ -28,7 +28,7 @@ def wiki_list(threebot_name=None, package_name=None):
             abort(404)
         wiki_names = package.wiki_names
     else:
-        wiki_names = j.sal.fs.listDirsInDir(j.tools.threegit.docsites_path, dirNameOnly=True)
+        wiki_names = [w.name for w in j.tools.threegit.find()]
 
     return env.get_template("wiki/home.html").render(
         wiki_names=wiki_names, threebot_name=threebot_name, package_name=package_name
