@@ -172,6 +172,7 @@ class provisioning(j.baseclasses.threebot_actor):
         #reservation.customer_signature = me.nacl.sign_hex(reservation.json.encode())
 
         resp =  self.reservation(reservation)
+
         #network_peer = "100.64."+ip_splits[2]+"."+ip_splits[3]+"/16"
         #print(
         #   f"""
@@ -185,7 +186,7 @@ class provisioning(j.baseclasses.threebot_actor):
         #       PersistentKeepalive = 25
         #       """
         # )
-
+        return resp
 
     def reservation(self, reservation, schema_out=None, user_session=None):
         resp = self.explorer.actors_all.workload_manager.reservation_register(reservation)
