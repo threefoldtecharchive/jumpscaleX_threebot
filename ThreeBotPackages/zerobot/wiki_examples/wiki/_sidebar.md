@@ -5,7 +5,7 @@
 * [Team](test_team.md)
 * [Gallery](test_gallery.md)
 * [Inline html](test_html.md)
-* [Slides](test_presentaion.md)
+* [Slides](test_presentation.md)
 * [Slides version2](test_presentation_v2.md)
 * [Markdown](test_markdown.md)
 * [PDF documents](test_gpdf.md)
