@@ -200,8 +200,8 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         if jsxobj.next_action == "pay":
             # Temporary change to simplify reservation flow for testing
-            # if self._validate_farmers_signature(jsxobj):
-            jsxobj.next_action = "deploy"
+            if self._validate_farmers_signature(jsxobj):
+                jsxobj.next_action = "deploy"
 
         if jsxobj.next_action == "deploy":
             # Temporary change to simplify reservation flow for testing
