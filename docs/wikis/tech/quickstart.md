@@ -27,7 +27,7 @@
   - Example:
 
     ```bash
-    jsx wiki-load -n grid -u https://github.com/threefoldfoundation/info_grid/tree/development/docs -f
+    jsx wiki-load -n info_grid -u https://github.com/threefoldfoundation/info_grid/tree/development/docs -f
     ```
 
   - Now we can check our wikis at: http://172.17.0.2/wiki/info_grid
@@ -47,11 +47,14 @@
 - Reload the wikis using
 
   ```bash
-  jsx wiki-reload -n grid
+  jsx wiki-reload -n info_grid
   ```
 
   - extra params:
     - `-r` will reset your wiki, delete all output files and reload it
+
+- You can also reload your wiki via web at: http://172.17.0.2/wiki/
+    ![Reloading wikis](../images/wikireload.png)
 
 ## Threefold wikis
 
