@@ -23,4 +23,9 @@ Editing the content of the wikis are done collaboratively in the previous reposi
 * [Inline HTML](html.md)
 
 ## Running your own wiki
+
 ًWikis are supported by default in threebot packages, to run and setup your own package with a wiki, more technical documentation can be found [here](tech/README.md).
+
+## Quick start
+
+For a quick start for how to run/configure wikis check [here](tech/quickstart.md)
