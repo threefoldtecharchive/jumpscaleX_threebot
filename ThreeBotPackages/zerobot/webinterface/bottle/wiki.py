@@ -69,7 +69,21 @@ def gdrive_handler(doc_type, guid1, guid2=""):
 @app.route("/3git/wikis/<filepath:re:.+>")
 @enable_cors
 def threegit_handler(filepath):
-    return static_file(filepath, root=j.tools.threegit.docsites_path)
+    root = j.tools.threegit.docsites_path
+    # first remove md file extention and check if the file exist
+    if filepath.endswith(".md"):
+        filepath = filepath[:-3]
+
+    filename = j.sal.fs.joinPaths(root, filepath)
+    if j.sal.fs.exists(filename):
+        return static_file(filepath, root=root)
+
+    # if the file isn't found without md extension, try to get it with md
+    filepath_with_md = filename + ".md"
+    if j.sal.fs.exists(filepath_with_md):
+        return static_file(filepath + ".md", root=root)
+
+    return abort(404, f"File not found with path {filename} or {filepath_with_md}")
 
 
 # def get_document(docsite_name, relative_path):
