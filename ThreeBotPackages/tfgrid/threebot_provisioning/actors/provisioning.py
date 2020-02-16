@@ -43,12 +43,12 @@ class provisioning(j.baseclasses.threebot_actor):
 
 
     def find_node_public(self, nodes):
-        # search a node that has a public ipv6 address
+        # search a node that has a public ipv4 address
         for node in filter(self.is_up, nodes):
             for iface in node.ifaces:
                 for addr in iface.addrs:
                     ip = ipaddress.ip_interface(addr).ip
-                    if ip.version != 6:
+                    if ip.version != 4:
                         continue
                     if ip.is_global:
                         return (node, str(ip))
@@ -87,7 +87,7 @@ class provisioning(j.baseclasses.threebot_actor):
         return self.key_private_, self.key_public
 
     @j.baseclasses.actor_method
-    def generate_schema_container(self, name, email, ip_range , ip_address, pub_key, user_corex, password_corex, schema_out=None, user_session=None):
+    def generate_schema_container(self, name=None, email=None, ip_range =None, ip_address=None, pub_key=None, user_corex=None, password_corex=None, schema_out=None, user_session=None):
         """
         ```in
         name = (S)
@@ -107,7 +107,7 @@ class provisioning(j.baseclasses.threebot_actor):
 
         selected_node = self.find_node_public(nodes)
         if selected_node is None:
-            raise j.exceptions.NotFound("no node found with public ipv6")
+            raise j.exceptions.NotFound("no node found with public ipv4")
 
         node, public_ip = selected_node
         _, wg_private_encrypted, wg_public = j.tools.wireguard.generate_zos_keys(node.public_key_hex)
@@ -142,14 +142,14 @@ class provisioning(j.baseclasses.threebot_actor):
         network_range+= 256
         network2 = str(network_range) + "/24"
         ip = netaddr.IPAddress(network_range)
-        allwoed_ip = ip.words
+        allowed_ip = ip.words
 
         private_key, public_key = self.key_pair_get()
         # add a peer to the network, this peer is your laptop
         peer = nr1.peers.new()
         peer.iprange = network2
 
-        peer.allowed_iprange = ["100.64."+str(allwoed_ip[1])+"."+str(allwoed_ip[2])+"/32", network2]
+        peer.allowed_iprange = ["100.64."+str(allowed_ip[1])+"."+str(allowed_ip[2])+"/32", network2]
         # this is your wireguard public key from your laptop
         peer.public_key = public_key
 
@@ -168,25 +168,25 @@ class provisioning(j.baseclasses.threebot_actor):
         net.ipaddress = ip_address
 
         reservation.json = reservation.data_reservation._json
-        #TODO: find solution to generate signature
-        #reservation.customer_signature = me.nacl.sign_hex(reservation.json.encode())
+        me = j.tools.threebot.me.default
+        reservation.customer_signature = me.nacl.sign_hex(reservation.json.encode())
 
         resp =  self.reservation(reservation)
 
-        #network_peer = "100.64."+ip_splits[2]+"."+ip_splits[3]+"/16"
-        #print(
-        #   f"""
-        #       [Interface]
-        #       Address = 100.64.22.2/16, 172.22.2.0/16
-        #       PrivateKey = {private_key}
-        #       [Peer]
-        #       PublicKey = {public_key}
-        #       Endpoint = [{public_ip}]:{wg_port}
-        #       AllowedIPs = {ip_range}, {network_peer}
-        #       PersistentKeepalive = 25
-        #       """
-        # )
-        return resp
+        first_network_range = netaddr.IPNetwork(ip_range).ip
+        ip = netaddr.IPAddress(first_network_range)
+        first_ip = ip.words
+        import ipdb; ipdb.set_trace()
+        result=f"""[Interface]
+          Address = 100.64.{allowed_ip[1]}.{allowed_ip[2]}/16, {network_range}/16
+          PrivateKey = {private_key}
+          [Peer]
+          PublicKey = {public_key}
+          Endpoint = [{public_ip}]:{wg_port}
+          AllowedIPs = {ip_range}, 100.64.{first_ip[1]}.{first_ip[2]}/16
+          PersistentKeepalive = 25"""
+
+        return result
 
     def reservation(self, reservation, schema_out=None, user_session=None):
         resp = self.explorer.actors_all.workload_manager.reservation_register(reservation)
