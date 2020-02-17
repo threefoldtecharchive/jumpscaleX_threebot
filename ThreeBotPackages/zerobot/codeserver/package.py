@@ -28,12 +28,12 @@ class Package(j.baseclasses.threebot_package):
             "codeserver", cmd_start="./code-server --auth none", path="/sandbox/bin", ports=8080
         )
         if not j.sal.fs.exists("/sandbox/bin/code-server"):
-            j.exceptions.NotFound(message="Codeserver binary not found")
+            j.builders.apps.codeserver.install()
 
         self.startupcmd.start()
 
     def stop(self):
         # Stop code server
         if not j.sal.fs.exists("/sandbox/bin/code-server"):
-            j.exceptions.NotFound(message="Codeserver binary not found")
+            j.builders.apps.codeserver.install()
         self.startupcmd.stop()
