@@ -38,12 +38,18 @@ class nodes(j.baseclasses.threebot_actor):
             validation_errors.append("location")
         if validation_errors:
             raise Exception("Can not create node without {}".format(" or ".join(validation_errors)))
+
         old_node = self._find(node.node_id)
-        if old_node:
-            node.updated = j.data.time.epoch
-            return self.node_model.set_dynamic(node._ddict, obj_id=old_node.id)
-        else:
-            node.created = j.data.time.epoch
+        if old_node:  # this is just an update/reboot of the node
+            old_node.farm_id = node.farm_id
+            old_node.os_version = node.os_version
+            old_node.location = node.location
+            old_node.updated = j.data.time.epoch
+            old_node.save()
+            return old_node
+
+        # here we got a new node
+        node.created = j.data.time.epoch
         return self.node_model.new(data=node).save()
 
     @j.baseclasses.actor_method
