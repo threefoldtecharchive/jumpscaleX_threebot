@@ -70,6 +70,8 @@ class workload_manager(j.baseclasses.threebot_actor):
         )
         self.workload_schema = j.data.schema.get_from_url("tfgrid.workloads.reservation.workload.1")
         self.user_model = j.threebot.packages.tfgrid.phonebook.bcdb.model_get(url="tfgrid.phonebook.user.1")
+        self.node_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.node.2")
+        self.farm_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.farm.1")
         self.nacl = j.data.nacl.default
 
         index_table = reservation_index_model()
@@ -78,6 +80,36 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         self.reservation_model.IndexTable = index_table
         self.reservation_model.trigger_add(reservation_index_create())
+
+    def _farmer_tids_from_reservation(self, obj):
+        """
+        Extract a list of all farmer tids based on the node_id for each object in the reservation flow.
+        :param obj: reservation schema
+        """
+        # gather all nodes we deploy on
+        nodes = set()
+        for _typ, workload in iterate_over_workloads(obj):
+            if _typ == "network":
+                for nr in workload.network_resources:
+                    nodes.add(nr.node_id)
+            else:
+                nodes.add(workload.node_id)
+        # get all farms these nodes belong in
+        farm_ids = set()
+        for node_id in nodes:
+            # we already
+            node_list = self.node_model.find(node_id=node_id)
+            if len(node_list) == 0:
+                # node not found
+                continue
+            farm_ids.add(node_list[0].farm_id)
+        farmer_tids = []
+        # get respective farm ids
+        for farm_id in farm_ids:
+            farm = self.farm_model.get(farm_id, None)
+            farmer_tids.append(farm.threebot_id)
+
+        return farmer_tids
 
     def _validate_signature(self, payload, signature, key):
         """
@@ -135,9 +167,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         Checks that all the farmers signed with a valid signature
         """
-        farmers_tids = set()
-        for _, workload in iterate_over_workloads(jsxobj):
-            farmers_tids.add(workload.farmer_tid)
+        farmers_tids = self._farmer_tids_from_reservation(jsxobj)
 
         for signature in jsxobj.signatures_farmer:
             if signature.tid not in farmers_tids:
@@ -199,7 +229,6 @@ class workload_manager(j.baseclasses.threebot_actor):
                 jsxobj.next_action = "pay"
 
         if jsxobj.next_action == "pay":
-            # Temporary change to simplify reservation flow for testing
             if self._validate_farmers_signature(jsxobj):
                 jsxobj.next_action = "deploy"
 
@@ -452,9 +481,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
         """
         reservation = self._reservation_get(reservation_id)
-        farmers_tids = set()
-        for _, workload in iterate_over_workloads(reservation):
-            farmers_tids.add(workload.farmer_tid)
+        farmers_tids = self._farmer_tids_from_reservation(reservation)
 
         if tid not in farmers_tids:
             raise j.exceptions.NotFound("Can not find a farmer with tid: {}".format(tid))
