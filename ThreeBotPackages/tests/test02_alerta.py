@@ -1,169 +1,76 @@
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.common.exceptions import NoSuchElementException
 from testconfig import config
-import unittest
-import time
-from .base_test import BaseTest
+import unittest, time
+import base
 from parameterized import parameterized
 import random
+from loguru import logger
 from Jumpscale import j
 
 
-@unittest.skip("https://github.com/threefoldtech/jumpscaleX_threebot/issues/185")
-class alerta(BaseTest):
-    def setUp(self):
-        super().setUp()
-        self.get_page(self.alerta_page)
-        self.assertIn("Alerta", self.driver.title)
-        self.assertTrue(self.wait_until_element_located("alerts_table"))
-        self.rows_count = len(self.get_table_rows("alerts_table"))
+page_url = "http://172.17.0.2/zerobot/alerta/"
 
-    def test001_ALL_filter(self):
-        """
-        * test ALL filter *
-        - Get jobs page.
-        - Click All filter , Check that it return all jobs.
-        - Check that it has same value as all jobs value in summary table.
-        """
+driver = base.set_browser()
 
-        self.info("Click All filter , Check that it return all jobs.")
-        All_element = self.find_element("All_filter_alerta")
-        All_element.click()
-        rows_count_after_all = len(self.get_table_rows("alerts_table"))
-        self.assertEqual(rows_count_after_all, self.rows_count)
 
-    @parameterized.expand(
-        [("Production", "PRODUCTION"), ("Development", "DEVELOPMENT"), ("Infrastucture", "INFRATUCTURE")]
+def before_all():
+    j.servers.threebot.start(background=True)
+    cl = j.clients.gedis.get(name="test", port=8901, package_name="zerobot.packagemanager")
+    cl.actors.package_manager.package_add(
+        path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/alerta"
     )
-    def test002_environment_filters(self, filter_type, env_type):
-        """
-        * test filters [Production, Development, Infrastucture ] in alerta page.*
-        - Get alerts page.
-        - Click filter , Check that it return right filtered alerta environment only .
-        - Click reset filter, should return all alerts .
-        """
-        self.info("Get {} filter rows ".format(filter_type))
-        table_rows = self.get_table_rows("alerts_table")
-        filterd_alerts = []
-        for i in range(len(table_rows)):
-            table_row = self.get_table_row("alerts_table", i)
-            if table_row[4] == env_type:
-                filterd_alerts.append(table_row)
 
-        self.info("Click  filter , Check that it return right filtered alerta environment only")
-        filter_element = self.find_element(filter_type)
-        filter_element.click()
 
-        if len(filterd_alerts) == 0:
-            self.assertEqual("There is no alerts matching your criteria", self.find_element("no_alerts").text)
-        else:
-            table_rows_after = self.get_table_rows("alerts_table")
-            self.assertEqual(len(filterd_alerts), len(table_rows_after))
-            for i in range(len(table_rows_after)):
-                self.assertEqual(env_type, self.get_table_row("alerts_table", i)[4])
+def before():
+    global driver
+    driver = base.set_browser()
+    base.get_page(driver, page_url)
+    assert "Alerta" in driver.title
 
-        self.info("Click reset filter, should return all alerts .")
-        reset_filter = self.find_element("reset_filters")
-        reset_filter.click()
-        table_rows = self.get_table_rows("alerts_table")
-        self.assertEqual(len(table_rows), self.rows_count)
 
-    def test003_search_box(self):
-        """
-        * test search box *
-        - Get alerts page.
-        - Use search box with not exist value, should return that value doesn't exist.
-        - Use Search box with exist value, should return right value.
-        """
-        self.info(" Use search box with not exist value, should return that value doesn't exist.")
-        alerta_search_box = self.find_element("alerta_search_box")
-        random_value = self.rand_string()
-        alerta_search_box.send_keys(random_value)
-        try:
-            elem = self.find_element("No_alerts")
-            self.assertEqual("There is no alerts matching your criteria", elem.text)
-        except NoSuchElementException:
-            self.fail("searchbox doesn't work successfully ")
+def after():
+    driver.close()
 
-        self.info(" Use Search box with exist value, should return right value")
-        alerta_search_box.clear()
-        ramdom_row_number = random.randint(1, self.rows_count)
-        table_row = self.get_table_row("alerts_table", ramdom_row_number)
-        alerta_search_box.send_keys(table_row[9])
-        alerta_table_after_search = self.get_table_rows("alerts_table")
-        for i in range(len(alerta_table_after_search)):
-            self.assertEqual(table_row[9], self.get_table_row("alerts_table", i)[9])
 
-    @parameterized.expand(["Services", "Message type", "Status"])
-    def test004_filters_options(self, filter_type):
-        """
-        * test  options ["Services", "Message type", "Status"] *
-        - Get alerts page.
-        - Get column of the filter.
-        - Click on filter .
-        - check every option option in this filter, Check that it return filterd alerta services.
-        """
-        self.info("Get column of the filter.")
-        head_elements = self.get_table_head_data("alerts_table")
-        head_name = filter_type
-        if filter_type == "Message type":
-            head_name = "Message Type"
-        column = [i for i, element in enumerate(head_elements) if element == head_name][0]
+def test_001_search_box():
+    """
+    * test search box *
+    - Get alerts page.
+    - Use search box with not exist value, should return that value doesn't exist.
+    - Use Search box with exist value, should return right value.
+    """
+    base.wait_until_element_located(driver, "alerts_table") is True
+    rows_count = len(base.get_table_rows(driver, "alerts_table"))
 
-        self.info("Click on {} filter.".format(filter_type))
-        filter_menue = self.find_element(filter_type)
-        filter_menue.find_element_by_id("dropdownMenuButton").click()
+    base.info(" Use search box with not exist value, should return that value doesn't exist.")
+    alerta_search_box = base.find_element(driver, "alerta_search_box")
+    random_value = base.rand_string()
+    alerta_search_box.send_keys(random_value)
+    elem = base.find_element(driver, "no_alerts")
+    assert "There is no alerts matching your criteria" == elem.text
+    base.info(" Use Search box with exist value, should return right value")
+    alerta_search_box.clear()
+    alerta_search_box.send_keys(" ")
+    base.wait_until_element_located(driver, "alerts_table") is True
 
-        self.info(" check every option option in this filter, Check that it return filterd alerta services.")
-        options = filter_menue.find_elements_by_class_name("dropdown-item")
-        for option in options:
-            option_text = option.get_attribute("innerHTML")
-            if not option_text:
-                continue
+    ramdom_row_number = random.randint(1, rows_count)
+    table_row = base.get_table_row(driver, "alerts_table", ramdom_row_number - 1)
+    alerta_search_box.clear()
+    alerta_search_box.send_keys(table_row[7].split()[2])
+    alerta_table_after_search = base.get_table_rows(driver, "alerts_table")
+    for i in range(len(alerta_table_after_search)):
+        assert table_row[7].split()[2] in base.get_table_row(driver, "alerts_table", i)[7]
 
-            self.info("Get all {} option rows ".format(option))
-            table_rows = self.get_table_rows("alerts_table")
-            option_alerts = []
-            for i in range(len(table_rows)):
-                table_row = self.get_table_row("alerts_table", i)
-                if table_row[column] == option_text:
-                    option_alerts.append(table_row)
-            self.info("Click {} option in this filter ".format(option_text))
-            option.click()
 
-            self.info("Check it return filterd alerts only")
-            if not option_alerts:
-                self.assertEqual("There is no alerts matching your criteria", self.find_element("no_alerts").text)
-            else:
-                alerta_table_after_filter = self.get_table_rows("alerts_table")
-                self.assertEqual(len(alerta_table_after_filter), len(option_alerts))
-                for i in range(len(alerta_table_after_filter)):
-                    self.assertEqual(option_text, self.get_table_row("alerts_table", i)[column])
-
-    def test005_delete_alerts(self, filter_type):
-        """
-        * test delete alerts. *
-        - Get alerts page.
-        - Use delete button, check that all alerts has been deleted.
-        - Add some alerts .
-        """
-        self.info("Use delete button, check that all alerts has been deleted.")
-        delete_button = self.find_element("delete_alerts")
-        delete_button.click()
-        self.assertEqual("There is no alerts matching your criteria", self.find_element("no_alerts").text)
-
-        self.info("Add some alerts.")
-        client = j.servers.threebot.start()
-        for _ in range(5):
-            client.actors.alerta.new_alert(
-                severity=10,
-                status=random.choice(["NEW", "OK", "ERROR"]),
-                environment=random.choice(["PRODUCTION", "STAGING", "DEVELOPMENT", "INFRATUCTURE"]),
-                service=random.choice(["JSX", ""]),
-                resource="xmonader",
-                event="event 1",
-                value="n/a",
-                messageType=random.choice(["Error", "Information", "Warning"]),
-                text=self.rand_string(),
-            )
+def test_002_delete_alerts():
+    """
+    * test delete alerts. *
+    - Get alerts page.
+    - Use delete button, check that all alerts has been deleted.
+    """
+    base.info("Use delete button, check that all alerts has been deleted.")
+    delete_button = base.find_element(driver, "delete_alerts")
+    delete_button.click()
+    base.find_element(driver, "confirm_delete_alert").click()
+    assert "All the alerts have been deleted." == base.find_element(driver, "no_alerts").text
