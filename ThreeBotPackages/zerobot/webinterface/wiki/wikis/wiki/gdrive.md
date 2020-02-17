@@ -1,7 +1,7 @@
 # Gdrive
-This actor provides a way to get a download link for gdrive documents.
+This actor with the name of `wiki_gdrive_manager` provides a way to get a download link for gdrive documents, this link is served by current running 3bot.
 
-Note that this actors need a service account to be set, see [service account setup](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/docs/wikis/tech/README.md#setting-up-gdrive-and-service-account) documention for more.
+Note that this actors need a service account to be set, see [service account setup](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/docs/wikis/tech/README.md#setting-up-gdrive-and-service-account) documentation for more.
 
 
 ## file_get(doctype, guid1, guid1)
@@ -18,13 +18,6 @@ Accepts the following parameters:
 ## Examples
 
 ```
-JSX> cl = j.clients.gedis.get(name="threebot", port=8901, namespace="default")
-system__system
-system__system
-JSX> cl.actors.gdrive.file_get('document', '1z_B9_sPob88AwFWJbYAhu58T58m8YRj-IpcnrcGye5w')
-default__gdrive
-## actors.default.gdrive.file_get.e0b4c80da14d4999d989aaa13e532074
- - res                 : /gdrive_static/document/1z_B9_sPob88AwFWJbYAhu58T58m8YRj-IpcnrcGye5w.pdf
- - error_message       :
- - error_code          : 0
+JSX> cl = j.clients.gedis.get(name="gdrive", port=8901, package_name="zerobot.webinterface")
+JSX> cl.actors.wiki_gdrive_manager.file_get("document", "1z_B9_sPob88AwFWJbYAhu58T58m8YRj-IpcnrcGye5w")
 ```

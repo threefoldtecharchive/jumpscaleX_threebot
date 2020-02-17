@@ -111,8 +111,16 @@
     alerts = currentFilteredAlerts;
   }
   function searchAlertsText() {
+    const keyworkd = searchText.trim().toLocaleLowerCase();
+
     alerts = currentFilteredAlerts.filter(singleAlert => {
-      return singleAlert.message.includes(searchText);
+      const values = Object.values(singleAlert);
+      let found = false;
+      for (let value of values) {
+        value = String(value).toLocaleLowerCase();
+        found |= value.includes(keyworkd);
+      }
+      return found;
     });
   }
   function resetFilters() {
