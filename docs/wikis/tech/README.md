@@ -90,6 +90,32 @@ test/wiki/
 0 directories, 3 files
 ```
 
+### Configuring sidebar using _sidebar.md
+Docsify allows configuring the sidebar for navigation
+
+Here's an example used to produces the following sidebar
+![sidebar](../images/sidebar.png)
+
+
+```markdown
+* [Test](test.md)
+* [Test Include](test_include.md)
+* [Test Links](test_links.md)
+* [Test source](test_src.md)
+* [Team](test_team.md)
+* [Gallery](test_gallery.md)
+* [Inline html](test_html.md)
+* [Slides](test_presentation.md)
+* [Slides version2](test_presentation_v2.md)
+* [Markdown](test_markdown.md)
+* [PDF documents](test_gpdf.md)
+
+```
+
+
+For more information  [Docsify config](https://docsify.now.sh/configuration) and [Docsify sidebar](https://docsify.now.sh/more-pages?id=sidebar)
+
+
 After filling `wiki` directory with content, you can add the package now via threebot package manager:
 
 ```
@@ -128,6 +154,11 @@ Inside the wiki:
 
 
 ## Reloading the wiki of any package
+
+### Reloading from the UI
+![Reloading wikis](../images/wikireload.png)
+
+### Reloading from command line
 
 To reload a wiki of a specific package, you just need to get an instance from this package (make sure it was added before).
 
