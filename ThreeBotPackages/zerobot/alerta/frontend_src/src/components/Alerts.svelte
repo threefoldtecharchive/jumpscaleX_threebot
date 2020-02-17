@@ -51,9 +51,7 @@
           {#each alerts as myAlert, i}
             <tr>
               <th scope="row">
-                <a href="/zerobot/alerta_ui/alert/{myAlert.identifier}">
-                  {i + 1}
-                </a>
+                <a href="/zerobot/alerta/alert/{myAlert.identifier}">{i + 1}</a>
               </th>
               <td>{myAlert.alert_type}</td>
               <td>{myAlert.status}</td>

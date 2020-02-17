@@ -1,10 +1,10 @@
 # Base package
-This package contains necessary actors that would be available to by default.
+This package contains system actors that would be available by default.
 
-All of these actors are registered under `default` namespace, to work with any of them, you need to get a client like:
+
+All of these actors are registered under package name of `zerobot.base`, to get a client to this package, simply do:
+
 
 ```
-JSX> cl = j.clients.gedis.get(name="threebot", port=8901, namespace="default")
+JSX> cl = j.clients.gedis.get(name="base_package", port=8901, package_name="zerobot.base")
 ```
-
-#TODO: wrong

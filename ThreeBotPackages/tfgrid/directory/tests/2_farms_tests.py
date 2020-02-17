@@ -6,8 +6,11 @@ import gevent
 import os
 from Jumpscale import j
 
+skip = j.baseclasses.testtools._skip
 
-def main(self=None):
+
+@skip("Test need to be revised after js10.3 is released")
+def test():
     try:
         bcdb = j.data.bcdb.get("tf_directory")
     except:
@@ -73,7 +76,3 @@ def main(self=None):
 
     finally:
         model.destroy()
-
-
-if __name__ == "__main__":
-    main()

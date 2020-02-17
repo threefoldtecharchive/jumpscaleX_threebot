@@ -1,12 +1,5 @@
-from Jumpscale import j
-
-try:
-    # get gdrive client so google api dependency is installed
-    cl = j.clients.gdrive.get("main")
-except:
-    pass
-
 from googleapiclient.errors import HttpError as GoogleApiHTTPError
+from Jumpscale import j
 
 
 STATIC_DIR = j.core.tools.text_replace("{DIR_BASE}/var/gdrive/static")
@@ -47,6 +40,7 @@ class wiki_gdrive_manager(j.baseclasses.threebot_actor):
             if not j.sal.fs.exists(parent_dir):
                 j.sal.fs.createDir(parent_dir)
 
+            cl = j.clients.gdrive.get("main")
             if doctype in ["document", "spreadsheets", "presentation"]:
                 path = j.sal.fs.joinPaths(parent_dir, "{}.pdf".format(guid1))
                 cl.exportFile(guid1, destpath=path, service_name=service_name, service_version="v3")

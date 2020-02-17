@@ -7,11 +7,11 @@ needs to walk over all files in threefoldtech:jumpscaleX_core till it finds 'sch
 if more than 1 then error
 needs to cache this for 1h (like check of links, also there caching of 1h)
 
-!!!include("threefoldtech:home:projects/readme.md")
+!!!include("threefoldtech:home:products/readme.md")
 
 ## includes 2
 
-!!!include("threefoldtech:home(master):projects/readme.md")
+!!!include("threefoldtech:home(master):products/readme.md")
 
 ## includes 3
 
@@ -42,7 +42,7 @@ when no extension checks for .md
 when no account or repo then is current repo
 
 
-!!!include("home:networks")
+!!!include("home:threefold_grid_2.0_specs")
 
 ## include long
 
