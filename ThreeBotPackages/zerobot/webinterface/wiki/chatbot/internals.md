@@ -1,28 +1,9 @@
-# Chat Package internal
+# Chat bot
 
+Chat now is a part of webinterface package.
 
-## Package structure
-
-```
-
-├── ChatFactory.py
-├── package.py
-├── README.md
-├── static
-│   ├── chat
-│   ├── home
-│   └── weblibs
-└── templates
-    └── chat
-        ├── error.html
-        ├── home.html
-        └── index.html
-        └── login.html
-```
-
-- package.py describes the package and the installation
-- static has the static assets for the chat
-- templates: templates used by bottle server to generate the UI
+- `static/chat`: has the static assets for the chat
+- `templates/chat`: templates used by bottle server to generate the UI
 
 
 ## Available actors
@@ -30,13 +11,13 @@
 
 ### Getting available chatflows
 
-[chatbot actor](https://github.com/threefoldtech/jumpscaleX_core/blob/0afdc7d212ee24c37e7c510a92e8ace051696516/JumpscaleCore/servers/threebot/base_actors/chatbot.py) is available as part of base actors
+[chatbot actor](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/zerobot/webinterface/actors/chatbot.py) is available as part of base actors
 
 ```python
 
 
 def _get_chatflows():
-    gedis_client = j.clients.gedis.get(port=8901)
+    gedis_client = j.clients.gedis.get("chat", port=8901, package_name="zerobot.webinterface")
     chatflows = gedis_client.actors.chatbot.chatflows_list()
     return [chatflow.decode() for chatflow in chatflows]
 ```
@@ -59,11 +40,35 @@ Pushing answers to chatbot on the last question is done using `work_report`
 
 
 ### GedisChatBot
-has all of the implementation details of getting questions, pushing questions, queues, also it's responsible for the primitive question types `int_ask`, `string_ask`, `captcha_ask`, `multi_choice`, `single_choice`, `drop_down_choice` , `autocomplete_drop_down`
+Has all of the implementation details of getting questions, pushing questions, queues, also it's responsible for the primitive question types `int_ask`, `string_ask`, `captcha_ask`, `multi_choice`, `single_choice`, `drop_down_choice` , `autocomplete_drop_down`.</br>
+These question types are used to allow for taking different types of input from the user going through the chatflow.
+
+Example for chatflow:
+
+```python
+def chat(bot):
+    res = {}
+
+    country = bot.drop_down_country("where do you want to eat?")
+    food = bot.string_ask("What do you need to eat?")
+    amount = bot.int_ask("Enter the amount you need to eat from %s in grams:" % food)
+    sides = bot.multi_choice("Choose your side dishes: ", ["rice", "fries", "saute", "mashed potato"])
+    drink = bot.single_choice("Choose your Drink: ", ["tea", "coffee", "lemon"])
+
+    res = """
+    # country {{country}}
+
+    # You have ordered:
+    - {{amount}} grams,sides {{sides}} and {{drink}} drink
+    ### Click next
+    for the final step which will redirect you to threefold.me
+    """
+    bot.template_render(res, **locals())
+```
 
 #### Validation
 
-Here's an example of validations required for a string input
+Some validations can be applied on the input taken from the user so that they are warned. This is helpful to validate certain restrictions before processing the data itself in the server. Here's an example of validations required for a string input
 
 ```python
     email = bot.string_ask("Enter email", validate={"required": True, "email": True}).strip()
@@ -140,7 +145,7 @@ var generateSlide = function (res) {
 
 ## How GedisChatBot Works
 
-[GedisChatBot](https://github.com/threefoldtech/jumpscaleX_core/blob/0afdc7d212ee24c37e7c510a92e8ace051696516/JumpscaleCore/servers/gedis/GedisChatBot.py) is the one responsible for creating sessions and keeping track of them and of the loaded chatflows, and also for getting questions to a certain session by `session_id` `session_work_get` and receiving user's answer and giving it to a certain session by `session_id`
+[GedisChatBot](https://github.com/threefoldtech/jumpscaleX_core/blob/development/JumpscaleCore/servers/gedis/GedisChatBot.py) is the one responsible for creating sessions and keeping track of them and of the loaded chatflows, and also for getting questions to a certain session by `session_id` `session_work_get` and receiving user's answer and giving it to a certain session by `session_id`
 
 ### Session
 

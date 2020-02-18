@@ -14,8 +14,7 @@ class Package(j.baseclasses.threebot_package):
             website.domain = DOMAIN
             locations = website.locations.get(name=f"tf_directory_{port}_locations")
 
-            include_location = locations.locations_custom.new()
-            include_location.name = f"tf_directory_includes_{port}"
+            include_location = locations.get_location_custom(f"tf_directory_includes_{port}")
             # default website locations include wiki related locations
             # so include them
             default_website_name = self.openresty.get_from_port(port).name

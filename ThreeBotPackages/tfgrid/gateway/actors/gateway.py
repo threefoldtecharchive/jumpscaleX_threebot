@@ -1,18 +1,27 @@
 from Jumpscale import j
 
+THREEBOT_DOMAIN = j.core.myenv.config.get("THREEBOT_DOMAIN")
+EXPLORER_DOMAIN = j.core.myenv.config.get("EXPLORER_ADDR")
+
+MASTERIP = "192.168.99.254"
+
 
 class gateway(j.baseclasses.threebot_actor):
     # COREDNS redis backend
     def _init(self, **kwargs):
         # QUESTION: should it work against local database or against remote one? as it's generic enough
-        self._gateway = j.tools.tf_gateway.get(j.core.db)
+        redisclient = j.clients.redis.get(MASTERIP, port=6378)
+        self._gateway = j.tools.tf_gateway.get(redisclient)
+        self.explorer = j.clients.gedis.get(
+            name="phonebook_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.phonebook"
+        )
 
     @j.baseclasses.actor_method
     def domain_list(self, schema_out=None, user_session=None):
         return self._gateway.domain_list()
 
     @j.baseclasses.actor_method
-    def domain_exists(self, domain):
+    def domain_exists(self, domain, schema_out=None, user_session=None):
         """
         ```in
         domain = (S)
@@ -44,6 +53,7 @@ class gateway(j.baseclasses.threebot_actor):
     def domain_register_a(self, name, domain, record_ip, schema_out=None, user_session=None):
         """
         ```in
+        name = (S)
         domain = (S)
         record_ip = (S)
         ```
@@ -55,6 +65,7 @@ class gateway(j.baseclasses.threebot_actor):
     def domain_register_aaaa(self, name, domain, record_ip, schema_out=None, user_session=None):
         """
         ```in
+        name = (S)
         domain = (S)
         record_ip = (S)
         ```
@@ -67,7 +78,7 @@ class gateway(j.baseclasses.threebot_actor):
 
         """
         ```in
-        name
+        name = (S)
         domain = (S)
         host = (S)
         ```
@@ -84,9 +95,7 @@ class gateway(j.baseclasses.threebot_actor):
         domain = (S)
         host = (S)
         ```
-        """
-
-        """register NS record
+        register NS record
 
         :param name: name
         :type name: str
@@ -94,7 +103,6 @@ class gateway(j.baseclasses.threebot_actor):
         :type domain: str, optional
         :param host: host
         :type host: str
-
         """
         return self._gateway.domain_register_ns(name, domain, host)
 
@@ -104,7 +112,7 @@ class gateway(j.baseclasses.threebot_actor):
         ```in
         name = (S)
         domain = (S)
-        text (S)
+        text = (S)
         ```
         """
 
@@ -139,9 +147,20 @@ class gateway(j.baseclasses.threebot_actor):
         """
         return self._gateway.domain_register_srv(name, domain, host, port, priority, weight)
 
-    # TCP Router redis backend
+    ## TCP Router redis backend
+
     @j.baseclasses.actor_method
-    def tcpservice_register(self, domain, client_secret="", schema_out=None, user_session=None):
+    def tcpservice_ip_register(self, domain, privateip="", schema_out=None, user_session=None):
+        """
+        ```in
+         domain = (S)
+         privateip = (S)
+        ```
+        """
+        return self._gateway.tcpservice_register(domain, privateip)
+
+    @j.baseclasses.actor_method
+    def tcpservice_client_register(self, domain, client_secret="", schema_out=None, user_session=None):
         """
         ```in
          domain = (S)
@@ -150,3 +169,49 @@ class gateway(j.baseclasses.threebot_actor):
         """
         return self._gateway.tcpservice_register(domain=domain, client_secret=client_secret)
 
+    @j.baseclasses.actor_method
+    def domain_tcpservice_ip_expose(self, threebot_name, privateip, signature, schema_out=None, user_session=None):
+        """
+        Registers a domain in coredns (needs to be authoritative)
+
+        ```in
+        threebot_name = (S) # 3bot threebot_name
+        privateip = (S)
+        signature = (S) #the signature of the payload "{threebot_name}"
+        ```
+        """
+        result = self.explorer.actors.phonebook.validate_signature(
+            name=threebot_name, payload=threebot_name, signature=signature
+        )
+        if not result.is_valid:
+            raise j.exceptions.Value("Invalid signature")
+
+        fqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
+        self._gateway.tcpservice_register(fqdn, privateip)
+        self._gateway.domain_register_cname("@", f"{threebot_name}.{THREEBOT_DOMAIN}", f"{THREEBOT_DOMAIN}.")
+        self._gateway.domain_register_a(threebot_name, f"{THREEBOT_DOMAIN}", privateip)
+        return True
+
+    @j.baseclasses.actor_method
+    def domain_tcpservice_client_expose(
+        self, threebot_name, client_secret, signature, schema_out=None, user_session=None
+    ):
+        """
+        Registers a domain in coredns (needs to be authoritative)
+
+        ```in
+        threebot_name = (S) # 3bot threebot_name
+        client_secret = (S)
+        signature = (S) #the signature of the payload "{threebot_name}"
+        ```
+        """
+        result = self.explorer.actors.phonebook.validate_signature(
+            name=threebot_name, payload=threebot_name, signature=signature
+        )
+        if not result.is_valid:
+            raise j.exceptions.Value("Invalid signature")
+
+        fqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
+        self._gateway.tcpservice_register(fqdn, client_secret=client_secret)
+        self._gateway.domain_register_a(threebot_name, f"{THREEBOT_DOMAIN}", "165.227.201.194")  # TODO remove fixed ip
+        return True
