@@ -25,14 +25,14 @@
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link text-white" href="/zerobot/alerta_ui">
+          <a class="nav-link text-white" href="/zerobot/alerta">
             Home
             <span class="sr-only">(current)</span>
           </a>
         </li>
       </ul>
       <span class="navbar-text text-white">
-        Cenral system to track all alerts
+        Central system to track all alerts
       </span>
     </div>
   </nav>

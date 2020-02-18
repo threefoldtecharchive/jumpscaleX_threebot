@@ -7,8 +7,11 @@ import logging
 import os
 from Jumpscale import j
 
+skip = j.baseclasses.testtools._skip
 
-def main(self):
+
+@skip("https://github.com/threefoldtech/jumpscaleX_threebot/issues/364")
+def test():
     try:
         bcdb = j.data.bcdb.get("tf_directory")
     except:

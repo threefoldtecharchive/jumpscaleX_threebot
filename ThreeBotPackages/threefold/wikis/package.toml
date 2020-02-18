@@ -1,5 +1,5 @@
 [source]
-name = "threefold_wikis"
-description = ""
+name = "wikis"
+description = "threefold wikis for foundation, grid and tokens"
 threebot = "threefold"
 version = "1.0.0"

@@ -1,0 +1,5 @@
+[source]
+name = "codeserver"
+description = "A visual studio environment to host code"
+threebot = "zerobot"
+version = "1.0.0"
