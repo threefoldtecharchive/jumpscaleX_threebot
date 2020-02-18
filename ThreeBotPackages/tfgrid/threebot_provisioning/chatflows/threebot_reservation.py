@@ -22,7 +22,7 @@ def chat(bot):
     ip_address = bot.string_ask("Please add ip address of the container ")
 
     while not j.sal.zosv2.check_ip_in_network(ip_address,ip_range):
-
+        ip_range = bot.string_ask("Please add ip range of the network")
         ip_address = bot.string_ask("Please add ip address of the container ")
 
     filename = bot.string_ask("write name of wireguard configuration with (.conf) ")
