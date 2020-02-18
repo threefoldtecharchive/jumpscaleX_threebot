@@ -1,0 +1,32 @@
+{
+  "name": "interface",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "npx snowpack"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "snowpack": {
+    "webDependencies": [
+      "vue/dist/vue.js",
+      "http-vue-loader/src/httpVueLoader.js",
+      "vue-router/dist/vue-router.js",
+      "vuex/dist/vuex.js",
+      "vuetify/dist/vuetify.js",
+      "vuetify/dist/vuetify.map.js"
+    ]
+  },
+  "dependencies": {
+    "http-vue-loader": "^1.4.1",
+    "vue": "^2.6.11",
+    "vue-router": "^3.1.5",
+    "vuetify": "^2.2.12",
+    "vuex": "^3.1.2"
+  },
+  "devDependencies": {
+    "snowpack": "^1.4.0"
+  }
+}
