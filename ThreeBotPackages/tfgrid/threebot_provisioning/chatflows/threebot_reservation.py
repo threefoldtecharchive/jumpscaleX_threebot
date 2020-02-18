@@ -33,8 +33,7 @@ def chat(bot):
 
     resp, result = j.sal.zosv2.reservation(name=name,email=email,pub_key=pub_key, user_corex=user_corex,password_corex=password,ip_range=ip_range,ip_address=ip_address)
 
-    res = """
-            # reservation sent. ID: {}
+    res = """# reservation sent. ID: {}
         """.format(resp)
     bot.md_show(res)
     res = """
