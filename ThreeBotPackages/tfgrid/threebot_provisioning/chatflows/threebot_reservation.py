@@ -30,14 +30,13 @@ def chat(bot):
     resp, result = j.sal.zosv2.reservation(name=name,email=email,pub_key=pub_key, user_corex=user_corex,password_corex=password,ip_range=ip_range,ip_address=ip_address)
 
     res = """
-            # reservation sent. ID: {}"
+            # reservation sent. ID: {}
         """.format(resp)
     bot.md_show(res)
     res = """
-    
             # use the next template to configure the wg-quick config of your laptop:
-            ## wg-quick up /etc/wireguard/{}
-            ### Click next
+            ### ```wg-quick up /etc/wireguard/{}```
+            Click next
             to download your configuration
             """.format(filename)
     res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
