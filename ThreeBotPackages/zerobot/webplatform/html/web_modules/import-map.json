@@ -2,8 +2,7 @@
   "imports": {
     "vue/dist/vue": "./vue/dist/vue.js",
     "http-vue-loader/src/httpVueLoader": "./http-vue-loader/src/httpVueLoader.js",
-    "vue-router/dist/vue-router": "./vue-router/dist/vue-router.js",
-    "vuex/dist/vuex": "./vuex/dist/vuex.js",
+    "vue-router/dist/vue-router.esm.browser": "./vue-router/dist/vue-router.esm.browser.js",
     "vuetify/dist/vuetify": "./vuetify/dist/vuetify.js"
   }
 }
