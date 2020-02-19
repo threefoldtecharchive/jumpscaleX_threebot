@@ -91,7 +91,7 @@ We provide oauth2 proxy and clients, see [documentation](oauth2/README.md) of ho
 
 ```toml
 [source]
-name = "alerta_ui"
+name = "alerta"
 description = "alerting system for jumpscale"
 threebot = "threefold"
 version = "1.0.0"
