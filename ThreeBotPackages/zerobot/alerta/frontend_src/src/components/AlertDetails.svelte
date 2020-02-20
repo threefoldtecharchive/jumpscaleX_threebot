@@ -20,6 +20,10 @@
     {myAlert.status}
   </li>
   <li class="list-group-item">
+    <b>App name :</b>
+    {myAlert.appname}
+  </li>
+  <li class="list-group-item">
     <b>Level :</b>
     {levels[myAlert.level]}
   </li>
