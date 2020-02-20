@@ -5,8 +5,8 @@ import axios from '../web_modules/axios/dist/axios.min.js'
 
 export default ({
   getVueApps () {
-
-    const frontendPackages = axios.post(`${config.threeBotApiUrl}package_manager/packages_list`, {
+    console.log(`${config.threebotBaseUrl}${config.packagemanager}packages_list`)
+    const frontendPackages = axios.post(`${config.threebotBaseUrl}${config.packagemanager}packages_list`, {
       args: {
         frontend: true
       }

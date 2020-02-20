@@ -1,6 +1,6 @@
 export default ({
-  // threeBotApiUrl: `${window.location.origin}/web/gedis/http/`,
-  threeBotApiUrl: `https://172.17.0.2/web/gedis/http/`,
+  threebotBaseUrl: `${window.location.origin}/`,
+  packagemanager: "zerobot/packagemanager/actors/package_manager/"
   // tfGridApiUrl: "https://explorer.testnet.grid.tf/web/gedis/http",
 
   // botFrontEnd: 'https://login.threefold.me/',
