@@ -1,6 +1,5 @@
 <section class="navigation">
       <v-navigation-drawer app mini-variant mini-variant-width="80" class="primary rounded" dark>
-        
         <v-layout column fill-height justify-end>
           <div>
             <v-toolbar color="secondary darken-2">
@@ -15,7 +14,7 @@
                 <v-icon>{{ route.meta.icon }}</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title class="title text-capitalize">{{route.name}}</v-list-item-title>
+                <v-list-item-title class="title text-capitalize">{{ route.name }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </div>
@@ -26,7 +25,7 @@
                 <v-icon>{{ route.meta.icon }}</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title class="title text-capitalize">{{route.name}}</v-list-item-title>
+                <v-list-item-title class="title text-capitalize">{{ route.name }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item active-class="secondary--text">
@@ -43,8 +42,8 @@
       <v-bottom-navigation absolute v-if="$vuetify.breakpoint.mdAndDown" grow dark class="primary topround" app shift
         :value="$route.name">
         <v-btn :value="route.name" icon v-for="(route, i) in bottomNavApps" :key="route.name" :to="route">
-          <span class="text-capitalize">{{route.meta.displayName || route.name}}</span>
-          <v-icon :key="route.meta.icon">{{route.meta.icon}}</v-icon>
+          <span class="text-capitalize">{{ route.meta.displayName || route.name }}</span>
+          <v-icon :key="route.meta.icon">{{ route.meta.icon }}</v-icon>
         </v-btn>
       </v-bottom-navigation>
   </section>

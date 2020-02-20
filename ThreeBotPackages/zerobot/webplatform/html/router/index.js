@@ -6,6 +6,14 @@ Vue.use(VueRouter)
 
 export default new VueRouter({
   routes: [
-    { path: "/", component: httpVueLoader("./Views/Home/") },
+    { 
+      path: "/", 
+      component: httpVueLoader("./Views/Home/"), 
+      name: 'home',
+      meta: {
+        icon: 'fa-home',
+        position: 'top'
+      } 
+    },
   ]
 })

@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   
   Vue.use(httpVueLoader)
   Vue.use(Vuetify)
+
+  store.dispatch('setRoutes', router.options.routes)
   
   new Vue({
     components: {

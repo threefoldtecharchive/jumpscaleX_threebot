@@ -15,7 +15,6 @@
       "http-vue-loader/src/httpVueLoader.js",
       "vue-router/dist/vue-router.esm.browser.js",
       "vuex/dist/vuex.esm.browser.js",
-      "vuetify/",
       "@fortawesome/fontawesome-free/js/all.js",
       "axios/dist/axios.min.js"
     ]

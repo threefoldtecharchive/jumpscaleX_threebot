@@ -1,20 +1,6 @@
 export default ({
   state: {
-    routes: [{
-      path: '/',
-      name: 'home',
-      meta: {
-        icon: 'fa-home',
-        position: 'top'
-      }
-    }, {
-      path: '/test',
-      name: 'home',
-      meta: {
-        icon: 'fa-home',
-        position: 'top'
-      }
-    }]
+    routes: []
   },
   actions: {
     setRoutes: (context, routes) => context.commit('setRoutes', routes),
