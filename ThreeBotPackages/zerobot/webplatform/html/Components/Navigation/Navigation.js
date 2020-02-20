@@ -63,11 +63,11 @@ module.exports = new Promise(async (resolve, reject) => {
           const storeName = `${app.source.name.toLowerCase()}`;
 
           if (!this.alreadyAddedStores.some(x => x === storeName)) {
-            /*import(app.store).then(store => {
-              this.$store.registerModule(storeName, store);*/
+            import(app.store).then(store => {
+              this.$store.registerModule(storeName, store);
               this.alreadyAddedStores.push(storeName);
               this.registerRoutes(app)
-            //})
+            })
           }
         }
       }

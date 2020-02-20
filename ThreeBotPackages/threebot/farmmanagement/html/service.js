@@ -1,13 +1,15 @@
+import axios from '../../zerobot/webplatform/web_modules/axios/dist/axios.min.js'
+
 export default ({
   
   async getName () {
-    let respons = await localGedisClient.executeCommand('identity','name')
-    let resp = await respons.json()
-    return resp
-    /*return axios.post(`${window.config.jsApiUrl}/identity/name`, {
+    // let respons = await localGedisClient.executeCommand('identity','name')
+    // let resp = await respons.json()
+    // return resp
+    return axios.post(`${window.config.jsApiUrl}/identity/name`, {
       args: {
       }
-    })*/
+    })
   },
   getUser (name) {
     return axios.post(`${window.config.tfGridApiUrl}/phonebook/get`, {
