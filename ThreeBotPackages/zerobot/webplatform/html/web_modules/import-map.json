@@ -1,8 +1,10 @@
 {
   "imports": {
-    "vue/dist/vue": "./vue/dist/vue.js",
     "http-vue-loader/src/httpVueLoader": "./http-vue-loader/src/httpVueLoader.js",
     "vue-router/dist/vue-router.esm.browser": "./vue-router/dist/vue-router.esm.browser.js",
-    "vuetify/dist/vuetify": "./vuetify/dist/vuetify.js"
+    "vuex/dist/vuex.esm.browser": "./vuex/dist/vuex.esm.browser.js",
+    "vuetify/": "./vuetify/.js",
+    "@fortawesome/fontawesome-free/js/all": "./@fortawesome/fontawesome-free/js/all.js",
+    "axios/dist/axios.min": "./axios/dist/axios.min.js"
   }
 }
