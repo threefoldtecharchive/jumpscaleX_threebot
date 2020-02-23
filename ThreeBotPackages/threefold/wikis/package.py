@@ -3,16 +3,16 @@ from Jumpscale import j
 from Jumpscale.tools.threegit.ThreeGit import load_wiki
 
 WIKIS = {
-    "info_grid": "wiki.grid.tf",
-    "info_foundation": "wiki.threefold.tf",
-    "info_tokens": "wiki.tokens.tf",
+    "grid": "wiki.grid.tf",
+    "foundation": "wiki.threefold.tf",
+    "tokens": "wiki.tokens.tf",
 }
 
 BRANCH = "development"
 TF_WIKIS_LINKS = {
-    "info_grid": f"https://github.com/threefoldfoundation/info_grid/tree/{BRANCH}/docs",
-    "info_foundation": f"https://github.com/threefoldfoundation/info_foundation/tree/{BRANCH}/docs",
-    "info_tokens": f"https://github.com/threefoldfoundation/info_tokens/tree/{BRANCH}/docs",
+    "grid": f"https://github.com/threefoldfoundation/info_grid/tree/{BRANCH}/docs",
+    "foundation": f"https://github.com/threefoldfoundation/info_foundation/tree/{BRANCH}/docs",
+    "tokens": f"https://github.com/threefoldfoundation/info_tokens/tree/{BRANCH}/docs",
 }
 
 
