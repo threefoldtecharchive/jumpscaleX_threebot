@@ -69,17 +69,16 @@
                             Alerta
                         </a>
 
+                        <a class="nav-link collapsed" href="#myjobs" data-toggle="tab">
+                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                            Myjobs
+                        </a>
 
                         <a class="nav-link collapsed" href="#" data-toggle="tab">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                             Logs
                         </a>
 
-
-                        <a class="nav-link collapsed" href="#" data-toggle="tab">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Myjobs
-                        </a>
 
                         <a class="nav-link collapsed" href="#" data-toggle="tab">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
@@ -119,7 +118,7 @@
             </nav>
         </div>
         <div id="layoutSidenav_content">
-            <main class="tab-content">
+            <main class="tab-content" style="height: 100%;">
                 <div id="dashboard_overview" class="container-fluid tab-pane active" data-toggle="tab">
                     <h1 class="mt-4">Dashboard</h1>
                     <ol class="breadcrumb mb-4">
@@ -179,17 +178,20 @@
                     </div>
                 </div>
 
-                <div id="wikis" class="container-fluid tab-pane" data-toggle="tab">
-                    <iframe src="wiki/" style="width: auto; height: 100%;"></iframe>
+                <div id="wikis" class="tab-pane h-100" data-toggle="tab">
+                    <iframe src="wiki" style="width: 100%; height: 100%;" frameborder="0"></iframe>
                 </div>
-                <div id="packages" class="container-fluid tab-pane" data-toggle="tab">
-                    <iframe src="/zerobot/packagemanager" style="width: auto; height: 100%;"></iframe>
+                <div id="packages" class="tab-pane h-100" data-toggle="tab">
+                    <iframe src="/zerobot/packagemanager" style="width: 100%; height: 100%;" frameborder="0"></iframe>
                 </div>
-                <div id="chats" class="container-fluid tab-pane" data-toggle="tab">
-                    <iframe src="/zerobot/dashboard/chat" style="width: auto; height: 100%;"></iframe>
+                <div id="chats" class="tab-pane h-100" data-toggle="tab">
+                    <iframe src="/zerobot/dashboard/chat" style="width: 100%; height: 100%;" frameborder="0"></iframe>
                 </div>
-                <div id="alerta" class="container-fluid tab-pane" data-toggle="tab">
-                    <iframe src="/zerobot/alerta/" style="width: auto; height: 100%;"></iframe>
+                <div id="alerta" class="tab-pane h-100" data-toggle="tab">
+                    <ifrajme src="/zerobot/alerta/" style="width: 100%; height: 100%;" frameborder="0"></iframe>
+                </div>
+                <div id="myjobs" class="tab-pane h-100" data-toggle="tab">
+                    <ifrajme src="/zerobot/myjobs_ui/" style="width: 100%; height: 100%;" frameborder="0"></iframe>
                 </div>
             </main>
 
