@@ -10,7 +10,7 @@ module.exports = new Promise(async (resolve, reject) => {
       nodestable: httpVueLoader(
         "/farmmanagement/components/nodestable/index.vue"
       ),
-      vueGoogle: httpVueLoader("../../weblibs/gmaps/vue-google-maps.js")
+      // vueGoogle: httpVueLoader("../../weblibs/gmaps/vue-google-maps.js")
     },
     props: [],
     data() {
