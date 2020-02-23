@@ -149,6 +149,7 @@ wg.interface_name = "wgman_staging"
 wg.port = 7778
 wg.network_public = MASTERPUBLIC
 wg.network_private = f"{MASTERIP}/24"
+wg.config_path = f"/root/cfg/{wg.interface_name}.conf"
 wg.install()
 wg.save()
 wg.configure()
@@ -159,6 +160,7 @@ def configure_wg(ssh_name, privateip):
     wgr.interface_name = "wgman_staging"
     wgr.sshclient_name = ssh_name
     wgr.network_private = f"{privateip}/24"
+    wgr.config_path = f"/root/cfg/{wgr.interface_name}.conf"
     print(f"  Install wg")
     wgr.install()
     wgr.port = 7778
