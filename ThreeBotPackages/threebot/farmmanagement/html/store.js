@@ -8,12 +8,11 @@ export const state = {
 export const actions = {
   getName: async (context) => {
       var response = await farmManagementService.getName()
-      console.log(`response in store`,response)
-      return response.name
+      return response.data.name
     },
   getUser: async (context) => {
     var name = await context.dispatch('getName')
-    console.log(`name`,name)
+    console.log('name', name)
     var response = await farmManagementService.getUser(name)
     context.commit('setUser', response.data)
   },

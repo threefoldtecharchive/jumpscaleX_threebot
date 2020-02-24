@@ -4,6 +4,8 @@
     "vue-router/dist/vue-router.esm.browser": "./vue-router/dist/vue-router.esm.browser.js",
     "vuex/dist/vuex.esm.browser": "./vuex/dist/vuex.esm.browser.js",
     "@fortawesome/fontawesome-free/js/all": "./@fortawesome/fontawesome-free/js/all.js",
-    "axios/dist/axios.min": "./axios/dist/axios.min.js"
+    "axios/dist/axios.min": "./axios/dist/axios.min.js",
+    "moment/min/moment-with-locales.min": "./moment/min/moment-with-locales.min.js",
+    "moment-duration-format/lib/moment-duration-format": "./moment-duration-format/lib/moment-duration-format.js"
   }
 }

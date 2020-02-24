@@ -16,13 +16,16 @@
       "vue-router/dist/vue-router.esm.browser.js",
       "vuex/dist/vuex.esm.browser.js",
       "@fortawesome/fontawesome-free/js/all.js",
-      "axios/dist/axios.min.js"
+      "axios/dist/axios.min.js",
+      "moment/min/moment.min.js"
     ]
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.1",
     "axios": "^0.19.2",
     "http-vue-loader": "^1.4.1",
+    "moment": "^2.24.0",
+    "moment-duration-format": "^2.3.2",
     "vue": "^2.6.11",
     "vue-router": "^3.1.5",
     "vuetify": "^2.2.13",

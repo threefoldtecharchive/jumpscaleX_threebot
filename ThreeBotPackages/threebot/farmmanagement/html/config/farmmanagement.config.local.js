@@ -1,3 +1,3 @@
 export default ({
-  tfGridApiUrl: "https://explorer.testnet.grid.tf/web/gedis/http"
+  tfgridUrl: "https://explorer.testnet.grid.tf/tfgrid/directory/actors"
 })
