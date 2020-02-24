@@ -14,11 +14,8 @@ export default class TopView extends JetView {
 				{ id: "dash", value: "Dashboard", icon: "mdi mdi-view-dashboard" },
 				{ id: "wikis", value: "Wikis", icon: "mdi mdi-chart-areaspline" },
 				{ id: "alerts", value: "Alerts", icon: "mdi mdi-table" },
-				{ id: "myjobs", value: "Forms", icon: "mdi mdi-format-line-style" },
-				{ id: "sheet", value: "Spreadsheet", icon: "mdi mdi-table-large" },
-				{ id: "kanban", value: "Kanban", icon: "mdi mdi-view-column" },
-				{ id: "pivot", value: "Pivot", icon: "mdi mdi-layers" },
-				{ id: "files", value: "File Manager", icon: "mdi mdi-folder-star" }
+				{ id: "logs", value: "Logs", icon: "mdi mdi-format-line-style" },
+				{ id: "myjobs", value: "Jobs", icon: "mdi mdi-format-line-style" },
 			]
 		};
 

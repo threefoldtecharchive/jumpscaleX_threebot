@@ -64,34 +64,51 @@ export default class AlertsView extends JetView {
         return view;
     }
 
+    deleteItem(id) {
+        // TODO: handle multiple selection deletes
+        var self = this;
+
+        webix.confirm({
+            title: "Delete alert",
+            ok: "Yes",
+            cancel: "No",
+            text: `Delete alert item of ${id}`
+        }).then(function (result) {
+            const item = self.table.getItem(id);
+            webix.ajax().post("/zerobot/alerta/actors/alerta/delete_alert", {
+                args: {
+                    identifier: item.identifier
+                }
+            }).then((result) => {
+                self.table.remove(id);
+            });
+        });
+    }
     init(view) {
         // this.use(plugins.ProgressBar, "progress");
-        const table = $$("alerts_table");
-        webix.extend(table, webix.ProgressBar);
+        var self = this;
+        self.table = $$("alerts_table");
+
+        webix.extend(self.table, webix.ProgressBar);
         webix.ready(function () {
-            table.clearAll();
-            table.showProgress({ hide: false });
+            self.table.clearAll();
+            self.table.showProgress({ hide: false });
             webix.ajax().get("/zerobot/alerta/actors/alerta/list_alerts", function (data) {
                 let alerts = JSON.parse(data).alerts;
-                $$('alerts_table').parse(alerts);
+                self.table.parse(alerts);
             });
         });
 
         webix.ui({
             view: "contextmenu", id: "alerts_cm",
             data: ["View", "Delete"]
-        }).attachTo(table);
+        }).attachTo(self.table);
 
 
         $$("alerts_cm").attachEvent("onMenuItemClick", function (id) {
-            var menu = this.getMenu(id);
-            if (menu == "View") {
-
-            }
-
-            if (menu == "Delete") {
-                let item = table.getSelectedItem();
-                debugger;
+            if (id == "Delete") {
+                const id = self.table.getSelectedId();
+                self.deleteItem(id);
             }
         });
     }
