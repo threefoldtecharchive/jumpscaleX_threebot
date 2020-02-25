@@ -203,9 +203,7 @@ class simplemail(j.baseclasses.threebot_actor):
             encoders.encode_base64(part)
 
             # Add header as key/value pair to attachment part
-            part.add_header(
-                "Content-Disposition", f"attachment; filename= {filename}",
-            )
+            part.add_header("Content-Disposition", f"attachment; filename= {filename}")
 
             # Add attachment to message and convert message to string
             msg.attach(part)

@@ -213,4 +213,3 @@ def test07_filters_in_workers_page(filter_type, state):
         for i in range(len(table_rows)):
             assert state == base.get_table_row(driver, "workers_table", i)[1]
         assert len(table_rows) == filtered_workers
-
