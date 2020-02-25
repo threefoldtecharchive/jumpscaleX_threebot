@@ -65,7 +65,7 @@
   <title>Blogs</title>
 </svelte:head>
 
-{@debug metadata}
+<!-- {@debug metadata} -->
 <Nav {segment} {metadata} />
 
 <BlogsList {blogs} />

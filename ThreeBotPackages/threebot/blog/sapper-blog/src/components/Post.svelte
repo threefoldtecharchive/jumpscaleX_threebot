@@ -6,7 +6,7 @@
   export let username = $page.params.theuser;
   export let metadata = {};
   export let post;
-  console.log(metadata);
+  console.log(post);
   let converter = new showdown.Converter({ metadata: true });
   converter.setFlavor("github");
   let mdtext, post_image_link, post_author_image_link;

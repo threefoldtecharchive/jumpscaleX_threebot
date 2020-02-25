@@ -14,7 +14,9 @@
 {/if}
 
 {#if posts}
-  {#each posts as post}
-    <PostCard {post} {username} {showExcerpt} />
-  {/each}
+  <div class="row">
+    {#each posts as post}
+      <PostCard {post} {username} {showExcerpt} />
+    {/each}
+  </div>
 {/if}

@@ -31,28 +31,28 @@ const metadata = {
     ],
     "sidebar_social_links": [{
             "title": "facebook",
-            "link": "https://facebook.com/abc",
+            "link": "https://www.facebook.com/ThreeFoldNetwork",
             "page": "",
             "faclass": "",
             "img": "img/facebook.svg"
         },
         {
             "title": "twitter",
-            "link": "https://instagram.com",
+            "link": "https://twitter.com/threefoldntwrk",
             "page": "",
             "faclass": "fab fa-twitter",
             "img": "img/twitter.svg"
         },
         {
             "title": "linkedin",
-            "link": "https://www.linkedin.com/",
+            "link": "https://www.linkedin.com/company/threefold-foundation/",
             "page": "",
             "faclass": "fab fa-instagram",
             "img": "img/linkedin.svg"
         },
         {
             "title": "github",
-            "link": "https://github.com/abc",
+            "link": "https://github.com/threefoldfoundation",
             "page": "",
             "faclass": "fab fa-github",
             "img": "img/github.svg"
@@ -75,7 +75,7 @@ const metadata = {
     "allow_disqus": false,
     "allow_navbar": true,
     "allow_footer": true,
-    "posts_per_page": 5
+    "posts_per_page": 4
 }
 
 export default metadata;

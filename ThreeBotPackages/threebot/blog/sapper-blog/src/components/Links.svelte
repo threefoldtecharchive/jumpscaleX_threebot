@@ -9,11 +9,14 @@
       <li>
 
         {#if link.img}
-          <a href={link.link}>
-            <img src={link.img} alt={link.img} style="height: 50px;width: 50px;">
+          <a href={link.link} target="_blank">
+            <img
+              src={link.img}
+              alt={link.img}
+              style="height: 50px;width: 50px;" />
           </a>
         {:else}
-          <a href={link.link}>{link.title}</a>
+          <a href={link.link} target="_blank">{link.title}</a>
           <!-- else content here -->
         {/if}
       </li>

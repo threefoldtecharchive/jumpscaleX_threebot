@@ -69,13 +69,35 @@ ul li i {
     display: none;
 }
 
+.widget {
+    margin-top: 20px;
+}
+
 .post-details .widget {
     border: none;
     padding: 0;
 }
 
+.posts-listing {
+    margin-top: 20px;
+}
+
 .blog-post {
     padding-top: 0;
+}
+
+.navbar {
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
+}
+
+body {
+    padding-top: 5rem;
+    /* for fixed navbar */
+}
+
+.logo img {
+    width: 200px;
 }
 
 @keyframes fadeIn {
