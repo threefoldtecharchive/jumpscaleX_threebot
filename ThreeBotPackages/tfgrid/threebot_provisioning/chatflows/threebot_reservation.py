@@ -1,7 +1,6 @@
 from Jumpscale import j
 import  netaddr
 
-
 def get_all_ips(ip_range):
     networks = netaddr.IPNetwork(ip_range)
     ips = []
@@ -64,6 +63,9 @@ def chat(bot):
     wg_quick = j.sal.zosv2.network.add_access(
         network, node_selected.node_id, network_node, ipv4=True
     )
+    expiration = j.data.time.epoch + (3600 * 24 * 365)
+    # register the reservation
+    rid = j.sal.zosv2.reservation_register(reservation, expiration)
 
     env = {"corex_password":password,"corex_user":user_corex,"pub_key":pub_key}
     entry_point = "/usr/bin/zinit init -d"
@@ -77,7 +79,7 @@ def chat(bot):
                                         storage_url=storage_url, env=env, entrypoint=entry_point)
     j.sal.zosv2.volume.attach(reservation, cont, vol, "/sandbox/var")
 
-    expiration = j.data.time.epoch + (60 * 60)
+    expiration = j.data.time.epoch + (3600 * 24 * 365)
 
     resv_id = j.sal.zosv2.reservation_register(reservation, expiration)
 
