@@ -11,6 +11,8 @@ module.exports = new Promise(async (resolve, reject) => {
     "../../../web_modules/vuex/dist/vuex.esm.browser.js"
   );
   const { moment } = await import("../../../web_modules/moment/min/moment.min.js")
+  const { momentDurationFormat } = await import("../../../web_modules/moment-duration-format/lib/moment-duration-format.js")
+  momentDurationFormat(moment)
   resolve({
     name: 'nodestable',
     components: { 
@@ -41,8 +43,8 @@ module.exports = new Promise(async (resolve, reject) => {
       // Parse nodelist to table format here
       parsedNodesList: function () {
         const parsedNodes = this.nodes.map((node) => {
-          console.log(moment)
-          const uptime = moment.duration(node.uptime, 'seconds')//.format()
+          let uptime = moment.duration(node.uptime, 'seconds').format('h [hrs] m [min]')
+
           const farmer = find(this.farms, farmer => {
             return farmer.id === node.farm_id
           })
@@ -60,6 +62,8 @@ module.exports = new Promise(async (resolve, reject) => {
             farmer: farmerName,
             name: 'node ' + node.node_id,
             totalResources: node.total_resources,
+            reservedResources: node.reserved_resources,
+            usedResources: node.used_resources,
             updated: new Date(node.updated * 1000),
             status: this.getStatus(node),
             location: node.location
@@ -84,6 +88,13 @@ module.exports = new Promise(async (resolve, reject) => {
         str = str.toString()
         if (str.length < 10) return str
         return str.substr(0, 10) + '...'
+      },
+      openNodeDetails(node) {
+        const index = this.expanded.indexOf(node)
+        if (index > -1)
+          this.expanded.splice(index, 1)
+        else
+          this.expanded.push(node)
       }
     }
   });

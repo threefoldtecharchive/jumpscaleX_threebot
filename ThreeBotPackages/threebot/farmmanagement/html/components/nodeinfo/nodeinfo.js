@@ -5,7 +5,9 @@ module.exports = {
     return {
     }
   },
-  mounted () {
-    console.log(this.node)
+  methods: {
+    getPercentage(type) {
+      return (this.node.usedResources[type] / this.node.totalResources[type]) * 100
+    }
   }
 }
