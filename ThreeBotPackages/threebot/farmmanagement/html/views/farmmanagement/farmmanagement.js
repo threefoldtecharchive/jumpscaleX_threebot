@@ -15,6 +15,7 @@ module.exports = new Promise(async (resolve, reject) => {
     props: [],
     data() {
       return {
+        refreshInterval: undefined,
         addFarmDialog: false,
         addNodeDialog: false,
         settingsDialog: false,
@@ -283,8 +284,9 @@ module.exports = new Promise(async (resolve, reject) => {
       }
     },
     async mounted() {
-      var test = await this.getUser();
+        //var test = await this.getUser();
       this.getFarms();
+      this.initialiseRefresh()
       this.newFarm.threebot_id = this.user.id;
     },
     methods: {
@@ -295,6 +297,17 @@ module.exports = new Promise(async (resolve, reject) => {
         "updateFarm",
         "getNodes"
       ]),
+      initialiseRefresh () {
+        const that = this;
+        this.refreshInterval = setInterval(() => {
+          that.getFarms();
+        }, 60000)
+      },
+      refreshFarms () {
+        clearInterval(this.refreshInterval);
+        this.getFarms();
+        this.initialiseRefresh();
+      },
       viewNodes(item) {
         this.farmSelected = item;
         this.getNodes(this.farmSelected.id);
