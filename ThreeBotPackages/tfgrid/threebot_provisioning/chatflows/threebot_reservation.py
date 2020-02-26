@@ -79,10 +79,12 @@ def chat(bot):
 
         #Add volume and create container schema
         vol = j.sal.zosv2.volume.create(reservation, node_selected.node_id,volume_size=10)
+        rid = j.sal.zosv2.reservation_register(reservation, expiration)
         # create container
         cont = j.sal.zosv2.container.create(reservation=reservation, node_id=node_selected.node_id, network_name=network.name, ip_address=ip_address, flist=conatiner_flist,
                                             storage_url=storage_url, env=env, entrypoint=entry_point)
-        j.sal.zosv2.volume.attach(reservation, cont, vol, "/sandbox/var")
+        
+        j.sal.zosv2.volume.attach(reservation, cont, vol,rid, "/sandbox/var")
 
         expiration = j.data.time.epoch + (3600 * 24 * 365)
 
