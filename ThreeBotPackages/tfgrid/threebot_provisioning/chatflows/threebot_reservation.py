@@ -106,9 +106,7 @@ def chat(bot):
         res = j.tools.jinja2.template_render(text=wg_quick, **locals())
         bot.download_file(res, filename)
 
-        res = """
-                # Open your browser at ```{}:1500```
-                """.format(ip_address)
+        res = "# Open your browser at ```{}:1500```".format(ip_address)
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)
 
