@@ -3,7 +3,7 @@ from Jumpscale import j
 THREEBOT_DOMAIN = j.core.myenv.config.get("THREEBOT_DOMAIN")
 EXPLORER_DOMAIN = j.core.myenv.config.get("EXPLORER_ADDR")
 
-MASTERIP = "localhost"
+MASTERIP = "192.168.99.254"
 
 
 class gateway(j.baseclasses.threebot_actor):
@@ -256,6 +256,10 @@ class gateway(j.baseclasses.threebot_actor):
         ```
         """
         return self._gateway.tcpservice_register(domain, privateip)
+
+    @j.baseclasses.actor_method
+    def tcpservice_unregister(self, domain):
+        return self._gateway.tcpservice_unregister(domain)
 
     @j.baseclasses.actor_method
     def tcpservice_client_register(self, domain, client_secret="", schema_out=None, user_session=None):
