@@ -3,7 +3,7 @@ from Jumpscale import j
 THREEBOT_DOMAIN = j.core.myenv.config.get("THREEBOT_DOMAIN")
 EXPLORER_DOMAIN = j.core.myenv.config.get("EXPLORER_ADDR")
 
-MASTERIP = "192.168.99.254"
+MASTERIP = "localhost"
 
 
 class gateway(j.baseclasses.threebot_actor):
@@ -146,6 +146,104 @@ class gateway(j.baseclasses.threebot_actor):
         ```
         """
         return self._gateway.domain_register_srv(name, domain, host, port, priority, weight)
+
+    @j.baseclasses.actor_method
+    def domain_unregister_a(self, name, domain, record_ip, schema_out=None, user_session=None):
+        """
+        ```in
+        name = (S)
+        domain = (S)
+        record_ip = (S)
+        ```
+        """
+
+        return self._gateway.domain_unregister_a(name, domain, record_ip)
+
+    @j.baseclasses.actor_method
+    def domain_unregister_aaaa(self, name, domain, record_ip, schema_out=None, user_session=None):
+        """
+        ```in
+        name = (S)
+        domain = (S)
+        record_ip = (S)
+        ```
+        """
+
+        return self._gateway.domain_unregister_aaaa(name, domain, record_ip)
+
+    @j.baseclasses.actor_method
+    def domain_unregister_cname(self, name, domain, host, schema_out=None, user_session=None):
+
+        """
+        ```in
+        name = (S)
+        domain = (S)
+        host = (S)
+        ```
+        """
+
+        return self._gateway.domain_unregister_cname(name, domain, host)
+
+    @j.baseclasses.actor_method
+    def domain_unregister_ns(self, name, domain, host, schema_out=None, user_session=None):
+
+        """
+        ```in
+        name = (S)
+        domain = (S)
+        host = (S)
+        ```
+        unregister NS record
+
+        :param name: name
+        :type name: str
+        :param domain: str, defaults to "bots.grid.tf."
+        :type domain: str, optional
+        :param host: host
+        :type host: str
+        """
+        return self._gateway.domain_unregister_ns(name, domain, host)
+
+    @j.baseclasses.actor_method
+    def domain_unregister_txt(self, name, domain, text, schema_out=None, user_session=None):
+        """
+        ```in
+        name = (S)
+        domain = (S)
+        text = (S)
+        ```
+        """
+
+        return self._gateway.domain_unregister_txt(name, domain, text)
+
+    @j.baseclasses.actor_method
+    def domain_unregister_mx(self, name, domain, host, priority=10, schema_out=None, user_session=None):
+        """
+         ```in
+         name = (S)
+         domain = (S)
+         host =  (S)
+         priority = 10
+         ```
+        """
+        return self._gateway.domain_unregister_mx(name, domain, host, priority)
+
+    @j.baseclasses.actor_method
+    def domain_unregister_srv(
+            self, name, domain, host, port, priority=10, weight=100, schema_out=None, user_session=None
+    ):
+        """
+        ```in
+         name = (S)
+         domain = (S)
+         host =  (S)
+         port = (I)
+         priority = 10
+         weight = 100
+
+        ```
+        """
+        return self._gateway.domain_unregister_srv(name, domain, host, port, priority, weight)
 
     ## TCP Router redis backend
 
