@@ -77,6 +77,16 @@ class alerta(j.baseclasses.threebot_actor):
         j.tools.alerthandler.delete(identifier)
 
     @j.baseclasses.actor_method
+    def delete_alerts(self, identifiers, schema_out=None, user_session=None):
+        """
+        ```in
+        identifiers = (LS)
+        ```
+        """
+        for identifier in identifiers:
+            j.tools.alerthandler.delete(identifier)
+
+    @j.baseclasses.actor_method
     def delete_all_alerts(self, schema_out=None, user_session=None):
         j.tools.alerthandler.delete_all()
 

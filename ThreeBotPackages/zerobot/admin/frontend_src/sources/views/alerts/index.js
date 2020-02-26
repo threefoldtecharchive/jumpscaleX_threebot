@@ -1,7 +1,12 @@
 
 
-import { JetView, plugins } from "webix-jet";
 import AnsiUp from "ansi_up";
+import { JetView } from "webix-jet";
+
+import { json_ajax } from "../../common";
+import AlertView from "./alert";
+
+const MAX_MSG_LEN = 100;
 
 export default class AlertsView extends JetView {
     config() {
@@ -27,21 +32,57 @@ export default class AlertsView extends JetView {
                             sort: "int",
                             autowidth: true,
                         },
-                        { id: "alert_type", header: "Type", sort: "string" },
-                        { id: "status", header: "Status", sort: "string" },
-                        { id: "level", header: "Level", sort: "int" },
+                        {
+                            id: "alert_type",
+                            header: "Type",
+                            sort: "string"
+                        },
+                        {
+                            id: "status",
+                            header: "Status",
+                            sort: "string"
+                        },
+                        {
+                            id: "level",
+                            header: "Level",
+                            sort: "int"
+                        },
                         {
                             id: "cat",
                             header: [
-                                { content: "textFilter" },
+                                {
+                                    content: "textFilter"
+                                },
                                 "Category"
                             ],
                             sort: "string"
                         },
-                        { id: "time_first", header: "First time", sort: "date", format: webix.Date.dateToStr("%Y-%m-%d %H %G:%i:%s"), width: 200 },
-                        { id: "time_last", header: "Last time", sort: "date", format: webix.Date.dateToStr("%Y-%m-%d %G:%i:%s"), width: 200 },
                         {
-                            id: "message", header: [{ content: "textFilter" }, "Message"], sort: "str", fillspace: true, format: function (value) {
+                            id: "time_first",
+                            header: "First time",
+                            sort: "date",
+                            format: webix.Date.dateToStr("%Y-%m-%d %H %G:%i:%s"), width: 200
+                        },
+                        {
+                            id: "time_last",
+                            header: "Last time",
+                            sort: "date",
+                            format: webix.Date.dateToStr("%Y-%m-%d %G:%i:%s"), width: 200
+                        },
+                        {
+                            id: "message",
+                            header: [
+                                {
+                                    content: "textFilter"
+                                },
+                                "Message"
+                            ],
+                            sort: "str",
+                            fillspace: true,
+                            format: function (value) {
+                                if (value.length > MAX_MSG_LEN) {
+                                    value = value.substr(0, MAX_MSG_LEN) + '...';
+                                }
                                 return ansiUp.ansi_to_html(value);
                             }
                         },
@@ -57,37 +98,54 @@ export default class AlertsView extends JetView {
                     scheme: {
                         $init: function (obj) { obj.index = this.count(); }
                     },
-                }
+                },
+                { $subview: true, popup: true }
             ]
         };
 
         return view;
     }
 
-    deleteItem(id) {
-        // TODO: handle multiple selection deletes
+    deleteItem(objects) {
         var self = this;
 
+        let items = [], ids = [], indexes = [];
+
+        for (let obj of objects) {
+            ids.push(obj.id);
+            let item = self.table.getItem(obj.id);
+            items.push(item)
+            indexes.push(item.index);
+        }
+
         webix.confirm({
-            title: "Delete alert",
+            title: "Delete alerts",
             ok: "Yes",
             cancel: "No",
-            text: `Delete alert item of ${id}`
-        }).then(function (result) {
-            const item = self.table.getItem(id);
-            webix.ajax().post("/zerobot/alerta/actors/alerta/delete_alert", {
+            text: `Delete alert item(s) of ${indexes.join(", ")}`
+        }).then(() => {
+            const identifiers = items.map((item) => item.identifier);
+            self.table.showProgress({ hide: false })
+            json_ajax.post("/zerobot/alerta/actors/alerta/delete_alerts", {
                 args: {
-                    identifier: item.identifier
+                    identifiers: identifiers
                 }
-            }).then((result) => {
-                self.table.remove(id);
+            }).then(() => {
+                self.table.remove(ids)
+                self.table.showProgress({ hide: true })
             });
         });
     }
+
+    viewItem(id) {
+        this.alertView.showFor(this.table.getItem(id));
+    }
+
     init(view) {
         // this.use(plugins.ProgressBar, "progress");
         var self = this;
         self.table = $$("alerts_table");
+        self.alertView = self.ui(AlertView);
 
         webix.extend(self.table, webix.ProgressBar);
         webix.ready(function () {
@@ -105,10 +163,15 @@ export default class AlertsView extends JetView {
         }).attachTo(self.table);
 
 
+        self.table.attachEvent("onDblClick", function () {
+            self.viewItem(self.table.getSelectedId());
+        });
+
         $$("alerts_cm").attachEvent("onMenuItemClick", function (id) {
             if (id == "Delete") {
-                const id = self.table.getSelectedId();
-                self.deleteItem(id);
+                self.deleteItem(self.table.getSelectedId(true));
+            } else if (id == "View") {
+                self.viewItem(self.table.getSelectedId());
             }
         });
     }
