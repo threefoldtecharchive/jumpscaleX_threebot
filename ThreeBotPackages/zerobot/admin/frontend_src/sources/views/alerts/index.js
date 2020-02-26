@@ -1,18 +1,14 @@
 
 
-import AnsiUp from "ansi_up";
 import { JetView } from "webix-jet";
 
-import { json_ajax } from "../../common";
+import { json_ajax, ansiUp } from "../../common";
 import AlertView from "./alert";
 
 const MAX_MSG_LEN = 100;
 
 export default class AlertsView extends JetView {
     config() {
-
-        const ansiUp = new AnsiUp();
-
         const view = {
             rows: [
                 {
@@ -163,7 +159,7 @@ export default class AlertsView extends JetView {
         }).attachTo(self.table);
 
 
-        self.table.attachEvent("onDblClick", function () {
+        self.table.attachEvent("onItemDblClick", function () {
             self.viewItem(self.table.getSelectedId());
         });
 
