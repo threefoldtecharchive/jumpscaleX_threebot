@@ -6,11 +6,12 @@ install:
   - pip3 install click loguru parameterized pyperclip xmltodict 
   - eval `ssh-agent -s`; ssh-add
   - cd /sandbox/code/github/threefoldtech/
-  - declare strs=('core' 'libs' 'builders' 'libs_extra') && for s in ${strs[@]}; do
-    rm -rf /sandbox/code/github/threefoldtech/jumpscaleX_$s &&
-    git clone https://github.com/threefoldtech/jumpscaleX_$s.git --branch development; done
   - rm -rf /sandbox/code/github/threefoldtech/jumpscaleX_threebot
   - cp -r /opt/code/github/threefoldtech/jumpscaleX_threebot /sandbox/code/github/threefoldtech/jumpscaleX_threebot
+  - cd /sandbox/code/github/threefoldtech/jumpscaleX_threebot ; threebot_branch=$(git rev-parse --abbrev-ref HEAD)
+  - declare strs=('libs' 'core' 'builders' 'libs_extra') && for s in ${strs[@]}; do 
+    cd /sandbox/code/github/threefoldtech/ && rm -rf /sandbox/code/github/threefoldtech/jumpscaleX_$s && 
+    git clone https://github.com/threefoldtech/jumpscaleX_$s.git --branch $threebot_branch || git clone https://github.com/threefoldtech/jumpscaleX_$s.git --branch development ; done
   - source /sandbox/env.sh; js_init generate
   - source /sandbox/env.sh; kosmos "j.builders.runtimes.lua.install_autossl()"
 
