@@ -26,6 +26,7 @@ farmer_tid = (I)
 capacity = (O) !tfgrid.workloads.reservation.container.capacity.1
 
 
+
 @url = tfgrid.workloads.reservation.container.mount.1
 volume_id = (S)
 mountpoint = (S)
@@ -33,9 +34,10 @@ mountpoint = (S)
 @url = tfgrid.workloads.reservation.network.connection.1
 network_id = (S)
 ipaddress = (ipaddress)
+public_ip6 = (B)
 
 @url = tfgrid.workloads.reservation.container.capacity.1
 # Number of vCPU
-cpu = (I)
+cpu = (I) 
 # memory in MiB
 memory = (I)
