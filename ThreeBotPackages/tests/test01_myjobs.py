@@ -132,9 +132,6 @@ def test_004_job_details():
     table_rows = base.get_table_rows(driver, "jobs_table")
     job_index = random.randint(1, len(table_rows))
     job_data = base.get_table_row(driver, "jobs_table", job_index)
-    import ipdb
-
-    ipdb.set_trace()
     base.info("check details of the job [J]")
     details_button = table_rows[job_index - 1].find_element_by_tag_name("button")
     details_button.click()
@@ -213,3 +210,4 @@ def test07_filters_in_workers_page(filter_type, state):
         for i in range(len(table_rows)):
             assert state == base.get_table_row(driver, "workers_table", i)[1]
         assert len(table_rows) == filtered_workers
+

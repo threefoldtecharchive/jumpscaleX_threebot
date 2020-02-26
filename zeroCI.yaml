@@ -3,7 +3,7 @@ prequisties:
 
 install:
   - apt-get update
-  - pip3 install click nose nose-progressive nose-testconfig loguru parameterized
+  - pip3 install click loguru parameterized pyperclip xmltodict 
   - eval `ssh-agent -s`; ssh-add
   - cd /sandbox/code/github/threefoldtech/
   - declare strs=('core' 'libs' 'builders' 'libs_extra') && for s in ${strs[@]}; do
@@ -15,7 +15,5 @@ install:
   - source /sandbox/env.sh; kosmos "j.builders.runtimes.lua.install_autossl()"
 
 script:
-  - source /sandbox/env.sh; nosetests-3.4 -v /sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/webinterface/tests/test_wiki.py
-    --nologcapture --with-xunit --xunit-file=/test.xml --xunit-testsuite-name=Test_wikis
-  - source /sandbox/env.sh; nosetests-3.4 -v /sandbox/code/github/threefoldtech/jumpscaleX_threebot/test_loader.py --nologcapture
-    --with-xunit --xunit-file=/test.xml --xunit-testsuite-name=jumpscaleX_threebot
+  - source /sandbox/env.sh; kosmos -p 'testrunner = j.baseclasses.testtools(xml_report=True, xml_path="/test.xml", xml_testsuite_name="UI_tests"); testrunner._run_tests_from_path("/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tests/")'
+  - source /sandbox/env.sh; kosmos -p 'testrunner = j.baseclasses.testtools(xml_report=True, xml_path="/test.xml", xml_testsuite_name="wikis_tests"); testrunner._run_tests_from_path("/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/webinterface/tests")'
