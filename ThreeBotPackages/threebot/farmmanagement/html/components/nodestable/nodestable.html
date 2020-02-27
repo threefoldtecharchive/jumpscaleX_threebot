@@ -14,7 +14,10 @@
           <v-flex class="ml-3">
             <v-layout column justify-space-around>
               <v-data-table show-expand item-key="name" :search="searchNodes" :headers="headers" :items="parsedNodesList" :items-per-page="10"
-                single-expand :expanded.sync="expanded" @click:row="openNodeDetails">
+                single-expand :expanded.sync="expanded" @click:row="openNodeDetails" :footer-props="{
+                  prevIcon: 'fa-angle-left',
+                  nextIcon: 'fa-angle-right'
+                }">
                 <template v-slot:item.farmer="{ item }">
                   <v-tooltip top>
                     <template v-slot:activator="{ on }">

@@ -23,7 +23,10 @@
       <v-card-text>
         <v-row>
           <v-data-table item-key="name" :search="searchFarms" :headers="headers" :items="farms" :items-per-page="10"
-            @click:row="viewNodes" style="width: 100%;">
+            @click:row="viewNodes" style="width: 100%;" :footer-props="{
+              prevIcon: 'fa-angle-left',
+              nextIcon: 'fa-angle-right'
+            }">
             <template v-slot:item.action="{ item }">
               <v-btn fab small text @click="viewNodes(item)">
                 <v-icon small>
