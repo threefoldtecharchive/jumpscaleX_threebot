@@ -82,7 +82,7 @@ def chat(bot):
         rid = j.sal.zosv2.reservation_register(reservation, expiration)
         # create container
         cont = j.sal.zosv2.container.create(reservation=reservation, node_id=node_selected.node_id, network_name=network.name, ip_address=ip_address, flist=conatiner_flist,
-                                            storage_url=storage_url, env=env, entrypoint=entry_point)
+                                            storage_url=storage_url, env=env, entrypoint=entry_point, cpu=4, memory=4096)
         
         j.sal.zosv2.volume.attach(reservation, cont, vol,rid, "/sandbox/var")
 
@@ -109,7 +109,7 @@ def chat(bot):
         bot.download_file(res, filename)
 
         res = "# Open your browser at ```{}:1500```".format(ip_address)
-        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
+        res = j.tools.jinja2.template_render(text=res, **locals())
         bot.md_show(res)
 
 
