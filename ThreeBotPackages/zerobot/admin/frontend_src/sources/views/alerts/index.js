@@ -1,8 +1,11 @@
+import {
+    JetView
+} from "webix-jet";
 
-
-import { JetView } from "webix-jet";
-
-import { json_ajax, ansiUp } from "../../common";
+import {
+    json_ajax,
+    ansiUp
+} from "../../common";
 import AlertView from "./alert";
 
 const MAX_MSG_LEN = 100;
@@ -10,10 +13,10 @@ const MAX_MSG_LEN = 100;
 export default class AlertsView extends JetView {
     config() {
         const view = {
-            rows: [
-                {
+            rows: [{
                     view: "template",
-                    type: "header", template: "ِAlerts",
+                    type: "header",
+                    template: "Alerts",
                 },
                 {
                     view: "datatable",
@@ -21,8 +24,7 @@ export default class AlertsView extends JetView {
                     resizeColumn: true,
                     select: true,
                     multiselect: true,
-                    columns: [
-                        {
+                    columns: [{
                             id: "index",
                             header: "#",
                             sort: "int",
@@ -50,8 +52,7 @@ export default class AlertsView extends JetView {
                         },
                         {
                             id: "cat",
-                            header: [
-                                {
+                            header: [{
                                     content: "textFilter"
                                 },
                                 "Category"
@@ -62,18 +63,19 @@ export default class AlertsView extends JetView {
                             id: "time_first",
                             header: "First time",
                             sort: "date",
-                            format: webix.Date.dateToStr("%Y-%m-%d %H %G:%i:%s"), width: 200
+                            format: webix.Date.dateToStr("%Y-%m-%d %H %G:%i:%s"),
+                            width: 200
                         },
                         {
                             id: "time_last",
                             header: "Last time",
                             sort: "date",
-                            format: webix.Date.dateToStr("%Y-%m-%d %G:%i:%s"), width: 200
+                            format: webix.Date.dateToStr("%Y-%m-%d %G:%i:%s"),
+                            width: 200
                         },
                         {
                             id: "message",
-                            header: [
-                                {
+                            header: [{
                                     content: "textFilter"
                                 },
                                 "Message"
@@ -97,10 +99,15 @@ export default class AlertsView extends JetView {
                     //     },
                     // }
                     scheme: {
-                        $init: function (obj) { obj.index = this.count(); }
+                        $init: function (obj) {
+                            obj.index = this.count();
+                        }
                     },
                 },
-                { $subview: true, popup: true }
+                {
+                    $subview: true,
+                    popup: true
+                }
             ]
         };
 
@@ -110,7 +117,9 @@ export default class AlertsView extends JetView {
     deleteItem(objects) {
         var self = this;
 
-        let items = [], ids = [], indexes = [];
+        let items = [],
+            ids = [],
+            indexes = [];
 
         for (let obj of objects) {
             ids.push(obj.id);
@@ -126,14 +135,18 @@ export default class AlertsView extends JetView {
             text: `Delete alert item(s) of ${indexes.join(", ")}`
         }).then(() => {
             const identifiers = items.map((item) => item.identifier);
-            self.table.showProgress({ hide: false })
+            self.table.showProgress({
+                hide: false
+            })
             json_ajax.post("/zerobot/alerta/actors/alerta/delete_alerts", {
                 args: {
                     identifiers: identifiers
                 }
             }).then(() => {
                 self.table.remove(ids)
-                self.table.showProgress({ hide: true })
+                self.table.showProgress({
+                    hide: true
+                })
             });
         });
     }
@@ -151,7 +164,9 @@ export default class AlertsView extends JetView {
         webix.extend(self.table, webix.ProgressBar);
         webix.ready(function () {
             self.table.clearAll();
-            self.table.showProgress({ hide: false });
+            self.table.showProgress({
+                hide: false
+            });
             webix.ajax().get("/zerobot/alerta/actors/alerta/list_alerts", function (data) {
                 let alerts = JSON.parse(data).alerts;
                 self.table.parse(alerts);
@@ -159,7 +174,8 @@ export default class AlertsView extends JetView {
         });
 
         webix.ui({
-            view: "contextmenu", id: "alerts_cm",
+            view: "contextmenu",
+            id: "alerts_cm",
             data: ["View", "Delete"]
         }).attachTo(self.table);
 
