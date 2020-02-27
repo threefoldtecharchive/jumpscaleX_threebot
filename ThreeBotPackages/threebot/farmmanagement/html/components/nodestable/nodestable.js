@@ -8,7 +8,7 @@ module.exports = new Promise(async (resolve, reject) => {
   resolve({
     name: 'nodestable',
     components: { 
-      nodeinfo: httpVueLoader('/farmmanagement/components/nodeinfo/index.vue'),
+      nodeinfo: httpVueLoader('/threebot/farmmanagement/components/nodeinfo/index.vue'),
 
     },
     props: ['farmselected'],

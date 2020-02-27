@@ -8,7 +8,7 @@ module.exports = new Promise(async (resolve, reject) => {
     name: "farmManagement",
     components: {
       nodestable: httpVueLoader(
-        "/farmmanagement/components/nodestable/index.vue"
+        "/threebot/farmmanagement/components/nodestable/index.vue"
       ),
       // vueGoogle: httpVueLoader("../../weblibs/gmaps/vue-google-maps.js")
     },
