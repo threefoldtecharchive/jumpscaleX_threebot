@@ -4,7 +4,7 @@ export default class TopView extends JetView {
 	config() {
 		const header = {
 			type: "header", css: "custom_dark", height: 58,
-			template: "ADMIN APP"
+			template: "Dashboard"
 		};
 
 		const sidebar = {
@@ -16,6 +16,7 @@ export default class TopView extends JetView {
 				{ id: "alerts", value: "Alerts", icon: "mdi mdi-table" },
 				{ id: "logs", value: "Logs", icon: "mdi mdi-format-line-style" },
 				{ id: "myjobs", value: "Jobs", icon: "mdi mdi-format-line-style" },
+				{ id: "packages", value: "Packages", icon: "mdi mdi-format-line-style" },
 			]
 		};
 

@@ -89,13 +89,13 @@ export default class AlertView extends JetView {
                         rows: [
                             {
                                 view: "tabbar",
-                                id: "tabs",
+                                id: "tb_tabs",
                                 multiview: true,
                                 options: []
                             },
                             {
                                 view: "multiview",
-                                id: "views",
+                                id: "tb_views",
                                 cells: [
                                     {
                                         template: ""
@@ -121,6 +121,7 @@ export default class AlertView extends JetView {
             head: "Alert",
             modal: true,
             width: 500,
+            height: 600,
             position: "center",
             body: {
                 rows: [
@@ -143,43 +144,44 @@ export default class AlertView extends JetView {
     init() {
         this.form = $$("form");
         this.message = $$("message");
-        this.tracebacks = $$("tracebacks");
         this.logs = $$("logs");
+
+        this.tbViews = $$("tb_views");
+        this.tbTabs = $$("tb_tabs");
     }
 
     addTraceback(tb) {
+        const tbId = `${tb.threebot_name}_${tb.process_id}`;
+        const tbTitle = `${tb.threebot_name} - PID: (${tb.process_id})`;
 
+        this.tbViews.addView({
+            view: "template",
+            id: tbId,
+            template: `<p>${ansiUp.ansi_to_html(tb.formatted)}</p>`
+        });
 
+        this.tbTabs.addOption(tbId, tbTitle, true);
     }
 
     clearTraceBacks() {
+        let id = this.tbTabs.getValue();
 
+        while (id) {
+            this.tbTabs.removeOption(id);
+            this.tbViews.removeView(id);
+
+            id = this.tbTabs.getValue();
+        }
     }
 
     showFor(item) {
-        this.getRoot().show();
-
         this.form.setValues(item);
-
         this.message.setHTML(ansiUp.ansi_to_html(item.message));
+        this.clearTraceBacks();
+        for (let tb of item.tracebacks) {
+            this.addTraceback(tb);
+        }
 
-        // let tracebackCells = []
-
-        // for (let tb of item.tracebacks) {
-        //     tracebackCells.push({
-        //         header: `${tb.threebot_name} - PID: (${tb.process_id})`,
-        //         body: {
-        //             view: "template",
-        //             template: ansiUp.ansi_to_html(tb.formatted)
-        //         }
-        //     })
-        // }
-
-        // // this.tracebacks.setValue("");
-        // this.tracebacks.addView({
-        //     view: "tabview",
-        //     cells: tracebackCells
-        // });
-
+        this.getRoot().show();
     }
 }

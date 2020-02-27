@@ -17,6 +17,9 @@ class alerta(j.baseclasses.threebot_actor):
         # re-populate tracebacks with formatted lines
         tbs = []
         for tb in alert.tracebacks:
+            if not tb.items:
+                continue
+
             tb_dict = {}
             tb_dict["process_id"] = tb.process_id
             tb_dict["threebot_name"] = tb.threebot_name

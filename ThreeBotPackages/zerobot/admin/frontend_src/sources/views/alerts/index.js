@@ -34,6 +34,11 @@ export default class AlertsView extends JetView {
                             sort: "string"
                         },
                         {
+                            id: "count",
+                            header: "Count",
+                            sort: "int"
+                        },
+                        {
                             id: "status",
                             header: "Status",
                             sort: "string"
