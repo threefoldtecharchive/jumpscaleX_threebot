@@ -36,7 +36,7 @@ class gateway(j.baseclasses.threebot_actor):
         domain = (S)
         ```
         """
-        return self._gateway.domain_exists(domain)
+        return self._gateway.domain_dump(domain)
 
     @j.baseclasses.actor_method
     def subdomain_get(self, domain, subdomain):
@@ -256,6 +256,10 @@ class gateway(j.baseclasses.threebot_actor):
         ```
         """
         return self._gateway.tcpservice_register(domain, privateip)
+
+    @j.baseclasses.actor_method
+    def tcpservice_dump(self, domain):
+        return self._gateway.tcpservice_dump(domain)
 
     @j.baseclasses.actor_method
     def tcpservice_unregister(self, domain):
