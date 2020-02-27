@@ -28,7 +28,7 @@ class identity(j.baseclasses.threebot_actor):
             raise j.exceptions.RuntimeError(f"Threebot me {name} has not been initialized yet")
 
         out = schema_out.new()
-        out.name = "zaibon.3botconnect" # identity.tname
+        out.name = identity.tname
         out.tid = identity.tid
         out.admins = identity.admins
 
