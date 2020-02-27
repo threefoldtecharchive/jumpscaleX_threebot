@@ -1,17 +1,9 @@
-// import nodeInfo from '../nodeinfo'
-// import { mapGetters } from 'vuex'
-// import moment from 'moment'
-// import momentDurationFormatSetup from 'moment-duration-format'
-// import { find } from 'lodash'
-
-// momentDurationFormatSetup(moment)
-
 module.exports = new Promise(async (resolve, reject) => {
   const vuex = await import(
-    "../../../web_modules/vuex/dist/vuex.esm.browser.js"
+    "/weblibs/vuex/vuex.esm.browser.js"
   );
-  const { moment } = await import("../../../web_modules/moment/min/moment.min.js")
-  const { momentDurationFormat } = await import("../../../web_modules/moment-duration-format/lib/moment-duration-format.js")
+  const { moment } = await import("/weblibs/moment/moment.min.js")
+  const { momentDurationFormat } = await import("/weblibs/moment/moment-duration-format.js")
   momentDurationFormat(moment)
   resolve({
     name: 'nodestable',

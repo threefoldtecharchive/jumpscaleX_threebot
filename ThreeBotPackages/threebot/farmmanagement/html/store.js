@@ -18,7 +18,6 @@ export const actions = {
   },
   getFarms: (context) => {
     console.log("in get farms")
-    console.log(context.getters.user)
     farmManagementService.getFarms(context.getters.user.id).then(response => {
       context.commit('setFarms', response.data.farms)
     })

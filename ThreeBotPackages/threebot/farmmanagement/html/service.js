@@ -1,4 +1,4 @@
-import axios from '../../zerobot/webplatform/web_modules/axios/dist/axios.min.js'
+import axios from '/weblibs/axios/axios.min.js'
 import farmConfig from '/threebot/farmmanagement/config/farmmanagement.config.local.js'
 
 
@@ -8,16 +8,15 @@ export default ({
     // let respons = await localGedisClient.executeCommand('identity','name')
     // let resp = await respons.json()
     // return resp
-    return axios.post(`/${window.config.identityActor}/name`, {
+    return axios.post(`/${window.config.identityActor}/threebot_name`, {
       args: {
       }
     })
   },
   getUser (name) {
-    console.log('name', name)
     return axios.post(`${window.config.phonebookActor}/get`, {
       args: {
-        "tid": 7
+        "name": name
       }
     })
   },

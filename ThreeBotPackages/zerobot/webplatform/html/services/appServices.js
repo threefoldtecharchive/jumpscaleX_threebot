@@ -1,7 +1,7 @@
 /* eslint no-undef: 0 */
 /* eslint-disable no-new */
 import config from '../config/index.js'
-import axios from '../web_modules/axios/dist/axios.min.js'
+import axios from '/weblibs/axios/axios.min.js'
 
 export default ({
   getVueApps () {

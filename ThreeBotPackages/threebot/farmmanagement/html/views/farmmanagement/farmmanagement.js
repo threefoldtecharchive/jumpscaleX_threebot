@@ -2,7 +2,7 @@
 
 module.exports = new Promise(async (resolve, reject) => {
   const vuex = await import(
-    "../../../web_modules/vuex/dist/vuex.esm.browser.js"
+    "/weblibs/vuex/vuex.esm.browser.js"
   );
   resolve({
     name: "farmManagement",
@@ -284,7 +284,7 @@ module.exports = new Promise(async (resolve, reject) => {
       }
     },
     async mounted() {
-        //var test = await this.getUser();
+      await this.getUser();
       this.getFarms();
       this.initialiseRefresh()
       this.newFarm.threebot_id = this.user.id;

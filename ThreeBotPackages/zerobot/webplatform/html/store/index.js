@@ -1,5 +1,5 @@
-import Vuex from '../web_modules/vuex/dist/vuex.esm.browser.js'
-import Vue from '../web_modules/vue/dist/vue.js'
+import Vuex from '/weblibs/vuex/vuex.esm.browser.js'
+import Vue from '/weblibs/vue/vue.js'
 
 import appStore from './app.js'
 import routeStore from './route.js'
