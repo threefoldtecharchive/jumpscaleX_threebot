@@ -1,4 +1,7 @@
-import { JetView, plugins } from "webix-jet";
+import {
+    JetView,
+    plugins
+} from "webix-jet";
 
 export default class TopView extends JetView {
     config() {
@@ -23,43 +26,95 @@ export default class TopView extends JetView {
 
         const sidebar = {
             localId: "menu",
-            view: "sidebar", css: "webix_dark", width: 200,
-            data: [
-                { id: "dash", value: "Dashboard", icon: "mdi mdi-view-dashboard" },
-                { id: "wikis", value: "Wikis", icon: "mdi mdi-chart-areaspline" },
-                { id: "alerts", value: "Alerts", icon: "mdi mdi-table" },
-                { id: "logs", value: "Logs", icon: "mdi mdi-format-line-style" },
-                { id: "myjobs", value: "Jobs", icon: "mdi mdi-format-line-style" },
-                { id: "packages", value: "Packages", icon: "mdi mdi-format-line-style" },
+            view: "sidebar",
+            css: "webix_dark",
+            width: 200,
+            data: [{
+                id: "dash",
+                value: "Dashboard",
+                icon: "mdi mdi-view-dashboard"
+            },
+            {
+                id: "wikis",
+                value: "Wikis",
+                icon: "mdi mdi-chart-areaspline"
+            },
+            {
+                id: "alerts",
+                value: "Alerts",
+                icon: "mdi mdi-table"
+            },
+            {
+                id: "logs",
+                value: "Logs",
+                icon: "mdi mdi-format-line-style"
+            },
+            {
+                id: "myjobs",
+                value: "Jobs",
+                icon: "mdi mdi-format-line-style"
+            },
+            {
+                id: "packages",
+                value: "Packages",
+                icon: "mdi mdi-format-line-style"
+            },
+            {
+                id: "codeserver",
+                value: "Codeserver",
+                icon: "mdi mdi-format-line-style"
+            },
+            {
+                id: "juypter",
+                value: "Juypter",
+                icon: "mdi mdi-format-line-style"
+            },
             ]
         };
 
         const toolbar = {
             view: "toolbar",
-            padding: 9, height: 58,
-            cols: [
-                {
-                    id: "button_show_menu",
-                    view: "icon", icon: "mdi mdi-menu",
-                    click: this.showMenu,
-                    hidden: true, // hidden by default
-                    tooltip: "Show menu",
-                },
-                { css: "logo" },
-                { view: "icon", icon: "mdi mdi-bell", badge: "5" },
-                { view: "icon", icon: "mdi mdi-settings" },
-                {
-                    template: `<image class="mainphoto" src="data/images/morgan_yu.jpg">
+            padding: 9,
+            height: 58,
+            cols: [{
+                id: "button_show_menu",
+                view: "icon", icon: "mdi mdi-menu",
+                click: this.showMenu,
+                hidden: true, // hidden by default
+                tooltip: "Show menu",
+            },
+            {
+                css: "logo"
+            },
+            {
+                view: "icon",
+                icon: "mdi mdi-bell",
+                badge: "5"
+            },
+            {
+                view: "icon",
+                icon: "mdi mdi-settings"
+            },
+            {
+                template: `<image class="mainphoto" src="data/images/morgan_yu.jpg">
                     <span class="webix_icon mdi mdi-circle status green"></span>`,
-                    width: 60, css: "avatar", borderless: true
-                }
+                width: 60,
+                css: "avatar",
+                borderless: true
+            }
             ]
         };
 
         return {
-            type: "clean", cols: [
-                { rows: [header, sidebar] },
-                { rows: [toolbar, { $subview: true }] }
+            type: "clean",
+            cols: [{
+                rows: [header, sidebar]
+            },
+            {
+                rows: [toolbar, {
+                    $subview: true
+                }]
+            }
             ]
         };
     }
@@ -88,4 +143,5 @@ export default class TopView extends JetView {
         this.buttonShowMenu = this.$$("button_show_menu");
         this.buttonHideMenu = this.$$("button_hide_menu");
     }
+
 }

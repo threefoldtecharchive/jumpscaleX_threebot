@@ -1,8 +1,11 @@
+import {
+    JetView
+} from "webix-jet";
 
-
-import { JetView } from "webix-jet";
-
-import { json_ajax, ansiUp } from "../../common";
+import {
+    json_ajax,
+    ansiUp
+} from "../../common";
 import AlertView from "./alert";
 
 const MAX_MSG_LEN = 100;
@@ -10,98 +13,104 @@ const MAX_MSG_LEN = 100;
 export default class AlertsView extends JetView {
     config() {
         const view = {
-            rows: [
-                {
-                    view: "template",
-                    type: "header", template: "ِAlerts",
+            rows: [{
+                view: "template",
+                type: "header",
+                template: "Alerts",
+            },
+            {
+                view: "datatable",
+                id: "alerts_table",
+                resizeColumn: true,
+                select: true,
+                multiselect: true,
+                css: "webix_header_border webix_data_border",
+                columns: [{
+                    id: "index",
+                    header: "#",
+                    sort: "int",
+                    autowidth: true,
                 },
                 {
-                    view: "datatable",
-                    id: "alerts_table",
-                    resizeColumn: true,
-                    select: true,
-                    multiselect: true,
-                    css: "webix_header_border webix_data_border",
-                    columns: [
+                    id: "alert_type",
+                    header: "Type",
+                    sort: "string"
+                },
+                {
+                    id: "count",
+                    header: "Count",
+                    sort: "int"
+                },
+                {
+                    id: "status",
+                    header: "Status",
+                    sort: "string"
+                },
+                {
+                    id: "level",
+                    header: "Level",
+                    sort: "int"
+                },
+                {
+                    id: "cat",
+                    header: [
+                        "Category",
                         {
-                            id: "index",
-                            header: "#",
-                            sort: "int",
-                            autowidth: true,
-                        },
+                            content: "textFilter"
+                        }
+                    ],
+                    sort: "string"
+                },
+                {
+                    id: "time_first",
+                    header: "First time",
+                    sort: "date",
+                    format: webix.Date.dateToStr("%Y-%m-%d %H %G:%i:%s"),
+                    width: 200
+                },
+                {
+                    id: "time_last",
+                    header: "Last time",
+                    sort: "date",
+                    format: webix.Date.dateToStr("%Y-%m-%d %G:%i:%s"),
+                    width: 200
+                },
+                {
+                    id: "message",
+                    header: [
+                        "Message",
                         {
-                            id: "alert_type",
-                            header: "Type",
-                            sort: "string"
-                        },
-                        {
-                            id: "count",
-                            header: "Count",
-                            sort: "int"
-                        },
-                        {
-                            id: "status",
-                            header: "Status",
-                            sort: "string"
-                        },
-                        {
-                            id: "level",
-                            header: "Level",
-                            sort: "int"
-                        },
-                        {
-                            id: "cat",
-                            header: [
-                                "Category",
-                                {
-                                    content: "textFilter"
-                                }
-                            ],
-                            sort: "string"
-                        },
-                        {
-                            id: "time_first",
-                            header: "First time",
-                            sort: "date",
-                            format: webix.Date.dateToStr("%Y-%m-%d %H %G:%i:%s"), width: 200
-                        },
-                        {
-                            id: "time_last",
-                            header: "Last time",
-                            sort: "date",
-                            format: webix.Date.dateToStr("%Y-%m-%d %G:%i:%s"), width: 200
-                        },
-                        {
-                            id: "message",
-                            header: [
-                                "Message",
-                                {
-                                    content: "textFilter"
-                                },
-                            ],
-                            sort: "str",
-                            fillspace: true,
-                            format: function (value) {
-                                if (value.length > MAX_MSG_LEN) {
-                                    value = value.substr(0, MAX_MSG_LEN) + '...';
-                                }
-                                return ansiUp.ansi_to_html(value);
-                            }
+                            content: "textFilter"
                         },
                     ],
-                    autoConfig: true,
-                    // url:{
-                    //     $proxy:true,
-                    //     load: function(view, params){
-                    //         let data = webix.ajax("/zerobot/alerta/actors/alerta/list_alerts");
-                    //         return data;
-                    //     },
-                    // }
-                    scheme: {
-                        $init: function (obj) { obj.index = this.count(); }
-                    },
+                    sort: "str",
+                    fillspace: true,
+                    format: function (value) {
+                        if (value.length > MAX_MSG_LEN) {
+                            value = value.substr(0, MAX_MSG_LEN) + '...';
+                        }
+                        return ansiUp.ansi_to_html(value);
+                    }
                 },
-                { $subview: true, popup: true }
+                ],
+                autoConfig: true,
+                // url:{
+                //     $proxy:true,
+                //     load: function(view, params){
+                //         let data = webix.ajax("/zerobot/alerta/actors/alerta/list_alerts");
+                //         return data;
+                //     },
+                // }
+                scheme: {
+                    $init: function (obj) {
+                        obj.index = this.count();
+                    }
+                },
+            },
+            {
+                $subview: true,
+                popup: true
+            }
             ]
         };
 
@@ -111,7 +120,9 @@ export default class AlertsView extends JetView {
     deleteItem(objects) {
         var self = this;
 
-        let items = [], ids = [], indexes = [];
+        let items = [],
+            ids = [],
+            indexes = [];
 
         for (let obj of objects) {
             ids.push(obj.id);
@@ -127,14 +138,18 @@ export default class AlertsView extends JetView {
             text: `Delete alert item(s) of ${indexes.join(", ")}`
         }).then(() => {
             const identifiers = items.map((item) => item.identifier);
-            self.table.showProgress({ hide: false })
+            self.table.showProgress({
+                hide: false
+            })
             json_ajax.post("/zerobot/alerta/actors/alerta/delete_alerts", {
                 args: {
                     identifiers: identifiers
                 }
             }).then(() => {
                 self.table.remove(ids)
-                self.table.showProgress({ hide: true })
+                self.table.showProgress({
+                    hide: true
+                })
             });
         });
     }
@@ -152,7 +167,9 @@ export default class AlertsView extends JetView {
         webix.extend(self.table, webix.ProgressBar);
         webix.ready(function () {
             self.table.clearAll();
-            self.table.showProgress({ hide: false });
+            self.table.showProgress({
+                hide: false
+            });
             webix.ajax().get("/zerobot/alerta/actors/alerta/list_alerts", function (data) {
                 let alerts = JSON.parse(data).alerts;
                 self.table.parse(alerts);
@@ -160,7 +177,8 @@ export default class AlertsView extends JetView {
         });
 
         webix.ui({
-            view: "contextmenu", id: "alerts_cm",
+            view: "contextmenu",
+            id: "alerts_cm",
             data: ["View", "Delete"]
         }).attachTo(self.table);
 
