@@ -22,7 +22,7 @@ export default class JsxVersionView extends JetView {
 
         webix.ajax().get("/zerobot/admin/actors/health/jsx_version", function (data) {
             self.version_info.setHTML(`
-                <h3>JSX Version</h3>
+                <h2>JSX Version</h2>
                 <p>${data}</p>
             `);
             // if (data.ip6) {

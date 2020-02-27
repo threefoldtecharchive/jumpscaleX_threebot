@@ -9,15 +9,37 @@ export default class ProcessesView extends JetView {
             id: "process",
             view: "chart",
             type: "pie",
-            dynamic: true,
+            width: 500,
+            height: 400,
             color: "#color#",
             value: "#vms#",
-            label: "#name#",
-            pieInnerText: "#vms#",
+            label: "<h4>#name#</h4>",
+            pieInnerText: "<h4>#vms#</h4>",
             data: "#all_data#"
         }
 
-        return run_process_info
+        return {
+            type: "space",
+            rows: [
+                {
+                    template: "<div style='width:auto;text-align:center'><h3>Running Processes<h3/></div>",
+                    height: 50
+                },
+                run_process_info,
+                {
+                    view: "button",
+                    id: "show_all",
+                    value: "Show All",
+                    align: "center",
+                    css: "webix_primary",
+                    inputWidth: 100,
+                    click: function () {
+
+                    }
+                }
+
+            ]
+        }
     }
     init(view) {
         var self = this;
@@ -25,26 +47,26 @@ export default class ProcessesView extends JetView {
         this.run_process_info = this.$$("process");
 
         var colors_dataset = [{
-                color: "#ee3639"
-            },
-            {
-                color: "#ee9e36"
-            },
-            {
-                color: "#eeea36"
-            },
-            {
-                color: "#a9ee36"
-            },
-            {
-                color: "#36d3ee"
-            },
-            {
-                color: "#367fee"
-            },
-            {
-                color: "#9b36ee"
-            }
+            color: "#ee3639"
+        },
+        {
+            color: "#ee9e36"
+        },
+        {
+            color: "#eeea36"
+        },
+        {
+            color: "#a9ee36"
+        },
+        {
+            color: "#36d3ee"
+        },
+        {
+            color: "#367fee"
+        },
+        {
+            color: "#9b36ee"
+        }
         ];
         webix.ajax().get("/zerobot/admin/actors/health/get_running_processes", function (data) {
             var all_data = []
