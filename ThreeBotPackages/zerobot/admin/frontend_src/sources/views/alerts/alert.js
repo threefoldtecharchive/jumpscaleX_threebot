@@ -80,7 +80,7 @@ export default class AlertView extends JetView {
                         id: "message",
                         view: "template",
                         template: "",
-                        scroll: true,
+                        scroll: "auto",
                     }
                 },
                 {
@@ -120,8 +120,8 @@ export default class AlertView extends JetView {
             view: "window",
             head: "Alert",
             modal: true,
-            width: 500,
-            height: 600,
+            width: 600,
+            height: 800,
             position: "center",
             body: {
                 rows: [
@@ -157,6 +157,7 @@ export default class AlertView extends JetView {
         this.tbViews.addView({
             view: "template",
             id: tbId,
+            scroll: "xy",
             template: `<p>${ansiUp.ansi_to_html(tb.formatted)}</p>`
         });
 
@@ -176,8 +177,10 @@ export default class AlertView extends JetView {
 
     showFor(item) {
         this.form.setValues(item);
-        this.message.setHTML(ansiUp.ansi_to_html(item.message));
+        this.message.setHTML(`<p>${ansiUp.ansi_to_html(item.message)}</p>`);
+
         this.clearTraceBacks();
+
         for (let tb of item.tracebacks) {
             this.addTraceback(tb);
         }

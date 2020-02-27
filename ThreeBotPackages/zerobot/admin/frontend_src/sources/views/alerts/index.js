@@ -21,6 +21,7 @@ export default class AlertsView extends JetView {
                     resizeColumn: true,
                     select: true,
                     multiselect: true,
+                    css: "webix_header_border webix_data_border",
                     columns: [
                         {
                             id: "index",
@@ -51,10 +52,10 @@ export default class AlertsView extends JetView {
                         {
                             id: "cat",
                             header: [
+                                "Category",
                                 {
                                     content: "textFilter"
-                                },
-                                "Category"
+                                }
                             ],
                             sort: "string"
                         },
@@ -73,10 +74,10 @@ export default class AlertsView extends JetView {
                         {
                             id: "message",
                             header: [
+                                "Message",
                                 {
                                     content: "textFilter"
                                 },
-                                "Message"
                             ],
                             sort: "str",
                             fillspace: true,
