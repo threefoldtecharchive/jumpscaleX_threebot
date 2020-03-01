@@ -13,11 +13,10 @@ def login():
     provider = request.query.get("provider")
 
     if provider:
-        next_url = request.query.get("next_url")
-        if next_url:
-            bot_app.session["next_url"] = next_url
-
         if provider == "3bot":
+            next_url = request.query.get("next_url")
+            if next_url:
+                bot_app.session["next_url"] = next_url
             return bot_app.login(request.headers["HOST"], "/auth/3bot_callback")
 
         redirect_url = f"https://{request.headers['HOST']}/auth/oauth_callback"
