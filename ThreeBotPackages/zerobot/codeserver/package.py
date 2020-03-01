@@ -18,15 +18,15 @@ class Package(j.baseclasses.threebot_package):
             auth_location.config = """
             location /codeserver/ {
                 # FIXME: need to update nginx/openresty with auth module, know yields unkown directive
-                # auth_request /admin/codeserver/auth;
+                # auth_request /auth/authenticated;
 
                 access_by_lua '
-                    local res = ngx.location.capture("/admin/codeserver/auth")
+                    local res = ngx.location.capture("/auth/authenticated")
 
                     if res.status == ngx.HTTP_OK then
                         return
                     else
-                        return ngx.redirect("/admin/codeserver")
+                        return ngx.redirect("/auth/login?provider=3bot&next_url=/codeserver")
                     end
                 ';
 
@@ -42,14 +42,6 @@ class Package(j.baseclasses.threebot_package):
             }
             """
 
-            proxy_location = locations.get_location_proxy("admin_codeserver")
-            proxy_location.path_url = "/admin/codeserver/"
-            proxy_location.ipaddr_dest = "127.0.0.1"
-            proxy_location.port_dest = 8909
-            proxy_location.path_dest = "/"
-            locations.configure()
-            website.configure()
-
         # Start code server
         cmd_start = "./code-server --auth none"
         self.startupcmd = j.servers.startupcmd.get("codeserver", cmd_start=cmd_start, path="/sandbox/bin", ports=8080)
@@ -57,10 +49,6 @@ class Package(j.baseclasses.threebot_package):
             j.builders.apps.codeserver.install()
 
         self.startupcmd.start()
-
-        from threebot_packages.zerobot.codeserver.bottle.rooter import app_with_session
-
-        self.gevent_rack.bottle_server_add(name="codeserver_auth", port=8909, app=app_with_session, websocket=True)
 
     def stop(self):
         # Stop code server
