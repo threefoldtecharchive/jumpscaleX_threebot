@@ -53,4 +53,4 @@ def is_authenticated():
     session = request.environ.get("beaker.session", {})
     if session.get("authorized"):
         return
-    return abort(401)
+    return abort(403)
