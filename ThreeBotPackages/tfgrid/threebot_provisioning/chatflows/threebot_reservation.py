@@ -1,6 +1,6 @@
 from Jumpscale import j
 import  netaddr
-
+import  random
 def get_all_ips(ip_range):
     networks = netaddr.IPNetwork(ip_range)
     ips = []
@@ -17,13 +17,14 @@ def chat(bot):
     email = user_info["email"]
     ips = ["IPV6", "IPV4"]
     choose = ["New","Restore"]
+    ip_range_choose = ["Specify IPRange","Choose IPRange for me"]
     explorer = j.clients.threebot.explorer
 
     if not name or not email:
         bot.md_show("Username or email not found in session. Please log in properly")
     user_choice = bot.single_choice("you want new container or restore previous one ?", choose)
     if user_choice == "Restore":
-        res = "# This Feature still in progress"
+        res = "# This feature is still in progress"
         res = j.tools.jinja2.template_render(text=res, **locals())
         bot.md_show(res)
 
@@ -31,15 +32,18 @@ def chat(bot):
         pub_key = bot.string_ask("Please add your public ssh-key ")
         user_corex = bot.string_ask("username of your coreX")
         password = bot.secret_ask("password of your coreX")
-
-        ip_range = bot.string_ask("Please add ip range of the network")
+        iprange_user_choice = bot.single_choice("Specify IPRange OR Choose IPRange for me  ?", ip_range_choose)
+        if iprange_user_choice == "Specify IPRange":
+            ip_range = bot.string_ask("Please add private IPRange of the network")
+        else:
+            ip_range = str(random.choice([192,172,10])) + "." + str(random.randint(0, 255)) + ".0.0/16"
 
         #create new reservation
         reservation = j.sal.zosv2.reservation_create()
         identity = explorer.actors_all.phonebook.get(name=name, email=email)
         nodes = j.sal.zosv2.nodes_finder.nodes_search()
 
-        ip = bot.single_choice("choose your ip version", ips)
+        ip = bot.single_choice("choose your IP version", ips)
 
         if ip == "IPV4":
             for node in filter(j.sal.zosv2.nodes_finder.filter_public_ip4, nodes):
