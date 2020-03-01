@@ -18,7 +18,7 @@ export default class TopView extends JetView {
 						$subview: "dash.bcdbHealth"
 					},
 					{
-						$subview: "dash.jsxVersion"
+						$subview: "dash.diskSpace"
 					}
 					]
 				},

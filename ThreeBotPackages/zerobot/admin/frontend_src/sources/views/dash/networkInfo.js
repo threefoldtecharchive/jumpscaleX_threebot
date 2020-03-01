@@ -12,11 +12,19 @@ export default class NetworkInfoView extends JetView {
                 height: 100,
             },
             template: `
-                <h4>#key#</h4>: <span>#value#</value>",
+                <h3>#key#</h3><font size="4">#value#</font>
             `
         }
 
-        return info
+        return {
+            type: "space",
+            rows: [{
+                template: "<div style='width:auto;text-align:center'><h3>JSX Info<h3/></div>",
+                height: 50
+            },
+                info
+            ]
+        }
     }
     init(view) {
         const self = this;
@@ -48,6 +56,14 @@ export default class NetworkInfoView extends JetView {
                 })
             }
         });
+
+        webix.ajax().get("/zerobot/admin/actors/health/jsx_version", function (data) {
+            self.info.add({
+                key: "JSX Version: ",
+                value: data
+            })
+        })
+
     }
 
 }

@@ -96,3 +96,14 @@ class health(j.baseclasses.threebot_actor):
         data["get_running_ports"] = self.get_running_ports()
         data["jsx_version"] = self.jsx_version()
         return data
+
+    @j.baseclasses.actor_method
+    def get_disk_space(self, schema_out=None, user_session=None):
+        res = {}
+        disk_obj = psutil.disk_usage("/")
+        res["total"] = disk_obj.total // (1024.0 ** 3)
+        res["used"] = disk_obj.used // (1024.0 ** 3)
+        res["free"] = disk_obj.free // (1024.0 ** 3)
+        res["percent"] = disk_obj.percent
+
+        return res
