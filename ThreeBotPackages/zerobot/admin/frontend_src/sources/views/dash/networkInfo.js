@@ -6,6 +6,7 @@ export default class NetworkInfoView extends JetView {
     config() {
         const info = {
             id: "networkInfo",
+            responsive: true,
             view: "list",
             type: {
                 height: 100,

@@ -8,6 +8,7 @@ export default class TopView extends JetView {
 	config() {
 		return {
 			type: "space",
+			responsive: true,
 			rows: [
 				{
 					cols: [{

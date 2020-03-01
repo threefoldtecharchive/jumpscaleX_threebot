@@ -2,6 +2,8 @@ import {
     JetView
 } from "webix-jet";
 
+import ProcessesChildView from "./processesChildView";
+
 export default class ProcessesView extends JetView {
 
     config() {
@@ -11,11 +13,12 @@ export default class ProcessesView extends JetView {
             type: "pie",
             width: 500,
             height: 400,
+            responsive: true,
             color: "#color#",
             value: "#vms#",
             label: "<h4>#name#</h4>",
             pieInnerText: "<h4>#vms#</h4>",
-            data: "#all_data#"
+            data: "#chart_data#"
         }
 
         return {
@@ -34,17 +37,23 @@ export default class ProcessesView extends JetView {
                     css: "webix_primary",
                     inputWidth: 100,
                     click: function () {
-
+                        this.$scope.childview.showFor(this.$scope.all_data)
                     }
                 }
 
             ]
         }
     }
+
+
     init(view) {
         var self = this;
 
+        this.all_data = []
+
         this.run_process_info = this.$$("process");
+
+        self.childview = self.ui(ProcessesChildView);
 
         var colors_dataset = [{
             color: "#ee3639"
@@ -69,9 +78,10 @@ export default class ProcessesView extends JetView {
         }
         ];
         webix.ajax().get("/zerobot/admin/actors/health/get_running_processes", function (data) {
-            var all_data = []
+            var chart_data = []
 
             data = JSON.parse(data);
+            self.all_data = data
 
             for (let i = 0; i < data.length; i++) {
                 //Break when there is no more colors
@@ -82,11 +92,11 @@ export default class ProcessesView extends JetView {
                     "name": data[i].name,
                     "vms": Math.ceil(data[i].vms)
                 }
-                all_data.push(temp)
+                chart_data.push(temp)
                 // console.log(myArray[i]);
             }
             self.run_process_info.parse({
-                data: all_data
+                data: chart_data
             });
         });
     }

@@ -7,6 +7,7 @@ export default class JsxVersionView extends JetView {
         const version_info = {
             id: "jsxVersion",
             view: "template",
+            responsive: true,
             type: {
                 height: 200,
             },
