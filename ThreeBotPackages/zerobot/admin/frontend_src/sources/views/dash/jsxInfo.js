@@ -34,7 +34,7 @@ export default class JSXInfoView extends JetView {
 
         webix.ajax().get("/zerobot/admin/actors/health/get_identity", function (data) {
             self.info.add({
-                key: "3bot: ",
+                key: "3bot",
                 value: data
             })
         })
@@ -60,7 +60,7 @@ export default class JSXInfoView extends JetView {
 
         webix.ajax().get("/zerobot/admin/actors/health/jsx_version", function (data) {
             self.info.add({
-                key: "JSX Version: ",
+                key: "JSX Version",
                 value: data
             })
         })

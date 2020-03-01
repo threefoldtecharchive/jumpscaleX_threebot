@@ -7,8 +7,8 @@ class logs(j.baseclasses.threebot_actor):
 
     @j.baseclasses.actor_method
     def list_apps(self, schema_out=None, user_session=None):
-        apps = self.client.get_app_names()
-        return list(apps)
+        apps = list(self.client.get_app_names())
+        return j.data.serializers.json.dumps(apps)
 
     @j.baseclasses.actor_method
     def count(

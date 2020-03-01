@@ -58,7 +58,6 @@ export default class runningPortsView extends JetView {
         this.running_ports = this.$$("runningPorts");
 
         webix.ajax().get("/zerobot/admin/actors/health/get_running_ports", function (data) {
-            console.log(data)
             // let data = JSON.parse(data);
             self.running_ports.parse(data);
         });
