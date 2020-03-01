@@ -25,11 +25,15 @@ export default class runningPortsView extends JetView {
             },
             {
                 id: "port_number",
-                header: "Port Number",
+                header: ["Port Number", {
+                    content: "textFilter"
+                },],
                 sort: "string"
             }, {
                 id: "process",
-                header: "Process",
+                header: ["Process", {
+                    content: "textFilter"
+                }],
                 sort: "string"
             }], scheme: {
                 $init: function (obj) {
