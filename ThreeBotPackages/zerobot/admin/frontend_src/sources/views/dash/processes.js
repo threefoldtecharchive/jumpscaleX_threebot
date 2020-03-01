@@ -10,6 +10,7 @@ export default class ProcessesView extends JetView {
         const run_process_info = {
             id: "process",
             view: "chart",
+            responsive: true,
             type: "pie",
             width: 500,
             height: 400,

@@ -8,6 +8,7 @@ export default class JSXInfoView extends JetView {
             id: "jsxInfo",
             responsive: true,
             view: "list",
+            responsive: true,
             type: {
                 height: 100,
             },

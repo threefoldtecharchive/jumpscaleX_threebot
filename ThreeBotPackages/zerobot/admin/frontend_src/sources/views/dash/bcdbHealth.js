@@ -6,6 +6,7 @@ export default class BcdbHealthView extends JetView {
     config() {
         const bcdb_info = {
             id: "bcdbHealth",
+            responsive: true,
             view: "template",
             responsive: true,
             type: {

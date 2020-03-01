@@ -1,6 +1,16 @@
 from Jumpscale import j
 import psutil
 
+# Helper function
+def Convert(tup):
+    ports = []
+    for a, b in tup:
+        temp = {}
+        temp["port_number"] = a
+        temp["process"] = b
+        ports.append(temp)
+    return ports
+
 
 class health(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
@@ -71,8 +81,10 @@ class health(j.baseclasses.threebot_actor):
         """
         :return: string threebotname
         """
+        data = []
         ports = j.sal.nettools.getRunningPorts()
-        return ports
+        data = Convert(ports)
+        return j.data.serializers.json.dumps(data)
 
     @j.baseclasses.actor_method
     def jsx_version(self, schema_out=None, user_session=None):
