@@ -31,10 +31,19 @@ export default class BcdbHealthView extends JetView {
 
         webix.ajax().get("/zerobot/admin/actors/health/bcdb_health", function (data) {
             data = JSON.parse(data);
-            self.bcdb_info.setHTML(`
-            <font size="4">${data.state}</font>
-        `)
+
+            if (data.state === "OK") {
+                self.bcdb_info.setHTML(`
+                <span class='webix_icon wxi-checkbox-marked' style="color:green;width: 100%;font-size: 75px"></span>
+                
+            `)
+            } else {
+                self.bcdb_info.setHTML(`
+                <span class='webix_icon wxi-close-circle' style="color:red;width: 100%;font-size: 75px"></span>
+            `)
+            }
         });
+
     }
 
 }
