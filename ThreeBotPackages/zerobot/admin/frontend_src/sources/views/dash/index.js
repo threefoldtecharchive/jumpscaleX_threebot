@@ -2,8 +2,6 @@ import {
 	JetView
 } from "webix-jet";
 
-import NetworkInfoView from "./networkInfo";
-
 export default class TopView extends JetView {
 	config() {
 		return {
@@ -12,7 +10,7 @@ export default class TopView extends JetView {
 			rows: [
 				{
 					cols: [{
-						$subview: "dash.networkInfo"
+						$subview: "dash.jsxInfo"
 					},
 					{
 						$subview: "dash.bcdbHealth"

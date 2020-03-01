@@ -2,10 +2,10 @@ import {
     JetView
 } from "webix-jet";
 
-export default class NetworkInfoView extends JetView {
+export default class JSXInfoView extends JetView {
     config() {
         const info = {
-            id: "networkInfo",
+            id: "jsxInfo",
             responsive: true,
             view: "list",
             type: {
@@ -29,7 +29,7 @@ export default class NetworkInfoView extends JetView {
     init(view) {
         const self = this;
 
-        this.info = this.$$("networkInfo");
+        this.info = this.$$("jsxInfo");
 
         webix.ajax().get("/zerobot/admin/actors/health/get_identity", function (data) {
             self.info.add({
