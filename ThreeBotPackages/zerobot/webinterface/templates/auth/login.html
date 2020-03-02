@@ -9,7 +9,7 @@
         <i class="fa fa-{{provider}}" style="font-size: 33px">{{provider}}</i>
     </a>
     {% endfor %}
-    <a type="button" class="btn btn-light" href="/auth/login?provider=3bot">
+    <a type="button" class="btn btn-light" href="/auth/login?provider=3bot&{% if next_url %}next_url={{next_url}}{% endif %}">
         <i class="bot" style="font-size: 33px"></i>3bot App
     </a>
 

@@ -1,4 +1,4 @@
 npm run build
-cp index.html ../html
-mkdir -p ../html/codebase
-cp -a codebase/* ../html/codebase
+cp index.html ../output
+mkdir -p ../output/codebase
+cp -a codebase/* ../output/codebase
