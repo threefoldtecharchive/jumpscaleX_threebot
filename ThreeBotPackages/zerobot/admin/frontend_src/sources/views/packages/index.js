@@ -118,12 +118,34 @@ export default class PackagesView extends JetView {
         var menu = webix.ui({
             view: "contextmenu",
             on: {
-                onMenuItemClick: function (id) {
+                onMenuItemClick: function (id, e, node) {
                     var item = this.getMenuItem(id);
+                    var test = this.getItem(id);
+                    var context = this.getContext();
+                    console.log("context");
+                    console.log(context);
+                    // var tmp = this.package_table.getSelectedId()
 
                     console.log("event firing")
+                    // console.log(tmp)
+                    console.log(test)
                     console.log(item)
                     console.log(id)
+                    console.log(e)
+                    console.log(node)
+                    // if (id == 'delete') {
+                    //     deletePackage()
+                    // } else if (id == 'start') {
+                    //     startPackage()
+                    // } else if (id == 'stop') {
+                    //     stopPackage()
+                    // } else if (id == 'disable') {
+                    //     disablePackage()
+                    // } else if (id == 'enable') {
+                    //     enablePackage()
+                    // } else {
+                    //     console.log("something wrong")
+                    // }
                     webix.message(JSON.stringify(item));
                 }
             }
@@ -172,10 +194,56 @@ export default class PackagesView extends JetView {
             return menudata
 
         }
+        // API calls
         webix.ajax().get("/zerobot/packagemanager/actors/package_manager/packages_list", function (data) {
             let packages_json = JSON.parse(data).packages;
             let package_data = mapData(packages_json)
             self.package_table.parse(package_data);
         });
+
+        function deletePackage(packageName) {
+            path = "/zerobot/packagemanager/actors/package_manager/packages_delete";
+            webix.ajax().post(path, {
+                name: packageName
+            }, function (data) {
+                console.log(data)
+            });
+        }
+
+        function startPackage(packageName) {
+            path = "/zerobot/packagemanager/actors/package_manager/packages_start";
+            webix.ajax().post(path, {
+                name: packageName
+            }, function (data) {
+                console.log(data)
+            });
+        }
+
+        function stopPackage(packageName) {
+            path = "/zerobot/packagemanager/actors/package_manager/packages_stop";
+            webix.ajax().post(path, {
+                name: packageName
+            }, function (data) {
+                console.log(data)
+            });
+        }
+
+        function disablePackage(packageName) {
+            path = "/zerobot/packagemanager/actors/package_manager/packages_disable";
+            webix.ajax().post(path, {
+                name: packageName
+            }, function (data) {
+                console.log(data)
+            });
+        }
+
+        function enablePackage(packageName) {
+            path = "/zerobot/packagemanager/actors/package_manager/packages_enable";
+            webix.ajax().post(path, {
+                name: packageName
+            }, function (data) {
+                console.log(data)
+            });
+        }
     }
 }
