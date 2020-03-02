@@ -23,4 +23,4 @@ class TFDirectoryFactory(j.baseclasses.threebot_factory):
         )
 
         client.reload()
-        self._tests_run(name=name)
+        self._tests_run(name=name, die=True)
