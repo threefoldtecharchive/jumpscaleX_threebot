@@ -284,14 +284,13 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation = self.reservation_model.new(reservation)
         reservation.save()  # save to get an id
 
-        reservation = volumes_prepend_id(reservation)
+        reservation = self.volumes_prepend_id(reservation)
 
         reservation.save()
 
         reservation = self.volumes_prepend_id(reservation)
 
         return reservation
-
 
     @j.baseclasses.actor_method
     def reservation_get(self, reservation_id, schema_out, user_session):

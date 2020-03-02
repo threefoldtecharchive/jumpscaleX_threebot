@@ -2,14 +2,14 @@
 
 @url = tfgrid.workloads.reservation.zdb.1
 #unique id inside the reservation is an autoincrement
-workload_id = (I)
-node_id = (S)
-size = (I)
-mode = "seq,user" (E)
-password = (S)
-disk_type = "hdd,ssd" (E)
-public = false (B)
+0 : workload_id = (I)
+1 : node_id = (S)
+2 : size = (I)
+3 : mode = "seq,user" (E)
+4 : password = (S)
+5 : disk_type = "hdd,ssd" (E)
+6 : public = false (B)
 #where to send the statistics too
-stats_aggregator = (LO) !tfgrid.workloads.reservation.statsaggregator.1
+7 : stats_aggregator = (LO) !tfgrid.workloads.reservation.statsaggregator.1
 #id of threebot who is the farmer
-farmer_tid = (I)
+8 : farmer_tid = (I)
