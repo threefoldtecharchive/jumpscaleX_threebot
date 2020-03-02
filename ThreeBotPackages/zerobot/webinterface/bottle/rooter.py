@@ -1,4 +1,4 @@
-from bottle import Bottle, abort, post, request, response, run
+from bottle import Bottle, abort, post, request, response, run, redirect
 from Jumpscale import j
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import bottle
@@ -37,3 +37,4 @@ from .chat import *
 from .gedis import *
 from .wiki import *
 from .info import *
+from .auth import *
