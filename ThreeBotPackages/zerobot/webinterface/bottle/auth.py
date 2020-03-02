@@ -1,6 +1,6 @@
 from Jumpscale import j
 
-from .rooter import app, abort, env, redirect, request
+from .rooter import app, abort, env, redirect, response, request
 
 client = j.clients.oauth_proxy.get("main")
 oauth_app = j.tools.oauth_proxy.get(app, client, "/auth/login")
@@ -52,5 +52,6 @@ def logout():
 def is_authenticated():
     session = request.environ.get("beaker.session", {})
     if session.get("authorized"):
-        return
+        response.content_type = "application/json"
+        return j.data.serializers.json.dumps({"username": session["username"], "email": session["email"]})
     return abort(403)
