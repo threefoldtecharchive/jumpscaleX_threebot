@@ -7,7 +7,7 @@ import {
 
 export default class PackagesView extends JetView {
     config() {
-        const view = {
+        const grid = {
             rows: [{
                     //Header
                     view: "template",
@@ -54,6 +54,7 @@ export default class PackagesView extends JetView {
                     css: "webix_header_border webix_data_border",
                     scroll: true,
                     autoConfig: true,
+                    onContext: {},
                     columns: [{
                             id: "index",
                             header: "#",
@@ -82,45 +83,73 @@ export default class PackagesView extends JetView {
                 }
             ]
         };
-        return view;
+        return grid;
     }
     init(view) {
         var self = this;
 
         this.package_table = this.$$("packages_table");
         // TODO: check how can i change the data in the context related to every row in the table
-        webix.ui({
-            view: "contextmenu",
-            id: "packages_cm",
-            data: ["View", "Delete"]
-        }).attachTo(self.package_table);
-
-        const pkgStatus = {
-            0: {
+        var pkgStatus = [{
                 name: "Init",
                 actions: ["delete"]
             },
-            1: {
+            {
                 name: "Installed",
                 actions: ['delete', "start"]
             },
-            2: {
+            {
                 name: "Running",
                 actions: ['delete', "stop"]
             },
-            3: {
+            {
                 name: "Halted",
                 actions: ['delete', "start", "disable"]
             },
-            4: {
+            {
                 name: "Disabled",
                 actions: ['delete', "enable"]
             },
-            5: {
+            {
                 name: "Error",
                 actions: ["delete"]
             }
-        }
+        ]
+        var menu = webix.ui({
+            view: "contextmenu",
+            on: {
+                onMenuItemClick: function (id) {
+                    var item = this.getMenuItem(id);
+
+                    console.log("event firing")
+                    console.log(item)
+                    console.log(id)
+                    webix.message(JSON.stringify(item));
+                }
+            }
+        });
+        webix.event(self.package_table.$view, "contextmenu", function (e /*MouseEvent*/ ) {
+            var pos = self.package_table.locate(e);
+            var menudata = [];
+            if (pos) {
+                var item = self.package_table.getItem(pos.row);
+                for (var i = 0; i < pkgStatus.length; i++) {
+                    if (pkgStatus[i].name == item.status) {
+                        menudata = addActions(menudata, i)
+                    }
+
+                }
+            }
+            menu.clearAll();
+            menu.parse(menudata);
+            menu.show(e);
+            return webix.html.preventEvent(e);
+        })
+
+        /////////////////////////////////////////
+
+
+        // Helper functions
 
         // Mapping the data to the right format to be able to diplay the actual status
         function mapData(packages_json) {
@@ -137,11 +166,15 @@ export default class PackagesView extends JetView {
             return package_data
         }
 
+        function addActions(menudata, pkgIndex) {
+            for (var j = 0; j < pkgStatus[pkgIndex].actions.length; j++)
+                menudata.push(pkgStatus[pkgIndex].actions[j]);
+            return menudata
+
+        }
         webix.ajax().get("/zerobot/packagemanager/actors/package_manager/packages_list", function (data) {
             let packages_json = JSON.parse(data).packages;
-
             let package_data = mapData(packages_json)
-            console.log(package_data)
             self.package_table.parse(package_data);
         });
     }
