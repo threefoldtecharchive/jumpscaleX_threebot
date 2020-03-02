@@ -1,18 +1,24 @@
 {% extends "chat/home.html"%}
 {% block title %}Login{% endblock %}
 {% block content %}
-<h2>Please login by pressing on 3bot image .</h2>
+<h3>Choose one of the following available methods</h3>
+<br/>
+<div class="row justify-content-md-center">
+    <div class="col-sm-4">
+        {% for provider in providers%}
+        <a class="btn btn-block btn-social btn-{[provider]} text-center"  href="/auth/login?provider={{provider}}&{% if next_url %}next_url={{next_url}}{% endif %}">
+            <i class="fa fa-{{provider}}"></i> {{provider}}
+        </a>
+        {% endfor %}
 
-<span class="li-social">
-    {% for provider in providers%}
-    <a type="button" class="btn btn-light" href="/auth/login?provider={{provider}}">
-        <i class="fa fa-{{provider}}" style="font-size: 33px">{{provider}}</i>
-    </a>
-    {% endfor %}
-    <a type="button" class="btn btn-light" href="/auth/login?provider=3bot&{% if next_url %}next_url={{next_url}}{% endif %}">
-        <i class="bot" style="font-size: 33px"></i>3bot App
-    </a>
+        <a class="btn btn-block btn-social btn-vk text-center" href="/auth/login?provider=3bot&{% if next_url %}next_url={{next_url}}{% endif %}">
+            <span class="bot"></span>Sign in with 3Bot connect
+        </a>
+    </div>
+</div>
 
 
-</span>
+
+
+
 {% endblock %}
