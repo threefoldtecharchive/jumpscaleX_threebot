@@ -95,12 +95,54 @@ export default class PackagesView extends JetView {
             data: ["View", "Delete"]
         }).attachTo(self.package_table);
 
+        const pkgStatus = {
+            0: {
+                name: "Init",
+                actions: ["delete"]
+            },
+            1: {
+                name: "Installed",
+                actions: ['delete', "start"]
+            },
+            2: {
+                name: "Running",
+                actions: ['delete', "stop"]
+            },
+            3: {
+                name: "Halted",
+                actions: ['delete', "start", "disable"]
+            },
+            4: {
+                name: "Disabled",
+                actions: ['delete', "enable"]
+            },
+            5: {
+                name: "Error",
+                actions: ["delete"]
+            }
+        }
 
+        // Mapping the data to the right format to be able to diplay the actual status
+        function mapData(packages_json) {
+            let package_data = []
+            for (var i = 0; i < packages_json.length; i++) {
+                let tmp = {
+                    "name": packages_json[i].name,
+                    "path": packages_json[i].path,
+                    "status": pkgStatus[packages_json[i].status].name
+                }
+                package_data.push(tmp)
+
+            }
+            return package_data
+        }
 
         webix.ajax().get("/zerobot/packagemanager/actors/package_manager/packages_list", function (data) {
-            let json = JSON.parse(data);
+            let packages_json = JSON.parse(data).packages;
 
-            self.package_table.parse(json.packages);
+            let package_data = mapData(packages_json)
+            console.log(package_data)
+            self.package_table.parse(package_data);
         });
     }
 }
