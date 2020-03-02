@@ -102,9 +102,9 @@ def stress_explorer(count=100, interactive=True):
     stress_customer_id = f"stress_customer_{j.data.idgenerator.generateXCharID(5)}"
 
     threebots = [
-        {"role": stress_signer_uid, "pubkey": binascii.hexlify(signer_signing_key.verify_key.encode()),},
-        {"role": stress_farmer_uid, "pubkey": binascii.hexlify(farmer_signing_key.verify_key.encode()),},
-        {"role": stress_customer_id, "pubkey": binascii.hexlify(customer_signing_key.verify_key.encode()),},
+        {"role": stress_signer_uid, "pubkey": binascii.hexlify(signer_signing_key.verify_key.encode())},
+        {"role": stress_farmer_uid, "pubkey": binascii.hexlify(farmer_signing_key.verify_key.encode())},
+        {"role": stress_customer_id, "pubkey": binascii.hexlify(customer_signing_key.verify_key.encode())},
     ]
     tbots = {}
     for threebot in threebots:

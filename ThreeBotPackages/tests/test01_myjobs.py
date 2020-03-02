@@ -132,9 +132,6 @@ def test_004_job_details():
     table_rows = base.get_table_rows(driver, "jobs_table")
     job_index = random.randint(1, len(table_rows))
     job_data = base.get_table_row(driver, "jobs_table", job_index)
-    import ipdb
-
-    ipdb.set_trace()
     base.info("check details of the job [J]")
     details_button = table_rows[job_index - 1].find_element_by_tag_name("button")
     details_button.click()
