@@ -1,11 +1,12 @@
 import farmManagementService from './service.js'
 
-export const state = {
+const state = {
   user: {},
   farms: [],
   nodes: []
 }
-export const actions = {
+
+const actions = {
   getName: async (context) => {
       var response = await farmManagementService.getName()
       return response.data.name
@@ -38,15 +39,23 @@ export const actions = {
     })
   }
 }
-export const mutations = {
+
+const mutations = {
   setUser: (state, user) => {state.user = user},
   setFarms: (state, farms) => { state.farms = farms },
   addFarm: (state, farm) => { state.farms.push(farm) },
   setNodes: (state, nodes) => {state.nodes = nodes}
 }
 
-export const getters = {
+const getters = {
   user: (state) => state.user,
   farms: (state) => state.farms,
   nodes: (state) => state.nodes
+}
+
+export {
+  state,
+  actions,
+  mutations,
+  getters
 }

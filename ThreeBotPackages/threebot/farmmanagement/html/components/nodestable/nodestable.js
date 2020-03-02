@@ -8,13 +8,19 @@ module.exports = new Promise(async (resolve, reject) => {
   resolve({
     name: 'nodestable',
     components: { 
-      nodeinfo: httpVueLoader('/farmmanagement/components/nodeinfo/index.vue'),
-
+      nodeinfo: httpVueLoader('/farmmanagement/components/nodeinfo/index.vue')
     },
     props: ['farmselected'],
     data () {
       return {
-        showResult: false,
+        showDialog: false,
+        dilogTitle: "title",
+        dialogBody: "",
+        dialogActions: [],
+        dialogImage: null,
+        block: null,
+        showBadge: true,
+        menu: false,
         itemsPerPage: 4,
         expanded: [],
         searchNodes: '',

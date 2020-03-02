@@ -4,6 +4,7 @@ import Vuetify from '/weblibs/vuetify/vuetify.js'
 import store from './store/index.js'
 import router from './router/index.js'
 import config from './config/index.js'
+import './plugins/index.js'
 
 document.addEventListener('DOMContentLoaded', (event) => {
   
@@ -19,7 +20,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
       app: httpVueLoader('./App/'),
     },
     vuetify: new Vuetify({
-      iconfont: 'fa',
+      icons: {
+        iconfont: 'fa',
+      },
       theme: {
         themes: {
           light: {
