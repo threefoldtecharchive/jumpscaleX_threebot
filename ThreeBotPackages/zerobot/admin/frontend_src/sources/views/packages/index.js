@@ -1,64 +1,106 @@
-import { JetView } from "webix-jet";
+import {
+    JetView
+} from "webix-jet";
+import {
+    json_ajax
+} from "../../common";
 
 export default class PackagesView extends JetView {
     config() {
         const view = {
-            rows: [
-                {
+            rows: [{
+                    //Header
                     view: "template",
                     type: "header",
                     template: "Packages",
                 },
-                {
-                    view: "template",
-                    template: "2nd row",
-                },
-                {
-                    cols: [
-                        {
-                            view: "template",
-                            template: "1st col",
+                { //adding Package
+                    cols: [{
+                            //selector
+                            view: "select",
+                            options: ["Path", "Giturl"],
                         },
+                        //text area
                         {
-                            view: "template",
-                            template: "2nd col",
+                            view: "text",
+                            inputAlign: "left",
                         },
+                        //submit button
                         {
-                            rows: [
-                                {
-                                    view: "list",
-                                    id: "mylist",
-                                    template: "#id# - #title#",
-                                    data: [
-                                        { id: 1, title: "Item 1" },
-                                        { id: 2, title: "Item 2" },
-                                        { id: 3, title: "Item 3" }
-                                    ]
-                                },
-                                {
-                                    view: "button",
-                                    value: "add",
-                                    click: function () {
-                                        this.$scope.addToList();
-                                    }
-                                }
-                            ]
+                            view: "button",
+                            id: "my_button",
+                            value: "Add package",
+                            autowidth: true,
+                            type: ""
                         }
                     ]
+                },
+                { //DataTable
+                    view: "datatable",
+                    id: "packages_table",
+                    resizeColumn: true,
+                    type: {
+                        height: 200,
+                    },
+                    select: true,
+                    multiselect: true,
+                    css: "webix_header_border webix_data_border",
+                    scroll: true,
+                    autoConfig: true,
+                    view: "datatable",
+                    resizeColumn: true,
+                    select: true,
+                    multiselect: true,
+                    css: "webix_header_border webix_data_border",
+                    scroll: true,
+                    autoConfig: true,
+                    columns: [{
+                            id: "index",
+                            header: "#",
+                            sort: "int",
+                            autowidth: true,
+                        }, {
+                            id: "name",
+                            header: "Name",
+                            sort: "string"
+                        },
+                        {
+                            id: "status",
+                            header: "Status",
+                            sort: "string"
+                        }, {
+                            id: "path",
+                            header: "Path",
+                            sort: "string",
+                        }
+                    ],
+                    scheme: {
+                        $init: function (obj) {
+                            obj.index = this.count();
+                        }
+                    }
                 }
             ]
         };
-
         return view;
     }
-
-    addToList() {
-        this.mylist.add({
-            id: 5, title: "hamada"
-        }, 0);
-    }
-
     init(view) {
-        this.mylist = $$("mylist");
+        var self = this;
+
+        this.package_table = this.$$("packages_table");
+        // TODO: check how can i change the data in the context related to every row in the table
+        webix.ui({
+            view: "contextmenu",
+            id: "packages_cm",
+            data: ["View", "Delete"]
+        }).attachTo(self.package_table);
+
+
+
+        webix.ajax().get("/zerobot/packagemanager/actors/package_manager/packages_list", function (data) {
+            let json = JSON.parse(data);
+
+            self.package_table.parse(json.packages);
+        });
     }
 }
