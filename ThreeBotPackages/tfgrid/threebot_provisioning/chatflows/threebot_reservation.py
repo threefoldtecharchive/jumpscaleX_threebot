@@ -36,7 +36,14 @@ def chat(bot):
         if iprange_user_choice == "Specify IPRange":
             ip_range = bot.string_ask("Please add private IPRange of the network")
         else:
-            ip_range = str(random.choice([192,172,10])) + "." + str(random.randint(0, 255)) + ".0.0/16"
+            first_digit =random.choice([192,172,10])
+            if first_digit == 10:
+                second_digit = random.randint(0, 255)
+            elif first_digit == 172:
+                second_digit = random.randint(16, 31)
+            else:
+                second_digit = 168
+            ip_range = str(first_digit) + "." + str(second_digit) + ".0.0/16"
 
         #create new reservation
         reservation = j.sal.zosv2.reservation_create()
