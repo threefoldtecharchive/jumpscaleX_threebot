@@ -78,7 +78,8 @@ export default class AppLogsView extends JetView {
                     },
                 ],
                 sort: "string",
-                width: 300
+                width: 500,
+                autowidth: true
             },
             {
                 id: "level",

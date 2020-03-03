@@ -1,4 +1,6 @@
 from Jumpscale import j
+
+import math
 import psutil
 
 # Helper function
@@ -53,6 +55,7 @@ class health(j.baseclasses.threebot_actor):
         """
         Get list of running process sorted by Memory Usage
         """
+        all_data = {}
         processes_list = []
         # Iterate over the list
         for proc in psutil.process_iter():
@@ -65,8 +68,15 @@ class health(j.baseclasses.threebot_actor):
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
         processes_list = sorted(processes_list, key=lambda procObj: procObj["vms"], reverse=True)
+        all_data["processes_list"] = processes_list
 
-        return j.data.serializers.json.dumps(processes_list)
+        # memory data
+        memory_usage = {}
+        memory_data = dict(psutil.virtual_memory()._asdict())
+        memory_usage["total_mem"] = math.ceil(memory_data.get("total") / (1024 * 1024 * 1024))
+        memory_usage["usage_percent"] = memory_data.get("percent")
+        all_data["memory_usage"] = memory_usage
+        return j.data.serializers.json.dumps(all_data)
 
     @j.baseclasses.actor_method
     def get_identity(self, schema_out=None, user_session=None):
@@ -94,20 +104,22 @@ class health(j.baseclasses.threebot_actor):
         ```
         :return: string threebotname
         """
-        version = j.clients.git.get(basedir="/sandbox/code/github/threefoldtech/jumpscaleX_core").describe()
+        tag, version = j.clients.git.get(basedir="/sandbox/code/github/threefoldtech/jumpscaleX_core").describe(
+            showout=False
+        )
 
         return version
 
-    @j.baseclasses.actor_method
-    def get_info(self, schema_out=None, user_session=None):
-        data = {}
-        data["network_info"] = self.network_info()
-        data["bcdb_health"] = self.bcdb_health()
-        data["get_running_processes"] = self.get_running_processes()
-        data["get_identity"] = self.get_identity()
-        data["get_running_ports"] = self.get_running_ports()
-        data["jsx_version"] = self.jsx_version()
-        return data
+    # @j.baseclasses.actor_method
+    # def get_info(self, schema_out=None, user_session=None):
+    #     data = {}
+    #     data["network_info"] = self.network_info()
+    #     data["bcdb_health"] = self.bcdb_health()
+    #     data["get_running_processes"] = self.get_running_processes()
+    #     data["get_identity"] = self.get_identity()
+    #     data["get_running_ports"] = self.get_running_ports()
+    #     data["jsx_version"] = self.jsx_version()
+    #     return data
 
     @j.baseclasses.actor_method
     def get_disk_space(self, schema_out=None, user_session=None):
