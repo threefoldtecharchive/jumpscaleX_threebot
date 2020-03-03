@@ -129,7 +129,9 @@ export default class PackagesView extends JetView {
 
         function checkAction(action, selected_item_id) {
             if (self.package_table.getItem(selected_item_id)) {
-                let packageName = self.package_table.getItem(selected_item_id).name
+                let name = self.package_table.getItem(selected_item_id).name
+                let author = self.package_table.getItem(selected_item_id).author
+                let packageName = author + "." + name
                 if (action == 'delete') {
                     deletePackage(packageName)
                 } else if (action == 'start') {
