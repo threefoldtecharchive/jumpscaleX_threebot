@@ -58,7 +58,17 @@ export default class PackagesView extends JetView {
                             autowidth: true,
                         }, {
                             id: "name",
-                            header: "Name",
+                            header: ["Name", {
+                                content: "textFilter"
+                            }],
+                            sort: "string",
+                            width: 200
+                        },
+                        {
+                            id: "author",
+                            header: ["Author", {
+                                content: "textFilter"
+                            }],
                             sort: "string",
                             width: 200
                         },
@@ -188,9 +198,11 @@ export default class PackagesView extends JetView {
             let package_data = []
             for (var i = 0; i < packages_json.length; i++) {
                 let tmp = {
-                    "name": packages_json[i].name,
+                    "name": packages_json[i].source.name,
+                    "author": packages_json[i].source.threebot,
                     "path": packages_json[i].path,
                     "status": pkgStatus[packages_json[i].status].name
+
                 }
                 package_data.push(tmp)
 
