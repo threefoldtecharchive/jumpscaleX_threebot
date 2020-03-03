@@ -35,9 +35,6 @@ export default class PackagesView extends JetView {
                             value: "Add package",
                             autowidth: true,
                             type: "",
-                            // click: function () {
-                            //     console.log("button is clicked")
-                            // }
                         }
                     ]
                 },
@@ -119,12 +116,10 @@ export default class PackagesView extends JetView {
             view: "contextmenu",
             id: "packages_cm"
         });
-        //
 
         function checkAction(action, selected_item_id) {
             if (self.package_table.getItem(selected_item_id)) {
                 let packageName = self.package_table.getItem(selected_item_id).name
-                console.log(packageName)
                 if (action == 'delete') {
                     deletePackage(packageName)
                 } else if (action == 'start') {
@@ -143,9 +138,6 @@ export default class PackagesView extends JetView {
             }
         }
         $$("add_package_button").attachEvent("onItemClick", function (id) {
-            console.log("button event fired")
-            console.log($$("package_path").getValue())
-            console.log($$("method_selector").getValue())
             let package_location = $$("package_path").getValue()
             if (package_location == "") {
                 alert("please enter package location")
@@ -165,8 +157,6 @@ export default class PackagesView extends JetView {
         });
 
         $$("packages_cm").attachEvent("onMenuItemClick", function (id) {
-            console.log("new event fired")
-
             checkAction(id, self.package_table.getSelectedId());
         });
         //
