@@ -1,10 +1,10 @@
 #json representation of whatever needs to come back from the ZOS after provisioning
 @url = tfgrid.workloads.reservation.result.1
-category = "zdb,container,network,volume" (E)
-workload_id = (S)
-data_json = (S)
+0 : category = "zdb,container,network,volume" (E)
+1 : workload_id = (S)
+2 : data_json = (S)
 #signature of the data (is e.g. json) by the zos node who deployed
-signature = (bytes)
-state = "error,ok,deleted" (E)
-message = "" (S)
-epoch = (T)
+3 : signature = (bytes)
+4 : state = "error,ok,deleted" (E)
+5 : message = "" (S)
+6 : epoch = (T)

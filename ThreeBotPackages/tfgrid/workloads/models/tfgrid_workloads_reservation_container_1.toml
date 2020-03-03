@@ -2,42 +2,42 @@
 
 @url = tfgrid.workloads.reservation.container.1
 #unique id inside the reservation is an autoincrement
-workload_id = (I)
+0 : workload_id = (I)
 #links to unique node on the TFGrid
-node_id = (S)
-flist = (S)
-hub_url = (S)
+1 : node_id = (S)
+2 : flist = (S)
+3 : hub_url = (S)
 #env variables
-environment = (dict)
+4 : environment = (dict)
 #secret_env variables. the key is in plain text but the value
 #must be encrypted using Curve25519 with the public key of node.
 #then hex encoded.
-secret_environment = (dict)
+5 : secret_environment = (dict)
 #the process to start
-entrypoint = (S)
+6 : entrypoint = (S)
 #corex yes or no
-interactive = true (B)
-volumes = (LO) !tfgrid.workloads.reservation.container.mount.1
-network_connection = (LO) !tfgrid.workloads.reservation.network.connection.1
+7 : interactive = true (B)
+8 : volumes = (LO) !tfgrid.workloads.reservation.container.mount.1
+9 : network_connection = (LO) !tfgrid.workloads.reservation.network.connection.1
 #where to send the statistics too
-stats_aggregator = (LO) !tfgrid.workloads.reservation.statsaggregator.1
+10 : stats_aggregator = (LO) !tfgrid.workloads.reservation.statsaggregator.1
 #id of threebot who is the farmer
-farmer_tid = (I)
-capacity = (O) !tfgrid.workloads.reservation.container.capacity.1
+11 : farmer_tid = (I)
+12 : capacity = (O) !tfgrid.workloads.reservation.container.capacity.1
 
 
 
 @url = tfgrid.workloads.reservation.container.mount.1
-volume_id = (S)
-mountpoint = (S)
+0 : volume_id = (S)
+1 : mountpoint = (S)
 
 @url = tfgrid.workloads.reservation.network.connection.1
-network_id = (S)
-ipaddress = (ipaddress)
-public_ip6 = (B)
+0 : network_id = (S)
+1 : ipaddress = (ipaddress)
+2 : public_ip6 = (B)
 
 @url = tfgrid.workloads.reservation.container.capacity.1
 # Number of vCPU
-cpu = (I) 
+0 : cpu = (I) 
 # memory in MiB
-memory = (I)
+1 : memory = (I)
