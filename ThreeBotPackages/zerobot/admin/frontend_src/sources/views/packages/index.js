@@ -18,20 +18,26 @@ export default class PackagesView extends JetView {
                     cols: [{
                             //selector
                             view: "select",
+                            id: 'method_selector',
                             options: ["Path", "Giturl"],
+                            width: 100
                         },
                         //text area
                         {
                             view: "text",
+                            id: 'package_path',
                             inputAlign: "left",
                         },
                         //submit button
                         {
                             view: "button",
-                            id: "my_button",
+                            id: "add_package_button",
                             value: "Add package",
                             autowidth: true,
-                            type: ""
+                            type: "",
+                            // click: function () {
+                            //     console.log("button is clicked")
+                            // }
                         }
                     ]
                 },
@@ -136,6 +142,28 @@ export default class PackagesView extends JetView {
                 alert("you have to select a process")
             }
         }
+        $$("add_package_button").attachEvent("onItemClick", function (id) {
+            console.log("button event fired")
+            console.log($$("package_path").getValue())
+            console.log($$("method_selector").getValue())
+            let package_location = $$("package_path").getValue()
+            if (package_location == "") {
+                alert("please enter package location")
+            } else {
+                let package_method = $$("method_selector").getValue()
+                let git_url = null;
+                let path = null;
+                if (package_method == "Giturl") {
+                    git_url = package_location
+                } else if (package_method == "Path") {
+                    path = package_location
+                } else {
+                    alert("something went wrong during selecting the package method")
+                }
+                addPackage(git_url, path)
+            }
+        });
+
         $$("packages_cm").attachEvent("onMenuItemClick", function (id) {
             console.log("new event fired")
 
@@ -187,11 +215,27 @@ export default class PackagesView extends JetView {
 
         }
         // API calls
+        // Get APIs
         webix.ajax().get("/zerobot/packagemanager/actors/package_manager/packages_list", function (data) {
             let packages_json = JSON.parse(data).packages;
             let package_data = mapData(packages_json)
             self.package_table.parse(package_data);
         });
+
+        //Post APIs
+
+        function addPackage(package_git_url, package_path) {
+            let path = "/zerobot/packagemanager/actors/package_manager/package_add";
+
+            json_ajax.post(path, {
+                args: {
+                    git_url: package_git_url,
+                    path: package_path
+                }
+            }).then(function (data) {
+                console.log(data)
+            });
+        }
 
         function deletePackage(packageName) {
             let path = "/zerobot/packagemanager/actors/package_manager/package_delete";
