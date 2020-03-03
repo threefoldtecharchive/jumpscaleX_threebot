@@ -6,7 +6,7 @@ class nodes(j.baseclasses.threebot_actor):
         self.node_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.node.2")
         self.farm_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.farm.1")
         # ensure the database for uptime influxdb exists
-        self._inflxudb = j.clients.influxdb.get("default", database="capacity")
+        self._inflxudb = j.clients.influxdb.get("default")
 
     def _find(self, node_id):
         nodes = self.node_model.find(node_id=node_id)
