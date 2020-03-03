@@ -6,7 +6,7 @@ module.exports = new Promise(async (resolve, reject) => {
       minigraph: "url:/capacity/components/minigraph/index.vue",
       capacitymap: "url:/capacity/components/capacitymap/index.vue",
       scrollablecard: "url:/capacity/components/scrollablecard/index.vue",
-      nodestable: "url:/capacity/components/nodestable/index.vue"
+      nodestable: "url:/weblibs/shared/components/nodestable/index.vue"
     },
     props: [],
     data() {
@@ -30,8 +30,8 @@ module.exports = new Promise(async (resolve, reject) => {
         "sru",
         "hru",
         "countries",
-        "onlinenodes"
-      ])
+        "onlinenodes",
+      ]),
     },
     mounted() {
       this.getRegistered3Bots();
