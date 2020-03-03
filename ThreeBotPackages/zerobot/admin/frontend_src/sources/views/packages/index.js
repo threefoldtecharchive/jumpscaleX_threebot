@@ -42,18 +42,11 @@ export default class PackagesView extends JetView {
                     type: {
                         height: 200,
                     },
-                    select: true,
-                    multiselect: true,
-                    css: "webix_header_border webix_data_border",
                     scroll: true,
                     autoConfig: true,
                     view: "datatable",
-                    resizeColumn: true,
                     select: true,
-                    multiselect: true,
                     css: "webix_header_border webix_data_border",
-                    scroll: true,
-                    autoConfig: true,
                     onContext: {},
                     columns: [{
                             id: "index",
@@ -63,7 +56,8 @@ export default class PackagesView extends JetView {
                         }, {
                             id: "name",
                             header: "Name",
-                            sort: "string"
+                            sort: "string",
+                            width: 200
                         },
                         {
                             id: "status",
@@ -73,6 +67,7 @@ export default class PackagesView extends JetView {
                             id: "path",
                             header: "Path",
                             sort: "string",
+                            width: 700
                         }
                     ],
                     scheme: {
@@ -89,7 +84,6 @@ export default class PackagesView extends JetView {
         var self = this;
 
         this.package_table = this.$$("packages_table");
-        // TODO: check how can i change the data in the context related to every row in the table
         var pkgStatus = [{
                 name: "Init",
                 actions: ["delete"]
@@ -117,39 +111,37 @@ export default class PackagesView extends JetView {
         ]
         var menu = webix.ui({
             view: "contextmenu",
-            on: {
-                onMenuItemClick: function (id, e, node) {
-                    var item = this.getMenuItem(id);
-                    var test = this.getItem(id);
-                    var context = this.getContext();
-                    console.log("context");
-                    console.log(context);
-                    // var tmp = this.package_table.getSelectedId()
-
-                    console.log("event firing")
-                    // console.log(tmp)
-                    console.log(test)
-                    console.log(item)
-                    console.log(id)
-                    console.log(e)
-                    console.log(node)
-                    // if (id == 'delete') {
-                    //     deletePackage()
-                    // } else if (id == 'start') {
-                    //     startPackage()
-                    // } else if (id == 'stop') {
-                    //     stopPackage()
-                    // } else if (id == 'disable') {
-                    //     disablePackage()
-                    // } else if (id == 'enable') {
-                    //     enablePackage()
-                    // } else {
-                    //     console.log("something wrong")
-                    // }
-                    webix.message(JSON.stringify(item));
-                }
-            }
+            id: "packages_cm"
         });
+        //
+
+        function checkAction(action, selected_item_id) {
+            if (self.package_table.getItem(selected_item_id)) {
+                let packageName = self.package_table.getItem(selected_item_id).name
+                console.log(packageName)
+                if (action == 'delete') {
+                    deletePackage(packageName)
+                } else if (action == 'start') {
+                    startPackage(packageName)
+                } else if (action == 'stop') {
+                    stopPackage(packageName)
+                } else if (action == 'disable') {
+                    disablePackage(packageName)
+                } else if (action == 'enable') {
+                    enablePackage(packageName)
+                } else {
+                    console.log("something wrong")
+                }
+            } else {
+                alert("you have to select a process")
+            }
+        }
+        $$("packages_cm").attachEvent("onMenuItemClick", function (id) {
+            console.log("new event fired")
+
+            checkAction(id, self.package_table.getSelectedId());
+        });
+        //
         webix.event(self.package_table.$view, "contextmenu", function (e /*MouseEvent*/ ) {
             var pos = self.package_table.locate(e);
             var menudata = [];
@@ -202,46 +194,57 @@ export default class PackagesView extends JetView {
         });
 
         function deletePackage(packageName) {
-            path = "/zerobot/packagemanager/actors/package_manager/packages_delete";
-            webix.ajax().post(path, {
-                name: packageName
-            }, function (data) {
+            let path = "/zerobot/packagemanager/actors/package_manager/package_delete";
+
+            json_ajax.post(path, {
+                args: {
+                    name: packageName
+                }
+            }).then(function (data) {
                 console.log(data)
             });
         }
 
         function startPackage(packageName) {
-            path = "/zerobot/packagemanager/actors/package_manager/packages_start";
-            webix.ajax().post(path, {
-                name: packageName
-            }, function (data) {
+            let path = "/zerobot/packagemanager/actors/package_manager/package_start";
+            json_ajax.post(path, {
+                args: {
+                    name: packageName
+                }
+            }).then(function (data) {
                 console.log(data)
             });
         }
 
         function stopPackage(packageName) {
-            path = "/zerobot/packagemanager/actors/package_manager/packages_stop";
-            webix.ajax().post(path, {
-                name: packageName
-            }, function (data) {
+            let path = "/zerobot/packagemanager/actors/package_manager/package_stop";
+            json_ajax.post(path, {
+                args: {
+                    name: packageName
+                }
+            }).then(function (data) {
                 console.log(data)
             });
         }
 
         function disablePackage(packageName) {
-            path = "/zerobot/packagemanager/actors/package_manager/packages_disable";
-            webix.ajax().post(path, {
-                name: packageName
-            }, function (data) {
+            let path = "/zerobot/packagemanager/actors/package_manager/package_disable";
+            json_ajax.post(path, {
+                args: {
+                    name: packageName
+                }
+            }).then(function (data) {
                 console.log(data)
             });
         }
 
         function enablePackage(packageName) {
-            path = "/zerobot/packagemanager/actors/package_manager/packages_enable";
-            webix.ajax().post(path, {
-                name: packageName
-            }, function (data) {
+            let path = "/zerobot/packagemanager/actors/package_manager/package_enable";
+            json_ajax.post(path, {
+                args: {
+                    name: packageName
+                }
+            }).then(function (data) {
                 console.log(data)
             });
         }
