@@ -6,10 +6,10 @@ import psutil
 # Helper function
 def Convert(tup):
     ports = []
-    for a, b in tup:
+    for port, process in tup:
         temp = {}
-        temp["port_number"] = a
-        temp["process"] = b
+        temp["port_number"] = port
+        temp["process"] = process
         ports.append(temp)
     return ports
 
@@ -93,7 +93,8 @@ class health(j.baseclasses.threebot_actor):
         """
         data = []
         ports = j.sal.nettools.getRunningPorts()
-        data = Convert(ports)
+        unique_ports = list(set(ports))
+        data = Convert(unique_ports)
         return j.data.serializers.json.dumps(data)
 
     @j.baseclasses.actor_method

@@ -131,9 +131,21 @@ export default class PackagesView extends JetView {
             if (self.package_table.getItem(selected_item_id)) {
                 let name = self.package_table.getItem(selected_item_id).name
                 let author = self.package_table.getItem(selected_item_id).author
+                let elementID = self.package_table.getItem(selected_item_id).id
                 let packageName = author + "." + name
                 if (action == 'delete') {
-                    deletePackage(packageName)
+                    //deletePackage(packageName)
+                    // self.package_table.remove(elementID)
+                    //
+                    webix.confirm({
+                        title: "Delete Package",
+                        ok: "Yes",
+                        text: "Are you sure about deleting this package?",
+                        cancel: "No",
+                    }).then(() => {
+                        deletePackage(packageName, elementID)
+                    });
+                    //
                 } else if (action == 'start') {
                     startPackage(packageName)
                 } else if (action == 'stop') {
@@ -148,6 +160,7 @@ export default class PackagesView extends JetView {
             } else {
                 alert("you have to select a process")
             }
+
         }
         $$("add_package_button").attachEvent("onItemClick", function (id) {
             let package_location = $$("package_path").getValue()
@@ -237,20 +250,39 @@ export default class PackagesView extends JetView {
                     path: package_path
                 }
             }).then(function (data) {
-                console.log(data)
-            });
+                webix.message({
+                    type: "success",
+                    text: "The operation has beed done successfully"
+                });
+            }).catch(function (error) {
+                webix.message({
+                    type: "error",
+                    text: "error has happened " + error.response
+                });
+            })
         }
 
-        function deletePackage(packageName) {
+        function deletePackage(packageName, elementID) {
             let path = "/zerobot/packagemanager/actors/package_manager/package_delete";
-
             json_ajax.post(path, {
                 args: {
                     name: packageName
                 }
             }).then(function (data) {
-                console.log(data)
-            });
+                self.package_table.remove(elementID)
+                webix.message({
+                    type: "success",
+                    text: "The operation has beed done successfully"
+                });
+
+            }).catch(function (error) {
+                webix.message({
+                    type: "error",
+                    text: "error has happened " + error.response
+                });
+            })
+
+
         }
 
         function startPackage(packageName) {
@@ -260,8 +292,16 @@ export default class PackagesView extends JetView {
                     name: packageName
                 }
             }).then(function (data) {
-                console.log(data)
-            });
+                webix.message({
+                    type: "success",
+                    text: "The operation has beed done successfully"
+                });
+            }).catch(function (error) {
+                webix.message({
+                    type: "error",
+                    text: "error has happened " + error.response
+                });
+            })
         }
 
         function stopPackage(packageName) {
@@ -271,8 +311,16 @@ export default class PackagesView extends JetView {
                     name: packageName
                 }
             }).then(function (data) {
-                console.log(data)
-            });
+                webix.message({
+                    type: "success",
+                    text: "The operation has beed done successfully"
+                });
+            }).catch(function (error) {
+                webix.message({
+                    type: "error",
+                    text: "error has happened " + error.response
+                });
+            })
         }
 
         function disablePackage(packageName) {
@@ -282,8 +330,16 @@ export default class PackagesView extends JetView {
                     name: packageName
                 }
             }).then(function (data) {
-                console.log(data)
-            });
+                webix.message({
+                    type: "success",
+                    text: "The operation has beed done successfully"
+                });
+            }).catch(function (error) {
+                webix.message({
+                    type: "error",
+                    text: "error has happened " + error.response
+                });
+            })
         }
 
         function enablePackage(packageName) {
@@ -293,8 +349,16 @@ export default class PackagesView extends JetView {
                     name: packageName
                 }
             }).then(function (data) {
-                console.log(data)
-            });
+                webix.message({
+                    type: "success",
+                    text: "The operation has beed done successfully"
+                });
+            }).catch(function (error) {
+                webix.message({
+                    type: "error",
+                    text: "error has happened " + error.response
+                });
+            })
         }
     }
 }
