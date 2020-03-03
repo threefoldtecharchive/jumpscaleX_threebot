@@ -37,37 +37,37 @@ export default class TopView extends JetView {
             {
                 id: "wikis",
                 value: "Wikis",
-                icon: "mdi mdi-chart-areaspline"
+                icon: "mdi mdi-newspaper"
             },
             {
                 id: "alerts",
                 value: "Alerts",
-                icon: "mdi mdi-table"
+                icon: "mdi mdi-bell-alert"
             },
             {
                 id: "logs",
                 value: "Logs",
-                icon: "mdi mdi-format-line-style"
+                icon: "mdi mdi-history"
             },
             {
                 id: "myjobs",
                 value: "Jobs",
-                icon: "mdi mdi-format-line-style"
+                icon: "mdi mdi-animation-play"
             },
             {
                 id: "packages",
                 value: "Packages",
-                icon: "mdi mdi-format-line-style"
+                icon: "mdi mdi-package"
             },
             {
                 id: "codeserver",
                 value: "Codeserver",
-                icon: "mdi mdi-format-line-style"
+                icon: "mdi mdi-code-tags"
             },
             {
                 id: "juypter",
                 value: "Juypter",
-                icon: "mdi mdi-format-line-style"
+                icon: "mdi mdi-play"
             },
             ]
         };
@@ -78,29 +78,31 @@ export default class TopView extends JetView {
             height: 58,
             cols: [{
                 id: "button_show_menu",
-                view: "icon", icon: "mdi mdi-menu",
+                view: "icon",
+                icon: "mdi mdi-menu",
                 click: this.showMenu,
                 hidden: true, // hidden by default
                 tooltip: "Show menu",
             },
             {
-                css: "logo"
+                view: "template",
+                template: `<img class="webix_icon" src="static/img/3bot.png"/>`,
+                borderless: true,
+                height: 40,
             },
             {
+                id: "username_label",
+                view: "label",
+                label: "username",
+                borderless: true,
+                align: "right",
+            },
+            {
+                id: "user_icon",
                 view: "icon",
-                icon: "mdi mdi-bell",
-                badge: "5"
-            },
-            {
-                view: "icon",
-                icon: "mdi mdi-settings"
-            },
-            {
-                template: `<image class="mainphoto" src="data/images/morgan_yu.jpg">
-                    <span class="webix_icon mdi mdi-circle status green"></span>`,
-                width: 60,
-                css: "avatar",
-                borderless: true
+                icon: "mdi mdi-account-circle",
+                borderless: true,
+                popup: "user_menu"
             }
             ]
         };
@@ -111,9 +113,12 @@ export default class TopView extends JetView {
                 rows: [header, sidebar]
             },
             {
-                rows: [toolbar, {
-                    $subview: true
-                }]
+                rows: [
+                    toolbar,
+                    {
+                        $subview: true
+                    }
+                ]
             }
             ]
         };
@@ -136,12 +141,41 @@ export default class TopView extends JetView {
     }
 
     init() {
+        var self = this;
+
         this.use(plugins.Menu, "menu");
         this.menu = this.$$("menu");
         this.header = this.$$("header");
 
         this.buttonShowMenu = this.$$("button_show_menu");
         this.buttonHideMenu = this.$$("button_hide_menu");
+
+
+        this.webix.ui({
+            view: "submenu",
+            id: "user_menu",
+            autowidth: true,
+            data: []
+        });
+
+        this.userMenu = $$("user_menu");
+        this.userMenu.attachEvent("onItemClick", function (id, e, node) {
+            if (id == "logout") {
+                window.location.href = "/auth/logout?next_url=/admin";
+            }
+        });
+
+        this.usernameLabel = $$("username_label");
+
+        webix.ajax().get("/auth/authenticated", function (data) {
+            const info = JSON.parse(data);
+            self.usernameLabel.config.label = info.username;
+            self.usernameLabel.config.width = webix.html.getTextSize(info.username) + 10;
+            self.usernameLabel.refresh();
+
+            self.userMenu.add({ id: 'email', value: info.email })
+            self.userMenu.add({ id: 'logout', value: "Logout" })
+        });
     }
 
 }
