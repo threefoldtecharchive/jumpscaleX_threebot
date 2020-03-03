@@ -9,10 +9,10 @@ export default class DiskSpaceView extends JetView {
             responsive: true,
             view: "list",
             type: {
-                height: 100,
+                height: 60,
             },
             template: `
-                <h3>#key#</h3><font size="4">#value#</font>
+            <p><font size="3"><b>#key#: </b></font> <font size="3">#value#</font></p>
             `
         }
 
