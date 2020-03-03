@@ -56,17 +56,17 @@ export default class PackagesView extends JetView {
                             header: "#",
                             sort: "int",
                             autowidth: true,
-                        }, {
-                            id: "name",
-                            header: ["Name", {
-                                content: "textFilter"
-                            }],
-                            sort: "string",
-                            width: 200
                         },
                         {
                             id: "author",
                             header: ["Author", {
+                                content: "textFilter"
+                            }],
+                            sort: "string",
+                            width: 200
+                        }, {
+                            id: "name",
+                            header: ["Name", {
                                 content: "textFilter"
                             }],
                             sort: "string",
