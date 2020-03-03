@@ -24,8 +24,10 @@ class health(j.baseclasses.threebot_actor):
         return container_ip
 
     @j.baseclasses.actor_method
-    def bcdb_health(self, schema_out=None, user_session=None):
+    def health(self, schema_out=None, user_session=None):
         data = {}
+
+        # bcdb test
         try:
             bcdb = j.data.bcdb.get("test_health")
             scm = """@url = world.ship
@@ -43,11 +45,45 @@ class health(j.baseclasses.threebot_actor):
             assert len(bcdb.get_all()) == 1
             bcdb.reset()
             bcdb.destroy()
-            data["state"] = "OK"
+            data["bcdb"] = "OK"
             self._log_info("TEST OK")
         except Exception as e:
-            self._log_error(f"error happend: {e}")
-            data["state"] = "Error"
+            self._log_error(f"error happend at bcdb: {e}")
+            data["bcdb"] = "Error"
+
+        # wikis are running
+        try:
+            wikis = j.sal.nettools.checkUrlReachable("http://127.0.0.1/3git/wikis/zerobot.packagemanager/readme.md")
+            if wikis:
+                data["wikis"] = "OK"
+            else:
+                data["wikis"] = "Error"
+        except Exception as e:
+            self._log_error(f"error happend at wikis ping: {e}")
+            data["wikis"] = "Error"
+
+        # codeserver is running
+        try:
+            codeserver = j.sal.nettools.checkUrlReachable("http://127.0.0.1:8080")
+            if codeserver:
+                data["codeserver"] = "OK"
+            else:
+                data["codeserver"] = "Error"
+        except Exception as e:
+            self._log_error(f"error happend at codeserver ping: {e}")
+            data["codeserver"] = "Error"
+
+        # Jupyter is running
+        try:
+            jupyter = j.sal.nettools.checkUrlReachable("http://127.0.0.1/simulator/threefold/show/")
+            if jupyter:
+                data["jupyter"] = "OK"
+            else:
+                data["jupyter"] = "Error"
+        except Exception as e:
+            self._log_error(f"error happend at jupyter ping: {e}")
+            data["jupyter"] = "Error"
+
         return data
 
     @j.baseclasses.actor_method
@@ -110,17 +146,6 @@ class health(j.baseclasses.threebot_actor):
         )
 
         return version
-
-    # @j.baseclasses.actor_method
-    # def get_info(self, schema_out=None, user_session=None):
-    #     data = {}
-    #     data["network_info"] = self.network_info()
-    #     data["bcdb_health"] = self.bcdb_health()
-    #     data["get_running_processes"] = self.get_running_processes()
-    #     data["get_identity"] = self.get_identity()
-    #     data["get_running_ports"] = self.get_running_ports()
-    #     data["jsx_version"] = self.jsx_version()
-    #     return data
 
     @j.baseclasses.actor_method
     def get_disk_space(self, schema_out=None, user_session=None):
