@@ -106,12 +106,46 @@ export default class AlertView extends JetView {
                     }
                 },
                 {
-                    header: "Logs",
-                    body: {
-                        id: "logs",
-                        view: "template",
-                        template: "",
-                    }
+                    id: "logs",
+                    view: "datatable",
+                    resizeColumn: true,
+                    select: true,
+                    multiselect: true,
+                    css: "webix_header_border webix_data_border",
+                    scroll: true,
+                    autoConfig: true,
+                    columns: [
+                        {
+                            id: "index",
+                            header: "#",
+                            sort: "int",
+                            autowidth: true,
+                            width: 60
+                        },
+                        {
+                            id: "threebot_name",
+                            header: "Threebot Name",
+                            sort: "string",
+                            width: 180
+                        },
+                        {
+                            id: "app_name",
+                            header: "App Name",
+                            sort: "string",
+                            width: 180
+                        },
+                        {
+                            id: "latest_logid",
+                            header: "Latest Log#",
+                            sort: "int",
+                            width: 180
+                        }
+                    ],
+                    scheme: {
+                        $init: function (obj) {
+                            obj.index = this.count();
+                        }
+                    },
                 }
             ]
         };
@@ -136,18 +170,23 @@ export default class AlertView extends JetView {
                     }
                 ]
             }
-
         }
     }
 
 
     init() {
+        var self = this;
         this.form = $$("form");
         this.message = $$("message");
         this.logs = $$("logs");
 
         this.tbViews = $$("tb_views");
         this.tbTabs = $$("tb_tabs");
+
+        this.logs.attachEvent("onItemDblClick", function () {
+            let logData = self.logs.getSelectedItem()
+            this.$scope.show(`/main/logs?appname=${logData.app_name}&logid=${logData.latest_logid}`)
+        });
     }
 
     addTraceback(tb) {
@@ -184,6 +223,9 @@ export default class AlertView extends JetView {
         for (let tb of item.tracebacks) {
             this.addTraceback(tb);
         }
+
+        this.logs.clearAll()
+        this.logs.parse(item.logs);
 
         this.getRoot().show();
     }

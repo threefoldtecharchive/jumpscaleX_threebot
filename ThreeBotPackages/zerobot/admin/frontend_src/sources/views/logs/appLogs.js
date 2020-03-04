@@ -19,11 +19,17 @@ export default class AppLogsView extends JetView {
             css: "webix_header_border webix_data_border",
             scroll: true,
             autoConfig: true,
+            on: {
+                onAfterLoad: function () {
+                    this.sort("epoch", "des");
+                    this.markSorting("epoch", "des");
+                }
+            },
 
             columns: [{
                 id: "id",
                 header: [
-                    "#",
+                    "Log#",
                     {
                         content: "textFilter"
                     },
@@ -78,7 +84,8 @@ export default class AppLogsView extends JetView {
                     },
                 ],
                 sort: "string",
-                width: 300
+                width: 500,
+                autowidth: true
             },
             {
                 id: "level",

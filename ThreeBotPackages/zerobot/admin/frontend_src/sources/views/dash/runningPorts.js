@@ -18,24 +18,26 @@ export default class runningPortsView extends JetView {
             multiselect: true,
             css: "webix_header_border webix_data_border",
             columns: [{
-                id: "index",
-                header: "#",
-                sort: "int",
-                autowidth: true,
-            },
-            {
-                id: "port_number",
-                header: ["Port Number", {
-                    content: "textFilter"
-                },],
-                sort: "string"
-            }, {
-                id: "process",
-                header: ["Process", {
-                    content: "textFilter"
-                }],
-                sort: "string"
-            }], scheme: {
+                    id: "index",
+                    header: "#",
+                    sort: "int",
+                    autowidth: true,
+                },
+                {
+                    id: "port_number",
+                    header: ["Port Number", {
+                        content: "textFilter"
+                    }, ],
+                    sort: "string"
+                }, {
+                    id: "process",
+                    header: ["Process", {
+                        content: "textFilter"
+                    }],
+                    sort: "string"
+                }
+            ],
+            scheme: {
                 $init: function (obj) {
                     obj.index = this.count();
                 }
@@ -45,11 +47,10 @@ export default class runningPortsView extends JetView {
         // return running_ports
         return {
             type: "space",
-            rows: [
-                {
-                    template: "<div style='width:auto;text-align:center'><h3>Running Ports<h3/></div>",
-                    height: 50
-                }, running_ports]
+            rows: [{
+                template: "<div style='width:auto;text-align:center'><h3>Ports<h3/></div>",
+                height: 50
+            }, running_ports]
         }
     }
     init(view) {

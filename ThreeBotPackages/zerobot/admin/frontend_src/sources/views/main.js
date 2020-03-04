@@ -74,8 +74,8 @@ export default class TopView extends JetView {
                 icon: "mdi mdi-code-tags"
             },
             {
-                id: "juypter",
-                value: "Juypter",
+                id: "jupyter",
+                value: "Jupyter",
                 icon: "mdi mdi-play"
             },
             ]

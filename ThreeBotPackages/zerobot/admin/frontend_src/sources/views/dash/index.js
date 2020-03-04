@@ -13,7 +13,7 @@ export default class TopView extends JetView {
 						$subview: "dash.jsxInfo"
 					},
 					{
-						$subview: "dash.bcdbHealth"
+						$subview: "dash.health"
 					},
 					{
 						$subview: "dash.diskSpace"
