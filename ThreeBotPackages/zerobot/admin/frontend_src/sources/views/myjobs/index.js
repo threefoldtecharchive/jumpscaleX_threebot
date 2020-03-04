@@ -1,5 +1,5 @@
 import { JetView } from "webix-jet";
-import { dateFormatter } from "../../common";
+import { dateFormatter, json_ajax } from "../../common";
 
 export default class JobsView extends JetView {
     config() {
@@ -49,9 +49,7 @@ export default class JobsView extends JetView {
                 id: "kwargs",
                 header: "Arguments",
                 sort: "string",
-                format: function (value) {
-                    return JSON.stringify(value);
-                }
+                format: JSON.stringify
             },
             {
                 id: "result",
@@ -61,7 +59,8 @@ export default class JobsView extends JetView {
                         content: "textFilter"
                     }
                 ],
-                sort: "string"
+                sort: "string",
+                format: JSON.stringify,
             },
                 // {
                 //     id: "message",
