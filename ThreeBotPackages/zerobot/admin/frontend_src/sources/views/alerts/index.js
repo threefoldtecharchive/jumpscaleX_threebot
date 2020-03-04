@@ -1,12 +1,9 @@
-import {
-    JetView
-} from "webix-jet";
+import { JetView } from "webix-jet";
 
-import {
-    ansiUp,
-    dateFormatter,
-    json_ajax,
-} from "../../common";
+import { ansiUp } from "../../common/colors";
+import { dateFormatter } from "../../common/formatters";
+import { alerts } from "../../services/alerts";
+
 import AlertView from "./alert";
 
 const MAX_MSG_LEN = 100;
@@ -138,11 +135,7 @@ export default class AlertsView extends JetView {
             self.table.showProgress({
                 hide: false
             })
-            json_ajax.post("/zerobot/alerta/actors/alerta/delete_alerts", {
-                args: {
-                    identifiers: identifiers
-                }
-            }).then(() => {
+            alerts.delete(identifier).then(() => {
                 self.table.remove(ids)
                 self.table.showProgress({
                     hide: true
@@ -167,8 +160,8 @@ export default class AlertsView extends JetView {
             self.table.showProgress({
                 hide: false
             });
-            webix.ajax().get("/zerobot/alerta/actors/alerta/list_alerts", function (data) {
-                let alerts = JSON.parse(data).alerts;
+            alerts.list().then(data => {
+                let alerts = data.json().alerts;
                 self.table.parse(alerts);
             });
         });

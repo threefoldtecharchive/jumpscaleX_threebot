@@ -1,10 +1,7 @@
 import { JetView } from "webix-jet";
 
-import {
-    json_ajax
-} from "../../common";
-
 import AppLogsView from "./appLogs";
+import { logs } from "../../services/logs";
 
 export default class LogsView extends JetView {
     config() {
@@ -20,7 +17,6 @@ export default class LogsView extends JetView {
                         view: "combo",
                         id: "logs_apps",
                         placeholder: "Choose your application",
-                        options: "/zerobot/admin/actors/logs/list_apps",
                         on: {
                             onChange: function (appName) {
                                 this.$scope.showFor(appName)
@@ -38,9 +34,8 @@ export default class LogsView extends JetView {
     }
 
     init(view) {
-        // this.appLogs = this.ui(AppLogsView);
-        // var self = this;
-        self.apps_combo = $$("logs_apps");
+
+        self.appsComob = $$("apps_combo");
     }
 
     urlChange(view, url) {
@@ -53,10 +48,16 @@ export default class LogsView extends JetView {
     showFor(appName, logId) {
         var self = this;
         self.appLogs = $$("applogs_table");
+
+        logs.listApps().then(data => {
+            this.appsComob.config.options = data;
+            this.appsComob.refresh();
+        });
+
         webix.extend(self.appLogs, webix.ProgressBar);
         self.appLogs.showProgress({ hide: false });
 
-        json_ajax.post("/zerobot/admin/actors/logs/list", { args: { appname: appName, id_from: logId } }).then(function (data) {
+        logs.list(appName, logId).then(data => {
             self.appLogs.clearAll()
             self.appLogs.parse(data.json()[0])
             self.appLogs.showProgress({ hide: true });

@@ -1,6 +1,5 @@
-import {
-    JetView
-} from "webix-jet";
+import { JetView } from "webix-jet";
+import { health } from "../../services/health";
 
 export default class DiskSpaceView extends JetView {
     config() {
@@ -28,27 +27,27 @@ export default class DiskSpaceView extends JetView {
     }
 
 
-    init(view) {
+    init() {
         var self = this;
 
-        this.disk_info = this.$$("diskSpace");
+        this.diskInfo = this.$$("diskSpace");
 
-        webix.ajax().get("/zerobot/admin/actors/health/get_disk_space", function (data) {
-            data = JSON.parse(data);
+        health.getDiskSpace().then(data => {
+            data = data.json();
 
-            self.disk_info.add({
+            self.diskInfo.add({
                 key: "Used",
                 value: data.used + " GB"
             });
-            self.disk_info.add({
+            self.diskInfo.add({
                 key: "Free",
                 value: data.free + " GB"
             });
-            self.disk_info.add({
+            self.diskInfo.add({
                 key: "Total",
                 value: data.total + " GB"
             });
-            self.disk_info.add({
+            self.diskInfo.add({
                 key: "Percent",
                 value: data.percent + " %"
             });

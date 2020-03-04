@@ -1,13 +1,36 @@
-import {
-    JetView
-} from "webix-jet";
+import { JetView } from "webix-jet";
 
 import ProcessesChildView from "./processesChildView";
+import { health } from "../../services/health";
+
+const colorsDataset = [
+    {
+        color: "#ee3639"
+    },
+    {
+        color: "#ee9e36"
+    },
+    {
+        color: "#eeea36"
+    },
+    {
+        color: "#a9ee36"
+    },
+    {
+        color: "#36d3ee"
+    },
+    {
+        color: "#367fee"
+    },
+    {
+        color: "#9b36ee"
+    }
+];
 
 export default class ProcessesView extends JetView {
 
     config() {
-        const run_process_info = {
+        const processesInfo = {
             id: "process",
             view: "chart",
             responsive: true,
@@ -18,7 +41,7 @@ export default class ProcessesView extends JetView {
             value: "#vms#",
             label: "<h4>#name#</h4>",
             pieInnerText: "<h4>#vms#</h4>",
-            data: "#chart_data#",
+            data: "#chartsData#",
         }
 
         return {
@@ -28,7 +51,7 @@ export default class ProcessesView extends JetView {
                     template: "<div style='width:auto;text-align:center'><h3>Running processes memory usage (MB)<h3/></div>",
                     height: 50
                 },
-                run_process_info,
+                processesInfo,
                 {
                     view: "button",
                     id: "show_all",
@@ -37,7 +60,7 @@ export default class ProcessesView extends JetView {
                     css: "webix_primary",
                     inputWidth: 100,
                     click: function () {
-                        this.$scope.childview.showFor(this.$scope.processes_list)
+                        this.$scope.childview.showFor(this.$scope.processesList)
                     }
                 }
 
@@ -47,76 +70,55 @@ export default class ProcessesView extends JetView {
 
 
     init(view) {
-        var self = this;
+        const self = this;
 
-        this.processes_list = []
+        this.processesList = []
 
-        this.run_process_info = this.$$("process");
+        this.runProcessInfo = this.$$("process");
 
         self.childview = self.ui(ProcessesChildView);
 
-        var colors_dataset = [{
-            color: "#ee3639"
-        },
-        {
-            color: "#ee9e36"
-        },
-        {
-            color: "#eeea36"
-        },
-        {
-            color: "#a9ee36"
-        },
-        {
-            color: "#36d3ee"
-        },
-        {
-            color: "#367fee"
-        },
-        {
-            color: "#9b36ee"
-        }
-        ];
-        webix.ajax().get("/zerobot/admin/actors/health/get_running_processes", function (data) {
-            var chart_data = []
+        health.getRunningProcesses().then(data => {
+            var chartsData = []
 
-            data = JSON.parse(data);
-            self.processes_list = data.processes_list
+            data = data.json();
+            self.processesList = data.processesList
 
             // memory usage
-            self.memory_usage = data.memory_usage
-            self.total_memory = self.memory_usage.total_mem
-            self.percent = self.memory_usage.usage_percent
+            self.memoryUsage = data.memoryUsage
+            self.totalMemory = self.memoryUsage.total_mem
+            self.percent = self.memoryUsage.usage_percent
 
 
-            self.run_process_info.define("legend", {
+            self.runProcessInfo.define("legend", {
                 layout: "x",
                 width: 110,
                 values: [
                     {
-                        text: `<b>Total memory: </b>${self.total_memory}GB`
+                        text: `<b>Total memory: </b>${self.totalMemory}GB`
                     },
                     {
                         text: `<b>Usage: </b>${self.percent}%`
                     }
                 ]
             })
-            self.run_process_info.refresh()
+            self.runProcessInfo.refresh()
 
-            for (let i = 0; i < self.processes_list.length; i++) {
+            for (let i = 0; i < self.processesList.length; i++) {
                 //Break when there is no more colors
-                if (i == colors_dataset.length)
+                if (i == colorsDataset.length)
                     break;
+
                 var temp = {
-                    "color": colors_dataset[i].color,
-                    "name": self.processes_list[i].name,
-                    "vms": Math.ceil(self.processes_list[i].vms),
+                    "color": colorsDataset[i].color,
+                    "name": self.processesList[i].name,
+                    "vms": Math.ceil(self.processesList[i].vms),
                 }
-                chart_data.push(temp)
+                chartsData.push(temp)
                 // console.log(myArray[i]);
             }
-            self.run_process_info.parse({
-                data: chart_data,
+            self.runProcessInfo.parse({
+                data: chartsData,
             });
         });
     }

@@ -1,6 +1,4 @@
-import {
-	JetView
-} from "webix-jet";
+import { JetView } from "webix-jet";
 
 export default class TopView extends JetView {
 	config() {
@@ -28,17 +26,5 @@ export default class TopView extends JetView {
 				},
 			]
 		};
-	}
-
-
-	init(view) {
-		// this.use(plugins.ProgressBar, "progress");
-		var self = this;
-
-		// webix.ready(function () {
-		// 	webix.ajax().get("/zerobot/admin/actors/health/get_", function (data) {
-		// 		console.log(data)
-		// 	});
-		// });
 	}
 }

@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint sources/",
     "build": "webpack --env.production true",
+    "build-dev": "webpack --env.production false",
     "start": "webpack-dev-server",
     "deploy": "yarn build && rsync -ar index.html codebase webix.com:/root/composer/snippet.webix.com/admin/"
   },

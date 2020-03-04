@@ -1,5 +1,9 @@
 import { JetView } from "webix-jet";
-import { json_ajax } from "../../common";
+import { health } from "../../services/health";
+import { packages } from "../../services/packages";
+
+const CODE_URL = "/codeserver&folder=/sandbox/code";
+const PACKAGE_PATH = "/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/codeserver"
 
 export default class CodeserverView extends JetView {
     config() {
@@ -15,9 +19,11 @@ export default class CodeserverView extends JetView {
                 }
             }
         };
+
         return {
             type: "space",
             rows: [{
+                id: "install-package",
                 cols: [
                     {
                         template: "<div style='width:auto;text-align:center'><h3>You need to install Codeserver package<h3/></div>",
@@ -39,55 +45,36 @@ export default class CodeserverView extends JetView {
             }, iframe]
         }
     }
+
+    installCodeserverPackage() {
+        packages.add(PACKAGE_PATH);
+    }
+
     init(view) {
+        view.codeserverIframe = $$("iframe-codeserver");
+        view.installPackageContainer = $$("install-package");
+
+        webix.extend(view.codeserverIframe, webix.ProgressBar);
+
+        view.codeserverIframe.disable();
+        view.codeserverIframe.showProgress({ type: "icon" });
+        view.codeserverIframe.load(CODE_URL);
+
         $$("install_btn").attachEvent("onItemClick", function (id) {
-            addPackage();
+            view.installCodeserverPackage();
         });
-        webix.ajax().get("/zerobot/admin/actors/health/health", function (data) {
-            let codeServerStatus = JSON.parse(data).codeserver
+
+        health.getHealth().then(data => {
+            let codeServerStatus = data.json().codeserver
             if (codeServerStatus == "OK") {
-                $$("iframe-codeserver").show();
-                $$("info-message").hide();
-                $$("install_btn").hide();
-                $$("codeserver_title").show();
+                view.codeserverIframe.show();
+                view.installPackageContainer.hide();
             }
             else {
-                $$("iframe-codeserver").hide();
-                $$("info-message").show();
-                $$("install_btn").show();
-                $$("codeserver_title").hide();
-
+                view.codeserverIframe.show();
+                view.installPackageContainer.hide();
             }
         });
-
-        //Api calls 
-        function addPackage() {
-            let url = "/zerobot/packagemanager/actors/package_manager/package_add";
-            let package_path = "/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/codeserver"
-            let package_git_url = null;
-            json_ajax.post(url, {
-                args: {
-                    git_url: package_git_url,
-                    path: package_path
-                }
-            }).then(function (data) {
-                webix.message({
-                    type: "success",
-                    text: "The operation has beed done successfully"
-                });
-            }).catch(function (error) {
-                webix.message({
-                    type: "error",
-                    text: "error has happened " + error.response
-                });
-            })
-        }
     }
 
-    init(view) {
-        webix.extend(view, webix.ProgressBar);
-        view.disable();
-        view.showProgress({ type: "icon" });
-        view.load("/codeserver");
-    }
 }

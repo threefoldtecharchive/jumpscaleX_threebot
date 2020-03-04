@@ -1,5 +1,6 @@
-import { ansiUp } from "../../common";
 import { JetView } from "webix-jet";
+
+import { ansiUp } from "../../common/colors";
 
 const MAX_MSG_LEN = 100;
 

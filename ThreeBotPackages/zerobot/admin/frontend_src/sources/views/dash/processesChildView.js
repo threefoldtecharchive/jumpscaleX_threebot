@@ -1,6 +1,4 @@
-import {
-    JetView
-} from "webix-jet";
+import { JetView } from "webix-jet";
 
 export default class ProcessesChildView extends JetView {
 
@@ -82,14 +80,11 @@ export default class ProcessesChildView extends JetView {
     }
 
     showFor(data) {
-
         this.table.parse(data)
         this.getRoot().show();
     }
 
-    init(view) {
-        // this.use(plugins.ProgressBar, "progress");
-        // var self = this;
+    init() {
         this.table = $$("process_table");
     }
 }

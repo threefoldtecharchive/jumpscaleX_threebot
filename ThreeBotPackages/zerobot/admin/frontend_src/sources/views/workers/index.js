@@ -1,5 +1,7 @@
 import { JetView } from "webix-jet";
-import { dateFormatter } from "../../common";
+
+import { dateFormatter } from "../../common/formatters";
+import { myjobs } from "../../services/myjobs";
 
 export default class JobsView extends JetView {
     config() {
@@ -65,33 +67,8 @@ export default class JobsView extends JetView {
             {
                 id: "error",
                 header: "Error",
-            },
-                // {
-                //     id: "message",
-                //     header: [
-                //         "Message",
-                //         {
-                //             content: "textFilter"
-                //         },
-                //     ],
-                //     sort: "str",
-                //     fillspace: true,
-                //     format: function (value) {
-                //         if (value.length > MAX_MSG_LEN) {
-                //             value = value.substr(0, MAX_MSG_LEN) + '...';
-                //         }
-                //         return ansiUp.ansi_to_html(value);
-                //     }
-                // },
-            ],
+            }],
             autoConfig: true,
-            // url:{
-            //     $proxy:true,
-            //     load: function(view, params){
-            //         let data = webix.ajax("/zerobot/alerta/actors/alerta/list_alerts");
-            //         return data;
-            //     },
-            // }
             scheme: {
                 $init: function (obj) {
                     obj.index = this.count();
@@ -103,8 +80,7 @@ export default class JobsView extends JetView {
     }
 
     init(view) {
-        webix.ajax().get("/zerobot/myjobs_ui/actors/myjobs/list_workers", function (data) {
-            // throw ValueError(data);
+        myjobs.listWorkers().then(data => {
             view.parse(data);
         });
 

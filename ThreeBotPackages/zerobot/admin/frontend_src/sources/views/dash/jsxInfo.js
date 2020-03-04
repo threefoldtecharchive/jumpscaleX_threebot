@@ -1,6 +1,5 @@
-import {
-    JetView
-} from "webix-jet";
+import { JetView } from "webix-jet";
+import { health } from "../../services/health";
 
 export default class JSXInfoView extends JetView {
     config() {
@@ -27,20 +26,21 @@ export default class JSXInfoView extends JetView {
             ]
         }
     }
-    init(view) {
+
+    init() {
         const self = this;
 
         this.info = this.$$("jsxInfo");
 
-        webix.ajax().get("/zerobot/admin/actors/health/get_identity", function (data) {
+        health.getIdentity().then(data => {
             self.info.add({
                 key: "3bot",
-                value: data
+                value: data.text()
             })
         })
 
-        webix.ajax().get("/zerobot/admin/actors/health/network_info", function (data) {
-            data = JSON.parse(data);
+        health.getNetworkInfo().then(data => {
+            data = data.json();
             self.info.add({
                 key: "IP",
                 value: data.ip,
@@ -58,10 +58,10 @@ export default class JSXInfoView extends JetView {
             }
         });
 
-        webix.ajax().get("/zerobot/admin/actors/health/jsx_version", function (data) {
+        health.getJsxVersion().then(data => {
             self.info.add({
                 key: "JSX Version",
-                value: data
+                value: data.text()
             })
         })
 

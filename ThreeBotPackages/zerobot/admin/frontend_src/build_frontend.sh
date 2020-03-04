@@ -1,4 +1,11 @@
-npm run build
+#!/bin/bash
+
+if [ "$1" != "" ]; then
+    npm run build-$1
+else
+    npm run build
+fi
+
 cp index.html ../output
 
 mkdir -p ../output/codebase

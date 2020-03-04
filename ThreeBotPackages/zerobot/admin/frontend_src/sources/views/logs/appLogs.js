@@ -1,5 +1,6 @@
 import { JetView } from "webix-jet";
-import { dateFormatter } from "../../common.js";
+
+import { dateFormatter } from "../../common/formatters";
 
 export default class AppLogsView extends JetView {
     config() {
@@ -155,15 +156,5 @@ export default class AppLogsView extends JetView {
             ]
         }
     }
-
-
-
-    init() {
-        // this.table = $$("applogs_table");
-        // this.app_logs_res = []
-        // var self = this;
-
-    }
-
 
 }

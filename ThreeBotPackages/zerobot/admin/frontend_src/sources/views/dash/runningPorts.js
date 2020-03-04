@@ -1,10 +1,10 @@
-import {
-    JetView
-} from "webix-jet";
+import { JetView } from "webix-jet";
+
+import { health } from "../../services/health";
 
 export default class runningPortsView extends JetView {
     config() {
-        const running_ports = {
+        const ports = {
             id: "runningPorts",
             view: "datatable",
             responsive: true,
@@ -18,24 +18,24 @@ export default class runningPortsView extends JetView {
             multiselect: true,
             css: "webix_header_border webix_data_border",
             columns: [{
-                    id: "index",
-                    header: "#",
-                    sort: "int",
-                    autowidth: true,
-                },
-                {
-                    id: "port_number",
-                    header: ["Port Number", {
-                        content: "textFilter"
-                    }, ],
-                    sort: "string"
-                }, {
-                    id: "process",
-                    header: ["Process", {
-                        content: "textFilter"
-                    }],
-                    sort: "string"
-                }
+                id: "index",
+                header: "#",
+                sort: "int",
+                autowidth: true,
+            },
+            {
+                id: "port_number",
+                header: ["Port Number", {
+                    content: "textFilter"
+                },],
+                sort: "string"
+            }, {
+                id: "process",
+                header: ["Process", {
+                    content: "textFilter"
+                }],
+                sort: "string"
+            }
             ],
             scheme: {
                 $init: function (obj) {
@@ -44,23 +44,24 @@ export default class runningPortsView extends JetView {
             },
         }
 
-        // return running_ports
         return {
             type: "space",
-            rows: [{
-                template: "<div style='width:auto;text-align:center'><h3>Ports<h3/></div>",
-                height: 50
-            }, running_ports]
+            rows: [
+                {
+                    template: "<div style='width:auto;text-align:center'><h3>Ports<h3/></div>",
+                    height: 50
+                },
+                ports
+            ]
         }
     }
-    init(view) {
-        var self = this;
 
-        this.running_ports = this.$$("runningPorts");
+    init() {
+        const self = this;
 
-        webix.ajax().get("/zerobot/admin/actors/health/get_running_ports", function (data) {
-            // let data = JSON.parse(data);
-            self.running_ports.parse(data);
+        self.portsTable = this.$$("runningPorts");
+        health.getRunningProcesses().then(data => {
+            self.portsTable.parse(data.json());
         });
     }
 

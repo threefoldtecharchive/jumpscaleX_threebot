@@ -141,9 +141,7 @@ class health(j.baseclasses.threebot_actor):
         ```
         :return: string threebotname
         """
-        tag, version = j.clients.git.get(basedir="/sandbox/code/github/threefoldtech/jumpscaleX_core").describe(
-            showout=False
-        )
+        _, version = j.clients.git.get(basedir="/sandbox/code/github/threefoldtech/jumpscaleX_core").describe()
 
         return version
 
