@@ -68,7 +68,10 @@ class farms(j.baseclasses.threebot_actor):
         !tfgrid.directory.farm.1
         ```
         """
-        self._by_id(farm_id)
+        existing_farm = self._by_id(farm_id)
+        if user_session.threebot_id != existing_farm.threebot_id:
+            raise j.exceptions.Permission("can not update a farm you do not own")
+
         self._validate_farm(farm)
         self.farm_model.set_dynamic(farm._ddict, obj_id=farm_id)
         return farm
