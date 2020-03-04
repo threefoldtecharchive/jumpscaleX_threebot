@@ -23,22 +23,15 @@ module.exports = new Promise(async (resolve, reject) => {
     },
     computed: {
       ...vuex.mapGetters([
-        "registered3bots",
-        "registeredfarms",
-        "cru",
-        "mru",
-        "sru",
-        "hru",
-        "countries",
-        "onlinenodes",
+        "nodeSpecs",
       ]),
     },
     mounted() {
-      this.getRegistered3Bots();
+      this.getRegisteredNodes();
       this.getRegisteredFarms();
     },
     methods: {
-      ...vuex.mapActions(["getRegistered3Bots", "getRegisteredFarms"])
+      ...vuex.mapActions(["getRegisteredNodes", "getRegisteredFarms"])
     }
   });
 });

@@ -37,22 +37,22 @@ module.exports = new Promise(async (resolve, reject) => {
       };
     },
     computed: {
-      ...vuex.mapGetters(["nodeslist", "originalNodesList"])
+      ...vuex.mapGetters(["registeredNodes"])
     },
     methods: {
       handleInput(value) {
         const [min, max] = value;
-        let filteredNodes = this.originalNodesList.filter(
+        let filteredNodes = this.registeredNodes.filter(
           node =>
             node.total_resources[this.label.toLowerCase()] <= max &&
             node.total_resources[this.label.toLowerCase()] >= min
         );
 
-        this.setNodesList(filteredNodes);
+        this.setNodes(filteredNodes);
       },
-      ...vuex.mapMutations({
-        setNodesList: "setNodesList"
-      })
+      ...vuex.mapMutations([
+        "setNodes"
+      ])
     }
   });
 });

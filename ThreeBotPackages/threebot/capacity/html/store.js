@@ -1,86 +1,94 @@
-import tfService from './service.js'
-import lodash from '/weblibs/lodash/lodash.min.js'
+import tfService from "./service.js";
+import lodash from "/weblibs/lodash/lodash.min.js";
 
 const state = {
-  registered3bots: 0,
-  onlinenodes: 0,
-  registeredFarms: 0,
-  farmsList: [],
-  nodesList: [],
-  originalNodesList: [],
-  countries: 0,
-  cru: 0,
-  mru: 0,
-  sru: 0,
-  hru: 0
-}
+  user: {},
+  registeredNodes: [],
+  nodes: undefined,
+  registeredFarms: [],
+  farms: [],
+  nodeSpecs: {
+    amountregisteredNodes: 0,
+    amountregisteredFarms: 0,
+    countries: 0,
+    onlinenodes: 0,
+    cru: 0,
+    mru: 0,
+    sru: 0,
+    hru: 0
+  }
+};
 const actions = {
-  getRegistered3Bots(context) {
+  getName: async context => {
+    var response = await tfService.getName();
+    return response.data.name;
+  },
+  getUser: async context => {
+    var name = await context.dispatch("getName");
+    var response = await tfService.getUser(name);
+    context.commit("setUser", response.data);
+  },
+  getRegisteredNodes(context) {
     tfService.registered3bots().then(response => {
-      console.log('nodes', response.data)
-      context.commit('setRegistered3Bots', response.data.nodes.length)
-      context.commit('setNodesList', response.data.nodes)
-      context.commit('setOriginalNodesList', response.data.nodes)
-      context.commit('setCountriesFromNodes', response.data.nodes)
-      context.commit('setRUfromNodes', response.data.nodes)
-      context.commit('setNodesOnline', response.data.nodes)
-    })
+      context.commit("setRegisteredNodes", response.data.nodes);
+      context.commit("setTotalSpecs", response.data.nodes);
+    });
   },
   getRegisteredFarms(context) {
     tfService.registeredfarms().then(response => {
-      console.log('farms', response.data)
-      context.commit('setRegisteredFarms', response.data.farms.length)
-      context.commit('setFarmsList', response.data.farms)
-    })
+      context.commit("setAmountOfFarms", response.data.farms);
+      context.commit("setRegisteredFarms", response.data.farms);
+    });
+  },
+  getFarms: context => {
+    tfService.getFarms(context.getters.user.id).then(response => {
+      context.commit("setFarms", response.data.farms);
+    });
+  },
+  resetNodes: context => {
+    context.commit("setNodes", undefined)
   }
-}
+};
 const mutations = {
-  setRegistered3Bots(state, value) {
-    state.registered3bots = value
+  setRegisteredNodes(state, value) {
+    state.registeredNodes = value;
   },
   setRegisteredFarms(state, value) {
-    state.registeredFarms = value
+    state.registeredFarms = value;
   },
-  setFarmsList(state, value) {
-    state.farmsList = value
+  setFarms(state, value) {
+    state.farms = value;
   },
-  setNodesList(state, value) {
-    state.nodesList = value
+  setNodes(state, value) {
+    state.nodes = value;
   },
-  setOriginalNodesList(state, value) {
-    state.originalNodesList = value
+  setUser: (state, user) => {
+    state.user = user;
   },
-  setCountriesFromNodes(state, value) {
-    state.countries = lodash.uniqBy(value, node => node.location.country).length
+  setAmountOfFarms(state, value) {
+    state.nodeSpecs.amountregisteredFarms = value.length;
   },
-  setRUfromNodes(state, value) {
-    state.cru = lodash.sumBy(value, node => node.total_resources.cru)
-    state.mru = lodash.sumBy(value, node => node.total_resources.mru)
-    state.sru = lodash.sumBy(value, node => node.total_resources.sru)
-    state.hru = lodash.sumBy(value, node => node.total_resources.hru)
-  },
-  setNodesOnline(state, value) {
-    state.onlinenodes = value.length
+  setTotalSpecs(state, value) {
+    state.nodeSpecs.amountregisteredNodes = value.length;
+    state.nodeSpecs.onlinenodes = value.length;
+    state.nodeSpecs.countries = lodash.uniqBy(
+      value,
+      node => node.location.country
+    ).length;
+    state.nodeSpecs.cru = lodash.sumBy(value, node => node.total_resources.cru);
+    state.nodeSpecs.mru = lodash.sumBy(value, node => node.total_resources.mru);
+    state.nodeSpecs.sru = lodash.sumBy(value, node => node.total_resources.sru);
+    state.nodeSpecs.hru = lodash.sumBy(value, node => node.total_resources.hru);
   }
-}
+};
 
 const getters = {
-  registered3bots: (state) => state.registered3bots,
-  registeredfarms: (state) => state.registeredFarms,
-  farmslist: (state) => state.farmsList,
-  nodeslist: (state) => state.nodesList,
-  originalNodesList: (state) => state.originalNodesList,
-  cru: (state) => state.cru,
-  mru: (state) => state.mru,
-  sru: (state) => state.sru,
-  hru: (state) => state.hru,
-  countries: (state) => state.countries,
-  onlinenodes: (state) => state.onlinenodes
-}
+  user: state => state.user,
+  registeredNodes: state => state.registeredNodes,
+  nodes: state => state.nodes,
+  registeredFarms: state => state.registeredFarms,
+  farms: state => state.farms,
+  nodeSpecs: state => state.nodeSpecs
+};
 
-export {
-  state,
-  actions,
-  mutations,
-  getters
-}
+export { state, actions, mutations, getters };

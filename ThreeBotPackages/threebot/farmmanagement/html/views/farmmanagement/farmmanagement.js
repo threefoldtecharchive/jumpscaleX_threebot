@@ -294,7 +294,7 @@ module.exports = new Promise(async (resolve, reject) => {
         "registerFarm",
         "getFarms",
         "updateFarm",
-        "getNodes"
+        "getFarmNodes"
       ]),
       initialiseRefresh () {
         const that = this;
@@ -309,8 +309,7 @@ module.exports = new Promise(async (resolve, reject) => {
       },
       viewNodes(item) {
         this.farmSelected = item;
-        this.getNodes(this.farmSelected.id);
-        console.log(`farmsselected`, this.farmSelected);
+        //this.getFarmNodes(this.farmSelected.id);
       },
       viewSettings(farm) {
         this.farmToEdit = farm;

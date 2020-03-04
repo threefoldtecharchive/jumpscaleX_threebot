@@ -73,35 +73,35 @@
         <v-col class="pt-0">
           <v-row>
             <v-flex md3 xs6 d-flex class="pa-2">
-              <miniGraph :value="registered3bots" title="Registered Nodes" />
+              <miniGraph :value="nodeSpecs.amountregisteredNodes" title="Registered Nodes" />
             </v-flex>
             <v-flex md3 xs6 d-flex class="pa-2">
-              <miniGraph :value="onlinenodes" title="Nodes online" />
+              <miniGraph :value="nodeSpecs.onlinenodes" title="Nodes online" />
             </v-flex>
             <v-flex md3 xs6 d-flex class="pa-2">
-              <miniGraph :value="countries" title="Countries" />
+              <miniGraph :value="nodeSpecs.countries" title="Countries" />
             </v-flex>
             <v-flex md3 xs6 d-flex class="pa-2">
-              <miniGraph :value="registeredfarms" title="Farms" />
+              <miniGraph :value="nodeSpecs.amountregisteredFarms" title="Farms" />
             </v-flex>
           </v-row>
           <v-row>
             <v-flex md3 xs6 d-flex class="pa-2">
-              <miniGraph :value="cru" title="Cores online" />
+              <miniGraph :value="nodeSpecs.cru" title="Cores online" />
             </v-flex>
             <v-flex md3 xs6 d-flex class="pa-2">
-              <miniGraph :value="mru" append="GB" title="Memory online" />
+              <miniGraph :value="nodeSpecs.mru" append="GB" title="Memory online" />
             </v-flex>
             <v-flex md3 xs6 d-flex class="pa-2">
               <miniGraph
-                :value="sru"
+                :value="nodeSpecs.sru"
                 append="GB"
                 title="SSD Storage capacity"
               />
             </v-flex>
             <v-flex md3 xs6 d-flex class="pa-2">
               <miniGraph
-                :value="hru"
+                :value="nodeSpecs.hru"
                 append="GB"
                 title="HDD Storage capacity"
               />

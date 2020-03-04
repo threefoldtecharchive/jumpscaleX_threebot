@@ -13,12 +13,12 @@ module.exports = new Promise(async (resolve, reject) => {
       };
     },
     computed: {
-      ...vuex.mapGetters(["farmslist", "nodeslist", "originalNodesList"]),
+      ...vuex.mapGetters(["registeredFarms", "registeredNodes"]),
       allFarmsList: function() {
-        const allFarmers = this.farmslist.map(f => {
+        const allFarmers = this.registeredFarms.map(farm => {
           return {
-            value: f,
-            text: f.name
+            value: farm,
+            text: farm.name
           };
         });
         allFarmers.push({ text: "All", value: "All" });
@@ -27,7 +27,7 @@ module.exports = new Promise(async (resolve, reject) => {
       nodeLocation: function() {
         // Group nodes by country
         const groupedNodeLocations = _.groupBy(
-          this.nodeslist,
+          this.nodes,
           node => node.location.country
         );
 
@@ -46,15 +46,13 @@ module.exports = new Promise(async (resolve, reject) => {
     mounted() {},
     methods: {
       setSelected(value) {
-        if (value === "All") return this.setNodesList(this.originalNodesList);
-        const filteredNodes = this.originalNodesList.filter(
+        if (value === "All") return this.setNodes(this.registeredNodes);
+        const filteredNodes = this.registeredNodes.filter(
           node => node.farm_id.toString() === value.id.toString()
         );
-        this.setNodesList(filteredNodes);
+        this.setNodes(filteredNodes);
       },
-      ...vuex.mapMutations({
-        setNodesList: "setNodesList"
-      })
+      ...vuex.mapMutations(["setNodes"])
     }
   });
 });
