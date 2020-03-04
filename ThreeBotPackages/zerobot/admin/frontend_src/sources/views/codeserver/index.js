@@ -5,7 +5,21 @@ export default class CodeserverView extends JetView {
         return {
             view: "iframe",
             id: "iframe-codeserver",
-            src: "/codeserver"
+            on: {
+                onAfterLoad: function () {
+                    if (this.hideProgress) {
+                        this.hideProgress();
+                    }
+                    this.enable();
+                }
+            }
         };
+    }
+
+    init(view) {
+        webix.extend(view, webix.ProgressBar);
+        view.disable();
+        view.showProgress({ type: "icon" });
+        view.load("/codeserver");
     }
 }

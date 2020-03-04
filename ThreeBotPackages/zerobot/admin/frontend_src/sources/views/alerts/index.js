@@ -3,8 +3,9 @@ import {
 } from "webix-jet";
 
 import {
+    ansiUp,
+    dateFormatter,
     json_ajax,
-    ansiUp
 } from "../../common";
 import AlertView from "./alert";
 
@@ -13,104 +14,100 @@ const MAX_MSG_LEN = 100;
 export default class AlertsView extends JetView {
     config() {
         const view = {
-            rows: [{
-                view: "template",
-                type: "header",
-                template: "Alerts",
-            },
-            {
-                view: "datatable",
-                id: "alerts_table",
-                resizeColumn: true,
-                select: true,
-                multiselect: true,
-                css: "webix_header_border webix_data_border",
-                columns: [{
-                    id: "index",
-                    header: "#",
-                    sort: "int",
-                    autowidth: true,
-                },
+            rows: [
                 {
-                    id: "alert_type",
-                    header: "Type",
-                    sort: "string"
-                },
-                {
-                    id: "count",
-                    header: "Count",
-                    sort: "int"
-                },
-                {
-                    id: "status",
-                    header: "Status",
-                    sort: "string"
-                },
-                {
-                    id: "level",
-                    header: "Level",
-                    sort: "int"
-                },
-                {
-                    id: "cat",
-                    header: [
-                        "Category",
-                        {
-                            content: "textFilter"
+                    view: "datatable",
+                    id: "alerts_table",
+                    resizeColumn: true,
+                    select: true,
+                    multiselect: true,
+                    css: "webix_header_border webix_data_border",
+                    columns: [{
+                        id: "index",
+                        header: "#",
+                        sort: "int",
+                        autowidth: true,
+                    },
+                    {
+                        id: "alert_type",
+                        header: "Type",
+                        sort: "string"
+                    },
+                    {
+                        id: "count",
+                        header: "Count",
+                        sort: "int"
+                    },
+                    {
+                        id: "status",
+                        header: "Status",
+                        sort: "string"
+                    },
+                    {
+                        id: "level",
+                        header: "Level",
+                        sort: "int"
+                    },
+                    {
+                        id: "cat",
+                        header: [
+                            "Category",
+                            {
+                                content: "textFilter"
+                            }
+                        ],
+                        sort: "string"
+                    },
+                    {
+                        id: "time_first",
+                        header: "First time",
+                        sort: "date",
+                        format: dateFormatter,
+                        width: 200
+                    },
+                    {
+                        id: "time_last",
+                        header: "Last time",
+                        sort: "date",
+                        format: dateFormatter,
+                        width: 200
+                    },
+                    {
+                        id: "message",
+                        header: [
+                            "Message",
+                            {
+                                content: "textFilter"
+                            },
+                        ],
+                        sort: "str",
+                        fillspace: true,
+                        format: function (value) {
+                            if (value.length > MAX_MSG_LEN) {
+                                value = value.substr(0, MAX_MSG_LEN) + '...';
+                            }
+                            return ansiUp.ansi_to_html(value);
                         }
+                    },
                     ],
-                    sort: "string"
-                },
-                {
-                    id: "time_first",
-                    header: "First time",
-                    sort: "date",
-                    format: webix.Date.dateToStr("%Y-%m-%d %H %G:%i:%s"),
-                    width: 200
-                },
-                {
-                    id: "time_last",
-                    header: "Last time",
-                    sort: "date",
-                    format: webix.Date.dateToStr("%Y-%m-%d %G:%i:%s"),
-                    width: 200
-                },
-                {
-                    id: "message",
-                    header: [
-                        "Message",
-                        {
-                            content: "textFilter"
-                        },
-                    ],
-                    sort: "str",
-                    fillspace: true,
-                    format: function (value) {
-                        if (value.length > MAX_MSG_LEN) {
-                            value = value.substr(0, MAX_MSG_LEN) + '...';
+                    autoConfig: true,
+                    // url:{
+                    //     $proxy:true,
+                    //     load: function(view, params){
+                    //         let data = webix.ajax("/zerobot/alerta/actors/alerta/list_alerts");
+                    //         return data;
+                    //     },
+                    // }
+                    scheme: {
+                        $init: function (obj) {
+                            obj.index = this.count();
                         }
-                        return ansiUp.ansi_to_html(value);
-                    }
+                    },
                 },
-                ],
-                autoConfig: true,
-                // url:{
-                //     $proxy:true,
-                //     load: function(view, params){
-                //         let data = webix.ajax("/zerobot/alerta/actors/alerta/list_alerts");
-                //         return data;
-                //     },
-                // }
-                scheme: {
-                    $init: function (obj) {
-                        obj.index = this.count();
-                    }
-                },
-            },
-            {
-                $subview: true,
-                popup: true
-            }
+                {
+                    $subview: true,
+                    popup: true
+                }
             ]
         };
 

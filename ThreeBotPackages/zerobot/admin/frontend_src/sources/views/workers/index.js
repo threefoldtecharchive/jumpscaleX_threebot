@@ -5,7 +5,7 @@ export default class JobsView extends JetView {
     config() {
         const view = {
             view: "datatable",
-            id: "jobs_table",
+            id: "workers_table",
             resizeColumn: true,
             select: true,
             multiselect: true,
@@ -17,9 +17,35 @@ export default class JobsView extends JetView {
                 autowidth: true,
             },
             {
-                id: "category",
-                header: "Category",
+                id: "state",
+                header: "State",
                 sort: "string"
+            },
+            {
+                id: "halt",
+                header: "Halted",
+                sort: "string",
+                format: function (value) {
+                    return value ? 'Yes' : 'No';
+                },
+            },
+            {
+                id: "pid",
+                header: "PID",
+            },
+            {
+                id: "current_job",
+                header: "Current job",
+                format: function (value) {
+                    return value == 2147483647 ? 'N/A' : value;
+                }
+            },
+            {
+                id: "last_update",
+                header: "Last update",
+                sort: "date",
+                format: dateFormatter,
+                width: 200
             },
             {
                 id: "time_start",
@@ -29,39 +55,16 @@ export default class JobsView extends JetView {
                 width: 200
             },
             {
-                id: "time_stop",
-                header: "Stop time",
-                sort: "date",
-                format: dateFormatter,
-                width: 200
-            },
-            {
                 id: "timeout",
                 header: "Timeout",
-                sort: "int"
             },
             {
-                id: "action_id",
-                header: "Action",
-                sort: "string"
+                id: "type",
+                header: "Type",
             },
             {
-                id: "kwargs",
-                header: "Arguments",
-                sort: "string",
-                format: function (value) {
-                    return JSON.stringify(value);
-                }
-            },
-            {
-                id: "result",
-                header: [
-                    "Result",
-                    {
-                        content: "textFilter"
-                    }
-                ],
-                sort: "string"
+                id: "error",
+                header: "Error",
             },
                 // {
                 //     id: "message",
@@ -81,6 +84,7 @@ export default class JobsView extends JetView {
                 //     }
                 // },
             ],
+            autoConfig: true,
             // url:{
             //     $proxy:true,
             //     load: function(view, params){
@@ -99,8 +103,10 @@ export default class JobsView extends JetView {
     }
 
     init(view) {
-        webix.ajax().get("/zerobot/myjobs_ui/actors/myjobs/list_jobs", function (data) {
+        webix.ajax().get("/zerobot/myjobs_ui/actors/myjobs/list_workers", function (data) {
+            // throw ValueError(data);
             view.parse(data);
         });
+
     }
 }

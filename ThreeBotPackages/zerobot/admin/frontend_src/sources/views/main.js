@@ -50,9 +50,18 @@ export default class TopView extends JetView {
                 icon: "mdi mdi-history"
             },
             {
-                id: "myjobs",
-                value: "Jobs",
-                icon: "mdi mdi-animation-play"
+                id: "myjobs_main",
+                value: "My jobs",
+                icon: "mdi mdi-animation-play",
+                data: [{
+                    id: "myjobs",
+                    icon: "mdi mdi-book-open",
+                    value: "Jobs"
+                }, {
+                    id: "workers",
+                    icon: "mdi mdi-worker",
+                    value: "Workers"
+                }]
             },
             {
                 id: "packages",
