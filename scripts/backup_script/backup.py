@@ -9,6 +9,8 @@ def cli():
 
 @click.command()
 def backup():
+    if not os.environ.get("backup"):
+        return
     AWS_ACCESS_KEY_ID = os.environ["AWS_ID"]
     AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET"]
     HASH = os.environ["HASH"]
@@ -16,8 +18,11 @@ def backup():
     command= f"bash backup.sh -a {AWS_ACCESS_KEY_ID} -s {AWS_SECRET_ACCESS_KEY} -p {HASH} -f {BOT_FOLDER} backup"
     os.system(command)
 
+
 @click.command()
 def restore():
+    if not os.environ.get("restore"):
+        return
     AWS_ACCESS_KEY_ID = os.environ["AWS_ID"]
     AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET"]
     HASH = os.environ["HASH"]
