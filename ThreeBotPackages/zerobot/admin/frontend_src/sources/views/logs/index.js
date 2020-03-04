@@ -22,8 +22,8 @@ export default class LogsView extends JetView {
                         placeholder: "Choose your application",
                         options: "/zerobot/admin/actors/logs/list_apps",
                         on: {
-                            onChange: function (appname) {
-                                this.$scope.showFor(appname)
+                            onChange: function (appName) {
+                                this.$scope.showFor(appName)
 
                             }
                         }
@@ -44,16 +44,22 @@ export default class LogsView extends JetView {
     }
 
     urlChange(view, url) {
-        this.showFor(url[0].params.appname, url[0].params.logid)
+        const appName = url[0].params.appname, logId = url[0].params.logid;
+        if (appName) {
+            this.showFor(appName, logId);
+        }
     }
 
-    showFor(appname, logid = null) {
-        this.appLogs = $$("applogs_table")
-        this.app_logs_res = []
+    showFor(appName, logId) {
         var self = this;
-        json_ajax.post("/zerobot/admin/actors/logs/list", { args: { appname: appname, id_from: logid } }).then(function (data) {
+        self.appLogs = $$("applogs_table");
+        webix.extend(self.appLogs, webix.ProgressBar);
+        self.appLogs.showProgress({ hide: false });
+
+        json_ajax.post("/zerobot/admin/actors/logs/list", { args: { appname: appName, id_from: logId } }).then(function (data) {
             self.appLogs.clearAll()
             self.appLogs.parse(data.json()[0])
+            self.appLogs.showProgress({ hide: true });
         });
     }
 }
