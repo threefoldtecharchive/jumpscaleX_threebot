@@ -10,7 +10,7 @@ class alerta(j.baseclasses.threebot_actor):
         :return: dict with alert info
         :rtype: dict
         """
-        alert_dict = alert._ddict_hr
+        alert_dict = alert._ddict
         if not alert.tracebacks:
             return alert_dict
 

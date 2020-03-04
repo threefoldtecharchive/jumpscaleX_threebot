@@ -6,7 +6,14 @@ export default class CodeserverView extends JetView {
         const iframe = {
             view: "iframe",
             id: "iframe-codeserver",
-            src: "/codeserver"
+            on: {
+                onAfterLoad: function () {
+                    if (this.hideProgress) {
+                        this.hideProgress();
+                    }
+                    this.enable();
+                }
+            }
         };
         return {
             type: "space",
@@ -75,5 +82,12 @@ export default class CodeserverView extends JetView {
                 });
             })
         }
+    }
+
+    init(view) {
+        webix.extend(view, webix.ProgressBar);
+        view.disable();
+        view.showProgress({ type: "icon" });
+        view.load("/codeserver");
     }
 }

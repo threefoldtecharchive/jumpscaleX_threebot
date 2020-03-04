@@ -1,5 +1,5 @@
 import { JetView } from "webix-jet";
-
+import { dateFormatter } from "../../common.js";
 
 export default class AppLogsView extends JetView {
     config() {
@@ -107,17 +107,7 @@ export default class AppLogsView extends JetView {
                     },
                 ],
                 sort: "date",
-                format: function (value) {
-                    var date = new Date(parseInt(value) * 1000);
-                    let datetimeHR = date.getFullYear() + "-" +
-                        ("00" + (date.getMonth() + 1)).slice(-2) + "-" +
-                        ("00" + date.getDate()).slice(-2) + " " +
-                        ("00" + date.getHours()).slice(-2) + ":" +
-                        ("00" + date.getMinutes()).slice(-2) + ":" +
-                        ("00" + date.getSeconds()).slice(-2)
-                    return datetimeHR
-                }
-                ,
+                format: dateFormatter,
                 width: 130
             },
             {
