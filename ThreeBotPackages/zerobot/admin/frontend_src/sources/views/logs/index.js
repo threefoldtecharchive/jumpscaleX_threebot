@@ -23,7 +23,6 @@ export default class LogsView extends JetView {
                         options: "/zerobot/admin/actors/logs/list_apps",
                         on: {
                             onChange: function (appname) {
-                                console.log(appname);
                                 this.$scope.showFor(appname)
 
                             }
@@ -44,16 +43,17 @@ export default class LogsView extends JetView {
         self.apps_combo = $$("logs_apps");
     }
 
-    showFor(appname) {
+    urlChange(view, url) {
+        this.showFor(url[0].params.appname, url[0].params.logid)
+    }
+
+    showFor(appname, logid = null) {
         this.appLogs = $$("applogs_table")
         this.app_logs_res = []
         var self = this;
-
-        json_ajax.post("/zerobot/admin/actors/logs/list", { args: { appname: appname } }).then(function (data) {
+        json_ajax.post("/zerobot/admin/actors/logs/list", { args: { appname: appname, id_from: logid } }).then(function (data) {
             self.appLogs.clearAll()
             self.appLogs.parse(data.json()[0])
-
-            // self.getRoot().show();
         });
     }
 }

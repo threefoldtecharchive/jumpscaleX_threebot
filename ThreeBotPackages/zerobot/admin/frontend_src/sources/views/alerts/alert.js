@@ -175,12 +175,18 @@ export default class AlertView extends JetView {
 
 
     init() {
+        var self = this;
         this.form = $$("form");
         this.message = $$("message");
         this.logs = $$("logs");
 
         this.tbViews = $$("tb_views");
         this.tbTabs = $$("tb_tabs");
+
+        this.logs.attachEvent("onItemDblClick", function () {
+            let logData = self.logs.getSelectedItem()
+            this.$scope.show(`/logs?appname=${logData.app_name}&logid=${logData.latest_logid}`)
+        });
     }
 
     addTraceback(tb) {
