@@ -56,4 +56,4 @@ Or you can use [gedis_package.js](https://github.com/threefoldtech/jumpscaleX_we
 
 like:
 
-`packageGedisClient.threefold.alerta_ui.actors.alerta.list_alerts()`
+`packageGedisClient.threefold.alerta.actors.alerta.list_alerts()`
