@@ -1,11 +1,9 @@
-import { JetView } from "webix-jet";
+import { ExternalView } from "../external";
 
-export default class WikisView extends JetView {
-    config() {
-        return {
-            view: "iframe",
-            id: "iframe-wikis",
-            src: "/wiki"
-        };
+const WIKIS_URL = "/wiki";
+
+export default class WikisView extends ExternalView {
+    constructor(app, name) {
+        super(app, name, WIKIS_URL);
     }
 }

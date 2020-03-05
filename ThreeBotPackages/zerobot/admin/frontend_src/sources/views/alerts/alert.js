@@ -1,6 +1,8 @@
 import { JetView } from "webix-jet";
 
 import { ansiUp } from "../../common/colors";
+import { LEVELS, STATES, TYPES } from "./data";
+import { dateFormatter } from "../../common/formatters";
 
 export default class AlertView extends JetView {
     config() {
@@ -214,7 +216,15 @@ export default class AlertView extends JetView {
     }
 
     showFor(item) {
-        this.form.setValues(item);
+        let values = Object.assign({}, item);
+
+        values.alert_type = TYPES[item.alert_type];
+        values.status = STATES[item.status];
+        values.level = LEVELS[item.level];
+        values.time_first = dateFormatter(item.time_first);
+        values.time_last = dateFormatter(item.time_last);
+        this.form.setValues(values);
+
         this.message.setHTML(`<p>${ansiUp.ansi_to_html(item.message)}</p>`);
 
         this.clearTraceBacks();

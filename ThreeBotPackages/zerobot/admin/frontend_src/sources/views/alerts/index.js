@@ -1,12 +1,13 @@
 import { JetView } from "webix-jet";
 
 import { ansiUp } from "../../common/colors";
+import { LEVELS, MAX_MSG_LEN, STATES, TYPES } from "./data";
 import { dateFormatter } from "../../common/formatters";
 import { alerts } from "../../services/alerts";
 
 import AlertView from "./alert";
+import { createFilterOptions } from "../../common/filters";
 
-const MAX_MSG_LEN = 100;
 
 export default class AlertsView extends JetView {
     config() {
@@ -18,6 +19,7 @@ export default class AlertsView extends JetView {
                     resizeColumn: true,
                     select: true,
                     multiselect: true,
+                    scroll: "xy",
                     css: "webix_header_border webix_data_border",
                     columns: [{
                         id: "index",
@@ -27,8 +29,16 @@ export default class AlertsView extends JetView {
                     },
                     {
                         id: "alert_type",
-                        header: "Type",
-                        sort: "string"
+                        sort: "int",
+                        format: (value) => TYPES[value],
+                        width: 150,
+                        header: [
+                            "Type",
+                            {
+                                content: "selectFilter",
+                                options: createFilterOptions(TYPES)
+                            }
+                        ],
                     },
                     {
                         id: "count",
@@ -37,13 +47,27 @@ export default class AlertsView extends JetView {
                     },
                     {
                         id: "status",
-                        header: "Status",
-                        sort: "string"
+                        sort: "int",
+                        format: (value) => STATES[value],
+                        header: [
+                            "Status",
+                            {
+                                content: "selectFilter",
+                                options: createFilterOptions(STATES)
+                            }
+                        ],
                     },
                     {
                         id: "level",
-                        header: "Level",
-                        sort: "int"
+                        sort: "int",
+                        format: (value) => LEVELS[value],
+                        header: [
+                            "Level",
+                            {
+                                content: "selectFilter",
+                                options: createFilterOptions(LEVELS)
+                            }
+                        ],
                     },
                     {
                         id: "cat",
@@ -148,7 +172,7 @@ export default class AlertsView extends JetView {
         this.alertView.showFor(this.table.getItem(id));
     }
 
-    init(view) {
+    init() {
         // this.use(plugins.ProgressBar, "progress");
         var self = this;
         self.table = $$("alerts_table");
