@@ -3,10 +3,16 @@ import { JetView } from "webix-jet";
 import { ErrorView } from "../errors/dialog";
 import { packages } from "../../services/packages";
 
-const pkgStatus = [
+const UNKNOWN_STATUS = 'Unkown';
+
+const PACKAGE_STATES = [
     {
         name: "Init",
         actions: ["delete"]
+    },
+    {
+        name: "Config",
+        actions: ['install', 'delete'],
     },
     {
         name: "Installed",
@@ -246,8 +252,8 @@ export default class PackagesView extends JetView {
             var menudata = [];
             if (pos) {
                 var item = self.packageTable.getItem(pos.row);
-                for (var i = 0; i < pkgStatus.length; i++) {
-                    if (pkgStatus[i].name == item.status) {
+                for (var i = 0; i < PACKAGE_STATES.length; i++) {
+                    if (PACKAGE_STATES[i].name == item.status) {
                         menudata = addActions(menudata, i)
                     }
 
@@ -265,20 +271,21 @@ export default class PackagesView extends JetView {
         // Helper functions
 
         // Mapping the data to the right format to be able to diplay the actual status
-        function mapData(allitems) {
-            return allitems.map(item => {
+        function mapData(allItems) {
+            return allItems.map(item => {
+                const status = PACKAGE_STATES[item.status];
                 return {
                     "name": item.source.name,
                     "author": item.source.threebot,
                     "path": item.path,
-                    "status": pkgStatus[item.status].name
+                    "status": status && status.name || UNKNOWN_STATUS
                 }
             });
         }
 
         function addActions(menudata, pkgIndex) {
-            for (var j = 0; j < pkgStatus[pkgIndex].actions.length; j++)
-                menudata.push(pkgStatus[pkgIndex].actions[j]);
+            for (var j = 0; j < PACKAGE_STATES[pkgIndex].actions.length; j++)
+                menudata.push(PACKAGE_STATES[pkgIndex].actions[j]);
             return menudata
 
         }

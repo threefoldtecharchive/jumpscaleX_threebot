@@ -9,8 +9,6 @@ export class ExternalView extends JetView {
 
         this.targetUrl = targetUrl || "/";
         this.requiredPackages = requiredPackages || {}; // required packages as name: git_url pairs
-        this.requiredPackageNames = Object.keys(this.requiredPackages);
-        this.toInstallPackages = []; // packages names to install
     }
 
     config() {
@@ -27,7 +25,8 @@ export class ExternalView extends JetView {
             }
         };
 
-        const names = this.requiredPackageNames.join(", ");
+        const names = Object.keys(this.requiredPackages).join(", ");
+
         return {
             rows: [{
                 localId: "install-packages",
@@ -58,11 +57,8 @@ export class ExternalView extends JetView {
     }
 
     installRequiredPackages() {
-        if (!this.toInstallPackages.length) {
-            return;
-        }
-
-        let promises = this.toInstallPackages.map((name) => {
+        let promises = Object.keys(this.requiredPackages).map((name) => {
+            // add by git url
             return packages.add(null, this.requiredPackages[name]);
         });
 
@@ -93,12 +89,12 @@ export class ExternalView extends JetView {
             const allPackages = data.json().packages;
             for (const p of allPackages) {
                 const requiredPackage = this.requiredPackages[p.name];
-                if (requiredPackage && p.status != STATUS_INSTALLED) {
-                    this.toInstallPackages.push(p.name);
+                if (requiredPackage && p.status == STATUS_INSTALLED) {
+                    delete this.requiredPackages[p.name];
                 }
             }
 
-            if (this.toInstallPackages.length) {
+            if (Object.keys(this.requiredPackages).length) {
                 view.installPackageContainer.show();
                 view.externalIframe.hide();
             } else {
