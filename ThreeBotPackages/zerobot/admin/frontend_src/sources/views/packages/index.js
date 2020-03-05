@@ -124,6 +124,8 @@ export default class PackagesView extends JetView {
     }
 
     handleResult(promise, callback) {
+        this.packageTable.showProgress({ hide: false });
+
         promise.then((data) => {
             if (callback instanceof Function) {
                 callback(data);
@@ -133,8 +135,10 @@ export default class PackagesView extends JetView {
                 type: "success",
                 text: "The operation has beed done successfully"
             });
+            this.packageTable.showProgress({ hide: true });
         }).catch(error => {
             this.showError("Error has happened during this operation: " + error.response, "Error");
+            this.packageTable.showProgress({ hide: true });
         })
     }
 
@@ -176,8 +180,9 @@ export default class PackagesView extends JetView {
             view: "contextmenu",
             id: "packages_cm"
         });
-        this.packageTable = this.$$("packages_table");
 
+        this.packageTable = this.$$("packages_table");
+        webix.extend(this.packageTable, webix.ProgressBar);
 
         function checkAction(action, selectedItemId) {
             if (self.packageTable.getItem(selectedItemId)) {

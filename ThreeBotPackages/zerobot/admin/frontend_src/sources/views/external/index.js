@@ -66,18 +66,20 @@ export class ExternalView extends JetView {
             return packages.add(null, this.requiredPackages[name]);
         });
 
+        this.installButton.disable();
         Promise.all(promises).then(() => {
-            webix.message({ type: "success", text: "All required packages installed successfully" });
-            setInterval(() => window.location.reload(true), 600);
-        }).catch((error) => {
+            webix.message({ type: "success", text: "All required packages installed successfully, page will be reloaded in 2 seconds" });
+            setInterval(() => window.location.reload(true), 2000);
+            this.installButton.enable();
+        }).catch(() => {
             webix.message({ type: "error", text: "An error occurred, please try installing from packages for more details" });
         });
     }
 
     init(view) {
         view.installPackageContainer = this.$$("install-packages");
-        view.installButton = this.$$("install_btn");
-        view.installButton.attachEvent("onItemClick", this.installRequiredPackages.bind(this));
+        this.installButton = this.$$("install_btn");
+        this.installButton.attachEvent("onItemClick", this.installRequiredPackages.bind(this));
 
         view.externalIframe = this.$$("iframe-external");
         webix.extend(view.externalIframe, webix.ProgressBar);
