@@ -1,4 +1,6 @@
 import { JetView } from "webix-jet";
+
+import { ErrorView } from "../errors/dialog";
 import { packages } from "../../services/packages";
 
 const pkgStatus = [
@@ -68,7 +70,7 @@ export default class PackagesView extends JetView {
                 type: {
                     height: 200,
                 },
-                scroll: true,
+                scroll: "xy",
                 autoConfig: true,
                 view: "datatable",
                 select: true,
@@ -83,7 +85,7 @@ export default class PackagesView extends JetView {
                 {
                     id: "author",
                     header: ["Author", {
-                        content: "textFilter"
+                        content: "selectFilter"
                     }],
                     sort: "string",
                     width: 200
@@ -117,18 +119,22 @@ export default class PackagesView extends JetView {
         return grid;
     }
 
+    showError(message) {
+        this.errorView.showError(message);
+    }
+
     handleResult(promise, callback) {
-        promise.then(() => {
-            callback();
+        promise.then((data) => {
+            if (callback instanceof Function) {
+                callback(data);
+            }
+
             webix.message({
                 type: "success",
                 text: "The operation has beed done successfully"
             });
         }).catch(error => {
-            webix.message({
-                type: "error",
-                text: "error has happened " + error.response
-            });
+            this.showError("Error has happened during this operation: " + error.response, "Error");
         })
     }
 
@@ -163,6 +169,9 @@ export default class PackagesView extends JetView {
 
     init(view) {
         const self = this;
+
+        self.errorView = this.ui(ErrorView);
+
         const menu = webix.ui({
             view: "contextmenu",
             id: "packages_cm"
@@ -186,7 +195,7 @@ export default class PackagesView extends JetView {
                         text: `Are you sure you want to delete ${author}.${name}?`,
                         cancel: "No",
                     }).then(() => {
-                        deletePackage(packageName, elementID)
+                        self.deletePackage(packageName, elementID)
                     });
                     //
                 } else if (action == 'start') {
@@ -270,7 +279,8 @@ export default class PackagesView extends JetView {
         }
 
         packages.list().then(data => {
-            self.packageTable.parse(mapData(data.json()));
+            const allPackages = data.json().packages;
+            self.packageTable.parse(mapData(allPackages));
         });
 
 

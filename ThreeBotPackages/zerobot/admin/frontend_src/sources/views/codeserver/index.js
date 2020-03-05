@@ -2,7 +2,7 @@ import { JetView } from "webix-jet";
 import { health } from "../../services/health";
 import { packages } from "../../services/packages";
 
-const CODE_URL = "/codeserver&folder=/sandbox/code";
+const CODE_URL = "/codeserver/?folder=/sandbox/code";
 const PACKAGE_PATH = "/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/codeserver"
 
 export default class CodeserverView extends JetView {
@@ -21,7 +21,6 @@ export default class CodeserverView extends JetView {
         };
 
         return {
-            type: "space",
             rows: [{
                 id: "install-package",
                 cols: [
@@ -36,10 +35,6 @@ export default class CodeserverView extends JetView {
                         css: "webix_primary",
                         inputWidth: 140,
                         height: 50
-                    }, {
-                        template: "<div style='width:auto;text-align:center'><h3>Codeserver<h3/></div>",
-                        height: 50,
-                        id: "codeserver_title",
                     }
                 ]
             }, iframe]
@@ -47,7 +42,12 @@ export default class CodeserverView extends JetView {
     }
 
     installCodeserverPackage() {
-        packages.add(PACKAGE_PATH);
+        packages.add(PACKAGE_PATH).then((data) => {
+            webix.message("Package installed successfully");
+        }).fail((error) => {
+            webix.message("An error occurred while trying to install the package!");
+        });
+
     }
 
     init(view) {
@@ -60,9 +60,7 @@ export default class CodeserverView extends JetView {
         view.codeserverIframe.showProgress({ type: "icon" });
         view.codeserverIframe.load(CODE_URL);
 
-        $$("install_btn").attachEvent("onItemClick", function (id) {
-            view.installCodeserverPackage();
-        });
+        $$("install_btn").attachEvent("onItemClick", this.installCodeserverPackage);
 
         health.getHealth().then(data => {
             let codeServerStatus = data.json().codeserver
@@ -71,8 +69,8 @@ export default class CodeserverView extends JetView {
                 view.installPackageContainer.hide();
             }
             else {
-                view.codeserverIframe.show();
-                view.installPackageContainer.hide();
+                view.codeserverIframe.hide();
+                view.installPackageContainer.show();
             }
         });
     }

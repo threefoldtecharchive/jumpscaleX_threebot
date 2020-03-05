@@ -15,7 +15,7 @@ export default class LogsView extends JetView {
                     },
                     {
                         view: "combo",
-                        id: "logs_apps",
+                        id: "apps_combo",
                         placeholder: "Choose your application",
                         on: {
                             onChange: function (appName) {
@@ -34,8 +34,12 @@ export default class LogsView extends JetView {
     }
 
     init(view) {
+        view.appsCombo = $$("apps_combo");
+        logs.listApps().then(data => {
+            view.appsCombo.define("options", data.json());
+            view.appsCombo.render();
+        });
 
-        self.appsComob = $$("apps_combo");
     }
 
     urlChange(view, url) {
@@ -48,11 +52,6 @@ export default class LogsView extends JetView {
     showFor(appName, logId) {
         var self = this;
         self.appLogs = $$("applogs_table");
-
-        logs.listApps().then(data => {
-            this.appsComob.config.options = data;
-            this.appsComob.refresh();
-        });
 
         webix.extend(self.appLogs, webix.ProgressBar);
         self.appLogs.showProgress({ hide: false });

@@ -60,7 +60,7 @@ export default class runningPortsView extends JetView {
         const self = this;
 
         self.portsTable = this.$$("runningPorts");
-        health.getRunningProcesses().then(data => {
+        health.getRunningPorts().then(data => {
             self.portsTable.parse(data.json());
         });
     }

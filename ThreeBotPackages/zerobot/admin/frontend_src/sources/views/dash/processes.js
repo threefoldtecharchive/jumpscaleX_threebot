@@ -82,10 +82,10 @@ export default class ProcessesView extends JetView {
             var chartsData = []
 
             data = data.json();
-            self.processesList = data.processesList
+            self.processesList = data.processes_list
 
             // memory usage
-            self.memoryUsage = data.memoryUsage
+            self.memoryUsage = data.memory_usage
             self.totalMemory = self.memoryUsage.total_mem
             self.percent = self.memoryUsage.usage_percent
 
@@ -117,6 +117,7 @@ export default class ProcessesView extends JetView {
                 chartsData.push(temp)
                 // console.log(myArray[i]);
             }
+
             self.runProcessInfo.parse({
                 data: chartsData,
             });

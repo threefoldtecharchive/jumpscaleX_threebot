@@ -2,8 +2,6 @@ import { JetView } from "webix-jet";
 
 import { ansiUp } from "../../common/colors";
 
-const MAX_MSG_LEN = 100;
-
 export default class AlertView extends JetView {
     config() {
         const info = {
