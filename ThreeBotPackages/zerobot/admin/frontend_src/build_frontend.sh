@@ -1,15 +1,15 @@
 #!/bin/bash
 
+mkdir -p ../output/codebase
+mkdir -p ../output/static/
+
+# build will create the files directly inside ../output/codebase
 if [ "$1" != "" ]; then
     npm run build-$1
 else
     npm run build
 fi
 
+# copy index and static files
 cp index.html ../output
-
-mkdir -p ../output/codebase
-mkdir -p ../output/static/
-
-cp -a codebase/* ../output/codebase
 cp -a static/* ../output/static

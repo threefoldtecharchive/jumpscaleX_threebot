@@ -13,7 +13,7 @@ module.exports = function (env) {
 	var config = {
 		entry: "./sources/app.js",
 		output: {
-			path: path.join(__dirname, "codebase"),
+			path: path.join(__dirname, "../output/codebase"),
 			publicPath: "/codebase/",
 			library: "AdminApp",
 			libraryExport: "default",
