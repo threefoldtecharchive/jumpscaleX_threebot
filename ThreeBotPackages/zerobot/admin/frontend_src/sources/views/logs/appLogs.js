@@ -1,6 +1,8 @@
 import { JetView } from "webix-jet";
 
 import { dateFormatter } from "../../common/formatters";
+import { LEVELS } from "../alerts/data";
+import { createFilterOptions } from "../../common/filters";
 
 export default class AppLogsView extends JetView {
     config() {
@@ -93,11 +95,13 @@ export default class AppLogsView extends JetView {
                 header: [
                     "Level",
                     {
-                        content: "textFilter"
+                        content: "selectFilter",
+                        options: createFilterOptions(LEVELS)
                     },
                 ],
                 sort: "int",
-                width: 50
+                format: (value) => LEVELS[value],
+                width: 100
             },
             {
                 id: "epoch",
