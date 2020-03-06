@@ -8,7 +8,11 @@ module.exports = new Promise(async (resolve, reject) => {
     name: "farmManagement",
     components: {
       nodestable: httpVueLoader(
+<<<<<<< HEAD
         "/weblibs/shared/components/nodestable/index.vue"
+=======
+        "/threebot/farmmanagement/components/nodestable/index.vue"
+>>>>>>> rework_webplatform
       ),
     },
     props: [],
