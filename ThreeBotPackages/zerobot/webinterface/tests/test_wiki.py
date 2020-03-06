@@ -62,7 +62,7 @@ def test003_check_zdb_is_started():
     assert j.sal.process.checkProcessRunning("zdb") is True
 
     info("Get zdb client and check zdb is started using ping.")
-    adminsecret_ = j.data.hash.md5_string(j.core.myenv.adminsecret)
+    adminsecret_ = j.core.myenv.adminsecret
     cl = j.clients.zdb.client_admin_get(name="test_wiki", port=9900, secret=adminsecret_)
     assert cl.ping() is True
 

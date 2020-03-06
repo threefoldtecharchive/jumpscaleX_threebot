@@ -9,6 +9,10 @@ flist = (S)
 hub_url = (S)
 #env variables
 environment = (dict)
+#secret_env variables. the key is in plain text but the value
+#must be encrypted using Curve25519 with the public key of node.
+#then hex encoded.
+secret_environment = (dict)
 #the process to start
 entrypoint = (S)
 #corex yes or no
@@ -19,6 +23,7 @@ network_connection = (LO) !tfgrid.workloads.reservation.network.connection.1
 stats_aggregator = (LO) !tfgrid.workloads.reservation.statsaggregator.1
 #id of threebot who is the farmer
 farmer_tid = (I)
+capacity = (O) !tfgrid.workloads.reservation.container.capacity.1
 
 
 
@@ -29,3 +34,10 @@ mountpoint = (S)
 @url = tfgrid.workloads.reservation.network.connection.1
 network_id = (S)
 ipaddress = (ipaddress)
+public_ip6 = (B)
+
+@url = tfgrid.workloads.reservation.container.capacity.1
+# Number of vCPU
+cpu = (I) 
+# memory in MiB
+memory = (I)

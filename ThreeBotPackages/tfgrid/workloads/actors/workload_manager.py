@@ -287,6 +287,10 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation.next_action = "create"
         reservation.epoch = j.data.time.epoch
         reservation = self.reservation_model.new(reservation)
+        reservation.save()  # save to get an id
+
+        reservation = volumes_prepend_id(reservation)
+
         reservation.save()
         return reservation
 
@@ -528,3 +532,15 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         reservation.save()
         return True
+
+
+def volumes_prepend_id(reservation):
+    # look for container that reference volume from this reservation itself
+    # since the volume will be created after this, the user doesn't known
+    # the volume id just yet. So we prepend the reservation id to the workload id
+    # to have the full volume id
+    for container in reservation.data_reservation.containers:
+        for volume in container.volumes:
+            if volume.volume_id[0] == "-":
+                volume.volume_id = f"{reservation.id}{volume.volume_id}"
+    return reservation
