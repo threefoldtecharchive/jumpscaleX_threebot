@@ -8,9 +8,12 @@ module.exports = new Promise(async (resolve, reject) => {
     name: "farmManagement",
     components: {
       nodestable: httpVueLoader(
+<<<<<<< HEAD
+        "/weblibs/shared/components/nodestable/index.vue"
+=======
         "/threebot/farmmanagement/components/nodestable/index.vue"
+>>>>>>> rework_webplatform
       ),
-      // vueGoogle: httpVueLoader("../../weblibs/gmaps/vue-google-maps.js")
     },
     props: [],
     data() {
@@ -295,7 +298,7 @@ module.exports = new Promise(async (resolve, reject) => {
         "registerFarm",
         "getFarms",
         "updateFarm",
-        "getNodes"
+        "getFarmNodes"
       ]),
       initialiseRefresh () {
         const that = this;
@@ -310,8 +313,7 @@ module.exports = new Promise(async (resolve, reject) => {
       },
       viewNodes(item) {
         this.farmSelected = item;
-        this.getNodes(this.farmSelected.id);
-        console.log(`farmsselected`, this.farmSelected);
+        //this.getFarmNodes(this.farmSelected.id);
       },
       viewSettings(farm) {
         this.farmToEdit = farm;

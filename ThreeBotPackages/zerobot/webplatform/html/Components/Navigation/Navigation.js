@@ -61,11 +61,10 @@ module.exports = new Promise(async (resolve, reject) => {
       apps(apps) {
         for (const app of apps) {
           const storeName = `${app.source.name.toLowerCase()}`;
-
           if (!this.alreadyAddedStores.some(x => x === storeName)) {
+            this.alreadyAddedStores.push(storeName);
             import(app.store).then(store => {
               this.$store.registerModule(storeName, store);
-              this.alreadyAddedStores.push(storeName);
               this.registerRoutes(app)
             })
           }
