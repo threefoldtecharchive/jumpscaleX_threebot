@@ -282,6 +282,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation.next_action = "create"
         reservation.epoch = j.data.time.epoch
         reservation = self.reservation_model.new(reservation)
+        reservation.id = None
         reservation.save()  # save to get an id
 
         reservation = volumes_prepend_id(reservation)
