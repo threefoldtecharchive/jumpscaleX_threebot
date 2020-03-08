@@ -75,6 +75,11 @@ export default class TopView extends JetView {
                 value: "Jupyter",
                 icon: "mdi mdi-play"
             },
+            {
+                id: "settings",
+                value: "Settings",
+                icon: "mdi mdi-settings"
+            },
             ]
         };
 
