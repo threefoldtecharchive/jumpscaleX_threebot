@@ -48,10 +48,18 @@ def logout():
     redirect(request.query.get("next_url", "/"))
 
 
+def is_admin(tname):
+    threebot_me = j.tools.threebot.me.default
+    return threebot_me.tname == tname or tname in threebot_me.admins
+
+
 @app.route("/auth/authenticated")
 def is_authenticated():
     session = request.environ.get("beaker.session", {})
     if session.get("authorized"):
-        response.content_type = "application/json"
-        return j.data.serializers.json.dumps({"username": session["username"], "email": session["email"]})
+        tname = session["username"]
+        if is_admin(tname):
+            temail = session["email"]
+            response.content_type = "application/json"
+            return j.data.serializers.json.dumps({"username": tname, "email": temail})
     return abort(403)
