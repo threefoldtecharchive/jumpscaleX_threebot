@@ -72,13 +72,12 @@ def chat(bot):
     # register the reservation
     rid = j.sal.zosv2.reservation_register(reservation, expiration)
 
-    entry_point = "/bin/bash"
     conatiner_flist = f"{HUB_URL}/{version}.flist"
     storage_url ="zdb://hub.grid.tf:9900"
 
     # create container
     cont = j.sal.zosv2.container.create(reservation=reservation, node_id=node_selected.node_id, network_name=network.name, ip_address=ip_address, flist=conatiner_flist,
-                                        storage_url=storage_url, env=var_dict, entrypoint=entry_point)
+                                        storage_url=storage_url, env=var_dict, interactive=True)
 
     expiration = j.data.time.epoch + (3600 * 24 * 365)
 
