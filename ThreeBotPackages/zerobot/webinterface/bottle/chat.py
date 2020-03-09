@@ -1,40 +1,12 @@
-from bottle import Bottle, abort, post, request, response, run
 from Jumpscale import j
-from .rooter import env, app, get_ws_url
-
-client = j.clients.oauth_proxy.get("main")
-oauth_app = j.tools.oauth_proxy.get(app, client, "/auth/login")
-bot_app = j.tools.threebotlogin_proxy.get(app)
-PROVIDERS = list(client.providers_list())
 
 
-@app.route("/auth/login")
-def login():
-    provider = request.query.get("provider")
-    if provider:
-        if provider == "3bot":
-            return bot_app.login(request.headers["HOST"], "/auth/3botlogin")
-
-        redirect_url = f"https://{request.headers['HOST']}/auth/authorize"
-        return oauth_app.login(provider, redirect_url=redirect_url)
-
-    return env.get_template("chat/login.html").render(providers=PROVIDERS)
-
-
-@app.route("/auth/3botlogin")
-def chat_botcallback():
-    bot_app.callback()
-
-
-@app.route("/auth/authorize")
-def chat_authorize():
-    user_info = oauth_app.callback()
-    oauth_app.session["email"] = user_info["email"]
-    return redirect(oauth_app.next_url)
+from .auth import oauth_app
+from .rooter import abort, request, response, env, app, get_ws_url
 
 
 @app.route("/<threebot_name>/<package_name>/chat", method=["get"])
-def gedis_http_chat(threebot_name, package_name):
+def chat_home(threebot_name, package_name):
     try:
         package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
     except j.exceptions.NotFound:
@@ -49,7 +21,7 @@ def gedis_http_chat(threebot_name, package_name):
 
 @app.route("/<threebot_name>/<package_name>/chat/<chat_name>", method=["get"])
 @oauth_app.login_required
-def gedis_http_chat(threebot_name, package_name, chat_name):
+def chat_handler(threebot_name, package_name, chat_name):
     session = request.environ.get("beaker.session", {})
     try:
         package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
