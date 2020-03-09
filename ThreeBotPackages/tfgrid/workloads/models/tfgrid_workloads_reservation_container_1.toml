@@ -9,6 +9,10 @@ flist = (S)
 hub_url = (S)
 #env variables
 environment = (dict)
+#secret_env variables. the key is in plain text but the value
+#must be encrypted using Curve25519 with the public key of node.
+#then hex encoded.
+secret_environment = (dict)
 #the process to start
 entrypoint = (S)
 #corex yes or no

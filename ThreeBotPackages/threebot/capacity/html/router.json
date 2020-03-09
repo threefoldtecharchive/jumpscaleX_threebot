@@ -1,0 +1,12 @@
+[
+  {
+    "path": "/",
+    "name": "Capacity",
+    "component": "views/capacity",
+    "meta": {
+      "icon": "fa-server",
+      "position": "top",
+      "displayName": "Capacity"
+    }
+  }
+]
