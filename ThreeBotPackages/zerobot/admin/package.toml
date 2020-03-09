@@ -7,6 +7,7 @@ version = "1.0.0"
 
 
 [[bcdbs]]
-namespace = "zerobot"
+name = "zerobot_admin"
+namespace = "zerobot_admin"
 type = "zdb"
 instance = "default"
