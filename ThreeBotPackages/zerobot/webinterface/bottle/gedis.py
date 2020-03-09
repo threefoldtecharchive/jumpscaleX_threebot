@@ -78,7 +78,6 @@ def gedis_http(name, cmd, threebot_name=None, package_name=None):
     if not package_name:
         response.status = 400
         return f"Need to specify package_name in command {cmd} for gedis_http"
-
     actor = j.threebot.actor_get(author3bot=threebot_name, package_name=package_name, actor_name=name)
 
     if not actor:

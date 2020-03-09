@@ -97,10 +97,14 @@ def stress_explorer(count=100, interactive=True):
 
     cl = j.clients.threebot.explorer.actors_get("tfgrid.phonebook")
 
+    stress_signer_uid = f"stress_signer_{j.data.idgenerator.generateXCharID(5)}"
+    stress_farmer_uid = f"stress_farmer_{j.data.idgenerator.generateXCharID(5)}"
+    stress_customer_id = f"stress_customer_{j.data.idgenerator.generateXCharID(5)}"
+
     threebots = [
-        {"role": "stress_signer", "pubkey": binascii.hexlify(signer_signing_key.verify_key.encode())},
-        {"role": "stress_farmer", "pubkey": binascii.hexlify(farmer_signing_key.verify_key.encode())},
-        {"role": "stress_customer", "pubkey": binascii.hexlify(customer_signing_key.verify_key.encode())},
+        {"role": stress_signer_uid, "pubkey": binascii.hexlify(signer_signing_key.verify_key.encode())},
+        {"role": stress_farmer_uid, "pubkey": binascii.hexlify(farmer_signing_key.verify_key.encode())},
+        {"role": stress_customer_id, "pubkey": binascii.hexlify(customer_signing_key.verify_key.encode())},
     ]
     tbots = {}
     for threebot in threebots:
@@ -117,30 +121,30 @@ def stress_explorer(count=100, interactive=True):
     def create_reservation(node_id):
         print(f"creating reservations for {node_id}")
         reservation = {}
-        reservation["customer_tid"] = tbots["stress_customer"].id
+        reservation["customer_tid"] = tbots[stress_customer_id].id
 
         # create container
         container = {}
         container["node_id"] = node_id
         container["workload_id"] = 2
-        container["farmer_tid"] = tbots["stress_farmer"].id
+        container["farmer_tid"] = tbots[stress_farmer_uid].id
 
         # create volume
         volume = {}
         volume["node_id"] = node_id
         volume["workload_id"] = 1
-        volume["farmer_tid"] = tbots["stress_farmer"].id
+        volume["farmer_tid"] = tbots[stress_signer_uid].id
 
         # create zdb
         zdb = {}
         zdb["node_id"] = node_id
         zdb["workload_id"] = 3
-        zdb["farmer_tid"] = tbots["stress_farmer"].id
+        zdb["farmer_tid"] = tbots[stress_farmer_uid].id
 
         # create network
         network = {}
         network["workload_id"] = 4
-        network["farmer_tid"] = tbots["stress_farmer"].id
+        network["farmer_tid"] = tbots[stress_farmer_uid].id
 
         resource_one = {}
         resource_one["node_id"] = node_id
@@ -154,7 +158,7 @@ def stress_explorer(count=100, interactive=True):
         reservation["data_reservation"]["zdbs"] = [zdb]
         reservation["data_reservation"]["networks"] = [network]
 
-        request = {"signers": [tbots["stress_signer"].id], "quorum_min": 1}
+        request = {"signers": [tbots[stress_signer_uid].id], "quorum_min": 1}
 
         reservation["data_reservation"]["signing_request_provision"] = request
         reservation["data_reservation"]["signing_request_delete"] = request
@@ -184,7 +188,7 @@ def stress_explorer(count=100, interactive=True):
         # TEST05: FILL SIGNING REQUESTS
         signature = signer_signing_key.sign(reservation.json.encode())
         cl.workload_manager.sign_provision(
-            reservation.id, tbots["stress_signer"].id, binascii.hexlify(signature.signature)
+            reservation.id, tbots[stress_signer_uid].id, binascii.hexlify(signature.signature)
         )
         reservation = cl.workload_manager.reservation_get(reservation.id)
         assert reservation.next_action == "DEPLOY"
@@ -197,7 +201,7 @@ def stress_explorer(count=100, interactive=True):
         # TEST08: FILL SING DELETE
         signature = signer_signing_key.sign(reservation.json.encode())
         cl.workload_manager.sign_delete(
-            reservation.id, tbots["stress_signer"].id, binascii.hexlify(signature.signature)
+            reservation.id, tbots[stress_signer_uid].id, binascii.hexlify(signature.signature)
         )
         reservation = cl.workload_manager.reservation_get(reservation.id)
         assert reservation.next_action == "DELETE"
@@ -274,7 +278,7 @@ def cleanup():
                 print(f"farm {farm.id} not found")
 
     print("*********************** deleting users ********************")
-    names = ["stress_customer", "stress_signer", "stress_farmer"]
+    names = [stress_customer_id, stress_signer_uid, stress_farmer_uid]
     for name in names:
         users = user_model.find(name=name)
         if users:

@@ -37,6 +37,7 @@
             <th scope="col">Level</th>
             <th scope="col">Count</th>
             <th scope="col">Category</th>
+            <th scope="col">App name</th>
             <th scope="col">First time</th>
             <th scope="col">Last time</th>
             <th scope="col">Message</th>
@@ -51,9 +52,7 @@
           {#each alerts as myAlert, i}
             <tr>
               <th scope="row">
-                <a href="/zerobot/alerta_ui/alert/{myAlert.identifier}">
-                  {i + 1}
-                </a>
+                <a href="/zerobot/alerta/alert/{myAlert.identifier}">{i + 1}</a>
               </th>
               <td>{myAlert.alert_type}</td>
               <td>{myAlert.status}</td>
@@ -96,10 +95,13 @@
               {/if}
               <td>{myAlert.count}</td>
               <td>{myAlert.cat}</td>
+              <td>{myAlert.appname}</td>
               <td>{myAlert.time_first}</td>
               <td>{myAlert.time_last}</td>
               <td>
-                {@html ansiUp.ansi_to_html(myAlert.message)}
+                <span>
+                  {@html myAlert.message.length > 500 ? ansiUp.ansi_to_html(myAlert.message.substring(0, 500) + '...') : ansiUp.ansi_to_html(myAlert.message)}
+                </span>
               </td>
               <td>{myAlert.message_pub}</td>
               <td>

@@ -37,7 +37,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
         """
         network = self._network_get(networkname)
         newip = self._get_free_ip(network)
-        wg = j.tools.wireguard.new(name=f"{networkname}-{sshclient_name}", save=False)
+        wg = j.tools.wireguard.get(name=f"{networkname}-{sshclient_name}", save=False)
         sshclient = j.clients.ssh.get(sshclient_name, needexist=True)
         wg.sshclient_name = sshclient_name
         wg.install()
