@@ -85,6 +85,8 @@ class package_manager(j.baseclasses.threebot_actor):
         if start:
             package.start()
 
+        j.servers.threebot.default.openresty_server.reload()
+
         return "OK"
 
     @j.baseclasses.actor_method
