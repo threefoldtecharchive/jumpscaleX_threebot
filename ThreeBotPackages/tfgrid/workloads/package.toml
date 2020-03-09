@@ -5,6 +5,7 @@ threebot = "tfgrid"
 version = "1.0.0"
 
 [[bcdbs]]
-namespace = "workloads"
+name = "tfgrid_workloads"
+namespace = "tfgrid_workloads"
 type = "zdb"
 instance = "default"
