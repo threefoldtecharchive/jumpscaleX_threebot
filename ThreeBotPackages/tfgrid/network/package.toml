@@ -6,6 +6,7 @@ version = "1.0.0"
 
 
 [[bcdbs]]
-namespace = "tfgrid"
+name = "tfgrid_network"
+namespace = "tfgrid_network"
 type = "zdb"
 instance = "default"
