@@ -1,5 +1,4 @@
 import json
-import mimetypes
 import traceback
 
 from bottle import Bottle, abort, post, request, response, run
@@ -113,14 +112,3 @@ def gedis_http(name, cmd, threebot_name=None, package_name=None):
         if content_type:
             result = getattr(result, f"_{content_type}", result)
     return result
-
-
-@app.route("/bcdbfs/<url:re:.+>")
-@enable_cors
-def index(url):
-    try:
-        file = j.sal.bcdbfs.file_read("/" + url)
-    except j.exceptions.NotFound:
-        abort(404)
-    response.headers["Content-Type"] = mimetypes.guess_type(url)[0]
-    return file

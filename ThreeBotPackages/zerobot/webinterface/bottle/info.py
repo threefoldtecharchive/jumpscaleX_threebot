@@ -1,6 +1,5 @@
-from bottle import Bottle, abort, post, request, response, run
 from Jumpscale import j
-from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
+
 from .rooter import env, app
 
 
