@@ -62,16 +62,19 @@ def iterate_over_workloads(obj):
 
 class workload_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        self.reservation_model = j.threebot.packages.tfgrid.workloads.bcdb.model_get(
+        workloads_package = j.tools.threebot_packages.tfgrid__workloads
+        phonebook_package = j.tools.threebot_packages.tfgrid__phonebook
+        directory_package = j.tools.threebot_packages.tfgrid__directory
+        self.reservation_model = workloads_package.bcdb.model_get(
             url="tfgrid.workloads.reservation.1"
         )
-        self.signature_model = j.threebot.packages.tfgrid.workloads.bcdb.model_get(
+        self.signature_model = workloads_package.bcdb.model_get(
             url="tfgrid.workloads.reservation.signing.signature.1"
         )
         self.workload_schema = j.data.schema.get_from_url("tfgrid.workloads.reservation.workload.1")
-        self.user_model = j.threebot.packages.tfgrid.phonebook.bcdb.model_get(url="tfgrid.phonebook.user.1")
-        self.node_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.node.2")
-        self.farm_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.farm.1")
+        self.user_model = phonebook_package.bcdb.model_get(url="tfgrid.phonebook.user.1")
+        self.node_model = directory_package.bcdb.model_get(url="tfgrid.directory.node.2")
+        self.farm_model = directory_package.bcdb.model_get(url="tfgrid.directory.farm.1")
         self.nacl = j.data.nacl.default
 
         index_table = reservation_index_model()
@@ -79,6 +82,9 @@ class workload_manager(j.baseclasses.threebot_actor):
         index_table.create_table(safe=True)
 
         self.reservation_model.IndexTable = index_table
+        self.reservation_actionable_model = workloads_package.bcdb.model_get(
+            url="tfgrid.workloads.reservation_actionable.1"
+        )
         self.reservation_model.trigger_add(reservation_index_create())
 
     def _farmer_tids_from_reservation(self, obj):
@@ -216,6 +222,7 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         if jsxobj.data_reservation.expiration_reservation < j.data.time.epoch:
             jsxobj.next_action = "delete"
+            self._add_to_actionable_reservations(jsxobj)
 
         if jsxobj.next_action == "create":
             if jsxobj.data_reservation.expiration_provisioning > j.data.time.epoch:
@@ -236,6 +243,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         if jsxobj.next_action == "pay":
             if self._validate_farmers_signature(jsxobj):
                 jsxobj.next_action = "deploy"
+                self._add_to_actionable_reservations(jsxobj)
 
         if jsxobj.next_action == "deploy":
             # Temporary change to simplify reservation flow for testing
@@ -243,10 +251,19 @@ class workload_manager(j.baseclasses.threebot_actor):
             # request = jsxobj.data_reservation.signing_request_delete
             # if self._request_check(payload, request, signatures):
             #     jsxobj.next_action = "delete"
+            #     self._add_to_actionable_reservations(jsxobj)
             pass
 
         jsxobj.save()
         return jsxobj
+
+    def _add_to_actionable_reservations(self, reservation):
+        reservation_actionable = self.reservation_actionable_model.new(reservation_id=reservation.id)
+        reservation_actionable.save()
+
+    def _remove_from_actionable_reservations(self, reservation):
+        reservation_actionable = self.reservation_actionable_model.find(reservation_id=reservation.id)
+        reservation_actionable.delete()
 
     def _filter_reservations(self, node_id, states, cursor):
         query = None
@@ -372,7 +389,14 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
         """
         output = schema_out.new()
-        reservations = self._filter_reservations(node_id, ["deploy", "delete"], cursor)
+        reservations_subset = self._filter_reservations(node_id, ["deploy", "delete"], cursor)
+
+        reservations_actionable = self.reservation_actionable_model.find()
+        reservations_actionable = [self.reservation_model.get(rid) for rid in reservations_actionable]
+
+        reservations = set(reservations_subset)
+        reservations.update(reservations_actionable)
+
         for reservation in reservations:
             for _type, workload in iterate_over_workloads(reservation):
                 if node_id:
@@ -559,6 +583,7 @@ class workload_manager(j.baseclasses.threebot_actor):
                 r.state = "deleted"
 
         reservation.save()
+        self._remove_from_actionable_reservations(reservation)
         return True
 
 
