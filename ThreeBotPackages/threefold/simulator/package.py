@@ -13,6 +13,8 @@ class Package(j.baseclasses.threebot_package):
         Open voila directly through /simulator/threefold/show/
         :return:
         """
+        j.tools.tfsimulation.simulation_get()
+
         j.tools.tfsimulation.start(
             voila=False, background=True, base_url="/simulator/threefold/notebook/", ip="127.0.0.1"
         )
