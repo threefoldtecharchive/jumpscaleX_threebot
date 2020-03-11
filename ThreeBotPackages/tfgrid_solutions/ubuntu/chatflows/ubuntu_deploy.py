@@ -1,34 +1,80 @@
 from Jumpscale import j
+import netaddr
 
 
 def chat(bot):
     """
-    to call http://localhost:5050/chat/session/ubuntu_deploy
     """
 
+    user_info = bot.user_info()
+    name = user_info["username"]
+    email = user_info["email"]
+    ips = ["IPV6", "IPV4"]
     HUB_URL = "https://hub.grid.tf/tf-bootable"
     IMAGES = ["ubuntu:16.04", "ubuntu:18.04"]
 
-    email = bot.user_info().get("email")
+    explorer = j.clients.threebot.explorer
     if not email:
         raise j.exceptions.BadRequest("Email shouldn't be empty")
-    env_vars = bot.string_ask("Environment variables comma separated var1=value1, var=value2: ")
-    version = bot.single_choice("Version", IMAGES)
-    node_id = bot.string_ask("node_id: ")
 
-    # create a new reservation
+    version = bot.single_choice("Version", IMAGES)
+    env_vars = bot.string_ask("Environment variables comma separated var1=value1, var=value2: ")
     var_list = env_vars.split(",")
     var_dict = {}
     for item in var_list:
-        splitted_item = var_list.split("=")
+        splitted_item = item.split("=")
         if len(splitted_item) == 2:
             var_dict[splitted_item[0]] = splitted_item[1]
 
-    # Create and register new reservation with container information(credentials will be obtained from threebot.me)
-    reservation = j.tools.threebot.explorer.container_create(
-        flist=f"{version}.flist", hub_url=HUB_URL, environment=var_dict, entrypoint="/bin/bash"
+    # create new reservation
+    reservation = j.sal.zosv2.reservation_create()
+    identity = explorer.actors_all.phonebook.get(name=name, email=email)
+
+    ip = bot.single_choice("choose your ip version", ips)
+    node_selected = j.sal.chatflow.nodes_get(1, ip)[0]
+
+    reservation, config = j.sal.chatflow.network_configure(bot, reservation, [node_selected])
+    ip_address = config["ip_addresses"][0]
+
+    conatiner_flist = f"{HUB_URL}/{version}.flist"
+    storage_url = "zdb://hub.grid.tf:9900"
+
+    # create container
+    cont = j.sal.zosv2.container.create(
+        reservation=reservation,
+        node_id=node_selected.node_id,
+        network_name=config["name"],
+        ip_address=ip_address,
+        flist=conatiner_flist,
+        storage_url=storage_url,
+        env=var_dict,
+        interactive=True,
     )
 
-    res = f"Ubuntu has been deployed successfully: your reservation id is: {reservation.id} "
+    expiration = j.data.time.epoch + (3600 * 24 * 365)
+
+    resv_id = j.sal.zosv2.reservation_register(reservation, expiration)
+
+    res = f"# Ubuntu has been deployed successfully: your reservation id is: {resv_id} "
+
     bot.md_show(res)
-    bot.redirect("https://threefold.me")
+
+    filename = "{}_{}.conf".format(name, resv_id)
+
+    res = """
+            # use the next template to configure the wg-quick config of your laptop:
+            ### ```wg-quick up /etc/wireguard/{}```
+            Click next
+            to download your configuration
+            """.format(
+        filename
+    )
+    res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
+    bot.md_show(res)
+
+    res = j.tools.jinja2.template_render(text=config["wg"], **locals())
+    bot.download_file(res, filename)
+
+    res = "# Open your browser at ```{}:7681```".format(ip_address)
+    res = j.tools.jinja2.template_render(text=res, **locals())
+    bot.md_show(res)
