@@ -35,7 +35,8 @@ def chat(bot):
     selected_node = nodes_selected[0]
 
     # Create network of reservation and add peers
-    reservation, configs, rid = j.sal.chatflow.network_configure(bot, reservation, nodes_selected)
+    reservation, configs = j.sal.chatflow.network_configure(bot, reservation, nodes_selected)
+    rid = configs["rid"]
 
     ip_address = configs["ip_addresses"][0]
     wg_quick = configs["wg"]

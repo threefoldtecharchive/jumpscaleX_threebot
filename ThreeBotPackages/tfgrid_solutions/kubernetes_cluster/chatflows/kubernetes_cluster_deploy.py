@@ -31,7 +31,8 @@ def chat(bot):
     nodes_selected = j.sal.chatflow.nodes_get(workers_number + 1, ip_version)
 
     # Create network of reservation and add peers
-    reservation, configs, rid = j.sal.chatflow.network_configure(bot, reservation, nodes_selected)
+    reservation, configs = j.sal.chatflow.network_configure(bot, reservation, nodes_selected)
+    rid = configs["rid"]
 
     # Create master and workers
     # Master is in the first node from the selected nodes
