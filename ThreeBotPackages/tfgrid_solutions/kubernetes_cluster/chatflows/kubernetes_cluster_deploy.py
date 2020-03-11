@@ -1,46 +1,6 @@
 from Jumpscale import j
 import netaddr
 import ipaddress
-from nacl import public
-from nacl.signing import VerifyKey, SigningKey
-from nacl.encoding import Base64Encoder
-from nacl.public import SealedBox
-
-
-def is_up(node):
-    ago = j.data.time.epoch - (60 * 10)
-    return node.updated > ago
-
-
-def find_node_public(nodes, exclude):
-    # search a node that has a public ipv6 address
-    for node in filter(is_up, nodes):
-        if node.node_id in exclude:
-            continue
-        for iface in node.ifaces:
-            for addr in iface.addrs:
-                ip = ipaddress.ip_interface(addr).ip
-                if ip.version != 6:
-                    continue
-                if ip.is_global:
-                    return (node, str(ip))
-
-
-def find_free_wg_port(node):
-    ports = set(list(range(6000, 9000)))
-    used = set(node.wg_ports)
-    free = ports - used
-    return free.pop()
-
-
-def encrypt_password(password, public_key):
-    node_public_bin = j.data.hash.hex2bin(public_key)
-    node_public = VerifyKey(node_public_bin)
-    box = SealedBox(node_public.to_curve25519_public_key())
-
-    pasword_encrypted = box.encrypt(password.encode())
-    pasword_encrypted_hex = j.data.hash.bin2hex(pasword_encrypted)
-    return pasword_encrypted_hex
 
 
 def chat(bot):
