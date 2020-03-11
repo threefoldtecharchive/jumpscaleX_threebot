@@ -1,6 +1,7 @@
 import mimetypes
 
 from Jumpscale import j
+from Jumpscale.clients.peewee.peewee import OperationalError
 
 from . import auth
 from .rooter import app, abort, enable_cors, response, request
@@ -59,7 +60,10 @@ def model_route(handler):
         except j.exceptions.NotFound as ex:
             return abort(404, ex.message)
 
-        return handler(*args, **kwargs)
+        try:
+            return handler(*args, **kwargs)
+        except j.exceptions.Base as ex:
+            return abort(400, ex.message)
 
     return inner
 
@@ -109,8 +113,13 @@ def find(model):
     :return: data or corresponding error status
     :rtype: response
     """
+
+    try:
+        records = model.find(**request.query)
+    except OperationalError as ex:
+        return abort(400, f"some fields are not indexed, {ex}")
+
     response.headers["Content-Type"] = "application/json"
-    records = model.find(**request.query)
     return j.data.serializers.json.dumps([record._ddict for record in records])
 
 
@@ -133,6 +142,9 @@ def create(model):
 
     record = model.new(data=data)
     record.save()
+
+    if not record.id:
+        return abort(400, "could not create the record, please check your data")
 
     response.status = 201
     return j.data.serializers.json.dumps({"id": record.id})
@@ -191,7 +203,6 @@ def delete(record):
     :rtype: response
     """
     record.delete()
-
     # no content here
     response.status = 204
 
