@@ -1,0 +1,10 @@
+[source]
+name = "svelte"
+threebot = "default"
+version = "1.0.0"
+
+[[bcdbs]]
+name = "test"
+namespace = "test"
+type = "zdb"
+instance = "default"

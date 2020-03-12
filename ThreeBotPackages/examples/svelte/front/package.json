@@ -12,20 +12,22 @@
     "test": "run-p --race dev cy:run"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "compression": "^1.7.1",
     "polka": "next",
     "sirv": "^0.4.0"
   },
   "devDependencies": {
-    "plotly.js-dist": "*",
     "@babel/core": "^7.0.0",
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/runtime": "^7.0.0",
     "@rollup/plugin-commonjs": "^11.0.0",
+    "@rollup/plugin-json": "^4.0.2",
     "@rollup/plugin-node-resolve": "^7.0.0",
     "@rollup/plugin-replace": "^2.2.0",
+    "plotly.js-dist": "*",
     "rollup": "^1.20.0",
     "rollup-plugin-babel": "^4.0.2",
     "rollup-plugin-svelte": "^5.0.1",

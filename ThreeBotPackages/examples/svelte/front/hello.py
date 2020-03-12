@@ -4,9 +4,10 @@ from itertools import chain
 
 # b=BaseClassesLib()
 # idea is to see if we can get our basic basesclasses to work
-# will do some fancy work for seeing changes and sending it back to server over websockets
+# will do some fancy work for seeing changes and sending it back to server over websocket
 
 # class SolarSystem(b.object):
+
 class SolarSystem(object):
     planets = [
         list(chain(planet, (index + 1,)))
@@ -86,3 +87,64 @@ class Person:
 
     def onerror(self, e):
         console.log(e)
+
+class Company:
+    def success(self, data):
+        console.log(data)
+
+    def fail(self, err):
+        console.log(err)
+
+    def add_company(self, data):
+        axios.post('http://172.17.0.2/jumpscale/svelte/model/jumpscale.svelte.company.1', data).then(self.success).catch(self.fail);
+
+    def delete_company(self, id):
+        jq.ajax({
+            'url': '/jumoscale/svelte/model/threebot.examples.person.1/' + id,
+            'type': 'DELETE',
+            'dataType': 'json',
+            'contentType': 'application/json',
+            'success': self.success,
+            'fail': self.fail
+        })
+
+    def list_companies(self, name=None):
+        if name is None:
+            jq.ajax({
+                'url': '/jumpscale/svelte/model/threebot.examples.person.1',
+                'type': 'GET',
+                'dataType': 'json',
+                'contentType': 'application/json',
+                'success': self.success,
+                'fail': self.fail
+            })
+        else:
+            jq.ajax({
+                'url': '/threebot/svelte/model/threebot.examples.person.1?name=' +name,
+                'type': 'GET',
+                'dataType': 'json',
+                'contentType': 'application/json',
+                'success': self.success,
+                'fail': self.fail
+            })
+
+    def update_company(self, data):
+        jq.ajax({
+            'url': '/threebot/svelte/model/threebot.examples.person.1/' + id,
+            'type': 'POST',
+            'data': JSON.stringify(data),
+            'dataType': 'json',
+            'contentType': 'application/json',
+            'success': self.success,
+            'fail': self.fail
+        })
+
+    def delete_company(self, id):
+        jq.ajax({
+            'url': '/threebot/svelte/model/threebot.examples.person.1/' + id,
+            'type': 'DELETE',
+            'dataType': 'json',
+            'contentType': 'application/json',
+            'success': self.success,
+            'fail': self.fail
+        })

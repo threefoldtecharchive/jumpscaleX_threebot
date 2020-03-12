@@ -58,7 +58,7 @@
 		     the blog data when we hover over the link or tap it on a touchscreen -->
 		<li><a rel=prefetch aria-current='{segment === "blog" ? "page" : undefined}' href='blog'>blog</a></li>
 
-		<li><a aria-current='{segment === undefined ? "page" : undefined}' href='form'>form</a></li>
+		<li><a aria-current='{segment === undefined ? "page" : undefined}' href='websocket'>Websockets</a></li>
 		<li><a aria-current='{segment === undefined ? "page" : undefined}' href='plotly'>plotly</a></li>
 	</ul>
 </nav>

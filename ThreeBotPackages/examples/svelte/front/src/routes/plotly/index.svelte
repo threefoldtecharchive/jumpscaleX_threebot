@@ -2,9 +2,13 @@
   <title>Plotly</title>
   <meta name="description" content="">
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 </svelte:head>
 
 <script>
+
+  import CompanyForm from "../../components/CompanyForm.svelte";
+
 
   import { onMount } from 'svelte';
 
@@ -33,3 +37,5 @@
 </div>
 
 <div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
+
+<CompanyForm />
