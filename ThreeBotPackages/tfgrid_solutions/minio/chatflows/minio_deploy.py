@@ -35,7 +35,7 @@ def chat(bot):
     selected_node = nodes_selected[0]
 
     # Create network of reservation and add peers
-    reservation, configs = j.sal.chatflow.network_configure(bot, reservation, nodes_selected)
+    reservation, configs = j.sal.chatflow.network_configure(bot, reservation, nodes_selected, customer_tid=identity.id)
     rid = configs["rid"]
 
     ip_address = configs["ip_addresses"][0]
@@ -54,7 +54,7 @@ def chat(bot):
 
     # register the reservation for zdb db
     expiration = j.data.time.epoch + (3600 * 24 * 365)
-    zdb_rid = j.sal.zosv2.reservation_register(reservation, expiration)
+    zdb_rid = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
     res = f"# Database has been deployed with reservation id: {zdb_rid}"
 
     reservation_result = explorer.actors_all.workload_manager.reservation_get(zdb_rid).results
@@ -91,7 +91,7 @@ def chat(bot):
     )
 
     expiration = j.data.time.epoch + (3600 * 24 * 365)
-    resv_id = j.sal.zosv2.reservation_register(reservation, expiration)
+    resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = f"# Minio has been deployed successfully: your reservation id is: {resv_id} "
 
