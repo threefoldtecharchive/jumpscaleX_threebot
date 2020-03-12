@@ -38,9 +38,13 @@ def chat(bot):
         hash_restore = nacl.hash.blake2b(password.encode(), key=identity_pubkey.encode()).decode()
 
     # ask user about corex user:password and ssh-key to give him full access to his container
-    pub_key = bot.string_ask("Please add your public ssh-key ")
-    user_corex = bot.string_ask("username of your coreX")
-    password = bot.secret_ask("password of your coreX")
+    pub_key = bot.string_ask(
+        "Please add your public ssh-key (that will allow you to access the deployed container using ssh) "
+    )
+    user_corex = bot.string_ask(
+        "username of your coreX (that will allow you to be secure when access from web browser)"
+    )
+    password = bot.secret_ask("password of your coreX (that will allow you to be secure when access from web browser)")
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
