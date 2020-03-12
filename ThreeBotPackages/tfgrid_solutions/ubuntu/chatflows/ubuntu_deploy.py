@@ -18,7 +18,9 @@ def chat(bot):
         raise j.exceptions.BadRequest("Email shouldn't be empty")
 
     version = bot.single_choice("Version", IMAGES)
-    env_vars = bot.string_ask("Environment variables comma separated var1=value1, var=value2: ")
+    env_vars = bot.string_ask(
+        "Environment variables (optional. Comma-seperated env variables on container startup. For example: var1=value1, var=value2)"
+    )
     var_list = env_vars.split(",")
     var_dict = {}
     for item in var_list:
