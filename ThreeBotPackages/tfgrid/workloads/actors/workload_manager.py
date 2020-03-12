@@ -1,4 +1,5 @@
 import binascii
+
 from Jumpscale import j
 
 INT_NULL_VALUE = 2147483647
@@ -65,12 +66,8 @@ class workload_manager(j.baseclasses.threebot_actor):
         workloads_package = j.tools.threebot_packages.tfgrid__workloads
         phonebook_package = j.tools.threebot_packages.tfgrid__phonebook
         directory_package = j.tools.threebot_packages.tfgrid__directory
-        self.reservation_model = workloads_package.bcdb.model_get(
-            url="tfgrid.workloads.reservation.1"
-        )
-        self.signature_model = workloads_package.bcdb.model_get(
-            url="tfgrid.workloads.reservation.signing.signature.1"
-        )
+        self.reservation_model = workloads_package.bcdb.model_get(url="tfgrid.workloads.reservation.1")
+        self.signature_model = workloads_package.bcdb.model_get(url="tfgrid.workloads.reservation.signing.signature.1")
         self.workload_schema = j.data.schema.get_from_url("tfgrid.workloads.reservation.workload.1")
         self.user_model = phonebook_package.bcdb.model_get(url="tfgrid.phonebook.user.1")
         self.node_model = directory_package.bcdb.model_get(url="tfgrid.directory.node.2")
@@ -263,7 +260,8 @@ class workload_manager(j.baseclasses.threebot_actor):
 
     def _remove_from_actionable_reservations(self, reservation):
         reservation_actionable = self.reservation_actionable_model.find(reservation_id=reservation.id)
-        reservation_actionable.delete()
+        if reservation_actionable:
+            reservation_actionable[0].delete()
 
     def _filter_reservations(self, node_id, states, cursor):
         query = None
@@ -392,7 +390,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservations_subset = self._filter_reservations(node_id, ["deploy", "delete"], cursor)
 
         reservations_actionable = self.reservation_actionable_model.find()
-        reservations_actionable = [self.reservation_model.get(rid) for rid in reservations_actionable]
+        reservations_actionable = [self.reservation_model.get(r.reservation_id) for r in reservations_actionable]
 
         reservations = set(reservations_subset)
         reservations.update(reservations_actionable)
@@ -493,6 +491,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         # reservation.save()
         reservation = self._reservation_get(reservation_id)
         reservation.next_action = "delete"
+        self._add_to_actionable_reservations(reservation)
         reservation.save()
         return True
 
@@ -575,15 +574,22 @@ class workload_manager(j.baseclasses.threebot_actor):
         workload_id = (S)
         ```
         """
+        all_deleted = True
         rid, wid = rid_from_gwid(workload_id)
-
         reservation = self._reservation_get(rid)
-        for i, r in enumerate(reservation.results):
+
+        for r in reservation.results:
             if int(r.workload_id) == wid:
                 r.state = "deleted"
 
+            if r.state != "deleted":
+                all_deleted = False
+
+        if all_deleted:
+            reservation.next_action = "deleted"
+            self._remove_from_actionable_reservations(reservation)
+
         reservation.save()
-        self._remove_from_actionable_reservations(reservation)
         return True
 
 
