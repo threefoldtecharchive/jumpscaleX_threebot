@@ -1,11 +1,14 @@
+import mimetypes
+import traceback
+
 from bottle import Bottle, abort, post, request, response, run, redirect, static_file
+
 from Jumpscale import j
 from Jumpscale.tools.threegit.Doc import Doc
 from Jumpscale.tools.threegit.DocSite import DocSite
 from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
-from .rooter import env, app, get_ws_url
-import mimetypes
-import traceback
+
+from .rooter import env, app, get_ws_url, package_route
 
 
 def get_metadata(docsite):
@@ -17,22 +20,15 @@ def get_metadata(docsite):
         return "{}"
 
 
-@app.route("/wiki")
-@app.route("/<threebot_name>/<package_name>/wiki", method=["get"])
-def wiki_list(threebot_name=None, package_name=None):
-    if threebot_name and package_name:
-        try:
-            package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-        except j.exceptions.NotFound:
-            print(f"couldn't load wikis for {threebot_name}.{package_name}")
-            abort(404)
-        wiki_names = package.wiki_names
-    else:
-        wiki_names = [w.name for w in j.tools.threegit.find()]
+@app.get("/wiki")
+def list_all_wikis():
+    return env.get_template("wiki/home.html").render(wiki_names=[w.name for w in j.tools.threegit.find()])
 
-    return env.get_template("wiki/home.html").render(
-        wiki_names=wiki_names, threebot_name=threebot_name, package_name=package_name
-    )
+
+@app.get("/<threebot_name>/<package_name>/wiki")
+@package_route
+def list_package_wikis(package):
+    return env.get_template("wiki/home.html").render(wiki_names=package.wiki_names)
 
 
 @app.route("/wiki/<wiki_name>", method=["get"])
