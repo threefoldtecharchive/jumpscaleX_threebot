@@ -31,7 +31,7 @@ def chat(bot):
     nodes_selected = j.sal.chatflow.nodes_get(workers_number + 1, ip_version)
 
     # Create network of reservation and add peers
-    reservation, configs = j.sal.chatflow.network_configure(bot, reservation, nodes_selected)
+    reservation, configs = j.sal.chatflow.network_configure(bot, reservation, nodes_selected, customer_tid=identity.id)
     rid = configs["rid"]
 
     # Create master and workers
@@ -61,7 +61,7 @@ def chat(bot):
 
     # register the reservation
     expiration = j.data.time.epoch + (3600 * 24 * 365)
-    resv_id = j.sal.zosv2.reservation_register(reservation, expiration)
+    resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = f"# Kubernetes cluster has been deployed successfully: your reservation id is: {resv_id} Click next to proceed the wireguard configurations that need to be setup on your machine"
 
