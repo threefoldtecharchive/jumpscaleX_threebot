@@ -17,14 +17,18 @@ def chat(bot):
         raise j.exceptions.BadRequest("Email shouldn't be empty")
 
     form = bot.new_form()
-    flist = form.string_ask("Please add link of your flist to deploy it example: https://hub.grid.tf/usr/example.flist")
-    pub_key = form.string_ask(
-        "Please add your public ssh-key (That help you to access the container after deploy using SSH) "
+    flist = form.string_ask(
+        "Please add link of your flist to deploy it for example: https://hub.grid.tf/usr/example.flist"
     )
-    env_vars = form.string_ask("Environment variables comma separated var1=value1, var=value2: ")
+    pub_key = form.string_ask(
+        "Please add your public ssh-key (that will allow you to access the deployed container using ssh)"
+    )
+    env_vars = form.string_ask(
+        "Environment variables (optional. Comma-seperated env variables on container startup. For example: var1=value1, var=value2)"
+    )
     form.ask()
 
-    inetractive = bot.single_choice("You want to use this container using Web browser or not ?", ["YES", "NO"])
+    inetractive = bot.single_choice("DO you want to use this container using web browser or not ?", ["YES", "NO"])
 
     env.update({"pub_key": pub_key.value})
     if env_vars.value:
@@ -41,7 +45,7 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
     identity = explorer.actors_all.phonebook.get(name=name, email=email)
 
-    ip = bot.single_choice("choose your ip version", ips)
+    ip = bot.single_choice("choose your IP version", ips)
     node_selected = j.sal.chatflow.nodes_get(1, ip)[0]
 
     reservation, config = j.sal.chatflow.network_configure(bot, reservation, [node_selected])
@@ -77,7 +81,7 @@ def chat(bot):
     filename = "{}_{}.conf".format(name, resv_id)
 
     res = """
-            # use the next template to configure the wg-quick config of your laptop:
+            # Use the next template to configure the wg-quick config of your laptop:
             ### ```wg-quick up /etc/wireguard/{}```
             Click next
             to download your configuration
