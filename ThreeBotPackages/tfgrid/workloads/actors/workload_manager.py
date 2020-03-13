@@ -217,8 +217,10 @@ class workload_manager(j.baseclasses.threebot_actor):
             reservation.next_action = "invalid"
 
         if reservation.data_reservation.expiration_reservation < j.data.time.epoch:
+            # add to actionable workload if the state has changed
+            if reservation.next_action != "delete":
+                self._add_to_actionable_workload(reservation)
             reservation.next_action = "delete"
-            self._add_to_actionable_workload(reservation)
 
         if reservation.next_action == "create":
             if reservation.data_reservation.expiration_provisioning > j.data.time.epoch:
@@ -237,9 +239,11 @@ class workload_manager(j.baseclasses.threebot_actor):
                 reservation.next_action = "pay"
 
         if reservation.next_action == "pay":
-            if self._validate_farmers_signature(reservation):
-                reservation.next_action = "deploy"
+            # if self._validate_farmers_signature(reservation):
+            # add to actionable workload if the state has changed
+            if reservation.next_action != "deploy":
                 self._add_to_actionable_workload(reservation)
+            reservation.next_action = "deploy"
 
         if reservation.next_action == "deploy":
             # Temporary change to simplify reservation flow for testing
@@ -254,10 +258,16 @@ class workload_manager(j.baseclasses.threebot_actor):
         return reservation
 
     def _add_to_actionable_workload(self, reservation):
-        for _, w in iterate_over_workloads(reservation):
-            ra = self.workload_actionable_model.new()
-            ra.workload_id = gwid(reservation.id, w.workload_id)
-            ra.save()
+        for t, w in iterate_over_workloads(reservation):
+            if t in ["container", "zdb", "volume", "kubernetes"]:
+                self.workload_actionable_model.new(
+                    workload_id=gwid(reservation.id, w.workload_id), node_id=w.node_id
+                ).save()
+            if t == "network":
+                for nr in workload.network_resources:
+                    self.workload_actionable_model.new(
+                        workload_id=gwid(reservation.id, w.workload_id), node_id=nr.node_id
+                    ).save()
 
     def _remove_actionable_workload(self, workload_id):
         ras = self.workload_actionable_model.find(workload_id=workload_id)
@@ -388,10 +398,10 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
         """
         output = schema_out.new()
-        reservations_subset = self._filter_reservations(node_id, ["deploy", "delete"], cursor)
+        reservations_subset = self._filter_reservations(node_id, ["deploy"], cursor)
 
         workloads_actionable = self.workload_actionable_model.find(node_id=node_id)
-        rids = [rid_from_gwid(w.id)[0] for w in workloads_actionable]
+        rids = [rid_from_gwid(w.workload_id)[0] for w in workloads_actionable]
         reservations_actionable = [self.reservation_model.get(rid) for rid in rids]
 
         reservations = set(reservations_subset)
@@ -564,6 +574,7 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         reservation.results.append(result)
         reservation.save()
+        self._remove_actionable_workload(global_workload_id)
         return True
 
     @j.baseclasses.actor_method
