@@ -32,10 +32,13 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
     identity = explorer.actors_all.phonebook.get(name=name, email=email)
 
-    ip = bot.single_choice("choose your ip version", ips)
-    node_selected = j.sal.chatflow.nodes_get(1, ip)[0]
+    ip_version = bot.single_choice("choose your ip version", ips)
+    node_selected = j.sal.chatflow.nodes_get(1, ip_version)[0]
 
-    reservation, config = j.sal.chatflow.network_configure(bot, reservation, [node_selected])
+    reservation, config = j.sal.chatflow.network_configure(
+        bot, reservation, [node_selected], customer_tid=identity.id, ip_version=ip_version
+    )
+
     ip_address = config["ip_addresses"][0]
 
     conatiner_flist = f"{HUB_URL}/{version}.flist"
@@ -55,7 +58,7 @@ def chat(bot):
 
     expiration = j.data.time.epoch + (3600 * 24 * 365)
 
-    resv_id = j.sal.zosv2.reservation_register(reservation, expiration)
+    resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = f"# Ubuntu has been deployed successfully: your reservation id is: {resv_id} "
 
