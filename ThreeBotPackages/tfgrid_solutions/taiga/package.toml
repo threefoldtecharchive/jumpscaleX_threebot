@@ -5,6 +5,7 @@ threebot = "tfgrid"
 version = "1.0.0"
 
 [[bcdbs]]
-namespace = "tfgrid_solutions"
+name = "tfgrid_taiga"
+namespace = "tfgrid_taiga"
 type = "zdb"
 instance = "default"
