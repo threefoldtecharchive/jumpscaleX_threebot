@@ -1,9 +1,5 @@
-from Jumpscale import j
-
-# get gdrive client so google api dependency is installed
-cl = j.clients.gdrive.get("gdrive_macro_client", credfile=j.core.tools.text_replace("{DIR_BASE}/var/cred.json"))
-
 from googleapiclient.errors import HttpError as GoogleApiHTTPError
+from Jumpscale import j
 
 
 STATIC_DIR = j.core.tools.text_replace("{DIR_BASE}/var/gdrive/static")
@@ -38,17 +34,13 @@ class wiki_gdrive_manager(j.baseclasses.threebot_actor):
             out.error_message = f"invalid document type of '{doctype}', allowed types are {allowed_types}."
             return out
 
-        if not j.sal.fs.exists(cl.credfile):
-            out.error_code = 400
-            out.error_message = "service credential file is not found"
-            return out
-
         service_name = doctypes_map[doctype]
         try:
             parent_dir = j.sal.fs.joinPaths(STATIC_DIR, doctype)
             if not j.sal.fs.exists(parent_dir):
                 j.sal.fs.createDir(parent_dir)
 
+            cl = j.clients.gdrive.get("main")
             if doctype in ["document", "spreadsheets", "presentation"]:
                 path = j.sal.fs.joinPaths(parent_dir, "{}.pdf".format(guid1))
                 cl.exportFile(guid1, destpath=path, service_name=service_name, service_version="v3")

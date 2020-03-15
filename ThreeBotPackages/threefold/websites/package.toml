@@ -1,0 +1,11 @@
+[source]
+name = "tf_websites"
+description = "Umbrella package for threefold websites"
+threebot = "threefold"
+version = "1.0.0"
+
+
+[[bcdbs]]
+namespace = "threefold"
+type = "zdb"
+instance = "default"

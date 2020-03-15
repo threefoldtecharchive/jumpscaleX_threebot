@@ -50,6 +50,7 @@ class farms(j.baseclasses.threebot_actor):
         farm_id = (I)
         ```
         """
+        farm.id = None  # ensure we don't update
         self._validate_farm(farm)
         self._check_existing(farm)
         farm = self.farm_model.new(farm).save()

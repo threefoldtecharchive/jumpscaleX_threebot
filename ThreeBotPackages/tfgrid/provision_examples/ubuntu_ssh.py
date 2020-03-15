@@ -2,9 +2,15 @@ from Jumpscale import j
 import ipaddress
 
 
+# consider a node up if it has received update during the last 10 minute
+def is_up(node):
+    ago = j.data.time.epoch - (60 * 10)
+    return node.updated > ago
+
+
 def find_node_public(nodes):
     # search a node that has a public ipv6 address
-    for node in nodes:
+    for node in filter(is_up, nodes):
         for iface in node.ifaces:
             for addr in iface.addrs:
                 ip = ipaddress.ip_interface(addr).ip
@@ -39,8 +45,8 @@ def deploy_ubuntu_container():
 
     reservation = reservation_model.new()
     reservation.customer_tid = me.tid
-    reservation.data_reservation.expiration_provisioning = j.data.time.epoch + (60 * 5)  # 5 minutes
-    reservation.data_reservation.expiration_reservation = j.data.time.epoch + (60 * 5)  # 5 minutes
+    reservation.data_reservation.expiration_provisioning = j.data.time.epoch + (60 * 10)  # 10 minutes
+    reservation.data_reservation.expiration_reservation = j.data.time.epoch + (60 * 10)  # 10 minutes
 
     # network
     network = reservation.data_reservation.networks.new()
@@ -62,12 +68,19 @@ def deploy_ubuntu_container():
     peer.iprange = "172.22.2.0/24"
     peer.allowed_iprange = ["100.64.22.2/32", "172.22.2.0/24"]
     # this is your wireguard public key from your laptop
-    peer.public_key = "VHrmA1licqbB5ysAOu/uIVyJfz4="
+    peer.public_key = "VHrmA1licqbB5y2UV2j/dMcqg3ymG0bAOu/uIVyJfz4="
+
+    # volume
+    volume = reservation.data_reservation.volumes.new()
+    volume.workload_id = 2
+    volume.size = 10
+    volume.type = "SSD"
+    volume.node_id = node.node_id
 
     # # container
     cont = reservation.data_reservation.containers.new()
     cont.node_id = node.node_id
-    cont.workload_id = 2
+    cont.workload_id = 3
     # This flist is a basic ubuntu flist that already have your ssh key authorized inside.
     # TODO: add link to flist manipulation tool
     cont.flist = "https://hub.grid.tf/zaibon/zaibon-ubuntu-ssh-0.0.2.flist"
@@ -80,14 +93,20 @@ def deploy_ubuntu_container():
     net.network_id = network.name
     net.ipaddress = "172.22.1.10"
 
+    vol = cont.volumes.new()
+    # here we reference the volume created in the same reservation
+    vol.workload_id = 3
+    vol.volume_id = f"-{volume.workload_id}"
+    vol.mountpoint = "/data"
+
     print(reservation.data_reservation._json)
 
     reservation.json = reservation.data_reservation._json
     reservation.customer_signature = me.nacl.sign_hex(reservation.json.encode())
 
     print("sending reservation")
-    # resp = explorer.actors_all.workload_manager.reservation_register(reservation)
-    # print("reservation sent. ID: %s" % resp.id)
+    resp = explorer.actors_all.workload_manager.reservation_register(reservation)
+    print("reservation sent. ID: %s" % resp.id)
     print("use this template to configure the wg-quick config of your laptop:")
     print(
         f"""
@@ -102,3 +121,7 @@ def deploy_ubuntu_container():
         PersistentKeepalive = 25
         """
     )
+
+
+if __name__ == "__main__":
+    deploy_ubuntu_container()

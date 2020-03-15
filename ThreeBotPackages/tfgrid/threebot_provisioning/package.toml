@@ -5,7 +5,7 @@ description = "allow anyone to deploy threebots on TFGRID installed on TFGRID ex
 threebot = "tfgrid"
 version = "1.0.0"
 
-[[bcdbs]]
-namespace = "tfgrid"
-type = "zdb"
-instance = "default"
+#[[bcdbs]]
+#namespace = "tfgrid_provisioning"
+#type = "zdb"
+#instance = "default"

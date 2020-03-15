@@ -1,10 +1,10 @@
 [source]
 name = "directory"
-description = "TBD"
 threebot = "tfgrid"
 version = "1.0.0"
 
 [[bcdbs]]
-namespace = "tfgrid"
+name = "tfgrid_directory"
+namespace = "tfgrid_directory"
 type = "zdb"
 instance = "default"

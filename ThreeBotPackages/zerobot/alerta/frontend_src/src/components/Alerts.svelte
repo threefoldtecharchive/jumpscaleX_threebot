@@ -1,34 +1,24 @@
 <script>
-  import { deleteAlert } from "../routes/data";
   import AlertModal from "./AlertModal.svelte";
   import { ansiUp } from "../routes/common";
+  import Confirm from "./Confirm.svelte";
+  import { createEventDispatcher } from "svelte";
 
   export let alerts;
   $: alerts;
-  const severity = {
-    CRITICAL: "CRITICAL",
-    ERROR: "ERROR",
-    WARNING: "WARNING",
-    STDOUT: "STDOUT",
-    DEBUG: "DEBUG"
+  export const levels = {
+    50: "CRITICAL",
+    40: "ERROR",
+    30: "WARNING",
+    20: "INFO",
+    15: "STDOUT",
+    10: "DEBUG"
   };
-  function onDeleteAlert(alertId) {
-    //Call gedis actor
-    deleteAlert(alertId)
-      .then(resp => {
-        let toBeDeletedArrayIndex = getIndexOfAlert(alertId);
-        alerts.splice(toBeDeletedArrayIndex, 1);
-        alerts = [...alerts];
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
 
-  function getIndexOfAlert(alertId) {
-    for (let i = 0; i < alerts.length; i++) {
-      if (alerts[i].id == alertId) return i;
-    }
+  const dispatch = createEventDispatcher();
+
+  function dispatchDelete(identifier) {
+    dispatch("delete", { identifier: identifier });
   }
 </script>
 
@@ -42,17 +32,15 @@
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col">Severity</th>
+            <th scope="col">Type</th>
             <th scope="col">Status</th>
-            <th scope="col">Time</th>
+            <th scope="col">Level</th>
             <th scope="col">Count</th>
-            <th scope="col">Environment</th>
-            <th scope="col">Service</th>
-            <th scope="col">Resource</th>
-            <th scope="col">Event</th>
-            <th scope="col">Message Type</th>
-            <th scope="col">Text</th>
-            <!-- <th scope="col">Text</th> -->
+            <th scope="col">Category</th>
+            <th scope="col">First time</th>
+            <th scope="col">Last time</th>
+            <th scope="col">Message</th>
+            <th scope="col">Message (Public)</th>
             <th scope="col" class="text-center">Action</th>
           </tr>
         </thead>
@@ -60,70 +48,95 @@
         <tbody>
 
           <!-- content here -->
-          {#each alerts as myAlert}
+          {#each alerts as myAlert, i}
             <tr>
               <th scope="row">
-                <a href="/zerobot/alerta_ui/alert/{myAlert.id}">{myAlert.id}</a>
+                <a href="/zerobot/alerta/alert/{myAlert.identifier}">{i + 1}</a>
               </th>
-              {#if myAlert.severity == severity.CRITICAL}
+              <td>{myAlert.alert_type}</td>
+              <td>{myAlert.status}</td>
+              {#if myAlert.level == 50}
                 <td>
-                  <span class="badge badge-danger">{myAlert.severity}</span>
+                  <span class="badge badge-dark">{levels[myAlert.level]}</span>
                 </td>
-              {:else if myAlert.severity == severity.ERROR}
+              {:else if myAlert.level == 40}
                 <td>
-                  <span class="badge badge-info">{myAlert.severity}</span>
+                  <span class="badge badge-danger">
+                    {levels[myAlert.level]}
+                  </span>
                 </td>
-              {:else if myAlert.severity == severity.WARNING}
+              {:else if myAlert.level == 30}
                 <td>
-                  <span class="badge badge-warning">{myAlert.severity}</span>
+                  <span class="badge badge-warning">
+                    {levels[myAlert.level]}
+                  </span>
                 </td>
-              {:else if myAlert.severity == severity.STDOUT}
+              {:else if myAlert.level == 20}
                 <td>
-                  <span class="badge badge-secondary">{myAlert.severity}</span>
+                  <span class="badge badge-info">{levels[myAlert.level]}</span>
+                </td>
+              {:else if myAlert.level == 15}
+                <td>
+                  <span class="badge badge-light">{levels[myAlert.level]}</span>
+                </td>
+              {:else if myAlert.level == 10}
+                <td>
+                  <span class="badge badge-sucess">
+                    {levels[myAlert.level]}
+                  </span>
                 </td>
               {:else}
                 <td>
-                  <span class="badge badge-primary">{myAlert.severity}</span>
+                  <span class="badge badge-primary">
+                    {levels[myAlert.level]}
+                  </span>
                 </td>
               {/if}
-              <td>{myAlert.status}</td>
-              <td>{myAlert.time}</td>
               <td>{myAlert.count}</td>
-              <td>{myAlert.environment}</td>
-              <td>{myAlert.service}</td>
-              <td>{myAlert.resource}</td>
-              <td>{myAlert.event}</td>
-              <td>{myAlert.messageType}</td>
+              <td>{myAlert.cat}</td>
+              <td>{myAlert.time_first}</td>
+              <td>{myAlert.time_last}</td>
               <td>
-                {@html ansiUp.ansi_to_html(myAlert.text)}
+                {@html ansiUp.ansi_to_html(myAlert.message)}
               </td>
+              <td>{myAlert.message_pub}</td>
               <td>
                 <!--[Actions]-->
                 <div class="d-flex d-flex justify-content-center">
                   <!--[Delete-Alert-BTN]-->
-                  <div class="mr-1">
-                    <button
-                      type="button"
-                      class="btn btn-primary pointer"
-                      on:click={() => onDeleteAlert(myAlert.id)}>
-                      Delete
-                    </button>
-                  </div>
+                  <div class="mr-1" />
                   <!--[Details-Alert-BTN]-->
                   <div>
                     <button
                       type="button"
                       class="btn btn-warning pointer"
                       data-toggle="modal"
-                      data-target="#modal{myAlert.id}">
+                      data-target="#modal{myAlert.identifier}">
                       Details
                     </button>
+                    <Confirm
+                      let:confirm={confirmThis}
+                      confirmTitle="Delete"
+                      cancelTitle="Cancel">
+                      <span slot="title">Delete alert</span>
+                      <span slot="description">
+                        Alert of {myAlert.identifier} will be completely
+                        removed?
+                      </span>
+
+                      <button
+                        type="button"
+                        class="btn btn-primary pointer"
+                        on:click={() => confirmThis(dispatchDelete, myAlert.identifier)}>
+                        Delete
+                      </button>
+                    </Confirm>
                   </div>
                 </div>
               </td>
               <!--[Modal]-->
               <div>
-                <AlertModal {myAlert} index={myAlert.id} />
+                <AlertModal {myAlert} {levels} index={myAlert.identifier} />
               </div>
             </tr>
           {/each}

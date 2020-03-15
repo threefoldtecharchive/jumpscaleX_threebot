@@ -11,7 +11,7 @@ def gwid(reservation_id, workload_id):
 def rid_from_gwid(workload_id):
     ss = workload_id.split("-")
     if len(ss) != 2:
-        raise j.exceptions.Input("global workload id %s has wrong format")
+        raise j.exceptions.Input(f"global workload id {workload_id} has wrong format")
     return int(ss[0]), int(ss[1])
 
 
@@ -55,6 +55,9 @@ def iterate_over_workloads(obj):
     for _type in ["zdbs", "volumes", "containers", "networks"]:
         for workload in getattr(obj.data_reservation, _type):
             yield _type[:-1], workload
+    if hasattr(obj.data_reservation, "kubernetes"):
+        for workload in getattr(obj.data_reservation, "kubernetes"):
+            yield "kubernetes", workload
 
 
 class workload_manager(j.baseclasses.threebot_actor):
@@ -67,6 +70,8 @@ class workload_manager(j.baseclasses.threebot_actor):
         )
         self.workload_schema = j.data.schema.get_from_url("tfgrid.workloads.reservation.workload.1")
         self.user_model = j.threebot.packages.tfgrid.phonebook.bcdb.model_get(url="tfgrid.phonebook.user.1")
+        self.node_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.node.2")
+        self.farm_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.farm.1")
         self.nacl = j.data.nacl.default
 
         index_table = reservation_index_model()
@@ -76,10 +81,35 @@ class workload_manager(j.baseclasses.threebot_actor):
         self.reservation_model.IndexTable = index_table
         self.reservation_model.trigger_add(reservation_index_create())
 
-    def _iterate_over_workloads(self, obj):
-        for _type in ["zdbs", "volumes", "containers", "networks"]:
-            for workload in getattr(obj.data_reservation, _type):
-                yield _type[:-1], workload
+    def _farmer_tids_from_reservation(self, obj):
+        """
+        Extract a list of all farmer tids based on the node_id for each object in the reservation flow.
+        :param obj: reservation schema
+        """
+        # gather all nodes we deploy on
+        nodes = set()
+        for _typ, workload in iterate_over_workloads(obj):
+            if _typ == "network":
+                for nr in workload.network_resources:
+                    nodes.add(nr.node_id)
+            else:
+                nodes.add(workload.node_id)
+        # get all farms these nodes belong in
+        farm_ids = set()
+        for node_id in nodes:
+            # we already
+            node_list = self.node_model.find(node_id=node_id)
+            if len(node_list) == 0:
+                # node not found
+                continue
+            farm_ids.add(node_list[0].farm_id)
+        farmer_tids = []
+        # get respective farm ids
+        for farm_id in farm_ids:
+            farm = self.farm_model.get(farm_id, None)
+            farmer_tids.append(farm.threebot_id)
+
+        return farmer_tids
 
     def _validate_signature(self, payload, signature, key):
         """
@@ -137,9 +167,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         """
         Checks that all the farmers signed with a valid signature
         """
-        farmers_tids = set()
-        for _, workload in iterate_over_workloads(jsxobj):
-            farmers_tids.add(workload.farmer_tid)
+        farmers_tids = self._farmer_tids_from_reservation(jsxobj)
 
         for signature in jsxobj.signatures_farmer:
             if signature.tid not in farmers_tids:
@@ -201,9 +229,8 @@ class workload_manager(j.baseclasses.threebot_actor):
                 jsxobj.next_action = "pay"
 
         if jsxobj.next_action == "pay":
-            # Temporary change to simplify reservation flow for testing
-            # if self._validate_farmers_signature(jsxobj):
-            jsxobj.next_action = "deploy"
+            if self._validate_farmers_signature(jsxobj):
+                jsxobj.next_action = "deploy"
 
         if jsxobj.next_action == "deploy":
             # Temporary change to simplify reservation flow for testing
@@ -245,7 +272,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         wids = []
         for _type, w in workloads:
             wids.append(w.workload_id)
-            if _type in ["container", "zdb", "volume"] and not w.node_id:
+            if _type in ["container", "zdb", "volume", "kubernetes"] and not w.node_id:
                 raise j.exceptions.Value(f"workload {w.workload_id} has not a node_id set")
             elif _type == "network":
                 for r in w.network_resources:
@@ -284,6 +311,11 @@ class workload_manager(j.baseclasses.threebot_actor):
         reservation.next_action = "create"
         reservation.epoch = j.data.time.epoch
         reservation = self.reservation_model.new(reservation)
+        reservation.id = None
+        reservation.save()  # save to get an id
+
+        reservation = volumes_prepend_id(reservation)
+
         reservation.save()
         return reservation
 
@@ -339,7 +371,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         for reservation in reservations:
             for _type, workload in iterate_over_workloads(reservation):
                 if node_id:
-                    if _type in ["container", "zdb", "volume"] and workload.node_id != node_id:
+                    if _type in ["container", "zdb", "volume", "kubernetes"] and workload.node_id != node_id:
                         continue
                     if _type == "network" and node_id not in [
                         resource.node_id for resource in workload.network_resources
@@ -449,9 +481,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
         """
         reservation = self._reservation_get(reservation_id)
-        farmers_tids = set()
-        for _, workload in iterate_over_workloads(reservation):
-            farmers_tids.add(workload.farmer_tid)
+        farmers_tids = self._farmer_tids_from_reservation(reservation)
 
         if tid not in farmers_tids:
             raise j.exceptions.NotFound("Can not find a farmer with tid: {}".format(tid))
@@ -507,13 +537,33 @@ class workload_manager(j.baseclasses.threebot_actor):
         return True
 
     @j.baseclasses.actor_method
-    def workload_deleted(self, workload_id):
+    def workload_deleted(self, workload_id, user_session):
         """
         Mark a workload as deleted
-        this is called by a node once a workloads as been decomissioned
+        this is called by a node once a workloads as been decommissioned
 
         ```in
-        workload_id = (I)
+        workload_id = (S)
         ```
         """
-        pass
+        rid, wid = rid_from_gwid(workload_id)
+
+        reservation = self._reservation_get(rid)
+        for i, r in enumerate(reservation.results):
+            if int(r.workload_id) == wid:
+                r.state = "deleted"
+
+        reservation.save()
+        return True
+
+
+def volumes_prepend_id(reservation):
+    # look for container that reference volume from this reservation itself
+    # since the volume will be created after this, the user doesn't known
+    # the volume id just yet. So we prepend the reservation id to the workload id
+    # to have the full volume id
+    for container in reservation.data_reservation.containers:
+        for volume in container.volumes:
+            if volume.volume_id[0] == "-":
+                volume.volume_id = f"{reservation.id}{volume.volume_id}"
+    return reservation

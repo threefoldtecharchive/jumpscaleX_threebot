@@ -86,6 +86,17 @@ class ibiza_1_model(j.baseclasses.threebot_actor):
         assert user_session.admin  # for now only allow admin
         return self.model.find(query)
 
+    def find_paginated(self, query=None, limit=None, offset=None, schema_out=None, user_session=None):
+        """
+        ```in
+        query = (dict)
+        limit = 0
+        offset = 0
+        ```
+        """
+        assert user_session.admin  # for now only allow admin
+        return self.model.find(**query, limit=limit, offset=offset)
+
     @j.baseclasses.actor_method
     def delete(self, object_id=None, schema_out=None, user_session=None):
         """

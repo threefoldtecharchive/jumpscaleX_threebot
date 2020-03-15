@@ -17,14 +17,19 @@ def get_metadata(docsite):
         return "{}"
 
 
+@app.route("/wiki")
 @app.route("/<threebot_name>/<package_name>/wiki", method=["get"])
-def wiki_list(threebot_name, package_name):
-    try:
-        package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-    except j.exceptions.NotFound:
-        print(f"couldn't load wikis for {threebot_name}.{package_name}")
-        abort(404)
-    wiki_names = package.wiki_names
+def wiki_list(threebot_name=None, package_name=None):
+    if threebot_name and package_name:
+        try:
+            package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
+        except j.exceptions.NotFound:
+            print(f"couldn't load wikis for {threebot_name}.{package_name}")
+            abort(404)
+        wiki_names = package.wiki_names
+    else:
+        wiki_names = [w.name for w in j.tools.threegit.find()]
+
     return env.get_template("wiki/home.html").render(
         wiki_names=wiki_names, threebot_name=threebot_name, package_name=package_name
     )
@@ -32,7 +37,7 @@ def wiki_list(threebot_name, package_name):
 
 @app.route("/wiki/<wiki_name>", method=["get"])
 @app.route("/<threebot_name>/<package_name>/wiki/<wiki_name>", method=["get"])
-def wiki_by_name(wiki_name, threebot_name=None, package_name=None):
+def wiki_by_name(wiki_name=None, threebot_name=None, package_name=None):
     docsite_path = j.tools.threegit.get_docsite_path(wiki_name)
     if not j.sal.fs.exists(docsite_path):
         err = f"""
@@ -64,7 +69,21 @@ def gdrive_handler(doc_type, guid1, guid2=""):
 @app.route("/3git/wikis/<filepath:re:.+>")
 @enable_cors
 def threegit_handler(filepath):
-    return static_file(filepath, root=j.tools.threegit.docsites_path)
+    root = j.tools.threegit.docsites_path
+    # first remove md file extention and check if the file exist
+    if filepath.endswith(".md"):
+        filepath = filepath[:-3]
+
+    filename = j.sal.fs.joinPaths(root, filepath)
+    if j.sal.fs.exists(filename):
+        return static_file(filepath, root=root)
+
+    # if the file isn't found without md extension, try to get it with md
+    filepath_with_md = filename + ".md"
+    if j.sal.fs.exists(filepath_with_md):
+        return static_file(filepath + ".md", root=root)
+
+    return abort(404, f"File not found with path {filename} or {filepath_with_md}")
 
 
 # def get_document(docsite_name, relative_path):

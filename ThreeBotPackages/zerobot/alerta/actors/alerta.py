@@ -1,138 +1,111 @@
 from Jumpscale import j
 
 
-"""
-JSX> anew = j.clients.gedis(...., port=8901)
-JSX> anew.actors.alerta.list_alerts()
-... a very long list
-JSX> anew.actors.alerta.new_alert(
-   severity=10,
-   status="new",
-   environment="ALL",
-   service="JSX",
-   resource="xmonader",
-   event="event 1",
-   value="n/a",
-   messageType="error",
-   text="rafir text")
-## actors.default.alerta.new_alert.16c54214bfcd2a5b61f789be085a1d14
-res                 : True
-"""
-
-STATES = ["closed", "new", "open"]
-MESSAGE_TYPES = ["error", "info", "warn"]
-
-
 class alerta(j.baseclasses.threebot_actor):
-    def _init(self, **kwargs):
-        self.alert_model = j.tools.alerthandler.model
+    def with_formatted_traceback(self, alert):
+        """return a dict with formatted traceback for any given alert
+
+        :param alert: alert object
+        :type alert: jumpscale.alerts.alert
+        :return: dict with alert info
+        :rtype: dict
+        """
+        alert_dict = alert._ddict_hr
+        if not alert.tracebacks:
+            return alert_dict
+
+        # re-populate tracebacks with formatted lines
+        tbs = []
+        for tb in alert.tracebacks:
+            tb_dict = {}
+            tb_dict["process_id"] = tb.process_id
+            tb_dict["threebot_name"] = tb.threebot_name
+            tb_dict["formatted"] = j.tools.alerthandler.format_traceback(tb)
+            tbs.append(tb_dict)
+
+        alert_dict["tracebacks"] = tbs
+        return alert_dict
 
     @j.baseclasses.actor_method
-    def get_alert(self, alert_id, schema_out=None, user_session=None):
+    def get_alert(self, identifier, schema_out=None, user_session=None):
         """
         ```in
-        alert_id = (I)
+        identifier = (S)
         ```
-
         """
-        res = self.alert_model.find(id=alert_id)
+        res = j.tools.alerthandler.get(identifier)
         if res:
-            return j.data.serializers.json.dumps(res[0]._ddict)
+            alert_dict = self.with_formatted_traceback(res)
+            return j.data.serializers.json.dumps(alert_dict)
         return "{}"
+
+    def _get_hr_json_from_list(self, method, *args, **kwargs):
+        """get a human readable json from alerts list
+
+        :param method: method to get alerts by
+        :type method: function
+        :return: json formatted strings of alerts: <alerts list>
+        :rtype: str
+        """
+        alerts = []
+        for _, alert in method(*args, **kwargs):
+            alerts.append(self.with_formatted_traceback(alert))
+        return j.data.serializers.json.dumps({"alerts": alerts})
 
     @j.baseclasses.actor_method
     def list_alerts(self, schema_out=None, user_session=None):
-        alerts = j.data.serializers.json.dumps({"alerts": [alert._ddict for alert in self.alert_model.find()]})
-        return alerts
+        return self._get_hr_json_from_list(j.tools.alerthandler.list)
 
     @j.baseclasses.actor_method
-    def list_alerts_by_env(self, env_name="all", schema_out=None, user_session=None):
+    def list_alerts_by_category(self, cat="", schema_out=None, user_session=None):
         """
         ```in
-        env_name = (S)
+        cat = "" (S)
         ```
-
         """
-        if env_name.lower() == "all":
-            alerts = self.alert_model.find()
-        else:
-            alerts = self.alert_model.find(environment=env_name)
+        if not cat.strip():
+            return self.list_alerts()
+        return self._get_hr_json_from_list(j.tools.alerthandler.find, cat=cat)
 
-        def map_enums(a):
-            a["status"] = STATES[a["status"]]
-            a["messageType"] = MESSAGE_TYPES[a["messageType"]]
-            return a
+    @j.baseclasses.actor_method
+    def delete_alert(self, identifier, schema_out=None, user_session=None):
+        """
+        ```in
+        identifier = (S)
+        ```
+        """
+        j.tools.alerthandler.delete(identifier)
 
-        alerts = {"alerts": [map_enums(alert._ddict) for alert in alerts]}
-
-        print("ALERTS: ", alerts)
-        response = {"result": alerts, "error_code": "", "error_message": ""}
-        return j.data.serializers.json.dumps(response)
+    @j.baseclasses.actor_method
+    def delete_all_alerts(self, schema_out=None, user_session=None):
+        j.tools.alerthandler.delete_all()
 
     @j.baseclasses.actor_method
     def new_alert(
         self,
-        severity=10,
-        status="new",
-        time=None,
-        environment="all",
-        service="JSX",
-        resource="xmonader",
-        event="event 1",
-        value="n/a",
-        messageType="error",
-        text="error text",
+        alert_type="event_operator",
+        level=20,
+        message="",
+        message_pub="",
+        cat="",
         schema_out=None,
         user_session=None,
     ):
         """
         ```in
-        severity=0 (I)
-        status="closed,new,open" (E)
-        environment = "" (S)
-        service = "" (S)
-        resource = "" (S)
-        event = "" (S)
-        value = "" (S)
-        messageType = "error,info,warn" (E)
-        text = "" (S)
+        alert_type = "bug,question,event_system,event_monitor,event_operator" (E)
+        level = 20 (I)
+        message = ""
+        message_pub = ""                  #optional public message
+        cat = ""                          #a freely chosen category can be in dot notation e.g. performance.cpu.high
         ```
 
         ```out
         res = (B)
         ```
-
         """
-        alert = self.alert_model.new()
-        alert.severity = severity
-        alert.status = status
-        alert.time = time or j.data.time.epoch
-        alert.environment = environment
-        alert.service = service
-        alert.resource = resource
-        alert.event = event
-        alert.value = value
-        alert.messageType = messageType
-        alert.text = text
-
-        alert.save()
+        j.tools.alerthandler.alert_raise(message, message_pub, cat, level, alert_type)
 
         res = schema_out.new()
         res.res = True
         return res
-
-    @j.baseclasses.actor_method
-    def delete_all_alerts(self, schema_out=None, user_session=None):
-        self.alert_model.destroy()
-
-    @j.baseclasses.actor_method
-    def delete_alert(self, alert_id, schema_out=None, user_session=None):
-        """
-        ```in
-        alert_id = (I)
-        ```
-        """
-        try:
-            self.alert_model.delete(alert_id)
-        except:
-            pass

@@ -9,13 +9,26 @@ class package_manager(j.baseclasses.threebot_actor):
         j.data.schema.get_from_text(j.tools.threebot_packages._model.schema.text)
 
     @j.baseclasses.actor_method
-    def package_add(self, git_url=None, path=None, reload=True, install=True, schema_out=None, user_session=None):
+    def package_add(
+        self,
+        git_url=None,
+        path=None,
+        reload=True,
+        install=True,
+        start=True,
+        schema_out=None,
+        user_session=None,
+        install_kwargs=None,
+    ):
         """
         ```in
         git_url = ""
         path = ""
         reload = true (B)
         install = true (B)
+        start = true (B)
+        install_kwargs= (dict)
+
         ```
         can use a git_url or a path
         path needs to exist on the threebot server
@@ -23,7 +36,6 @@ class package_manager(j.baseclasses.threebot_actor):
         it will not update if its already there
 
         """
-
         user_session.admin_check()  # means will give error when not an admin user
 
         if git_url and path:
@@ -53,7 +65,6 @@ class package_manager(j.baseclasses.threebot_actor):
                 raise j.exceptions.Input("could not find :%s" % tomlpath)
 
         name = getfullname(p)
-
         package = None
         if git_url:
             package = j.tools.threebot_packages.get(name=name, giturl=git_url)
@@ -62,27 +73,19 @@ class package_manager(j.baseclasses.threebot_actor):
         else:
             raise j.exceptions.Input("need to have git_url or path to package")
 
-        g = j.threebot.packages.__dict__[package.source.threebot]
-        g.__dict__[package.source.name.replace(".", "__")] = package
+        j.threebot.servers.core._package_add(package)
+
         assert j.tools.threebot_packages.exists(name=package.name)
 
-        if install:
-            package = j.tools.threebot_packages.get(name)
-            package.install()
-            package.reload(reset=reload)
+        if install or reload:
+            package.install(install_kwargs=install_kwargs)
+        package.reload(reset=reload)
+        if not install:
+            package.status = "toinstall"
+        if start:
+            package.start()
 
         return "OK"
-
-    def _package_install(self, name, reload=False):
-        if reload or package.status not in ["installed"]:
-            package.install()
-            package.save()
-            package.start()
-            package.models
-            package.actors_reload()
-        # reload openresty configuration
-        package.openresty.reload()
-        return package
 
     @j.baseclasses.actor_method
     def package_delete(self, name, schema_out=None, user_session=None):
@@ -160,9 +163,10 @@ class package_manager(j.baseclasses.threebot_actor):
         package.enable()
 
     @j.baseclasses.actor_method
-    def packages_list(self, frontend=False, schema_out=None, user_session=None):
+    def packages_list(self, status="all", frontend=False, schema_out=None, user_session=None):
         """
         ```in
+        status = "all,init,config,toinstall,installed,tostart,disabled,error" (E)
         frontend = (B) false  # list only frontend packages
         ```
 
@@ -179,6 +183,10 @@ class package_manager(j.baseclasses.threebot_actor):
                     if not metadata["source"].get("frontend", False):
                         continue
                 else:
+                    continue
+
+            if status != "all":
+                if not package.status == status:
                     continue
 
             packages.append(package)

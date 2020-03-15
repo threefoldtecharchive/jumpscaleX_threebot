@@ -1,37 +1,86 @@
-## Welcome to GitHub Pages
+# Threebot Application Server
 
-You can use the [editor on GitHub](https://github.com/threefoldtech/jumpscaleX_threebot/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+Threebot is a pluggable application server based on [openresty](https://openresty.org/en/) and gevent servers and comes with lots of goodies by default.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+- [Wiki system](./docs/wikis/README.md)
+- [Chat](./ThreeBotPackages/zerobot/webinterface/wiki/chatbot/README.md)
+- [Multisite blog](./ThreeBotPackages/threebot/blog/wiki/README.md)
+- [Alerta](./ThreeBotPackages/zerobot/alerta/wiki/README.md)
+- [MyJobs Dashboard](./ThreeBotPackages/zerobot/myjobs_ui/wiki/README.md)
+- [Pastebin](./ThreeBotPackages/demo/pastebin/wiki/README.md)
+- [Package Manager](./ThreeBotPackages/zerobot/packagemanager/wiki/README.md)
+- [Webhooks](./ThreeBotPackages/zerobot/webhooks/wiki/README.md)
+- [BCDBFS](https://github.com/threefoldtech/jumpscaleX_core/blob/development/docs/BCDB/README.md)
+- [API Server](./ThreeBotPackages/zerobot/webinterface/wiki/README.md)
 
-### Markdown
+### Content:
+- [Installation](#installation)
+- [Starting the server](#starting-the-server)
+- [Applications and extensions](#applications-and-extensions)
+- [Core and example packages](#core-and-example-packages)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Installation
+Threebot is part of [JumpscaleX](https://github.com/threefoldtech/jumpscaleX_core). Make sure to follow the [installation instructions](https://github.com/threefoldtech/jumpscaleX_core/blob/development/docs/Installation/README.md)
 
-```markdown
-Syntax highlighted code block
+## Starting the server
+Using  `j.servers.threebot.start()`.
 
-# Header 1
-## Header 2
-### Header 3
+This will give you a ready shell in the same process where you can interact with your threebot:
 
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
 ```
+*****************************
+*** 3BOTSERVER IS RUNNING ***
+*****************************
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+*** file: /sandbox/lib/jumpscale/Jumpscale/servers/threebot/ThreebotServer.py
+*** function: start [linenr:295]
 
-### Jekyll Themes
+JSX>
+```
+The server starts with `base`, `webinterface`, `myjobs`, `oauth2`, `alerta` and `packagemanager` packages by default.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/threefoldtech/jumpscaleX_threebot/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+For a quick start, you can access myjobs
 
-### Support or Contact
+## Applications and extensions
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Threebot sever can be extended using packages, see documentation on packages [here](docs/packages.md).
+
+#### APIs
+
+APIs can be added as actors to your package, which are exposed directly and can be accessed via http or using our `gedis` clients for python or javascript, see [documentation](docs/actors.md).
+
+
+#### Openresty (nginx)
+
+We use openresty (nginx) for serving requests. Inside a package, you can define different types of locations to handle these requests, for more information, check [documentation](docs/locations.md).
+
+## Core and example packages
+
+Some core functionality are being added as a package:
+
+#### Webinterface package
+
+[Webinterface](https://github.com/threefoldtech/jumpscaleX_threebot/blob/c58b3db99095a8a9635c75ac7f82647947a9d110/ThreeBotPackages/threebot/webinterface) package is always registered when starting your threebot. It is responsible for
+
+- exposing http endpoints for actors, wikis and gdrive.
+- exposing websocket endpoints for actors
+- exposing bcdbfs endpoints
+
+#### Complete examples
+
+- Myjobs
+
+  - [backend](ThreeBotPackages/zerobot/myjobs/wiki/README.md)
+  - [frontend](ThreeBotPackages/zerobot/myjobs/frontend_src/README.md)
+
+- Alerta
+    - [backend](ThreeBotPackages/zerobot/alerta/wiki/README.md)
+    - [frontend](ThreeBotPackages/zerobot/alerta/frontend_src/README.md)
+
+- Pastebin
+  - [backend](ThreeBotPackages/demo/pastebin/wiki/README.md)
+  - [frontend](ThreeBotPackages/demo/pastebin/pastebin/README.md)
+
+- VueJS
+  - [backend](ThreeBotPackages/examples/vuejs/wiki/README.md)
+  - [frontend](ThreeBotPackages/examples/vuejs/newproject/README.md)
