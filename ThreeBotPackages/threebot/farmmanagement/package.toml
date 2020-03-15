@@ -3,6 +3,7 @@ name = "farmmanagement"
 description = "TBD"
 threebot = "threebot"
 version = "1.0.0"
+frontend = true
 
 [[bcdbs]]
 namespace = "threebot"

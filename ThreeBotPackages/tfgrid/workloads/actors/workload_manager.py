@@ -209,6 +209,11 @@ class workload_manager(j.baseclasses.threebot_actor):
         will return the updated jsxobj
         """
         payload = jsxobj.json
+
+        # make sure data in json is the same as reservation data
+        if jsxobj.data_reservation._ddict != j.data.serializers.json.loads(payload):
+            jsxobj.next_action = "invalid"
+
         if jsxobj.data_reservation.expiration_reservation < j.data.time.epoch:
             jsxobj.next_action = "delete"
 

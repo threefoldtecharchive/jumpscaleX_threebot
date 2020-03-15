@@ -11,14 +11,25 @@ class identity(j.baseclasses.threebot_actor):
         return j.tools.threebot.me.default.pubkey
 
     @j.baseclasses.actor_method
-    def name(self, schema_out=None, user_session=None):
+    def threebot_name(self, name="default", schema_out=None, user_session=None):
         """
+        ```in
+        name = "default"(S)
+        ```
+
         ```out
-        name  = ""
+        name  = "" (S)
+        tid = (I)
+        admins = (LS)
         ```
         """
+        identity = j.tools.threebot.me.get(name=name, needexist=True)
+        if identity.tid == 0:
+            raise j.exceptions.RuntimeError(f"Threebot me {name} has not been initialized yet")
 
         out = schema_out.new()
-        out.name = j.tools.threebot.me.default.tname
+        out.name = identity.tname
+        out.tid = identity.tid
+        out.admins = identity.admins
 
         return out

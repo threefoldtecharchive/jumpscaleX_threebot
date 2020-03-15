@@ -18,12 +18,20 @@ class Package(j.baseclasses.threebot_package):
             # default website locations include wiki related locations
             # so include them
             default_website_name = self.openresty.get_from_port(port).name
-            include_location.config = f"""
-            include {website.path_cfg_dir}/{default_website_name}_locations/*.conf;
+            include_location.config = """
+            include %s/%s_locations/*.conf;
 
-            location / {{
-                rewrite ^(.+) /tfgrid/directory/;
-            }}"""
+            location / {
+                if ($scheme = http) {
+                    rewrite ^ https://$host/tfgrid/directory/;
+                }
+                if ($scheme = https) {
+                    rewrite ^(.+) /tfgrid/directory/;
+                }
+            }""" % (
+                website.path_cfg_dir,
+                default_website_name,
+            )
 
             locations.configure()
             website.configure()
