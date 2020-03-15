@@ -11,9 +11,7 @@ class logs(j.baseclasses.threebot_actor):
         return j.data.serializers.json.dumps(apps)
 
     @j.baseclasses.actor_method
-    def count(
-        self, appname=None, all=False, schema_out=None, user_session=None,
-    ):
+    def count(self, appname=None, all=False, schema_out=None, user_session=None):
         """
         ```in
         appname = "" (S)
@@ -108,7 +106,7 @@ class logs(j.baseclasses.threebot_actor):
 
     @j.baseclasses.actor_method
     def dynamic_list(
-        self, appname=None, id_from=None, count=None, include_fslogs=False, schema_out=None, user_session=None,
+        self, appname=None, id_from=None, count=None, include_fslogs=False, schema_out=None, user_session=None
     ):
         """
         ```in
@@ -119,7 +117,7 @@ class logs(j.baseclasses.threebot_actor):
         ```
         """
         res = {}
-        logs = self.client.list(appname=appname, id_from=id_from, count=count, include_fslogs=include_fslogs,)
+        logs = self.client.list(appname=appname, id_from=id_from, count=count, include_fslogs=include_fslogs)
         res["data"] = logs[0]
         res["pos"] = id_from + count
         res["count"] = self.count(appname=appname, all=include_fslogs)

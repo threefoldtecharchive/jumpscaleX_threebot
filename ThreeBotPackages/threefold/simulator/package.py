@@ -6,7 +6,6 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-
     def prepare(self):
         j.servers.notebook.install()
 
@@ -39,7 +38,7 @@ class Package(j.baseclasses.threebot_package):
             jupyter_proxy_location.port_dest = 8888
             jupyter_proxy_location.path_dest = "/simulator/threefold/notebook/"
             jupyter_proxy_location.scheme = "http"
-            jupyter_proxy_location.is_auth=True
+            jupyter_proxy_location.is_auth = True
             # voila
             voila_proxy_location = locations.get_location_proxy("voila")
             voila_proxy_location.path_url = "/simulator/threefold/show/"
