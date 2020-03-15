@@ -1,4 +1,5 @@
 import binascii
+
 from Jumpscale import j
 
 INT_NULL_VALUE = 2147483647
@@ -62,16 +63,16 @@ def iterate_over_workloads(obj):
 
 class workload_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
-        self.reservation_model = j.threebot.packages.tfgrid.workloads.bcdb.model_get(
-            url="tfgrid.workloads.reservation.1"
-        )
-        self.signature_model = j.threebot.packages.tfgrid.workloads.bcdb.model_get(
-            url="tfgrid.workloads.reservation.signing.signature.1"
-        )
+        workloads_package = j.tools.threebot_packages.tfgrid__workloads
+        phonebook_package = j.tools.threebot_packages.tfgrid__phonebook
+        directory_package = j.tools.threebot_packages.tfgrid__directory
+        self.reservation_model = workloads_package.bcdb.model_get(url="tfgrid.workloads.reservation.1")
+        self.signature_model = workloads_package.bcdb.model_get(url="tfgrid.workloads.reservation.signing.signature.1")
         self.workload_schema = j.data.schema.get_from_url("tfgrid.workloads.reservation.workload.1")
-        self.user_model = j.threebot.packages.tfgrid.phonebook.bcdb.model_get(url="tfgrid.phonebook.user.1")
-        self.node_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.node.2")
-        self.farm_model = j.threebot.packages.tfgrid.directory.bcdb.model_get(url="tfgrid.directory.farm.1")
+        self.user_model = phonebook_package.bcdb.model_get(url="tfgrid.phonebook.user.1")
+        self.node_model = directory_package.bcdb.model_get(url="tfgrid.directory.node.2")
+        self.farm_model = directory_package.bcdb.model_get(url="tfgrid.directory.farm.1")
+        self.workload_actionable_model = workloads_package.bcdb.model_get(url="tfgrid.workload.actionable.1")
         self.nacl = j.data.nacl.default
 
         index_table = reservation_index_model()
@@ -79,6 +80,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         index_table.create_table(safe=True)
 
         self.reservation_model.IndexTable = index_table
+
         self.reservation_model.trigger_add(reservation_index_create())
 
     def _farmer_tids_from_reservation(self, obj):
@@ -195,7 +197,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         except j.exceptions.NotFound:
             raise j.exceptions.NotFound("reservation with id: (%s) not found" % reservation_id)
 
-    def _reservation_check(self, jsxobj):
+    def _reservation_check(self, reservation):
         """
         will do
             - check signature of the customer to see json ok (created by a valid customer)
@@ -206,42 +208,71 @@ class workload_manager(j.baseclasses.threebot_actor):
                 - if the delete requests done the 'next_action' -> delete
             - if something invalid e.g. signature of customer not ok then 'next_action' -> invalid
 
-        will return the updated jsxobj
+        will return the updated reservation
         """
-        payload = jsxobj.json
-        if jsxobj.data_reservation.expiration_reservation < j.data.time.epoch:
-            jsxobj.next_action = "delete"
+        payload = reservation.json
 
-        if jsxobj.next_action == "create":
-            if jsxobj.data_reservation.expiration_provisioning > j.data.time.epoch:
-                if jsxobj.customer_signature:
-                    if self._validate_customer_signature(jsxobj):
-                        jsxobj.next_action = "sign"
+        # make sure data in json is the same as reservation data
+        if reservation.data_reservation._ddict != j.data.serializers.json.loads(payload):
+            reservation.next_action = "invalid"
+
+        if reservation.data_reservation.expiration_reservation < j.data.time.epoch:
+            # add to actionable workload if the state has changed
+            if reservation.next_action != "delete":
+                self._add_to_actionable_workload(reservation)
+            reservation.next_action = "delete"
+
+        if reservation.next_action == "create":
+            if reservation.data_reservation.expiration_provisioning > j.data.time.epoch:
+                if reservation.customer_signature:
+                    if self._validate_customer_signature(reservation):
+                        reservation.next_action = "sign"
                     else:
-                        jsxobj.next_action = "invalid"
+                        reservation.next_action = "invalid"
             else:
-                jsxobj.next_action = "invalid"
+                reservation.next_action = "invalid"
 
-        if jsxobj.next_action == "sign":
-            signatures = jsxobj.signatures_provision
-            request = jsxobj.data_reservation.signing_request_provision
+        if reservation.next_action == "sign":
+            signatures = reservation.signatures_provision
+            request = reservation.data_reservation.signing_request_provision
             if self._request_check(payload, request, signatures):
-                jsxobj.next_action = "pay"
+                reservation.next_action = "pay"
 
-        if jsxobj.next_action == "pay":
-            if self._validate_farmers_signature(jsxobj):
-                jsxobj.next_action = "deploy"
+        if reservation.next_action == "pay":
+            # if self._validate_farmers_signature(reservation):
+            # add to actionable workload if the state has changed
+            if reservation.next_action != "deploy":
+                self._add_to_actionable_workload(reservation)
+            reservation.next_action = "deploy"
 
-        if jsxobj.next_action == "deploy":
+        if reservation.next_action == "deploy":
             # Temporary change to simplify reservation flow for testing
-            # signatures = jsxobj.signatures_delete
-            # request = jsxobj.data_reservation.signing_request_delete
+            # signatures = reservation.signatures_delete
+            # request = reservation.data_reservation.signing_request_delete
             # if self._request_check(payload, request, signatures):
-            #     jsxobj.next_action = "delete"
+            #     reservation.next_action = "delete"
+            #     self._add_to_actionable_workload(reservation)
             pass
 
-        jsxobj.save()
-        return jsxobj
+        reservation.save()
+        return reservation
+
+    def _add_to_actionable_workload(self, reservation):
+        for t, w in iterate_over_workloads(reservation):
+            if t in ["container", "zdb", "volume", "kubernetes"]:
+                self.workload_actionable_model.new(
+                    workload_id=gwid(reservation.id, w.workload_id), node_id=w.node_id
+                ).save()
+            if t == "network":
+                for nr in workload.network_resources:
+                    self.workload_actionable_model.new(
+                        workload_id=gwid(reservation.id, w.workload_id), node_id=nr.node_id
+                    ).save()
+
+    def _remove_actionable_workload(self, workload_id):
+        ras = self.workload_actionable_model.find(workload_id=workload_id)
+        for ra in ras:
+            ra.delete()
 
     def _filter_reservations(self, node_id, states, cursor):
         query = None
@@ -367,7 +398,15 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
         """
         output = schema_out.new()
-        reservations = self._filter_reservations(node_id, ["deploy", "delete"], cursor)
+        reservations_subset = self._filter_reservations(node_id, ["deploy"], cursor)
+
+        workloads_actionable = self.workload_actionable_model.find(node_id=node_id)
+        rids = [rid_from_gwid(w.workload_id)[0] for w in workloads_actionable]
+        reservations_actionable = [self.reservation_model.get(rid) for rid in rids]
+
+        reservations = set(reservations_subset)
+        reservations.update(reservations_actionable)
+
         for reservation in reservations:
             for _type, workload in iterate_over_workloads(reservation):
                 if node_id:
@@ -464,6 +503,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         # reservation.save()
         reservation = self._reservation_get(reservation_id)
         reservation.next_action = "delete"
+        self._add_to_actionable_workload(reservation)
         reservation.save()
         return True
 
@@ -534,6 +574,7 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         reservation.results.append(result)
         reservation.save()
+        self._remove_actionable_workload(global_workload_id)
         return True
 
     @j.baseclasses.actor_method
@@ -547,13 +588,14 @@ class workload_manager(j.baseclasses.threebot_actor):
         ```
         """
         rid, wid = rid_from_gwid(workload_id)
-
         reservation = self._reservation_get(rid)
-        for i, r in enumerate(reservation.results):
+
+        for r in reservation.results:
             if int(r.workload_id) == wid:
                 r.state = "deleted"
 
         reservation.save()
+        self._remove_actionable_workload(workload_id)
         return True
 
 

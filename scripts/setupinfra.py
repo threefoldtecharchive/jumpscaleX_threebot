@@ -1,6 +1,8 @@
 from Jumpscale import j
 import random
 
+# WIP still not complete
+
 redisconfig = """\
 bind {bindip}
 protected-mode yes
@@ -90,22 +92,39 @@ routerconfig = """\
 addr = "0.0.0.0"
 port = 443
 httpport = 80
+clientsport = 18000
 [server.dbbackend]
 type 	 = "redis"
 addr     = "127.0.0.1"
 port     = 6378
 refresh  = 10
+
+[server.services]
+    [server.services."www.python.org"]
+        addr = "151.101.240.223"
+        tlsport = 443
+
+    [server.services."www.ruby-lang.org"]
+        addr = "151.101.1.178"
+        tlsport = 443
+
+    [server.services."myserver.local"]
+        addr = "127.0.0.1"
+        httpport = 8000
 """
 
-tcprouterpath = j.core.tools.text_replace("{DIR_BASE}/bin/tcprouter")
+tcprouterclientpath = j.core.tools.text_replace("{DIR_BASE}/bin/trc")
+tcprouterserverpath = j.core.tools.text_replace("{DIR_BASE}/bin/trs")
 redisserverpath = j.core.tools.text_replace("{DIR_BASE}/bin/redis-server")
 corednspath = j.core.tools.text_replace("{DIR_BASE}/bin/coredns")
 
-THREEBOT_DOMAIN = "3bot.testnet.grid.tf"
+THREEBOT_DOMAIN = j.core.myenv.config.get("THREEBOT_DOMAIN")
 MASTERIP = "192.168.99.254"
 MASTERPUBLIC = j.sal.nettools.getReachableIpAddress("8.8.8.8", 53)
 
-if not j.sal.fs.exists(redisserverpath) or not j.sal.fs.exists(tcprouterpath):
+if not j.sal.fs.exists(redisserverpath) or not (
+    j.sal.fs.exists(tcprouterclientpath) and j.sal.fs.exists(tcprouterserverpath)
+):
     print("Installing tcprouter")
     j.builders.network.tcprouter.install(reset=True)
 if not j.sal.fs.exists(corednspath):
@@ -113,7 +132,7 @@ if not j.sal.fs.exists(corednspath):
     j.builders.network.coredns.install(reset=True)
 
 # we want 3 routers
-project_name = "3bot Infrastructure"
+project_name = "3bot Infra Staging"
 do = j.clients.digitalocean.get()
 size = "s-1vcpu-1gb"
 regions = do.digitalocean_region_names
@@ -125,8 +144,8 @@ if len(regions) < 3:
 clients = []
 
 print("Install wg on manager")
-wg = j.tools.wireguard.get("manager", autosave=False)
-wg.interface_name = "wgman"
+wg = j.tools.wireguard.get("manager_staging", autosave=False)
+wg.interface_name = "wgman_staging"
 wg.port = 7778
 wg.network_public = MASTERPUBLIC
 wg.network_private = f"{MASTERIP}/24"
@@ -137,7 +156,7 @@ wg.configure()
 
 def configure_wg(ssh_name, privateip):
     wgr = j.tools.wireguard.get(ssh_name, autosave=False)
-    wgr.interface_name = "wgman"
+    wgr.interface_name = "wgman_staging"
     wgr.sshclient_name = ssh_name
     wgr.network_private = f"{privateip}/24"
     print(f"  Install wg")
@@ -172,6 +191,8 @@ def configure_coredns(executor):
 def configure_redis(executor, privateip):
     print("  Configuring redis")
     dbpath = j.core.tools.text_replace("{DIR_BASE}/var/redis/")
+    j.sal.fs.createDir(dbpath)
+    executor.execute(f"mkdir -p {dbpath}")
     configpath = j.core.tools.text_replace("{DIR_BASE}/cfg/redis-jsx.conf")
     if privateip != MASTERIP:
         bindip = f"127.0.0.1 {privateip}"
@@ -188,7 +209,7 @@ def configure_tcprouter(executor):
     print("  Configuring tcprouter")
     configpath = j.core.tools.text_replace("{DIR_BASE}/cfg/router.toml")
     executor.file_write(configpath, routerconfig)
-    configure_systemd_unit(executor, "tcprouter", path=f"{tcprouterpath} -config {configpath}")
+    configure_systemd_unit(executor, "tcprouter", path=f"{tcprouterserverpath} -config {configpath}")
 
 
 configure_redis(j.tools.executor.local, MASTERIP)
@@ -196,24 +217,26 @@ j.sal.nettools.waitConnectionTest(MASTERIP, 6378)
 
 rediscli = j.clients.redis.get(MASTERIP, port=6378)
 tfgateway = j.tools.tf_gateway.get(rediscli)
-
-
 for x, region in enumerate(regions):
-    name = f"router{x+1}"
+    name = f"router{x+1}Staging"
     sshname = f"do_{name}"
     if not do.droplet_exists(name):
         print(f"Droplet create {name}")
-        droplet, _ = do.droplet_create(name, "Jo", region=region, size_slug=size, project_name=project_name)
+        droplet, _ = do.droplet_create(
+            name, "rana", region=region, size_slug=size, delete=False, project_name=project_name
+        )
     else:
         print(f"Droplet get {name}")
         droplet = do._droplet_get(name)
 
-    j.clients.ssh.get(name=sshname, addr=droplet.ip_address, login="root", sshkey_name="default")
+    # j.clients.ssh.get(name=sshname, addr=droplet.ip_address, login="root", sshkey_name="default") TODO
+    j.clients.ssh.get(name=sshname, addr=droplet.ip_address, login="root")
     executor = j.tools.executor.ssh_get(sshname)
     clients.append(executor)
-    for binary in (tcprouterpath, redisserverpath, corednspath):
+    for binary in (tcprouterserverpath, tcprouterclientpath, redisserverpath, corednspath):
         if not executor.exists(binary):
             print(f"  Copy {binary}")
+            executor.dir_ensure(j.core.tools.text_replace("{DIR_BASE}/bin"))
             executor.upload(binary, binary)
 
     privateip = f"192.168.99.{x + 1}"
@@ -221,7 +244,7 @@ for x, region in enumerate(regions):
     configure_redis(executor, privateip)
     configure_tcprouter(executor)
     configure_coredns(executor)
-    tfgateway.domain_register_a("@", THREEBOT_DOMAIN, executor.sshclient.addr)
+    tfgateway.domain_register_a("@", THREEBOT_DOMAIN, executor.sshclient.addr)  # TODO what is @
 
 wg.save()
 wg.configure()
@@ -230,45 +253,36 @@ print("Wating for DNS ...")
 j.sal.nettools.waitConnectionTest(THREEBOT_DOMAIN, 443, timeout=60)
 
 print("Start local 3bot")
-client = j.servers.threebot.start()
-client.actors.package_manager.package_add(
+client = j.servers.threebot.local_start_explorer(background=True)
+
+gedis_packagemanager = j.clients.gedis.get("packagemanager", port=8901, package_name="zerobot.packagemanager")
+gedis_packagemanager.actors.package_manager.package_add(
+    path=j.core.tools.text_replace("{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/dns")
+)
+gedis_packagemanager.actors.package_manager.package_add(
     path=j.core.tools.text_replace(
-        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/namemanager"
+        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/network"
     )
 )
-client.actors.package_manager.package_add(
+gedis_packagemanager.actors.package_manager.package_add(
     path=j.core.tools.text_replace(
-        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/gridnetwork"
-    )
-)
-client.actors.package_manager.package_add(
-    path=j.core.tools.text_replace(
-        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/tfgrid_directory"
-    )
-)
-client.actors.package_manager.package_add(
-    path=j.core.tools.text_replace(
-        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/tfgrid_workloads"
-    )
-)
-client.actors.package_manager.package_add(
-    path=j.core.tools.text_replace(
-        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/provisioning"
+        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/threebot_provisioning"
     )
 )
 client.reload()
 
-networks = client.actors.gridnetwork.network_find()
+gedis_gridnetwork = j.clients.gedis.get("gridnetwork", port=8901, package_name="tfgrid.network")
+networks = gedis_gridnetwork.actors.gridnetwork.network_find()
 for network in networks.res:
     if network.name == "3botnetwork":
         break
 else:
-    client.actors.gridnetwork.network_add("3botnetwork", "10.2.0.0/16")
+    gedis_gridnetwork.actors.gridnetwork.network_add("3botnetwork", "10.2.0.0/16")
 
 existingendpoints = []
-for endpoint in client.actors.gridnetwork.network_endpoint_find("3botnetwork").res:
+for endpoint in gedis_gridnetwork.actors.gridnetwork.network_endpoint_find("3botnetwork").res:
     existingendpoints.append(endpoint.network_public.split("/")[0])
 
 for executor in clients:
     if executor.sshclient.addr not in existingendpoints:
-        client.actors.gridnetwork.network_endpoint_add("3botnetwork", executor.sshclient.name)
+        gedis_gridnetwork.actors.gridnetwork.network_endpoint_add("3botnetwork", executor.sshclient.name)

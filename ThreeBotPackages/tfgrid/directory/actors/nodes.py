@@ -261,7 +261,7 @@ class nodes(j.baseclasses.threebot_actor):
             [
                 {
                     "measurement": "node_capacity",
-                    "tags": {"node_id": node.node_id, "farmer": node.farm_id, "version": node.os_version,},
+                    "tags": {"node_id": node.node_id, "farmer": node.farm_id, "version": node.os_version},
                     "fields": {
                         "cru": float(node.total_resources.cru),
                         "mru": float(node.total_resources.mru),

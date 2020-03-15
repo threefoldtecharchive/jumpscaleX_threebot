@@ -27,11 +27,7 @@ class myjobs(j.baseclasses.threebot_actor):
                 print(e)
             return worker_dict
 
-        workers = j.data.serializers.json.dumps(
-            {"workers": [transform_worker(worker) for worker in self.worker_model.find()]}
-        )
-        print("returning workers  ", workers)
-        return workers
+        return j.data.serializers.json.dumps([transform_worker(worker) for worker in self.worker_model.find()])
 
     @j.baseclasses.actor_method
     def list_jobs(self, schema_out=None, user_session=None):
@@ -51,6 +47,5 @@ class myjobs(j.baseclasses.threebot_actor):
                 print(e)
             return job_dict
 
-        jobs = j.data.serializers.json.dumps({"jobs": [transform_job(job) for job in self.job_model.find()]})
-        return jobs
+        return j.data.serializers.json.dumps([transform_job(job) for job in self.job_model.find()])
         # return JOBS

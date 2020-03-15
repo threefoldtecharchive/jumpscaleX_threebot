@@ -1,7 +1,7 @@
 from Jumpscale import j
 
 # get the sonic & zdb to run again
-j.data.bcdb.threebot_zdb_sonic_start()
+j.data.bcdb.start_servers_threebot_zdb_sonic()
 
 bcdbs = {i.name: j.data.bcdb.get(name=i.name) for i in j.data.bcdb.instances}
 

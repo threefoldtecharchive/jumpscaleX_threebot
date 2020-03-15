@@ -37,6 +37,7 @@
             <th scope="col">Level</th>
             <th scope="col">Count</th>
             <th scope="col">Category</th>
+            <th scope="col">App name</th>
             <th scope="col">First time</th>
             <th scope="col">Last time</th>
             <th scope="col">Message</th>
@@ -94,10 +95,13 @@
               {/if}
               <td>{myAlert.count}</td>
               <td>{myAlert.cat}</td>
+              <td>{myAlert.appname}</td>
               <td>{myAlert.time_first}</td>
               <td>{myAlert.time_last}</td>
               <td>
-                {@html ansiUp.ansi_to_html(myAlert.message)}
+                <span>
+                  {@html myAlert.message.length > 500 ? ansiUp.ansi_to_html(myAlert.message.substring(0, 500) + '...') : ansiUp.ansi_to_html(myAlert.message)}
+                </span>
               </td>
               <td>{myAlert.message_pub}</td>
               <td>
