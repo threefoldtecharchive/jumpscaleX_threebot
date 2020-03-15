@@ -49,8 +49,8 @@ def chat(bot):
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
-    ip = bot.single_choice("choose your IP version", ips)
-    node_selected = j.sal.chatflow.nodes_get(1, ip)[0]
+    ip_version = bot.single_choice("choose your IP version", ips)
+    node_selected = j.sal.chatflow.nodes_get(1, ip_version)[0]
 
     # Encrypt AWS ID and AWS Secret to send it in secret env
     aws_id_encrypt = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, AWS_ID)
@@ -62,7 +62,9 @@ def chat(bot):
         env.update({"restore": "True"})
         secret_env.update({"HASH": hash_encrypt})
 
-    reservation, config = j.sal.chatflow.network_configure(bot, reservation, [node_selected])
+    reservation, config = j.sal.chatflow.network_configure(
+        bot, reservation, [node_selected], customer_tid=identity.id, ip_version=ip_version
+    )
 
     ip_address = config["ip_addresses"][0]
 
@@ -84,7 +86,7 @@ def chat(bot):
     # Add volume and create container schema
     expiration = j.data.time.epoch + (3600 * 24 * 365)
     vol = j.sal.zosv2.volume.create(reservation, node_selected.node_id, size=8)
-    rid = j.sal.zosv2.reservation_register(reservation, expiration)
+    rid = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
     # create container
     cont = j.sal.zosv2.container.create(
         reservation=reservation,
@@ -103,7 +105,7 @@ def chat(bot):
     j.sal.zosv2.volume.attach_existing(cont, vol, rid, "/sandbox/var")
     expiration = j.data.time.epoch + (3600 * 24 * 365)
 
-    resv_id = j.sal.zosv2.reservation_register(reservation, expiration)
+    resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = """# reservation sent. ID: {}
         """.format(

@@ -45,10 +45,12 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
     identity = explorer.actors_all.phonebook.get(name=name, email=email)
 
-    ip = bot.single_choice("choose your IP version", ips)
-    node_selected = j.sal.chatflow.nodes_get(1, ip)[0]
+    ip_version = bot.single_choice("choose your IP version", ips)
+    node_selected = j.sal.chatflow.nodes_get(1, ip_version)[0]
 
-    reservation, config = j.sal.chatflow.network_configure(bot, reservation, [node_selected])
+    reservation, config = j.sal.chatflow.network_configure(
+        bot, reservation, [node_selected], customer_tid=identity.id, ip_version=ip_version
+    )
     ip_address = config["ip_addresses"][0]
 
     conatiner_flist = flist.value
@@ -72,7 +74,7 @@ def chat(bot):
 
     expiration = j.data.time.epoch + (24)
 
-    resv_id = j.sal.zosv2.reservation_register(reservation, expiration)
+    resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = f"# Container has been deployed successfully: your reservation id is: {resv_id} "
 
