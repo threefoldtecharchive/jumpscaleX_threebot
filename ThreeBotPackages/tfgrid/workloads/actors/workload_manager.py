@@ -281,7 +281,10 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         if cursor:
             cur_query = self.reservation_model.IndexTable.reservation_id >= cursor
-            query = query and cur_query if query else cur_query
+            if query:
+                query &= cur_query
+            else:
+                query = cur_query
 
         result = self.reservation_model.IndexTable.select().where(query).execute()
         reservations_ids = set([item.reservation_id for item in result])
