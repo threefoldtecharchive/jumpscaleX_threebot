@@ -16,7 +16,7 @@
 * Dependencies:
   - transcrypt: `pip3 install transcrypt`
   - nodejs and npm
-  - `cd frontend_src && npm install``
+  - `cd frontend_src && npm install`
 
-* To build the frontend, use `bash build_frontend.sh`
+* To build the frontend, use `bash build.sh`
 * Navigate to `http://<host>/jumpscale/svelte`.
