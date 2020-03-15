@@ -13,7 +13,7 @@ class Package(j.baseclasses.threebot_package):
             bottle_proxy_location = locations.get_location_proxy("svelte_example_proxy")
             bottle_proxy_location.path_url = "/svelte_example"
             bottle_proxy_location.ipaddr_dest = "127.0.0.1"
-            bottle_proxy_location.port_dest = 9999
+            bottle_proxy_location.port_dest = 8383
             bottle_proxy_location.path_dest = ""
             bottle_proxy_location.type = "http"
             bottle_proxy_location.scheme = "http"

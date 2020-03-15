@@ -103,8 +103,9 @@ class Company:
     def fail(self, err):
         console.log(err)
 
-    def add_company(self, data):
-        axios.post("/jumpscale/svelte/model/jumpscale.svelte.company.1", data).then(self.success).catch(self.fail)
+    def add_company(self, data, callback):
+        console.log("data passed", data)
+        return axios.post("/jumpscale/svelte/model/jumpscale.svelte.company.1", data)
 
     def delete_company(self, id):
         jq.ajax(
