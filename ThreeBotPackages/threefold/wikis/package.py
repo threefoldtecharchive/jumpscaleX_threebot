@@ -2,11 +2,7 @@ import re
 from Jumpscale import j
 from Jumpscale.tools.threegit.ThreeGit import load_wiki
 
-WIKIS = {
-    "info_grid": "wiki.grid.tf",
-    "info_foundation": "wiki.threefold.tf",
-    "info_tokens": "wiki.tokens.tf",
-}
+WIKIS = {"info_grid": "wiki.grid.tf", "info_foundation": "wiki.threefold.tf", "info_tokens": "wiki.tokens.tf"}
 
 BRANCH = "development"
 TF_WIKIS_LINKS = {
