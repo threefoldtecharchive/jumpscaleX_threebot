@@ -12,7 +12,7 @@ namespaces = {
     "tf_directory": "tfgrid",
     "users": "zerobot",
 }
-sonic, zdb = j.data.bcdb.threebot_zdb_sonic_start()
+sonic, zdb = j.data.bcdb.start_servers_threebot_zdb_sonic()
 adminsecret_ = j.data.hash.md5_string(zdb.adminsecret_)
 zdb_admin = zdb.client_admin_get()
 
