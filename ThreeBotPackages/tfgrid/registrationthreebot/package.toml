@@ -1,0 +1,11 @@
+[source]
+name = "registration"
+description = "Helper for registration of threebots."
+threebot = "tfgrid"
+version = "1.0.0"
+
+#[[bcdbs]]
+#name = "threebot_registry"
+#namespace = "threebot_registry"
+#type = "zdb"
+#instance = "default"

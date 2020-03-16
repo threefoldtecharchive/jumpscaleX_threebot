@@ -5,6 +5,7 @@ threebot = "tfgrid"
 version = "1.0.0"
 
 [[bcdbs]]
-namespace = "tfgrid"
+name = "tfgrid_tokens"
+namespace = "tfgrid_tokens"
 type = "zdb"
 instance = "default"

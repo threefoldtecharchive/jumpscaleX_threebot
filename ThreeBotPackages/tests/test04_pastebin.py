@@ -1,11 +1,20 @@
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.common.exceptions import NoSuchElementException
 from testconfig import config
-import unittest, time, os
-from .base_test import BaseTest
+import unittest, time
+import base, os
 from parameterized import parameterized
+import random
+from loguru import logger
+from Jumpscale import j
 import random, pyperclip
+
+skip = j.baseclasses.testtools._skip
+
+page_url = "http://172.17.0.2/jumpscale/pastebin"
+
+driver = base.set_browser()
+
 
 python_script = """
     # Solve the quadratic equation ax**2 + bx + c = 0
@@ -32,139 +41,147 @@ CODE_FIRST_LINE = "# Solve the quadratic equation ax**2 + bx + c = 0"
 CODE_LAST_LINE = "print('The solution are {0} and {1}'.format(sol1,sol2))"
 
 
-class Pastebin(BaseTest):
-    def setUp(self):
-        super().setUp()
-        self.get_page(self.pastebin_page)
+@skip("https://github.com/threefoldtech/jumpscaleX_threebot/issues/373")
+def before_all():
+    j.servers.threebot.start(background=True)
+    cl = j.clients.gedis.get(name="test", port=8901, package_name="zerobot.packagemanager")
+    cl.actors.package_manager.package_add(
+        path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/demo/pastebin"
+    )
 
-        self.info("get pastebin page. ")
-        self.assertIn("pastebin", self.driver.current_url)
-        self.assertTrue(self.wait_until_element_located("pastebin_header"))
 
-    def tearDown(self):
-        super().setUp()
+def before():
+    global driver
+    driver = base.set_browser()
+    base.get_page(driver, page_url)
+    assert "pastebin " in driver.current_url
+    assert base.wait_until_element_located(driver, "pastebin_header") is True
 
-    def test01_create_new_paste(self):
-        """
-        * Test Creation of new paste and the result linkk. *
 
-        - Get pastebin page .
-        - Add Python code to code input.
-        - Click on submit button.
-        - Get the result link.
-        - Copy resutl link from copy icon, chek it works successfully.
-        - Check that link contain right code.
-        """
-        self.info("Add Python code to code input.")
-        code_input = self.find_element("code_input")
-        code_input.send_keys(python_script)
+def after():
+    driver.close()
 
-        self.info("Click on submit button ")
-        submit_button = self.find_element("submit_button")
-        submit_button.click()
 
-        self.info("Get the result link.")
-        try:
-            result_url = self.find_element("result_url").text
-        except NoSuchElementException:
-            self.fail("there is no result link .")
+def test01_create_new_paste():
+    """
+    * Test Creation of new paste and the result linkk. *
 
-        self.info("Copy resutl link from copy icon, chek it works successfully.")
-        self.find_element("copy_link").click()
-        copied_link = pyperclip.paste()
-        self.assertEqual(result_url, copied_link)
+    - Get pastebin page .
+    - Add Python code to code input.
+    - Click on submit button.
+    - Get the result link.
+    - Copy resutl link from copy icon, chek it works successfully.
+    - Check that link contain right code.
+    """
+    base.info("Add Python code to code input.")
+    code_input = base.find_element(driver, "code_input")
+    code_input.send_keys(python_script)
 
-        self.info("Check that link contain right code.")
-        self.driver.get(result_url)
-        code = self.find_element("result_code")
-        code_lines = code.find_elements_by_tag_name("span")
-        self.assertEqual("CODE_FIRST_LINE", code_lines[0].text)
-        self.assertEqual(CODE_LAST_LINE, code_lines[len(code_lines) - 1].text)
+    base.info("Click on submit button ")
+    submit_button = base.find_element(driver, "submit_button")
+    submit_button.click()
 
-    def test02_edit_button(self):
-        """
-        * Test Edit button *
+    base.info("Get the result link.")
+    result_url = base.find_element(driver, "result_url").text
 
-        - Get pastebin page .
-        - Add Python code to code input.
-        - Click on submit button.
-        - Click on edit putton and add more code lines .
-        - Click sumbit again and check it code added successfully.
-        """
-        self.info("Add Python code to code input.")
-        code_input = self.find_element("code_input")
-        code_input.send_keys(python_script)
+    base.info("Copy resutl link from copy icon, chek it works successfully.")
+    base.find_element(driver, "copy_link").click()
+    copied_link = pyperclip.paste()
+    assert result_url == copied_link
 
-        self.info("Click on submit button ")
-        self.find_element("submit_button").click()
+    base.info("Check that link contain right code.")
+    driver.get(result_url)
+    code = base.find_element(driver, "result_code")
+    code_lines = code.find_elements_by_tag_name("span")
+    assert "CODE_FIRST_LINE" == code_lines[0].text
+    assert CODE_LAST_LINE == code_lines[len(code_lines) - 1].text
 
-        self.info("Click on edit button and add more code lines .")
-        self.find_element("edit_button").click()
 
-        code = """ Click on edit button and add more code lines . """
-        code_input.send_keys(code)
+def test02_edit_button():
+    """
+    * Test Edit button *
 
-        self.info("Click sumbit again and check it code added successfully.")
-        self.find_element("submit_button").click()
-        result_url = self.find_element("result_url").text
-        self.driver.get(result_url)
-        code = self.find_element("result_code")
-        code_lines = code.find_elements_by_tag_name("span")
-        self.assertIn(code, code_lines[len(code_lines) - 1].text)
+    - Get pastebin page .
+    - Add Python code to code input.
+    - Click on submit button.
+    - Click on edit putton and add more code lines .
+    - Click sumbit again and check it code added successfully.
+    """
+    base.info("Add Python code to code input.")
+    code_input = base.find_element(driver, "code_input")
+    code_input.send_keys(python_script)
 
-    def test03_download_button(self):
-        """
-        * Test Download button *
+    base.info("Click on submit button ")
+    base.find_element(driver, "submit_button").click()
 
-        - Get pastebin page .
-        - Add Python code to code input.
-        - Click on submit button.
-        - Click on download button .
-        - Check downloaded file has right info.
+    base.info("Click on edit button and add more code lines .")
+    base.find_element(driver, "edit_button").click()
 
-        """
-        self.info("Add Python code to code input.")
-        code_input = self.find_element("code_input")
-        code_input.send_keys(python_script)
+    code = """ Click on edit button and add more code lines . """
+    code_input.send_keys(code)
 
-        self.info("Click on submit button ")
-        self.find_element("submit_button").click()
+    base.info("Click sumbit again and check it code added successfully.")
+    base.find_element(driver, "submit_button").click()
+    result_url = base.find_element(driver, "result_url").text
+    driver.get(result_url)
+    code = base.find_element(driver, "result_code")
+    code_lines = code.find_elements_by_tag_name("span")
+    assert code in code_lines[len(code_lines) - 1].text
 
-        self.info("Click on download button .")
-        self.find_element("download_button").click()
 
-        self.info("Check downloaded file has right info.")
-        for file_name in os.listdir(os.path.expanduser("~/Downloads")):
-            if "orgional_code" in file_name:
-                file_dir = os.path.expanduser("~/Downloads/") + file_name
-                break
-        f = open(file_dir, "r")
-        content = f.read()
-        self.assertIn(CODE_FIRST_LINE, content)
-        f.close()
-        os.remove(f.name)
+def test03_download_button():
+    """
+    * Test Download button *
 
-    @unittest.skip("https://github.com/threefoldtech/jumpscaleX_threebot/issues/172")
-    def test04_copy_code(self):
-        """
-        * Test copy codefrom code input . *
+    - Get pastebin page .
+    - Add Python code to code input.
+    - Click on submit button.
+    - Click on download button .
+    - Check downloaded file has right info.
 
-        - Get pastebin page .
-        - Add Python code to code input.
-        - Click on submit button.
-        - Click on copy code button.
-        - Check that code copied successfully.
-        """
-        self.info("Add Python code to code input.")
-        code_input = self.find_element("code_input")
-        code_input.send_keys(python_script)
+    """
+    base.info("Add Python code to code input.")
+    code_input = base.find_element(driver, "code_input")
+    code_input.send_keys(python_script)
 
-        self.info("Click on submit button ")
-        self.find_element("submit_button").click()
+    base.info("Click on submit button ")
+    base.find_element(driver, "submit_button").click()
 
-        self.info("Click on copy code button.")
-        self.find_element("copy_code").click()
+    base.info("Click on download button .")
+    base.find_element(driver, "download_button").click()
 
-        self.info(" Check that code copied successfully.")
-        copied_code = pyperclip.paste()
-        self.assertIn(CODE_FIRST_LINE, copied_code)
+    base.info("Check downloaded file has right info.")
+    for file_name in os.listdir(os.path.expanduser("~/Downloads")):
+        if "orgional_code" in file_name:
+            file_dir = os.path.expanduser("~/Downloads/") + file_name
+            break
+    f = open(file_dir, "r")
+    content = f.read()
+    assert CODE_FIRST_LINE in content
+    f.close()
+    os.remove(f.name)
+
+
+@unittest.skip("https://github.com/threefoldtech/jumpscaleX_threebot/issues/172")
+def test04_copy_code():
+    """
+    * Test copy codefrom code input . *
+
+    - Get pastebin page .
+    - Add Python code to code input.
+    - Click on submit button.
+    - Click on copy code button.
+    - Check that code copied successfully.
+    """
+    base.info("Add Python code to code input.")
+    code_input = base.find_element(driver, "code_input")
+    code_input.send_keys(python_script)
+
+    base.info("Click on submit button ")
+    base.find_element(driver, "submit_button").click()
+    base.info("Click on copy code button.")
+    base.find_element(driver, "copy_code").click()
+
+    base.info(" Check that code copied successfully.")
+    copied_code = pyperclip.paste()
+    assert CODE_FIRST_LINE in copied_code
