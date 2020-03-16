@@ -24,12 +24,14 @@ class web_interface(j.baseclasses.object):
         )
 
         gedis_client.actors.package_manager.package_add(
-            j.core.tools.text_replace(
+            path=j.core.tools.text_replace(
                 "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_core/JumpscaleCore/servers/gedis/pytests/test_package"
             )
         )
         gedis_client.reload()
+
         print("testing gedis http")
+
         assert (
             j.clients.http.post(
                 f"{url}/zerobot/test_package/actors/actor/echo",
@@ -41,25 +43,6 @@ class web_interface(j.baseclasses.object):
             == "hello world"
         )
         print("gedis http OK")
-
-        print("testing gedis websocker")
-        from websocket import WebSocket
-        import ssl
-
-        ws = WebSocket(sslopt={"cert_reqs": ssl.CERT_NONE})
-        ws.connect(f"wss://{base_url}/gedis/websocket")
-        assert ws.connected
-
-        payload = """{
-        "namespace": "default",
-        "actor": "echo",
-        "command": "actor.echo",
-        "args": {"_input": "hello world"},
-        "headers": {"response_type":"json"}
-        }"""
-        ws.send(payload)
-        assert ws.recv() == "hello world"
-        print("gedis websocket OK")
 
         print("tearDown")
         gedis_client.actors.package_manager.package_delete("zerobot.test_package")
