@@ -26,5 +26,5 @@ This script will build and copy the output to `frontend` directory to be served 
 * The main entry is [app.js](sources/app.js)
 * Views:
     * Main view is defined at [main.js](sources/views/main.js)
-    * External views are [wiki](sources/views/wiki), [codeserver](sources/views/codeserver) and [jupyter](sources/views/jupyter).
+    * External views are [wiki](sources/views/wikis), [codeserver](sources/views/codeserver) and [jupyter](sources/views/jupyter).
 * Services (calling backend/actors) can be found at [sources/services](sources/services).
