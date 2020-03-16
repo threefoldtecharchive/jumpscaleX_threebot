@@ -50,7 +50,7 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
 
     ip_version = bot.single_choice("choose your IP version", ips)
-    node_selected = j.sal.chatflow.nodes_get(1, ip_version)[0]
+    node_selected = j.sal.chatflow.nodes_get(1)[0]
 
     # Encrypt AWS ID and AWS Secret to send it in secret env
     aws_id_encrypt = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, AWS_ID)
@@ -79,7 +79,7 @@ def chat(bot):
     env.update({"corex_password": password, "corex_user": user_corex, "pub_key": pub_key})
     secret_env.update({"AWS_ID": aws_id_encrypt, "AWS_SECRET": aws_secret_encrypt})
 
-    conatiner_flist = "https://hub.grid.tf/bola_nasr_1/threefoldtech-3bot-corex.flist"
+    container_flist = "https://hub.grid.tf/bola_nasr_1/threefoldtech-3bot-corex.flist"
     entry_point = "/usr/bin/zinit init -d"
     storage_url = "zdb://hub.grid.tf:9900"
 
@@ -93,7 +93,7 @@ def chat(bot):
         node_id=node_selected.node_id,
         network_name=config["name"],
         ip_address=ip_address,
-        flist=conatiner_flist,
+        flist=container_flist,
         storage_url=storage_url,
         env=env,
         entrypoint=entry_point,

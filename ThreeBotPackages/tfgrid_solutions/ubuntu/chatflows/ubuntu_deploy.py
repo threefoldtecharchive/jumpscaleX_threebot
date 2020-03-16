@@ -33,7 +33,7 @@ def chat(bot):
     identity = explorer.actors_all.phonebook.get(name=name, email=email)
 
     ip_version = bot.single_choice("choose your ip version", ips)
-    node_selected = j.sal.chatflow.nodes_get(1, ip_version)[0]
+    node_selected = j.sal.chatflow.nodes_get(1)[0]
 
     reservation, config = j.sal.chatflow.network_configure(
         bot, reservation, [node_selected], customer_tid=identity.id, ip_version=ip_version
@@ -41,7 +41,7 @@ def chat(bot):
 
     ip_address = config["ip_addresses"][0]
 
-    conatiner_flist = f"{HUB_URL}/{version}.flist"
+    container_flist = f"{HUB_URL}/{version}.flist"
     storage_url = "zdb://hub.grid.tf:9900"
 
     # create container
@@ -50,7 +50,7 @@ def chat(bot):
         node_id=node_selected.node_id,
         network_name=config["name"],
         ip_address=ip_address,
-        flist=conatiner_flist,
+        flist=container_flist,
         storage_url=storage_url,
         env=var_dict,
         interactive=True,
