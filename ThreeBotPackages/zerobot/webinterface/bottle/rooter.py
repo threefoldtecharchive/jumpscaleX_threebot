@@ -23,6 +23,8 @@ app_with_session = SessionMiddleware(app, session_opts)
 templates_path = j.sal.fs.joinPaths(j.sal.fs.getDirName(__file__), "..", "templates")
 env = Environment(loader=FileSystemLoader(templates_path), autoescape=select_autoescape(["html", "xml"]))
 
+PACKAGE_BASE_URL = "/<threebot_name>/<package_name>"
+
 
 def get_package(threebot_name, package_name):
     name = f"{threebot_name}.{package_name}".strip()

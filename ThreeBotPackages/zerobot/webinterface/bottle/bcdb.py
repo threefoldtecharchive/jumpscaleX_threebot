@@ -4,27 +4,24 @@ from Jumpscale import j
 from Jumpscale.clients.peewee.peewee import OperationalError
 
 from . import auth
-from .rooter import app, abort, enable_cors, response, request
+from .rooter import app, abort, enable_cors, package_route, response, request, PACKAGE_BASE_URL
 
-MODEL_URL = "/<threebot_name>/<package_name>/model/<model_url>"
+
+MODEL_URL = f"{PACKAGE_BASE_URL}/model/<model_url>"
 RECORD_URL = f"{MODEL_URL}/<record_id>"
 
 
-def get_model(package_name, model_url):
+def get_model(package, model_url):
     """a helper method to get a model from a package
 
-    :param package_name: full package name
-    :type package_name: str
+    :param package: package object
+    :type package: ThreeBotPackage
     :param model_url: full model url
     :type model_url: str
-    :raises j.exceptions.NotFound: in case package or model cannot be found
+    :raises j.exceptions.NotFound: if model cannot be found
     :return: model object
     :rtype: BCDBModel
     """
-    if not j.tools.threebot_packages.exists(package_name):
-        raise j.exceptions.NotFound(f"package of {package_name} cannot be found")
-
-    package = j.tools.threebot_packages.get(name=package_name)
     try:
         model = package.bcdb.model_get(url=model_url)
     except j.exceptions.Input:
@@ -49,21 +46,17 @@ def model_route(handler):
     """
 
     @auth.admin_only
+    @package_route
     def inner(*args, **kwargs):
-        threebot_name = kwargs.pop("threebot_name")
-        package_name = kwargs.pop("package_name")
+        package = kwargs.pop("package")
         model_url = kwargs.pop("model_url")
-        full_name = f"{threebot_name}.{package_name}"
 
         try:
-            kwargs["model"] = get_model(full_name, model_url)
+            kwargs["model"] = get_model(package, model_url)
         except j.exceptions.NotFound as ex:
             return abort(404, ex.message)
 
-        try:
-            return handler(*args, **kwargs)
-        except j.exceptions.Base as ex:
-            return abort(400, ex.message)
+        return handler(*args, **kwargs)
 
     return inner
 
