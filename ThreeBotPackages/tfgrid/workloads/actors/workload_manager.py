@@ -264,7 +264,7 @@ class workload_manager(j.baseclasses.threebot_actor):
                     workload_id=gwid(reservation.id, w.workload_id), node_id=w.node_id
                 ).save()
             if t == "network":
-                for nr in workload.network_resources:
+                for nr in w.network_resources:
                     self.workload_actionable_model.new(
                         workload_id=gwid(reservation.id, w.workload_id), node_id=nr.node_id
                     ).save()
