@@ -8,7 +8,7 @@ var stringContentGenerate = function (message, kwargs, idx) {
     if (typeof kwargs['default'] == 'undefined') {
         contents = `<input type="text" class="form-control" id="value_${idx}">`
     } else {
-        contents = `<input type="text" class="form-control" id="value" value="${kwargs["default"]}"`
+        contents = `<input type="text" class="form-control" id="value_${idx}" value="${kwargs["default"]}"`
     }
     return `
     <h4>${message}</h4>
@@ -17,7 +17,7 @@ var stringContentGenerate = function (message, kwargs, idx) {
     </div>`
 }
 
-var passwordContentGenerate = function (message, kwargs, idx) {
+var secretContentGenerate = function (message, kwargs, idx) {
     return `
     <h4>${message}</h4>
     <div class="form-group">
@@ -186,6 +186,59 @@ var dropDownChoiceGenerate = function (message, options, kwargs, idx) {
     return contents;
 }
 
+
+function download(text, filename) {
+
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+
+function upload() {
+    document.getElementById('upload').addEventListener('change', handleUploadFileSelect, false);
+}
+
+function handleUploadFileSelect(event) {
+    const reader = new FileReader()
+    reader.onload = handleUploadFileLoad;
+    reader.readAsText(event.target.files[0])
+}
+
+function handleUploadFileLoad(event) {
+    let uploadId = document.querySelectorAll('[data-upload-id]')[0].id;
+    document.getElementById(uploadId).textContent = event.target.result;
+}
+
+var generateDownloadAsFile = function (message, filename) {
+    let msg = message;
+    msg = msg.replace(/\n/g, "<br />");
+    let msg_with_trim = '`' + message.trim() + '`';
+    return `
+    <h4>${msg}</h4>
+    <div class="form-group">
+        <button class="btndownload" style="width:100%" onclick="download(${msg_with_trim},'${filename}')"><i class="fa fa-download"></i> Download</button>
+    </div>`
+}
+
+var generateUploadFile = function (message, kwargs, idx) {
+    let msg = message;
+    msg = msg.replace(/\n/g, "<br />");
+    let msg_with_trim = '`' + message.trim() + '`';
+    return `
+    <h4>${msg}</h4>
+    <div class="form-group" onclick="upload()">
+            <input id="upload" type="file" name="file"/>
+            <pre data-upload-id="${idx}" id="value_${idx}"></pre>
+    </div>`
+}
+
 var generateSlide = function (message) {
     $("#spinner").hide();
     // if error: leave the old slide and show the error
@@ -244,8 +297,14 @@ var generateSlide = function (message) {
             case "string_ask":
                 contents += stringContentGenerate(res['msg'], res['kwargs'], i);
                 break;
-            case "password_ask":
-                contents += passwordContentGenerate(res['msg'], res['kwargs'], i);
+            case "secret_ask":
+                contents += secretContentGenerate(res['msg'], res['kwargs'], i);
+                break;
+            case "download_file":
+                contents += generateDownloadAsFile(res['msg'], res['filename'], res['kwargs'], i);
+                break;
+            case "upload_file":
+                contents += generateUploadFile(res['msg'], res['kwargs'], i);
                 break;
             case "text_ask":
                 contents += textContentGenerate(res['msg'], res['kwargs'], i);
@@ -303,8 +362,10 @@ var generateSlide = function (message) {
         value = "";
         for (var idx = 0; idx < messages.length; idx++) {
             res = messages[idx];
-            if (["string_ask", "int_ask", "text_ask", "password_ask", "drop_down_choice", "captcha_ask", "location_ask"].includes(res['cat'])) {
+            if (["string_ask", "int_ask", "text_ask", "secret_ask", "download_file", "drop_down_choice", "captcha_ask", "location_ask"].includes(res['cat'])) {
                 value = $(`#value_${idx}`).val();
+            } else if (res['cat'] === "upload_file") {
+                value = $(`#value_${idx}`)[0].textContent;
             } else if (res['cat'] === "single_choice") {
                 value = $(`input[name='value_${idx}']:checked`).val();
             } else if (res['cat'] === "multi_choice") {
