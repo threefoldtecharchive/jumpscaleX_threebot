@@ -84,10 +84,11 @@ def chat(bot):
     storage_url = "zdb://hub.grid.tf:9900"
 
     # Add volume and create container schema
-    expiration = j.data.time.epoch + (3600 * 24 * 365)
+    expiration = j.data.time.epoch + (60 * 60 * 24)
     vol = j.sal.zosv2.volume.create(reservation, node_selected.node_id, size=8)
     rid = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
     # create container
+    # TODO:secret_env
     cont = j.sal.zosv2.container.create(
         reservation=reservation,
         node_id=node_selected.node_id,
@@ -99,11 +100,11 @@ def chat(bot):
         entrypoint=entry_point,
         cpu=4,
         memory=4096,
-        secret_env=secret_env,
+        secret_env={},
     )
 
     j.sal.zosv2.volume.attach_existing(cont, vol, rid, "/sandbox/var")
-    expiration = j.data.time.epoch + (3600 * 24 * 365)
+    expiration = j.data.time.epoch + (60 * 60 * 24)
 
     resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
 
