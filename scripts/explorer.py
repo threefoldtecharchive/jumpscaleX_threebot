@@ -51,6 +51,8 @@ def cli():
 @click.command(name="stress-explorer", help="stress explorer by creating nodes and reservations")
 @click.option("--count", help="number of nodes and reservations to create", default=100)
 def stress_explorer(count=100, interactive=True):
+    if "testnet" in j.clients.threebot.explorer_addr or "prod" in j.clients.threebot.explorer_addr:
+        raise RuntimeError("please configure your stress test to work against your own explorer")
 
     cl = j.clients.threebot.explorer.actors_get("tfgrid.directory")
     # create a farmer
