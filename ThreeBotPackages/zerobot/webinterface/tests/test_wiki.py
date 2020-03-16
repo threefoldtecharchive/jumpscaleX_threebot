@@ -96,7 +96,6 @@ def test005_check_package_manager_actor_is_loaded():
     assert "package_manager" in dir(actors)
 
 
-@skip("https://github.com/threefoldtech/jumpscaleX_threebot/issues/321")
 def test006_check_web_interfaces():
     """
     Test case for checking web interfaces is loaded.
