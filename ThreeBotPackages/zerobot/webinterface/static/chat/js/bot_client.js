@@ -10,8 +10,13 @@ var stringContentGenerate = function (message, kwargs, idx) {
     } else {
         contents = `<input type="text" class="form-control" id="value_${idx}" value="${kwargs["default"]}"`
     }
+    var lines = message.split("\n");
+    let output = ``
+    for (var i = 0; i < lines.length; i++) {
+        output += "<h4>" + `${lines[i]}` + "</h4>\n"
+    }
     return `
-    <h4>${message}</h4>
+    ${output}
     <div class="form-group">
         ${contents}
     </div>`

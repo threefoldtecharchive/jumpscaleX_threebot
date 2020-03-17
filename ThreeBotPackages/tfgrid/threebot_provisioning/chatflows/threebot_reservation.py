@@ -6,7 +6,6 @@ import os
 
 
 def chat(bot):
-
     """
     This chat is to deploy 3bot container on the grid
     """
@@ -42,7 +41,8 @@ def chat(bot):
     pub_key = None
     while not pub_key:
         pub_key = bot.string_ask(
-            "Please add your public ssh key, this will allow you to access the deployed container using ssh. Just copy your key from ~/.ssh/id_rsa.pub"
+            """Please add your public ssh key, this will allow you to access the deployed container using ssh. 
+            Just copy your key from `~/.ssh/id_rsa.pub`"""
         )
 
     form = bot.new_form()
@@ -55,7 +55,7 @@ def chat(bot):
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
-    ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4", ips)
+    ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips)
     node_selected = j.sal.chatflow.nodes_get(1)[0]
 
     # Encrypt AWS ID and AWS Secret to send it in secret env
@@ -106,7 +106,6 @@ def chat(bot):
     vol = j.sal.zosv2.volume.create(reservation, node_selected.node_id, size=8)
     rid = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
     # create container
-    # TODO:secret_env
     cont = j.sal.zosv2.container.create(
         reservation=reservation,
         node_id=node_selected.node_id,
@@ -135,7 +134,7 @@ def chat(bot):
 
     res = """
             # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
-            ## Make sure you have wireguard ```https://www.wireguard.com/install/``` installed:
+            ## Make sure you have wireguard ```https://www.wireguard.com/install/``` installed
             ## ```wg-quick up /etc/wireguard/{}```
             Click next
             to download your configuration
