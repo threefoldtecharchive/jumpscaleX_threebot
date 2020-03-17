@@ -239,11 +239,11 @@ class workload_manager(j.baseclasses.threebot_actor):
                 reservation.next_action = "pay"
 
         if reservation.next_action == "pay":
-            # if self._validate_farmers_signature(reservation):
-            # add to actionable workload if the state has changed
-            if reservation.next_action != "deploy":
-                self._add_to_actionable_workload(reservation)
-            reservation.next_action = "deploy"
+            if self._validate_farmers_signature(reservation):
+                # add to actionable workload if the state has changed
+                if reservation.next_action != "deploy":
+                    self._add_to_actionable_workload(reservation)
+                reservation.next_action = "deploy"
 
         if reservation.next_action == "deploy":
             # Temporary change to simplify reservation flow for testing
