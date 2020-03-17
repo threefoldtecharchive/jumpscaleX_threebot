@@ -91,18 +91,18 @@ We provide oauth2 proxy and clients, see [documentation](oauth2/README.md) of ho
 
 ```toml
 [source]
-name = "alerta"
-description = "alerting system for jumpscale"
-threebot = "threefold"
+name = "demo"
+description = "mypackage"
+threebot = "zerobot"
 version = "1.0.0"
-disable_crud = true #optional
 
 [actor]
 namespace = "zerobot"
 
 [[bcdbs]]
-namespace = "alerta"
-type = "redis"
+name = "zerobot_demo"
+namespace = "zerobot_demo"
+type = "zdb"
 instance = "default"
 ```
 
