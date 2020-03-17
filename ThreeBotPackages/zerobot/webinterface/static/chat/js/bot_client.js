@@ -23,8 +23,13 @@ var stringContentGenerate = function (message, kwargs, idx) {
 }
 
 var secretContentGenerate = function (message, kwargs, idx) {
+    var lines = message.split("\n");
+    let output = ``
+    for (var i = 0; i < lines.length; i++) {
+        output += "<h4>" + `${lines[i]}` + "</h4>\n"
+    }
     return `
-    <h4>${message}</h4>
+    ${output}
     <div class="form-group">
 		<input type="password" class="form-control" id="value_${idx}">
     </div>`

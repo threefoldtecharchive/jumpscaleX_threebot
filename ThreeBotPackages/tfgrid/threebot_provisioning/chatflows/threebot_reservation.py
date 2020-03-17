@@ -55,8 +55,19 @@ def chat(bot):
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
-    ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips)
-    node_selected = j.sal.chatflow.nodes_get(1)[0]
+
+    ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4", ips)
+    node_selected = j.sal.chatflow.nodes_get(1, cru=4, sru=8)
+    if len(node_selected) != 0:
+        node_selected = node_selected[0]
+    else:
+        node_selected = j.sal.chatflow.nodes_get(1, cru=4, hru=8)
+        if len(node_selected) != 0:
+            res = "# We are sorry we don't have empty Node to deploy your 3bot"
+            res = j.tools.jinja2.template_render(text=res, **locals())
+            bot.md_show(res)
+            return
+        node_selected = node_selected[0]
 
     # Encrypt AWS ID and AWS Secret to send it in secret env
     aws_id_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, AWS_ID)
@@ -133,8 +144,8 @@ def chat(bot):
     filename = "{}_{}.conf".format(name, resv_id)
 
     res = """
-            # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
-            ## Make sure you have wireguard ```https://www.wireguard.com/install/``` installed
+            ## Use the following template to configure your wireguard connection. This will give you access to your 3bot.
+            # Make sure you have wireguard ```https://www.wireguard.com/install/``` installed
             ## ```wg-quick up /etc/wireguard/{}```
             Click next
             to download your configuration
