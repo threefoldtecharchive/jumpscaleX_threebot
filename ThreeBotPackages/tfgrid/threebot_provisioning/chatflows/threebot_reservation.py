@@ -8,7 +8,7 @@ import os
 def chat(bot):
 
     """
-    This chat is create 3bot container using zosv2
+    This chat is to deploy 3bot container on the grid
     """
     explorer = j.clients.threebot.explorer
     cl = j.clients.s3.get("deployer")
@@ -19,45 +19,53 @@ def chat(bot):
     user_info = bot.user_info()
     name = user_info["username"]
     email = user_info["email"]
-    ips = ["IPV6", "IPV4"]
-    choose = ["New", "Restore"]
+    ips = ["IPv6", "IPv4"]
+    choose = ["Deploy a new 3bot", "Restore my 3bot"]
     ip_range_choose = ["Specify IP Range", "Choose IP Range for me"]
+    expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
 
-    folder_name = name.replace(".", "_")
+    backup_directory = name.replace(".", "_")
     env = dict()
     secret_env = dict()
 
     if not name or not email:
         bot.md_show("Username or email not found in session. Please log in properly")
 
-    user_choice = bot.single_choice("create a new 3bot or restore existing 3bot?", choose)
+    user_choice = bot.single_choice("This wizard will help you deploy or restore your 3bot.", choose)
     identity = explorer.actors_all.phonebook.get(name=name, email=email)
     identity_pubkey = identity.pubkey
-    if user_choice == "Restore":
-        password = bot.secret_ask("please add restore password?")
+    if user_choice == "Restore my 3bot":
+        password = bot.secret_ask("Please enter the password you configured to backup your 3bot")
         hash_restore = nacl.hash.blake2b(password.encode(), key=identity_pubkey.encode()).decode()
 
     # ask user about corex user:password and ssh-key to give him full access to his container
-    pub_key = bot.string_ask(
-        "Please add your public ssh-key (that will allow you to access the deployed container using ssh) "
+    pub_key = None
+    while not pub_key:
+        pub_key = bot.string_ask(
+            "Please add your public ssh key, this will allow you to access the deployed container using ssh. Just copy your key from ~/.ssh/id_rsa.pub"
+        )
+
+    form = bot.new_form()
+    user_corex = form.string_ask(
+        "Please create a username for your 3bot (this will allow you secure access to the 3bot from your web browser)"
     )
-    user_corex = bot.string_ask(
-        "username of your coreX (that will allow you to be secure when access from web browser)"
-    )
-    password = bot.secret_ask("password of your coreX (that will allow you to be secure when access from web browser)")
+    password = form.secret_ask("Please create a password for your 3bot")
+    form.ask()
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
-    ip_version = bot.single_choice("choose your IP version", ips)
+    ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4", ips)
     node_selected = j.sal.chatflow.nodes_get(1)[0]
 
     # Encrypt AWS ID and AWS Secret to send it in secret env
-    aws_id_encrypt = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, AWS_ID)
-    aws_secret_encrypt = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, AWS_SECRET)
+    aws_id_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, AWS_ID)
+    aws_secret_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, AWS_SECRET)
+    user_corex_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, user_corex.value)
+    password_corex_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, password.value)
 
     # Create network of reservation and add peers
-    if user_choice == "Restore":
+    if user_choice == "Restore my 3bot":
         hash_encrypt = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, hash_restore)
         env.update({"restore": "True"})
         secret_env.update({"HASH": hash_encrypt})
@@ -68,23 +76,33 @@ def chat(bot):
 
     ip_address = config["ip_addresses"][0]
 
-    backup = bot.single_choice("Auto-backup 3bot?", ["Yes", "No"])
+    backup = bot.single_choice("Do you want your 3bot to be automatically backed up?", ["Yes", "No"])
     if backup == "Yes":
-        password = bot.secret_ask("Backup password? Don't forget to save this password to be able to restore")
+        password = bot.secret_ask(
+            """The password you add here will be used to encrypt your backup to keep your 3bot safe.
+            please make sure to keep this password safe so you can later restore your 3bot. 
+            Remember, this password will not be saved anywhere, so there cannot be recovery for it"""
+        )
         hash_backup = nacl.hash.blake2b(password.encode(), key=identity_pubkey.encode()).decode()
-        hash_encrypt = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, hash_backup)
-        secret_env.update({"HASH": hash_encrypt})
-        env.update({"backup": "True", "FOLDER": folder_name})
+        hash_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, hash_backup)
+        secret_env.update({"HASH": hash_encrypted})
+        env.update({"backup": "True", "FOLDER": backup_directory})
 
-    env.update({"corex_password": password, "corex_user": user_corex, "pub_key": pub_key})
-    secret_env.update({"AWS_ID": aws_id_encrypt, "AWS_SECRET": aws_secret_encrypt})
+    env.update({"pub_key": pub_key})
+    secret_env.update(
+        {
+            "AWS_ID": aws_id_encrypted,
+            "AWS_SECRET": aws_secret_encrypted,
+            "corex_password": password_corex_encrypted,
+            "corex_user": user_corex_encrypted,
+        }
+    )
 
     container_flist = "https://hub.grid.tf/bola_nasr_1/threefoldtech-3bot-corex.flist"
     entry_point = "/usr/bin/zinit init -d"
     storage_url = "zdb://hub.grid.tf:9900"
 
     # Add volume and create container schema
-    expiration = j.data.time.epoch + (60 * 60 * 24)
     vol = j.sal.zosv2.volume.create(reservation, node_selected.node_id, size=8)
     rid = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
     # create container
@@ -104,7 +122,6 @@ def chat(bot):
     )
 
     j.sal.zosv2.volume.attach_existing(cont, vol, rid, "/sandbox/var")
-    expiration = j.data.time.epoch + (60 * 60 * 24)
 
     resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
 
@@ -117,8 +134,9 @@ def chat(bot):
     filename = "{}_{}.conf".format(name, resv_id)
 
     res = """
-            # use the next template to configure the wg-quick config of your laptop:
-            ### ```wg-quick up /etc/wireguard/{}```
+            # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
+            ## Make sure you have wireguard ```https://www.wireguard.com/install/``` installed:
+            ## ```wg-quick up /etc/wireguard/{}```
             Click next
             to download your configuration
             """.format(
