@@ -100,7 +100,7 @@ def chat(bot):
         entrypoint=entry_point,
         cpu=4,
         memory=4096,
-        secret_env={},
+        secret_env=secret_env,
     )
 
     j.sal.zosv2.volume.attach_existing(cont, vol, rid, "/sandbox/var")
