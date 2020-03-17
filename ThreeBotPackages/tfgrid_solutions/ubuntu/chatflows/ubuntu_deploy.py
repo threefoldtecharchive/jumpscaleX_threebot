@@ -9,7 +9,7 @@ def chat(bot):
     user_info = bot.user_info()
     name = user_info["username"]
     email = user_info["email"]
-    ips = ["IPV6", "IPV4"]
+    ips = ["IPv6", "IPv4"]
     HUB_URL = "https://hub.grid.tf/tf-bootable"
     IMAGES = ["ubuntu:16.04", "ubuntu:18.04"]
 
@@ -17,9 +17,13 @@ def chat(bot):
     if not email:
         raise j.exceptions.BadRequest("Email shouldn't be empty")
 
-    version = bot.single_choice("Version", IMAGES)
+    version = bot.single_choice(
+        "This wizard will help you deploy an ubuntu container, please choose ubuntu version", IMAGES
+    )
     env_vars = bot.string_ask(
-        "Environment variables (optional. Comma-seperated env variables on container startup. For example: var1=value1, var=value2)"
+        """To set environment variables on your deployed container, enter comma-separated variable=value
+        For example: var1=value1, var2=value2.
+        Leave empty if not needed"""
     )
     var_list = env_vars.split(",")
     var_dict = {}
@@ -32,7 +36,7 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
     identity = explorer.actors_all.phonebook.get(name=name, email=email)
 
-    ip_version = bot.single_choice("choose your ip version", ips)
+    ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4", ips)
     node_selected = j.sal.chatflow.nodes_get(1)[0]
 
     reservation, config = j.sal.chatflow.network_configure(
@@ -67,8 +71,9 @@ def chat(bot):
     filename = "{}_{}.conf".format(name, resv_id)
 
     res = """
-            # use the next template to configure the wg-quick config of your laptop:
-            ### ```wg-quick up /etc/wireguard/{}```
+            # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
+            ## Make sure you have wireguard ```https://www.wireguard.com/install/``` installed:
+            ## ```wg-quick up /etc/wireguard/{}```
             Click next
             to download your configuration
             """.format(

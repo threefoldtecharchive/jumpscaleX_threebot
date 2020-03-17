@@ -9,7 +9,7 @@ def chat(bot):
     user_info = bot.user_info()
     name = user_info["username"]
     email = user_info["email"]
-    ips = ["IPV6", "IPV4"]
+    ips = ["IPv6", "IPv4"]
     env = dict()
 
     explorer = j.clients.threebot.explorer
@@ -18,17 +18,23 @@ def chat(bot):
 
     form = bot.new_form()
     flist = form.string_ask(
-        "Please add link of your flist to deploy it for example: https://hub.grid.tf/usr/example.flist"
+        "Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
     )
-    pub_key = form.string_ask(
-        "Please add your public ssh-key (that will allow you to access the deployed container using ssh)"
-    )
+    pub_key = None
+    while not pub_key:
+        pub_key = bot.string_ask(
+            "Please add your public ssh key, this will allow you to access the deployed container using ssh. Just copy your key from ~/.ssh/id_rsa.pub"
+        )
     env_vars = form.string_ask(
-        "Environment variables (optional. Comma-seperated env variables on container startup. For example: var1=value1, var=value2)"
+        """To set environment variables on your deployed container, enter comma-separated variable=value
+        For example: var1=value1, var2=value2.
+        Leave empty if not needed"""
     )
     form.ask()
 
-    inetractive = bot.single_choice("DO you want to use this container using web browser or not ?", ["YES", "NO"])
+    inetractive = bot.single_choice(
+        "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"]
+    )
 
     env.update({"pub_key": pub_key.value})
     if env_vars.value:
@@ -45,8 +51,8 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
     identity = explorer.actors_all.phonebook.get(name=name, email=email)
 
-    ip_version = bot.single_choice("choose your IP version", ips)
-    node_selected = j.sal.chatflow.nodes_get(1, ip_version)[0]
+    ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4", ips)
+    node_selected = j.sal.chatflow.nodes_get(1)[0]
 
     reservation, config = j.sal.chatflow.network_configure(
         bot, reservation, [node_selected], customer_tid=identity.id, ip_version=ip_version
@@ -83,8 +89,9 @@ def chat(bot):
     filename = "{}_{}.conf".format(name, resv_id)
 
     res = """
-            # Use the next template to configure the wg-quick config of your laptop:
-            ### ```wg-quick up /etc/wireguard/{}```
+            # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
+            ## Make sure you have wireguard ```https://www.wireguard.com/install/``` installed:
+            ## ```wg-quick up /etc/wireguard/{}```
             Click next
             to download your configuration
             """.format(
