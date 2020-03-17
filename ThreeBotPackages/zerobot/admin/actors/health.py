@@ -119,7 +119,7 @@ class health(j.baseclasses.threebot_actor):
         """
         :return: string threebotname
         """
-        name = self.gedis_client.actors.identity.name().name
+        name = self.gedis_client.actors.identity.threebot_name().name
         return name
 
     @j.baseclasses.actor_method
