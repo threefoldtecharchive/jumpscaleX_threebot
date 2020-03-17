@@ -55,7 +55,6 @@ def chat(bot):
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
-
     ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4", ips)
     node_selected = j.sal.chatflow.nodes_get(1, cru=4, sru=8)
     if len(node_selected) != 0:
