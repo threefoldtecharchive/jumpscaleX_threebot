@@ -46,4 +46,5 @@ def chat_handler(package, chat_name):
         username=session.get("username", ""),
         email=session.get("email", ""),
         qs=session.get("kwargs", ""),
+        noheader=query.get("noheader", False),
     )
