@@ -1,11 +1,13 @@
 from Jumpscale import j
 
-from .auth import oauth_app
+from .auth import is_admin, oauth_app
 from .rooter import abort, request, response, env, app, get_ws_url, package_route, PACKAGE_BASE_URL
 
 
 CHAT_HOME_URL = f"{PACKAGE_BASE_URL}/chat"
 CHAT_URL = f"{CHAT_HOME_URL}/<chat_name>"
+# for now, we should add this as e.g. a config to packages
+ADMIN_ONLY_PACKAGES = ["tfgrid_solutions"]
 
 
 @app.get(CHAT_HOME_URL)
@@ -22,6 +24,10 @@ def chat_home(package):
 @package_route
 def chat_handler(package, chat_name):
     session = request.environ.get("beaker.session", {})
+    username = session.get("username", "")
+    if package.source.threebot in ADMIN_ONLY_PACKAGES:
+        if not is_admin(username):
+            return abort(401)
 
     query = dict(**request.query)  # converts from FormDict to dict
     session["kwargs"] = j.data.serializers.json.dumps(query)
@@ -43,7 +49,8 @@ def chat_handler(package, chat_name):
     return env.get_template("chat/index.html").render(
         topic=chat_name,
         url=ws_url,
-        username=session.get("username", ""),
+        username=username,
         email=session.get("email", ""),
         qs=session.get("kwargs", ""),
+        noheader=query.get("noheader", False),
     )

@@ -26,6 +26,7 @@
 <body>
     <div class="loader" id="spinner"></div>
     <!-- Top menu -->
+    {% if not noheader %}
     <div style="float:right; margin:12px; padding:10px;color:#404040;">
         <i class="fa fa-user-circle" style="font-size: 25px; margin-right:5px;"></i> {{ email }}
     </div>
@@ -61,7 +62,7 @@
             </div>
         </div>
     </nav>
-
+    {% endif %}
     <!-- Top content -->
     <div class="top-content">
         <div class="container">
