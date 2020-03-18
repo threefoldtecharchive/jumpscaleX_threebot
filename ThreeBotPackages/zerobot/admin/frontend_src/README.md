@@ -1,42 +1,30 @@
-Example of Webix MVC Admin App
+Admin dashboard
 ===============================
 
-Live demo
-----------
-
-- Material skin - http://webix.com/demos/admin-app/
-
-Older versions
-----------
-Demo in this repo uses latest Webix (6.0+) and Webix Jet 2.x, if you want to check older version, check
-
-- Flat skin, Jet 0.x - https://github.com/webix-hub/webix-adminapp-demo/tree/jet0
-- Material skin, Jet 0.x - https://github.com/webix-hub/webix-adminapp-demo/tree/material-jet0
-- Flat skin, Jet 1.x - https://github.com/webix-hub/webix-adminapp-demo/tree/jet1
-- Material skin, Jet 1.x - https://github.com/webix-hub/webix-adminapp-demo/tree/material-jet1
+Admin dashboard UI based on [webix jet](https://webix.gitbook.io/webix-jet/).
 
 
-Technical details
-------------------
+### Dependencies
 
-### Run
-
-- clone repo from git
-- run `npm install`
-- run `npm start`
-- open `http://localhost:8080` in a browser
-
-### Deploy
-
-- run `npm run build`
-- copy "index.html", "data" and "codebase" folders to the server
-
-### Other commands
-
-- `npm run lint` - will validate all js code in the project
+* nodejs & npm
+* `cd frontend_src`
+* `npm install`
 
 
-License
----------
+### Development
 
-All code in this repo is available under the MIT License
+3Bot need to started with this package installed, then for building the front-end, you can use `build_frontend.sh`:
+
+```
+cd frontend_src && bash build_frontend.sh
+```
+
+This script will build and copy the output to `frontend` directory to be served as a single page app,then you can go to `http://<host>/admin`.
+
+### Structure
+
+* The main entry is [app.js](sources/app.js)
+* Views:
+    * Main view is defined at [main.js](sources/views/main.js)
+    * External views are [wiki](sources/views/wikis), [codeserver](sources/views/codeserver) and [jupyter](sources/views/jupyter).
+* Services (calling backend/actors) can be found at [sources/services](sources/services).

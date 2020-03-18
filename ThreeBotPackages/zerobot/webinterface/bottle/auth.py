@@ -63,3 +63,22 @@ def is_authenticated():
             response.content_type = "application/json"
             return j.data.serializers.json.dumps({"username": tname, "email": temail})
     return abort(403)
+
+
+def admin_only(handler):
+    """a decorator to only allow admin access to specific routes
+
+    :param handler: handler function
+    :type handler: function
+    :return: function or abort with 405 (forbidden)
+    :rtype: function
+    """
+
+    def inner(*args, **kwargs):
+        username = request.environ.get("beaker.session", {}).get("username")
+        if not username or not is_admin(username):
+            return abort(403)
+
+        return handler(*args, **kwargs)
+
+    return inner

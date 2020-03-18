@@ -1,11 +1,11 @@
 from Jumpscale import j
 
 from .auth import oauth_app
-from .rooter import abort, request, response, env, app, get_ws_url, package_route
+from .rooter import abort, request, response, env, app, get_ws_url, package_route, PACKAGE_BASE_URL
 
 
-CHAT_HOME_URL = "/<threebot_name>/<package_name>/chat"
-CHAT_URL = "/<threebot_name>/<package_name>/chat/<chat_name>"
+CHAT_HOME_URL = f"{PACKAGE_BASE_URL}/chat"
+CHAT_URL = f"{CHAT_HOME_URL}/<chat_name>"
 
 
 @app.get(CHAT_HOME_URL)

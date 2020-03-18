@@ -8,7 +8,7 @@ from Jumpscale.tools.threegit.Doc import Doc
 from Jumpscale.tools.threegit.DocSite import DocSite
 from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
 
-from .rooter import env, app, get_ws_url, package_route
+from .rooter import env, app, get_ws_url, package_route, PACKAGE_BASE_URL
 
 
 def get_metadata(docsite):
@@ -25,7 +25,7 @@ def list_all_wikis():
     return env.get_template("wiki/home.html").render(wiki_names=[w.name for w in j.tools.threegit.find()])
 
 
-@app.get("/<threebot_name>/<package_name>/wiki")
+@app.get(f"{PACKAGE_BASE_URL}/wiki")
 @package_route
 def list_package_wikis(package):
     return env.get_template("wiki/home.html").render(wiki_names=package.wiki_names)

@@ -121,6 +121,9 @@ corednspath = j.core.tools.text_replace("{DIR_BASE}/bin/coredns")
 THREEBOT_DOMAIN = j.core.myenv.config.get("THREEBOT_DOMAIN")
 MASTERIP = "192.168.99.254"
 MASTERPUBLIC = j.sal.nettools.getReachableIpAddress("8.8.8.8", 53)
+SSH_KEY_NAME = j.core.myenv.config.get("SSH_KEY_NAME")
+DROPLET_PREFIX = j.core.myenv.config.get("DROPLET_PREFIX", "router")
+DROPLET_POSTFIX = j.core.myenv.config.get("DROPLET_POSTFIX", "Staging")
 
 if not j.sal.fs.exists(redisserverpath) or not (
     j.sal.fs.exists(tcprouterclientpath) and j.sal.fs.exists(tcprouterserverpath)
@@ -154,7 +157,7 @@ wg.save()
 wg.configure()
 
 
-def configure_wg(ssh_name, privateip):
+def configure_wg(ssh_name, privateip, executor):
     wgr = j.tools.wireguard.get(ssh_name, autosave=False)
     wgr.interface_name = "wgman_staging"
     wgr.sshclient_name = ssh_name
@@ -169,6 +172,10 @@ def configure_wg(ssh_name, privateip):
     wgr.configure()
     # add peer to "manager"
     wg.peer_add(wgr)
+    config = executor.file_read(f"/tmp/{wgr.interface_name}.conf")
+    executor.file_write(f"/etc/wireguard/{wgr.interface_name}.conf", config)
+    executor.execute(f"systemctl enable wg-quick@{wgr.interface_name}")
+
 
 
 def configure_systemd_unit(executor, name, path):
@@ -218,12 +225,12 @@ j.sal.nettools.waitConnectionTest(MASTERIP, 6378)
 rediscli = j.clients.redis.get(MASTERIP, port=6378)
 tfgateway = j.tools.tf_gateway.get(rediscli)
 for x, region in enumerate(regions):
-    name = f"router{x+1}Staging"
+    name = f"{DROPLET_PREFIX}{x+1}{DROPLET_POSTFIX}"
     sshname = f"do_{name}"
     if not do.droplet_exists(name):
         print(f"Droplet create {name}")
         droplet, _ = do.droplet_create(
-            name, "rana", region=region, size_slug=size, delete=False, project_name=project_name
+            name, SSH_KEY_NAME, region=region, size_slug=size, delete=False, project_name=project_name
         )
     else:
         print(f"Droplet get {name}")
@@ -240,7 +247,7 @@ for x, region in enumerate(regions):
             executor.upload(binary, binary)
 
     privateip = f"192.168.99.{x + 1}"
-    configure_wg(sshname, privateip)
+    configure_wg(sshname, privateip, executor)
     configure_redis(executor, privateip)
     configure_tcprouter(executor)
     configure_coredns(executor)
@@ -248,6 +255,9 @@ for x, region in enumerate(regions):
 
 wg.save()
 wg.configure()
+config = j.tools.executor.local.file_read(f"/tmp/{wg.interface_name}.conf")
+j.tools.executor.local.file_write(f"/etc/wireguard/{wg.interface_name}.conf", config)
+j.tools.executor.local.execute(f"systemctl enable wg-quick@{wg.interface_name}")
 
 print("Wating for DNS ...")
 j.sal.nettools.waitConnectionTest(THREEBOT_DOMAIN, 443, timeout=60)

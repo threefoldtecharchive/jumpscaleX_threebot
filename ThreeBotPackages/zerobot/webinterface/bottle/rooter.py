@@ -1,13 +1,17 @@
 from bottle import Bottle, abort, post, request, response, run, redirect
-from Jumpscale import j
-from jinja2 import Environment, FileSystemLoader, select_autoescape
-import bottle
+
 
 try:
     from beaker.middleware import SessionMiddleware
 except (ModuleNotFoundError, ImportError):
     j.builders.runtimes.python3.pip_package_install("beaker")
     from beaker.middleware import SessionMiddleware
+
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+
+from Jumpscale import j
+from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
 
 
 app = Bottle()
@@ -18,6 +22,8 @@ app_with_session = SessionMiddleware(app, session_opts)
 
 templates_path = j.sal.fs.joinPaths(j.sal.fs.getDirName(__file__), "..", "templates")
 env = Environment(loader=FileSystemLoader(templates_path), autoescape=select_autoescape(["html", "xml"]))
+
+PACKAGE_BASE_URL = "/<threebot_name>/<package_name>"
 
 
 def get_package(threebot_name, package_name):
@@ -76,10 +82,3 @@ def get_ws_url():
     if url_parts.port:
         ws_url = f"{ws_url}:{url_parts.port}"
     return ws_url
-
-
-from .chat import *
-from .gedis import *
-from .wiki import *
-from .info import *
-from .auth import *
