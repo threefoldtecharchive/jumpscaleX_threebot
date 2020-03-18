@@ -12,6 +12,7 @@ export class ExternalView extends JetView {
     }
 
     config() {
+        const self = this;
         const iframe = {
             view: "iframe",
             localId: "iframe-external",
@@ -25,22 +26,22 @@ export class ExternalView extends JetView {
             }
         };
 
-        const names = Object.keys(this.requiredPackages).join(", ");
-
         return {
             rows: [{
                 localId: "install-packages",
                 hidden: true,
                 cols: [
                     {
-                        template: `<div style='width:auto;text-align:center'><h3>You need to install the following required packages: ${names}<h3/></div>`,
+                        localId: "required_packages_div",
+                        view: "template",
                         autoheight: true,
                     }, {
                         view: "button",
                         localId: "install_btn",
                         value: "Install required packages",
                         css: "webix_primary",
-                        height: 50
+                        height: 50,
+                        click: self.installRequiredPackages.bind(self)
                     }, {
                         view: "button",
                         localId: "go_to_packages_btn",
@@ -66,16 +67,15 @@ export class ExternalView extends JetView {
         Promise.all(promises).then(() => {
             webix.message({ type: "success", text: "All required packages installed successfully, page will be reloaded in 2 seconds" });
             setInterval(() => window.location.reload(true), 2000);
-            this.installButton.enable();
         }).catch(() => {
             webix.message({ type: "error", text: "An error occurred, please try installing from packages for more details" });
         });
     }
 
     init(view) {
+        this.requiredPackagesDiv = this.$$("required_packages_div");
         view.installPackageContainer = this.$$("install-packages");
         this.installButton = this.$$("install_btn");
-        this.installButton.attachEvent("onItemClick", this.installRequiredPackages.bind(this));
 
         view.externalIframe = this.$$("iframe-external");
         webix.extend(view.externalIframe, webix.ProgressBar);
@@ -97,11 +97,15 @@ export class ExternalView extends JetView {
             if (Object.keys(this.requiredPackages).length) {
                 view.installPackageContainer.show();
                 view.externalIframe.hide();
+
+                const names = Object.keys(this.requiredPackages).join(", ");
+                this.requiredPackagesDiv.setHTML(
+                    `<div style='width:auto;text-align:center'><h3>You need to install the following required packages: ${names}<h3/></div>`
+                );
             } else {
                 view.installPackageContainer.hide();
                 view.externalIframe.show();
             }
-
         });
     }
 

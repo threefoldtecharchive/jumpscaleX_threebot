@@ -66,6 +66,27 @@ export default class TopView extends JetView {
                 icon: "mdi mdi-package"
             },
             {
+                id: "solutions",
+                value: "Solutions",
+                icon: "mdi mdi-animation-play",
+                data: [{
+                    id: "ubuntu",
+                    value: '<span><img class="solutions-icon" src="static/img/ubuntu.png"/>Ubuntu</span>'
+                }, {
+                    id: "flist",
+                    value: '<span><img class="solutions-icon" src="static/img/flist.png"/>Generic flist</span>'
+                }, {
+                    id: "minio",
+                    value: '<span><img class="solutions-icon" src="static/img/minio.png"/>Minio / S3</span>'
+                }, {
+                    id: "k8s_cluster",
+                    value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes cluster</span>'
+                }, {
+                    id: "threebot",
+                    value: '<span><img class="solutions-icon" src="static/img/3bot.ico"/>Threebot</span>'
+                }]
+            },
+            {
                 id: "codeserver",
                 value: "Codeserver",
                 icon: "mdi mdi-code-tags"
@@ -154,7 +175,19 @@ export default class TopView extends JetView {
     init() {
         var self = this;
 
-        this.use(plugins.Menu, "menu");
+        this.use(plugins.Menu, {
+            id: "menu",
+            urls: {
+                myjobs: "myjobs.jobs",
+                workers: "myjobs.workers",
+                ubuntu: "solutions.chatflow?author=tfgrid_solutions&package=ubuntu&chat=ubuntu_deploy",
+                flist: "solutions.chatflow?author=tfgrid_solutions&package=any_flist&chat=your_flist",
+                minio: "solutions.chatflow?author=tfgrid_solutions&package=minio&chat=minio_deploy",
+                k8s_cluster: "solutions.chatflow?author=tfgrid_solutions&package=kubernetes_cluster&chat=kubernetes_cluster_deploy",
+                threebot: "solutions.chatflow?author=tfgrid&package=threebot_provisioning&chat=threebot_reservation",
+            }
+        });
+
         this.menu = this.$$("menu");
         this.header = this.$$("header");
 
