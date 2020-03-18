@@ -52,7 +52,7 @@ def chat(bot):
     identity = explorer.actors_all.phonebook.get(name=name, email=email)
 
     ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4", ips)
-    node_selected = j.sal.chatflow.nodes_get(1)[0]
+    node_selected = j.sal.chatflow.nodes_get(1, ip_version=ip_version)[0]
 
     reservation, config = j.sal.chatflow.network_configure(
         bot, reservation, [node_selected], customer_tid=identity.id, ip_version=ip_version

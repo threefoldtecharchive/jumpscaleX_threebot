@@ -36,7 +36,7 @@ def chat(bot):
     identity = explorer.actors_all.phonebook.get(name=name, email=email)
 
     # Select nodes
-    nodes_selected = j.sal.chatflow.nodes_get(workers_number + 1)
+    nodes_selected = j.sal.chatflow.nodes_get(workers_number + 1, farm_id=71, ip_version=ip_version)
 
     # Create network of reservation and add peers
     reservation, configs = j.sal.chatflow.network_configure(
@@ -103,8 +103,9 @@ def chat(bot):
     for i, ip in enumerate(configs["ip_addresses"]):
         res = """
             kubernete {} IP : {}
+            To connect ssh rancher@{}
         """.format(
-            i + 1, ip
+            i + 1, ip, ip
         )
 
         res = j.tools.jinja2.template_render(text=res, **locals())

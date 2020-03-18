@@ -56,11 +56,11 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
 
     ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4", ips)
-    node_selected = j.sal.chatflow.nodes_get(1, cru=4, sru=8)
+    node_selected = j.sal.chatflow.nodes_get(1, cru=4, sru=8, ip_version=ip_version)
     if len(node_selected) != 0:
         node_selected = node_selected[0]
     else:
-        node_selected = j.sal.chatflow.nodes_get(1, cru=4, hru=8)
+        node_selected = j.sal.chatflow.nodes_get(1, cru=4, hru=8, ip_version=ip_version)
         if len(node_selected) != 0:
             res = "# We are sorry we don't have empty Node to deploy your 3bot"
             res = j.tools.jinja2.template_render(text=res, **locals())
