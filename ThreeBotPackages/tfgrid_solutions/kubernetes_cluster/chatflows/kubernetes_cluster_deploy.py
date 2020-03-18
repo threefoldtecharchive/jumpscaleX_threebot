@@ -73,13 +73,16 @@ def chat(bot):
 
     resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
 
-    res = f"""
-          # Kubernetes cluster has been deployed successfully
-          ## your reservation id is: {resv_id} 
-          ### Click next to proceed the wireguard configurations that need to be setup on your machine
-        """
-
+    res = """
+            ## Kubernetes cluster has been deployed successfully
+            # your reservation id is: {}
+            Click next to proceed the wireguard configurations that need to be setup on your machine
+            """.format(
+        resv_id
+    )
+    res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
     bot.md_show(res)
+
     filename = "{}_{}.conf".format(f"{default_cluster_name}_{i}", resv_id)
 
     res = """
@@ -96,3 +99,13 @@ def chat(bot):
 
     res = j.tools.jinja2.template_render(text=configs["wg"], **locals())
     bot.download_file(res, filename)
+
+    for i, ip in enumerate(configs["ip_addresses"]):
+        res = """
+            kubernete {} IP : {}
+        """.format(
+            i + 1, ip
+        )
+
+        res = j.tools.jinja2.template_render(text=res, **locals())
+        bot.md_show(res)
