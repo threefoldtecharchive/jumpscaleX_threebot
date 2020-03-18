@@ -20,11 +20,18 @@ formats
 
 - @3botname/objid  e.g. @kristof.ibiza/10
 - @3botid/objid e.g. @33/12
-- @3botname/@circlename/@objtype/@name 
+- @3botname/circlename/objtype/name 
     - e.g. @kristof.ibiza/threefold-support/doc/onboarding_process
-- @3botid/@circlename/@objtype/@name 
+- @3botid/circlename/objtype/name 
 
-## @circlename/@objtype/@name
+this is put in normal markdown link format e.g. [](kristof.ibiza/threefold-support/doc/onboarding_process)
+there can be link name in [] 
+
+## include
+
+![](kristof.ibiza/threefold-support/doc/onboarding_process)
+
+## names format e.g. circlename/objtype/name
 
 - allways lowercase and only: ```[0-9,a-z,-,_]```
 
