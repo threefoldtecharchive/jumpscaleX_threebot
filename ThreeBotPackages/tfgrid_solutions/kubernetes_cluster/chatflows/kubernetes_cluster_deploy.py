@@ -11,16 +11,24 @@ def chat(bot):
     email = user_info["email"]
     ips = ["IPv6", "IPv4"]
     default_cluster_name = name.split(".3bot")[0]
+    expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
 
     explorer = j.clients.threebot.explorer
     if not email:
         raise j.exceptions.BadRequest("Email shouldn't be empty")
 
-    ip_version = bot.single_choice("Choose your ip version to be used", ips)
+    ip_version = bot.single_choice(
+        "This wizard will help you deploy a kubernetes cluster, do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4",
+        ips,
+    )
 
-    workers_number = bot.int_ask("Please add the number of worker nodes")  # minimum should be 1
+    workers_number = bot.int_ask("Please specify the number of worker nodes")  # minimum should be 1
     cluster_size = workers_number + 1  # number of workers + the master node
-    ssh_keys = bot.upload_file("Please upload the ssh keys file with each key on a seperate line").split("\n")
+    ssh_keys = bot.upload_file(
+        """"Please add your public ssh key, this will allow you to access the deployed container using ssh. 
+            Just upload the ssh keys file with each key on a seperate line"""
+    ).split("\n")
+
     cluster_secret = bot.string_ask("Please add the cluster secret", default="secret")
 
     # create new reservation
@@ -62,17 +70,22 @@ def chat(bot):
         )
 
     # register the reservation
-    expiration = j.data.time.epoch + (3600 * 24 * 365)
+
     resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
 
-    res = f"# Kubernetes cluster has been deployed successfully: your reservation id is: {resv_id} Click next to proceed the wireguard configurations that need to be setup on your machine"
+    res = f"""
+          # Kubernetes cluster has been deployed successfully
+          ## your reservation id is: {resv_id} 
+          ### Click next to proceed the wireguard configurations that need to be setup on your machine
+        """
 
     bot.md_show(res)
     filename = "{}_{}.conf".format(f"{default_cluster_name}_{i}", resv_id)
 
     res = """
-            # use the next template to configure the wg-quick config of your laptop:
-            ### ```wg-quick up /etc/wireguard/{}```
+            ## Use the following template to configure your wireguard connection. This will give you access to your 3bot.
+            # Make sure you have wireguard ```https://www.wireguard.com/install/``` installed
+            ## ```wg-quick up /etc/wireguard/{}```
             Click next
             to download your configuration
             """.format(

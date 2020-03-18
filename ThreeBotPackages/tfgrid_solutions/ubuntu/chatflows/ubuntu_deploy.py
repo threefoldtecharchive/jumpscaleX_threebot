@@ -12,7 +12,7 @@ def chat(bot):
     ips = ["IPv6", "IPv4"]
     HUB_URL = "https://hub.grid.tf/tf-bootable"
     IMAGES = ["ubuntu:16.04", "ubuntu:18.04"]
-
+    expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
     explorer = j.clients.threebot.explorer
     if not email:
         raise j.exceptions.BadRequest("Email shouldn't be empty")
@@ -59,8 +59,6 @@ def chat(bot):
         env=var_dict,
         interactive=True,
     )
-
-    expiration = j.data.time.epoch + (3600 * 24 * 365)
 
     resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
 
