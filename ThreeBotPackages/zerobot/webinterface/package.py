@@ -31,7 +31,7 @@ class Package(j.baseclasses.threebot_package):
             bottle_proxy_location.scheme = "http"
 
             chat_wiki_proxy_location = locations.get_location_proxy("chat_wiki_actors")
-            chat_wiki_proxy_location.path_url = "~* ^/(.*)/(.*)/(chat|wiki|actors|info)"
+            chat_wiki_proxy_location.path_url = "~* ^/(.*)/(.*)/(chat|wiki|actors|info|model)"
             chat_wiki_proxy_location.ipaddr_dest = "127.0.0.1"
             chat_wiki_proxy_location.port_dest = 9999
 
@@ -54,6 +54,7 @@ class Package(j.baseclasses.threebot_package):
             wiki_static_location.path_url = "/staticwiki"
             wiki_static_location.path_location = f"{self._dirpath}/static"
 
+            locations.configure()
             website.configure()
 
     def start(self):
@@ -62,7 +63,7 @@ class Package(j.baseclasses.threebot_package):
 
         self.setup_locations()
 
-        from threebot_packages.zerobot.webinterface.bottle.rooter import app_with_session
+        from threebot_packages.zerobot.webinterface.bottle import app_with_session
 
         self.gevent_rack.bottle_server_add(name="bottle_web_interface", port=9999, app=app_with_session, websocket=True)
         # self.gevent_rack.webapp_root = webapp

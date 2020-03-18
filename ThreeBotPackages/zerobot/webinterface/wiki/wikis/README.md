@@ -40,26 +40,29 @@ to sum up an external client would call this threebot actors method through redi
 ![3Bot module example with mail module](../doc/images/3bot_actors_models.jpg)
 
 to load wikis or werbsites , use this package
-
+## From threebot server shell
 ### Install
 
-`j.threebot.package.wikis.install()`
+`j.threebot.packages.threefold.wikis.install()`
 
 ### Run
 
-`j.threebot.package.wikis.start()`
+`j.threebot.packages.threefold.wikis.start()`
 
+## From normal shell
+### Get gedis client
+`
+package_manager_gedis=j.clients.gedis.get(name="packagemanager_name", port=8901, package_name="zerobot.packagemanager")
+`
+### Add Wiki package
+`
+package_manager_gedis.actors.package_manager.package_add(path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/webinterface")
+`
 ### Screenshot
 
 <img src="https://i.ibb.co/K5WGBfz/Screenshot-from-2019-09-05-19-31-39.png" alt="Screenshot-from-2019-09-05-19-31-39" border="0">
 
 Open browser on port `80`
-
-### Test
-
-```
-j.threebot.package.wikis.test()
-```
 
 ### Actors
 

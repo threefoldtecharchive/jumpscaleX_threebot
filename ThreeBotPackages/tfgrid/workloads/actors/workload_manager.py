@@ -239,11 +239,11 @@ class workload_manager(j.baseclasses.threebot_actor):
                 reservation.next_action = "pay"
 
         if reservation.next_action == "pay":
-            # if self._validate_farmers_signature(reservation):
-            # add to actionable workload if the state has changed
-            if reservation.next_action != "deploy":
-                self._add_to_actionable_workload(reservation)
-            reservation.next_action = "deploy"
+            if self._validate_farmers_signature(reservation):
+                # add to actionable workload if the state has changed
+                if reservation.next_action != "deploy":
+                    self._add_to_actionable_workload(reservation)
+                reservation.next_action = "deploy"
 
         if reservation.next_action == "deploy":
             # Temporary change to simplify reservation flow for testing
@@ -264,7 +264,7 @@ class workload_manager(j.baseclasses.threebot_actor):
                     workload_id=gwid(reservation.id, w.workload_id), node_id=w.node_id
                 ).save()
             if t == "network":
-                for nr in workload.network_resources:
+                for nr in w.network_resources:
                     self.workload_actionable_model.new(
                         workload_id=gwid(reservation.id, w.workload_id), node_id=nr.node_id
                     ).save()
@@ -281,7 +281,10 @@ class workload_manager(j.baseclasses.threebot_actor):
 
         if cursor:
             cur_query = self.reservation_model.IndexTable.reservation_id >= cursor
-            query = query and cur_query if query else cur_query
+            if query:
+                query &= cur_query
+            else:
+                query = cur_query
 
         result = self.reservation_model.IndexTable.select().where(query).execute()
         reservations_ids = set([item.reservation_id for item in result])

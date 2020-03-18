@@ -12,9 +12,11 @@ class namemanager(j.baseclasses.threebot_actor):
         self.explorer = j.clients.gedis.get(
             name="phonebook_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.phonebook"
         )
-
-        redisclient = j.clients.redis.get(MASTERIP, port=6378)
-        self.tfgateway = j.tools.tf_gateway.get(redisclient)
+        if j.sal.nettools.waitConnectionTest(MASTERIP, port=6378, timeout=1):
+            redisclient = j.clients.redis.get(MASTERIP, port=6378)
+            self.tfgateway = j.tools.tf_gateway.get(redisclient)
+        else:
+            self._log_error(f"CONNECTION ERROR TO {MASTERIP}")
 
     @j.baseclasses.actor_method
     def domain_register(self, threebot_name, privateip, signature, schema_out=None, user_session=None):
