@@ -10,11 +10,14 @@ class gateway(j.baseclasses.threebot_actor):
     # COREDNS redis backend
     def _init(self, **kwargs):
         # QUESTION: should it work against local database or against remote one? as it's generic enough
-        redisclient = j.clients.redis.get(MASTERIP, port=6378)
-        self._gateway = j.tools.tf_gateway.get(redisclient)
-        self.explorer = j.clients.gedis.get(
-            name="phonebook_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.phonebook"
-        )
+        if j.sal.nettools.waitConnectionTest(MASTERIP, port=6378, timeout=1):
+            redisclient = j.clients.redis.get(MASTERIP, port=6378)
+            self._gateway = j.tools.tf_gateway.get(redisclient)
+            self.explorer = j.clients.gedis.get(
+                name="phonebook_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.phonebook"
+            )
+        else:
+            self._log_error(f"CONNECTION ERROR TO {MASTERIP}")
 
     @j.baseclasses.actor_method
     def domain_list(self, schema_out=None, user_session=None):
@@ -230,7 +233,7 @@ class gateway(j.baseclasses.threebot_actor):
 
     @j.baseclasses.actor_method
     def domain_unregister_srv(
-            self, name, domain, host, port, priority=10, weight=100, schema_out=None, user_session=None
+        self, name, domain, host, port, priority=10, weight=100, schema_out=None, user_session=None
     ):
         """
         ```in
