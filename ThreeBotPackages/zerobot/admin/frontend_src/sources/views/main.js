@@ -81,10 +81,11 @@ export default class TopView extends JetView {
                 }, {
                     id: "k8s_cluster",
                     value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes cluster</span>'
-                }, {
-                    id: "threebot",
-                    value: '<span><img class="solutions-icon" src="static/img/3bot.ico"/>Threebot</span>'
-                }]
+                } //, {
+                    //     id: "threebot",
+                    //     value: '<span><img class="solutions-icon" src="static/img/3bot.ico"/>Threebot</span>'
+                    // }
+                ]
             },
             {
                 id: "codeserver",
