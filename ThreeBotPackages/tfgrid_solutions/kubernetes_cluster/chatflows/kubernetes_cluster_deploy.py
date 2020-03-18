@@ -9,7 +9,7 @@ def chat(bot):
     user_info = bot.user_info()
     name = user_info["username"]
     email = user_info["email"]
-    ips = ["IPV6", "IPV4"]
+    ips = ["IPv6", "IPv4"]
     default_cluster_name = name.split(".3bot")[0]
 
     explorer = j.clients.threebot.explorer
@@ -28,10 +28,12 @@ def chat(bot):
     identity = explorer.actors_all.phonebook.get(name=name, email=email)
 
     # Select nodes
-    nodes_selected = j.sal.chatflow.nodes_get(workers_number + 1, ip_version)
+    nodes_selected = j.sal.chatflow.nodes_get(workers_number + 1)
 
     # Create network of reservation and add peers
-    reservation, configs = j.sal.chatflow.network_configure(bot, reservation, nodes_selected, customer_tid=identity.id)
+    reservation, configs = j.sal.chatflow.network_configure(
+        bot, reservation, nodes_selected, customer_tid=identity.id, ip_version=ip_version
+    )
     rid = configs["rid"]
 
     # Create master and workers
