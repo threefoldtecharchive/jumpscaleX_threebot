@@ -98,9 +98,7 @@ def chat(bot):
     namespace_config = []
     for result in reservation_result:
         if result.category == "ZDB":
-            result_config = result.data_json
-            result_config = result_config.replace("'", '"')
-            data = j.data.serializers.json.loads(result_config)
+            data = result.data_json
             cfg = f"{data['Namespace']}:{password}@[{data['IP']}]:{data['Port']}"
             namespace_config.append(cfg)
 
