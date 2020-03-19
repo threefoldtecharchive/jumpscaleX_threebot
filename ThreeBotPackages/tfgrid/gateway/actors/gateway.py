@@ -322,5 +322,7 @@ class gateway(j.baseclasses.threebot_actor):
 
         fqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
         self._gateway.tcpservice_register(fqdn, client_secret=client_secret)
-        self._gateway.domain_register_a(threebot_name, f"{THREEBOT_DOMAIN}", "165.227.201.194")  # TODO remove fixed ip
+        ips = j.tools.dnstools.default.namerecords_get(THREEBOT_DOMAIN)
+        for ip in ips:
+            self._gateway.domain_register_a(threebot_name, f"{THREEBOT_DOMAIN}", ip)
         return True
