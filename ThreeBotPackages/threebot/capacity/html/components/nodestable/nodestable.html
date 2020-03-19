@@ -52,7 +52,7 @@
 
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length">
-                    <nodeInfo :key="item.id" :node="item" />
+                    <nodeInfo :key="item.id" :node=item />
                   </td>
                 </template>
               </v-data-table>

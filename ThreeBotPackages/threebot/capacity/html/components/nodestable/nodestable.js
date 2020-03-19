@@ -9,7 +9,7 @@ module.exports = new Promise(async (resolve, reject) => {
     name: "nodestable",
     props: ['farmselected'],
     components: {
-      nodeinfo: "url:/farmmanagement/components/nodeinfo/index.vue"
+      nodeinfo: httpVueLoader("/capacity/components/nodeinfo/index.vue")
     },
     data() {
       return {
@@ -36,7 +36,7 @@ module.exports = new Promise(async (resolve, reject) => {
       };
     },
     computed: { 
-      ...vuex.mapGetters("farmmanagement", [
+      ...vuex.mapGetters("capacity", [
         "registeredNodes", 
         "registeredFarms",
         "nodes"
@@ -79,7 +79,7 @@ module.exports = new Promise(async (resolve, reject) => {
       this.getRegisteredNodes()
     },
     methods: {
-      ...vuex.mapActions("farmmanagement", [
+      ...vuex.mapActions("capacity", [
         "getRegisteredNodes",
         "resetNodes"
       ]),

@@ -61,7 +61,7 @@
       </v-card-text>
     </v-card>
     
-    <nodesTable style="height: 100%; width:100%;" v-bind:farmselected="farmSelected" v-if="farmSelected.name"/>
+    <nodesTable style="height: 100%; width:100%;" :farmselected="farmSelected" v-if="farmSelected.name"/>
   </v-row>
   <v-dialog v-model="settingsDialog" scrollable v-if="settingsDialog" max-width="700px">
     <v-card style="width: 100%;">

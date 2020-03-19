@@ -1,6 +1,8 @@
 import tfService from "./service.js";
 import lodash from "/weblibs/lodash/lodash.min.js";
 
+const namespaced = true;
+
 const state = {
   user: {},
   registeredNodes: [],
@@ -30,23 +32,24 @@ const actions = {
   },
   getRegisteredNodes(context) {
     tfService.registered3bots().then(response => {
-      context.commit("setRegisteredNodes", response.data.nodes);
-      context.commit("setTotalSpecs", response.data.nodes);
+      console.log(response)
+      context.commit("setRegisteredNodes", response.data);
+      context.commit("setTotalSpecs", response.data);
     });
   },
-  getRegisteredFarms(context) {
-    tfService.registeredfarms().then(response => {
-      context.commit("setAmountOfFarms", response.data.farms);
-      context.commit("setRegisteredFarms", response.data.farms);
+  getRegisteredFarms(context, farm_id) {
+    tfService.registeredfarms(farm_id).then(response => {
+      context.commit("setAmountOfFarms", response.data);
+      context.commit("setRegisteredFarms", response.data);
     });
   },
   getFarms: context => {
     tfService.getFarms(context.getters.user.id).then(response => {
-      context.commit("setFarms", response.data.farms);
+      context.commit("setFarms", response.data);
     });
   },
   resetNodes: context => {
-    context.commit("setNodes", undefined)
+    context.commit("setNodes", undefined);
   }
 };
 const mutations = {
@@ -91,4 +94,4 @@ const getters = {
   nodeSpecs: state => state.nodeSpecs
 };
 
-export { state, actions, mutations, getters };
+export { namespaced, state, actions, mutations, getters };
