@@ -11,6 +11,6 @@ class Package(j.baseclasses.threebot_package):
             locations = website.locations.get(name=f"admin_{port}")
 
             admin_location = locations.get_location_static("admin")
-            admin_location.path_url = "/admin"
+            admin_location.path_url = "/"
             admin_location.path_location = f"{self._dirpath}/output"
             admin_location.is_auth = True
