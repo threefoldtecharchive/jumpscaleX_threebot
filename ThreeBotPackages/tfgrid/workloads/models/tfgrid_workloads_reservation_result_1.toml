@@ -2,7 +2,7 @@
 @url = tfgrid.workloads.reservation.result.1
 category = "zdb,container,network,volume,kubernetes" (E)
 workload_id = (S)
-data_json = (S)
+data_json = (json)
 #signature of the data (is e.g. json) by the zos node who deployed
 signature = (bytes)
 state = "error,ok,deleted" (E)
