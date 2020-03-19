@@ -114,7 +114,7 @@ def chat(bot):
 
     # Add volume and create container schema
     vol = j.sal.zosv2.volume.create(reservation, node_selected.node_id, size=8)
-    rid = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
+    rid = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
     # create container
     cont = j.sal.zosv2.container.create(
         reservation=reservation,
@@ -132,7 +132,7 @@ def chat(bot):
 
     j.sal.zosv2.volume.attach_existing(cont, vol, rid, "/sandbox/var")
 
-    resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
+    resv_id = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = """# reservation sent. ID: {}
         """.format(

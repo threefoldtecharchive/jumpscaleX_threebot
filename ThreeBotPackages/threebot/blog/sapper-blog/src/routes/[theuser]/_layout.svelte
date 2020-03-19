@@ -1,37 +1,12 @@
 <script context="module">
-  import axios from "axios";
-  axios.defaults.headers.post["Content-Type"] = "application/json";
-
-  const BLOG_API = "/web/gedis/http/blog";
-  export async function callActorWithArgs(actorCmd, actorArgs) {
-    let p = () =>
-      axios.post(`${BLOG_API}/${actorCmd}`, {
-        args: actorArgs
-      });
-
-    let resp = await p();
-    return new Promise((resolve, reject) => resolve(resp.data));
-  }
+  import { getPosts, getPages, getMetadata, getTags } from "../_api.js";
 
   export async function preload({ host, path, params, query }) {
     try {
-      let blogName = params.theuser;
-      const pages = await callActorWithArgs("get_pages", {
-        blog_name: blogName
-      });
-
-      const metadata = await callActorWithArgs("get_metadata", {
-        blog_name: blogName
-      });
-
-      const tags = await callActorWithArgs("get_tags", {
-        blog_name: blogName
-      });
-
-      const allPosts = await callActorWithArgs("get_posts", {
-        blog_name: blogName
-      });
-
+      const pages = await getPages(params.theuser);
+      const metadata = await getMetadata(params.theuser);
+      const tags = await getTags(params.theuser);
+      const allPosts = await getPosts(params.theuser);
       // please notice it might be undefined
       // parseInt(undefined) > 0 -> false
       // parseInt(undefined) < 0 -> false
@@ -74,20 +49,19 @@
 
 {#await pages}
   loading
-{:then value}
-  <Nav {segment} {metadata} pages={value} />
+{:then pagesvalue}
+  {#await metadata then metavalue}
+
+    <Nav {segment} metadata={metavalue} pages={pagesvalue} />
+  {/await}
 {/await}
 <div>
   <div class="container">
     <div class="row">
       <main class="posts-listing col-lg-8">
         <div class="container">
-          <div class="row">
-            <!-- post -->
-            <slot />
-          </div>
-          <!-- Pagination -->
-          <ListPagination />
+          <!-- post -->
+          <slot />
         </div>
       </main>
 
@@ -96,6 +70,8 @@
       </aside>
     </div>
   </div>
-  <Footer {metadata} />
+  {#await metadata then metavalue}
+    <Footer {metavalue} />
+  {/await}
 
 </div>

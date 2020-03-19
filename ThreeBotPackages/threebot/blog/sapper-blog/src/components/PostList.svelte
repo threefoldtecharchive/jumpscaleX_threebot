@@ -13,6 +13,10 @@
   <h1>{title}</h1>
 {/if}
 
-{#each posts as post}
-  <PostCard {post} {username} {showExcerpt} />
-{/each}
+{#if posts}
+  <div class="row">
+    {#each posts as post}
+      <PostCard {post} {username} {showExcerpt} />
+    {/each}
+  </div>
+{/if}

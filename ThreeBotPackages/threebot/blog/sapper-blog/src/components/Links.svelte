@@ -8,12 +8,15 @@
     {#each links as link}
       <li>
 
-        {#if link.faclass}
-          <a href={link.link}>
-            <i class="{link.faclass} fa-3x" />
+        {#if link.img}
+          <a href={link.link} target="_blank">
+            <img
+              src={link.img}
+              alt={link.img}
+              style="height: 50px;width: 50px;" />
           </a>
         {:else}
-          <a href={link.link}>{link.title}</a>
+          <a href={link.link} target="_blank">{link.title}</a>
           <!-- else content here -->
         {/if}
       </li>

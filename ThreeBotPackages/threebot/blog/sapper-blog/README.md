@@ -1,14 +1,15 @@
 # Running
 
 ## Dev mode
+change `DEV` env variable in _api.js to 1 then
 - `npm run dev`
-Open up [localhost:3000](http://localhost:3000) and start clicking around.
+Open up [localhost:3000](http://localhost:3000/blog) and start clicking around.
 
 ## Production mode
 
-Run `kosmos -p 'j.threebot.package.blogs.start()'`
+- Check backend readme
 
-`start` takes a list of tuples of blog name and git repo 
+`start` takes a list of tuples of blog name and git repo
 open up JSX container IP:8084/blog
 
 
@@ -134,7 +135,7 @@ sapper-blog/src/
 
 ### Notes
 
-- If you want to access page.params instead of having to pass them around to all of your components, you can use `stores` from `@sapper/app` 
+- If you want to access page.params instead of having to pass them around to all of your components, you can use `stores` from `@sapper/app`
 - page is readable store has (host, path, params, query)
 - session a writable store
 <script>
@@ -142,4 +143,3 @@ sapper-blog/src/
   const { preloading, page, session } = stores();
   export let username = $page.params.theuser;
 </script>
-

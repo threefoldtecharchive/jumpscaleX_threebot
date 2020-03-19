@@ -1,6 +1,2 @@
 let blogs;
-export default blogs =
-    [
-        "xmon",
-        "ared",
-    ]
+export default blogs = ['blog']

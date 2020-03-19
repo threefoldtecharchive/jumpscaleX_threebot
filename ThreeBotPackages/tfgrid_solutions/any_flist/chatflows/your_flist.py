@@ -80,7 +80,7 @@ def chat(bot):
 
     expiration = j.data.time.epoch + (24)
 
-    resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
+    resv_id = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = f"# Container has been deployed successfully: your reservation id is: {resv_id} "
 
