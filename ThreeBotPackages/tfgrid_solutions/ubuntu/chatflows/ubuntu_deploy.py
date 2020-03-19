@@ -13,7 +13,7 @@ def chat(bot):
     HUB_URL = "https://hub.grid.tf/tf-bootable"
     IMAGES = ["ubuntu:16.04", "ubuntu:18.04"]
     expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
-    explorer = j.clients.threebot.explorer
+    explorer = j.clients.explorer.explorer
     if not email:
         raise j.exceptions.BadRequest("Email shouldn't be empty")
 
@@ -34,7 +34,7 @@ def chat(bot):
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
-    identity = explorer.actors_all.phonebook.get(name=name, email=email)
+    identity = explorer.users.get(name=name, email=email)
 
     ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4", ips)
     node_selected = j.sal.chatflow.nodes_get(1, ip_version=ip_version)[0]
