@@ -74,16 +74,23 @@ def chat(bot):
         )
 
     # register the reservation for zdb db
-    expiration = j.data.time.epoch + (60 * 60 * 24)
     zdb_rid = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
     res = (
         f"# Database has been deployed with reservation id: {zdb_rid}. Click next to continue with deployment of minio"
     )
 
     reservation_result = []
-    trials = 10
-    while len(reservation_result) < (zdb_number + 1):
+    trials = 20
+    zdbs_found = False
+    while not zdbs_found:
+        number_of_zdbs_found = 0
         reservation_result = explorer.reservations.get(zdb_rid).results
+        for result in reservation_result:
+            if result.category == "ZDB":
+                number_of_zdbs_found += 1
+        if number_of_zdbs_found == zdb_number:
+            zdbs_found = True
+
         trials = trials - 1
         if trials == 0:
             break
@@ -91,7 +98,9 @@ def chat(bot):
     namespace_config = []
     for result in reservation_result:
         if result.category == "ZDB":
-            data = j.data.serializers.json.loads(result.data_json)
+            result_config = result.data_json
+            result_config = result_config.replace("'", '"')
+            data = j.data.serializers.json.loads(result_config)
             cfg = f"{data['Namespace']}:{password}@[{data['IP']}]:{data['Port']}"
             namespace_config.append(cfg)
 
