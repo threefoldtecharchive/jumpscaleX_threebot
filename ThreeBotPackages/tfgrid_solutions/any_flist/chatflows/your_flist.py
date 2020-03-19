@@ -11,8 +11,8 @@ def chat(bot):
     email = user_info["email"]
     ips = ["IPv6", "IPv4"]
     env = dict()
-
-    explorer = j.clients.threebot.explorer
+    expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
+    explorer = j.clients.explorer.explorer
     if not email:
         raise j.exceptions.BadRequest("Email shouldn't be empty")
 
@@ -49,7 +49,7 @@ def chat(bot):
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
-    identity = explorer.actors_all.phonebook.get(name=name, email=email)
+    identity = explorer.users.get(name=name, email=email)
 
     ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4", ips)
     node_selected = j.sal.chatflow.nodes_get(1, ip_version=ip_version)[0]
@@ -77,8 +77,6 @@ def chat(bot):
         env=env,
         interactive=interactive,
     )
-
-    expiration = j.data.time.epoch + (24)
 
     resv_id = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
