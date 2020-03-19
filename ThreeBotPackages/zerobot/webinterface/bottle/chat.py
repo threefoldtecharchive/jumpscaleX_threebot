@@ -25,10 +25,6 @@ def chat_home(package):
 def chat_handler(package, chat_name):
     session = request.environ.get("beaker.session", {})
     username = session.get("username", "")
-    if package.source.threebot in ADMIN_ONLY_PACKAGES:
-        if not is_admin(username):
-            return abort(401)
-
     query = dict(**request.query)  # converts from FormDict to dict
     session["kwargs"] = j.data.serializers.json.dumps(query)
 
