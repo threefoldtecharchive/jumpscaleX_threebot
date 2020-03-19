@@ -11,8 +11,8 @@ def chat(bot):
     email = user_info["email"]
     ips = ["IPv6", "IPv4"]
     flist_url = "https://hub.grid.tf/azmy.3bot/minio.flist"
-
-    explorer = j.clients.threebot.explorer
+    expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
+    explorer = j.clients.explorer.explorer
     if not email:
         raise j.exceptions.BadRequest("Email shouldn't be empty")
 
@@ -47,13 +47,13 @@ def chat(bot):
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
-    identity = explorer.actors_all.phonebook.get(name=name, email=email)
+    identity = explorer.users.get(name=name, email=email)
 
-    nodes_selected = j.sal.chatflow.nodes_get(zdb_number + 1, ip_version=ip_version, farm_id=71)
+    nodes_selected = j.sal.reservation_chatflow.nodes_get(zdb_number + 1, ip_version=ip_version, farm_id=71)
     selected_node = nodes_selected[0]
 
     # Create network of reservation and add peers
-    reservation, configs = j.sal.chatflow.network_configure(
+    reservation, configs = j.sal.reservation_chatflow.network_configure(
         bot, reservation, nodes_selected, customer_tid=identity.id, ip_version=ip_version, number_of_ipaddresses=1
     )
     rid = configs["rid"]
@@ -75,7 +75,7 @@ def chat(bot):
 
     # register the reservation for zdb db
     expiration = j.data.time.epoch + (60 * 60 * 24)
-    zdb_rid = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
+    zdb_rid = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
     res = (
         f"# Database has been deployed with reservation id: {zdb_rid}. Click next to continue with deployment of minio"
     )
@@ -83,7 +83,7 @@ def chat(bot):
     reservation_result = []
     trials = 10
     while len(reservation_result) < (zdb_number + 1):
-        reservation_result = explorer.actors_all.workload_manager.reservation_get(zdb_rid).results
+        reservation_result = explorer.reservations.get(zdb_rid).results
         trials = trials - 1
         if trials == 0:
             break
@@ -115,8 +115,8 @@ def chat(bot):
             "SECRET_KEY": secret,
         },
     )
-    expiration = j.data.time.epoch + (60 * 60 * 24)
-    resv_id = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
+
+    resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = f"# Minio cluster has been deployed successfully: your reservation id is: {resv_id}"
 
@@ -124,8 +124,9 @@ def chat(bot):
     filename = "{}_{}.conf".format(name.split(".3bot")[0], resv_id)
 
     res = """
-            # use the next template to configure the wg-quick config of your laptop:
-            ### ```wg-quick up /etc/wireguard/{}```
+            ## Use the following template to configure your wireguard connection. This will give you access to your 3bot.
+            # Make sure you have wireguard ```https://www.wireguard.com/install/``` installed
+            ## ```wg-quick up /etc/wireguard/{}```
             Click next
             to download your configuration
             """.format(
@@ -137,6 +138,6 @@ def chat(bot):
     res = j.tools.jinja2.template_render(text=wg_quick, **locals())
     bot.download_file(res, filename)
 
-    res = "# Open your browser at ```{}:9000. It may take a few minutes.```".format(ip_address)
+    res = "# Open your browser at ```{}:9000```. It may take a few minutes.".format(ip_address)
     res = j.tools.jinja2.template_render(text=res, **locals())
     bot.md_show(res)

@@ -37,9 +37,9 @@ def chat(bot):
     identity = explorer.users.get(name=name, email=email)
 
     ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4", ips)
-    node_selected = j.sal.chatflow.nodes_get(1, ip_version=ip_version)[0]
+    node_selected = j.sal.reservation_chatflow.nodes_get(1, ip_version=ip_version)[0]
 
-    reservation, config = j.sal.chatflow.network_configure(
+    reservation, config = j.sal.reservation_chatflow.network_configure(
         bot, reservation, [node_selected], customer_tid=identity.id, ip_version=ip_version
     )
 
@@ -60,7 +60,7 @@ def chat(bot):
         interactive=True,
     )
 
-    resv_id = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
+    resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = f"# Ubuntu has been deployed successfully: your reservation id is: {resv_id} "
 
@@ -83,6 +83,6 @@ def chat(bot):
     res = j.tools.jinja2.template_render(text=config["wg"], **locals())
     bot.download_file(res, filename)
 
-    res = "# Open your browser at ```{}:7681```".format(ip_address)
+    res = "# Open your browser at ```{}:7681``` It may take a few minutes.".format(ip_address)
     res = j.tools.jinja2.template_render(text=res, **locals())
     bot.md_show(res)

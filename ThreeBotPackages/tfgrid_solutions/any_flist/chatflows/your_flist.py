@@ -52,9 +52,9 @@ def chat(bot):
     identity = explorer.users.get(name=name, email=email)
 
     ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4", ips)
-    node_selected = j.sal.chatflow.nodes_get(1, ip_version=ip_version)[0]
+    node_selected = j.sal.reservation_chatflow.nodes_get(1, ip_version=ip_version)[0]
 
-    reservation, config = j.sal.chatflow.network_configure(
+    reservation, config = j.sal.reservation_chatflow.network_configure(
         bot, reservation, [node_selected], customer_tid=identity.id, ip_version=ip_version
     )
     ip_address = config["ip_addresses"][0]
@@ -78,7 +78,7 @@ def chat(bot):
         interactive=interactive,
     )
 
-    resv_id = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
+    resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = f"# Container has been deployed successfully: your reservation id is: {resv_id} "
 

@@ -36,10 +36,10 @@ def chat(bot):
     identity = explorer.users.get(name=name, email=email)
 
     # Select nodes
-    nodes_selected = j.sal.chatflow.nodes_get(workers_number + 1, farm_id=71, ip_version=ip_version)
+    nodes_selected = j.sal.reservation_chatflow.nodes_get(workers_number + 1, farm_id=71, ip_version=ip_version)
 
     # Create network of reservation and add peers
-    reservation, configs = j.sal.chatflow.network_configure(
+    reservation, configs = j.sal.reservation_chatflow.network_configure(
         bot, reservation, nodes_selected, customer_tid=identity.id, ip_version=ip_version
     )
     rid = configs["rid"]
@@ -71,7 +71,7 @@ def chat(bot):
 
     # register the reservation
 
-    resv_id = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
+    resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = """
             ## Kubernetes cluster has been deployed successfully

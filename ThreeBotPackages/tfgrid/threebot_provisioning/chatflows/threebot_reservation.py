@@ -56,11 +56,11 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
 
     ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4", ips)
-    node_selected = j.sal.chatflow.nodes_get(1, cru=4, sru=8, ip_version=ip_version)
+    node_selected = j.sal.reservation_chatflow.nodes_get(1, cru=4, sru=8, ip_version=ip_version)
     if len(node_selected) != 0:
         node_selected = node_selected[0]
     else:
-        node_selected = j.sal.chatflow.nodes_get(1, cru=4, hru=8, ip_version=ip_version)
+        node_selected = j.sal.reservation_chatflow.nodes_get(1, cru=4, hru=8, ip_version=ip_version)
         if len(node_selected) != 0:
             res = "# We are sorry we don't have empty Node to deploy your 3bot"
             res = j.tools.jinja2.template_render(text=res, **locals())
@@ -80,7 +80,7 @@ def chat(bot):
         env.update({"restore": "True"})
         secret_env.update({"HASH": hash_encrypt})
 
-    reservation, config = j.sal.chatflow.network_configure(
+    reservation, config = j.sal.reservation_chatflow.network_configure(
         bot, reservation, [node_selected], customer_tid=identity.id, ip_version=ip_version
     )
 
@@ -114,7 +114,7 @@ def chat(bot):
 
     # Add volume and create container schema
     vol = j.sal.zosv2.volume.create(reservation, node_selected.node_id, size=8)
-    rid = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
+    rid = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
     # create container
     cont = j.sal.zosv2.container.create(
         reservation=reservation,
@@ -132,7 +132,7 @@ def chat(bot):
 
     j.sal.zosv2.volume.attach_existing(cont, vol, rid, "/sandbox/var")
 
-    resv_id = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
+    resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = """# reservation sent. ID: {}
         """.format(
@@ -157,6 +157,6 @@ def chat(bot):
     res = j.tools.jinja2.template_render(text=config["wg"], **locals())
     bot.download_file(res, filename)
 
-    res = "# Open your browser at ```{}:1500```".format(ip_address)
+    res = "# Open your browser at ```{}:1500``` It may take a few minutes.".format(ip_address)
     res = j.tools.jinja2.template_render(text=res, **locals())
     bot.md_show(res)
