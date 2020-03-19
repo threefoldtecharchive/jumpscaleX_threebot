@@ -60,8 +60,7 @@
         <p class="text-center">please select a farm to view the nodes.</p>
       </v-card-text>
     </v-card>
-    
-    <nodesTable style="height: 100%; width:100%;" :farmselected="farmSelected" v-if="farmSelected.name"/>
+    <nodesTable style="height: 100%; width:100%;" :farmselected="farmSelected" v-if="farmSelected && farmSelected.name"></nodesTable>
   </v-row>
   <v-dialog v-model="settingsDialog" scrollable v-if="settingsDialog" max-width="700px">
     <v-card style="width: 100%;">
