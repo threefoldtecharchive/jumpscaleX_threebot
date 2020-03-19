@@ -101,6 +101,8 @@ def chat(bot):
             result_config = result.data_json
             result_config = result_config.replace("'", '"')
             data = j.data.serializers.json.loads(result_config)
+            # TODO: not sure
+            # data = result.data_json
             cfg = f"{data['Namespace']}:{password}@[{data['IP']}]:{data['Port']}"
             namespace_config.append(cfg)
 
