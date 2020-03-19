@@ -4,10 +4,12 @@
       <v-card-title primary-title class="primary py-3 mb-5 white--text">
         <v-row>
           <v-col cols="6" class="py-0">
-            <v-icon small color="white" left>fas fa-server</v-icon>
             My Farms
-            <v-btn text icon dark class="ml-2 secondary" @click="addFarmDialog = true">
-              <v-icon small>fas fa-plus</v-icon>
+            <v-btn text icon dark class="ml-2" @click="addFarmDialog = true">
+              <v-icon small>fa-plus</v-icon>
+            </v-btn>
+            <v-btn text icon dark @click="refreshFarms">
+              <v-icon small>fa-sync-alt</v-icon>
             </v-btn>
           </v-col>
           <v-col></v-col>
@@ -20,23 +22,24 @@
       </v-card-title>
       <v-card-text>
         <v-row>
-          <v-col>
-            <v-data-table item-key="name" :search="searchFarms" :headers="headers" :items="farms" :items-per-page="10"
-              @click:row="viewNodes">
-              <template v-slot:item.action="{ item }">
-                <v-btn fab small text @click="viewNodes(item)">
-                  <v-icon small>
-                    fas fa-eye
-                  </v-icon>
-                </v-btn>
-                <v-btn fab small text @click.stop="viewSettings(item)">
-                  <v-icon small>
-                    fas fa-cog
-                  </v-icon>
-                </v-btn>
-              </template>
-            </v-data-table>
-          </v-col>
+          <v-data-table item-key="name" :search="searchFarms" :headers="headers" :items="farms" :items-per-page="10"
+            @click:row="viewNodes" style="width: 100%;" :footer-props="{
+              prevIcon: 'fa-angle-left',
+              nextIcon: 'fa-angle-right'
+            }">
+            <template v-slot:item.action="{ item }">
+              <v-btn fab small text @click="viewNodes(item)">
+                <v-icon small>
+                  fa-eye
+                </v-icon>
+              </v-btn>
+              <v-btn fab small text @click.stop="viewSettings(item)">
+                <v-icon small>
+                  fa-cog
+                </v-icon>
+              </v-btn>
+            </template>
+          </v-data-table>
         </v-row>
       </v-card-text>
     </v-card>
@@ -48,7 +51,7 @@
         <v-row>
           <v-col cols="6" class="py-0">
 
-            <v-icon small color="white" left>fas fa-server</v-icon>
+            <v-icon small color="white" left>fa-server</v-icon>
             Nodes in farm
           </v-col>
         </v-row>
@@ -63,7 +66,7 @@
   <v-dialog v-model="settingsDialog" scrollable v-if="settingsDialog" max-width="700px">
     <v-card style="width: 100%;">
       <v-card-title primary-title class="primary py-3 mb-5 white--text">
-        <v-icon color="white" left>fas fa-server</v-icon>
+        <v-icon color="white" left>fa-server</v-icon>
         Farm Settings - {{farmToEdit.name}}
       </v-card-title>
       <v-card-text>
@@ -127,7 +130,7 @@
   <v-dialog v-model="addFarmDialog" scrollable max-width="700px">
     <v-card style="width: 100%;">
       <v-card-title primary-title class="primary py-3 mb-5 white--text">
-        <v-icon color="white" left>fas fa-server</v-icon>
+        <v-icon color="white" left>fa-server</v-icon>
         Add a farm
         <v-spacer />
 
@@ -154,5 +157,4 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <script  type="application/javascript" src='/farmmanagement/weblibs/moment/moment.js' async></script>
 </section>

@@ -9,7 +9,7 @@
 <ul class="list-group">
   <li class="list-group-item">
     <b>ID :</b>
-    <a href="/zerobot/alerta_ui/{myAlert.identifier}">{myAlert.identifier}</a>
+    <a href="/zerobot/alerta/{myAlert.identifier}">{myAlert.identifier}</a>
   </li>
   <li class="list-group-item">
     <b>Type :</b>
@@ -18,6 +18,10 @@
   <li class="list-group-item">
     <b>Status :</b>
     {myAlert.status}
+  </li>
+  <li class="list-group-item">
+    <b>App name :</b>
+    {myAlert.appname}
   </li>
   <li class="list-group-item">
     <b>Level :</b>
@@ -47,4 +51,37 @@
     <b>Message (Public) :</b>
     {myAlert.message_pub}
   </li>
+  <li class="list-group-item">
+    <b>Tracebacks :</b>
+  </li>
 </ul>
+
+{#if myAlert.tracebacks.length}
+  <ul class="nav nav-tabs">
+    {#each myAlert.tracebacks as tb, i}
+      <li class="nav-item">
+        <a
+          class="nav-link {i == 0 ? 'active' : ''}"
+          role="tab"
+          data-toggle="tab"
+          href="#{tb.process_id}_{tb.threebot_name}">
+          {tb.threebot_name} - PID: ({tb.process_id})
+        </a>
+      </li>
+    {/each}
+  </ul>
+
+  <div class="tab-content">
+    {#each myAlert.tracebacks as tb, i}
+      <div
+        role="tabpanel"
+        class="tab-pane {i == 0 ? 'active' : ''}"
+        id="{tb.process_id}_{tb.threebot_name}"
+        style="white-space: pre-wrap;">
+        <p>
+          {@html ansiUp.ansi_to_html(tb.formatted)}
+        </p>
+      </div>
+    {/each}
+  </div>
+{/if}

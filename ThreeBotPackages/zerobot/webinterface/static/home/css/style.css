@@ -8,7 +8,6 @@ body {
 
 .intro {
     display: flex;
-    height: 100%;
     align-items: center;
     color: #fff;
 }
@@ -39,6 +38,7 @@ body {
     border: 2px solid #fff;
     border-radius: 15px;
     padding: 10px 30px;
+    margin: 4px;
     -webkit-transition: all .4s ease-in-out;
     -moz-transition: all .4s ease-in-out;
     -o-transition: all .4s ease-in-out;
@@ -63,3 +63,17 @@ body {
 .bot:before{
     content:url("/staticchat/home/img/3botlogin.png");
     }
+
+.card {
+    background-color: transparent;
+}
+
+.reload-button:hover {
+    cursor:pointer;
+}
+
+.reload-button:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: default;
+}

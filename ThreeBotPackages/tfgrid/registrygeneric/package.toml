@@ -1,0 +1,11 @@
+[source]
+name = "registry"
+description = "Register any type of information"
+threebot = "tfgrid"
+version = "1.0.0"
+
+[[bcdbs]]
+name = "registry"
+namespace = "registry"
+type = "zdb"
+instance = "default"

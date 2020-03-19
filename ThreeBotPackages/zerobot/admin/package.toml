@@ -1,0 +1,13 @@
+
+[source]
+name = "admin"
+description = "admin dashboard"
+threebot = "zerobot"
+version = "1.0.0"
+
+
+[[bcdbs]]
+name = "zerobot_admin"
+namespace = "zerobot_admin"
+type = "zdb"
+instance = "default"

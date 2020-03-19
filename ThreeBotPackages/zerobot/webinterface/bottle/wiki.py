@@ -1,11 +1,14 @@
+import mimetypes
+import traceback
+
 from bottle import Bottle, abort, post, request, response, run, redirect, static_file
+
 from Jumpscale import j
 from Jumpscale.tools.threegit.Doc import Doc
 from Jumpscale.tools.threegit.DocSite import DocSite
 from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
-from .rooter import env, app, get_ws_url
-import mimetypes
-import traceback
+
+from .rooter import env, app, get_ws_url, package_route, PACKAGE_BASE_URL
 
 
 def get_metadata(docsite):
@@ -17,22 +20,20 @@ def get_metadata(docsite):
         return "{}"
 
 
-@app.route("/<threebot_name>/<package_name>/wiki", method=["get"])
-def wiki_list(threebot_name, package_name):
-    try:
-        package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-    except j.exceptions.NotFound:
-        print(f"couldn't load wikis for {threebot_name}.{package_name}")
-        abort(404)
-    wiki_names = package.wiki_names
-    return env.get_template("wiki/home.html").render(
-        wiki_names=wiki_names, threebot_name=threebot_name, package_name=package_name
-    )
+@app.get("/wiki")
+def list_all_wikis():
+    return env.get_template("wiki/home.html").render(wiki_names=[w.name for w in j.tools.threegit.find()])
+
+
+@app.get(f"{PACKAGE_BASE_URL}/wiki")
+@package_route
+def list_package_wikis(package):
+    return env.get_template("wiki/home.html").render(wiki_names=package.wiki_names)
 
 
 @app.route("/wiki/<wiki_name>", method=["get"])
 @app.route("/<threebot_name>/<package_name>/wiki/<wiki_name>", method=["get"])
-def wiki_by_name(wiki_name, threebot_name=None, package_name=None):
+def wiki_by_name(wiki_name=None, threebot_name=None, package_name=None):
     docsite_path = j.tools.threegit.get_docsite_path(wiki_name)
     if not j.sal.fs.exists(docsite_path):
         err = f"""
@@ -64,7 +65,21 @@ def gdrive_handler(doc_type, guid1, guid2=""):
 @app.route("/3git/wikis/<filepath:re:.+>")
 @enable_cors
 def threegit_handler(filepath):
-    return static_file(filepath, root=j.tools.threegit.docsites_path)
+    root = j.tools.threegit.docsites_path
+    # first remove md file extention and check if the file exist
+    if filepath.endswith(".md"):
+        filepath = filepath[:-3]
+
+    filename = j.sal.fs.joinPaths(root, filepath)
+    if j.sal.fs.exists(filename):
+        return static_file(filepath, root=root)
+
+    # if the file isn't found without md extension, try to get it with md
+    filepath_with_md = filename + ".md"
+    if j.sal.fs.exists(filepath_with_md):
+        return static_file(filepath + ".md", root=root)
+
+    return abort(404, f"File not found with path {filename} or {filepath_with_md}")
 
 
 # def get_document(docsite_name, relative_path):

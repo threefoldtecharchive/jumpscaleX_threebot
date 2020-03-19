@@ -10,7 +10,15 @@ class package_manager(j.baseclasses.threebot_actor):
 
     @j.baseclasses.actor_method
     def package_add(
-        self, git_url=None, path=None, reload=True, install=True, start=True, schema_out=None, user_session=None
+        self,
+        git_url=None,
+        path=None,
+        reload=True,
+        install=True,
+        start=True,
+        schema_out=None,
+        user_session=None,
+        install_kwargs=None,
     ):
         """
         ```in
@@ -19,6 +27,8 @@ class package_manager(j.baseclasses.threebot_actor):
         reload = true (B)
         install = true (B)
         start = true (B)
+        install_kwargs= (dict)
+
         ```
         can use a git_url or a path
         path needs to exist on the threebot server
@@ -26,7 +36,6 @@ class package_manager(j.baseclasses.threebot_actor):
         it will not update if its already there
 
         """
-
         user_session.admin_check()  # means will give error when not an admin user
 
         if git_url and path:
@@ -56,7 +65,6 @@ class package_manager(j.baseclasses.threebot_actor):
                 raise j.exceptions.Input("could not find :%s" % tomlpath)
 
         name = getfullname(p)
-
         package = None
         if git_url:
             package = j.tools.threebot_packages.get(name=name, giturl=git_url)
@@ -70,12 +78,14 @@ class package_manager(j.baseclasses.threebot_actor):
         assert j.tools.threebot_packages.exists(name=package.name)
 
         if install or reload:
-            package.install()
+            package.install(install_kwargs=install_kwargs)
         package.reload(reset=reload)
         if not install:
             package.status = "toinstall"
         if start:
             package.start()
+
+        j.servers.threebot.default.openresty_server.reload()
 
         return "OK"
 
@@ -207,13 +217,18 @@ class package_manager(j.baseclasses.threebot_actor):
         """
 
         def do(r, package):
-            if package.status not in ["installed"]:
-                package.install()
-            pdef = r.packages.new()
-            pdef.package_name = package.name
-            actor_names = list(package.actors.keys())
-            pdef.actor_names = actor_names
-            return r
+            try:
+                # if package.status not in ["installed"]:
+                #     package.install()
+                pdef = r.packages.new()
+                pdef.package_name = package.name
+                actor_names = list(package.actors.keys())
+                pdef.actor_names = actor_names
+                if pdef.package_name:
+                    return r
+            except Exception as e:
+                self._log_error(f"Error occured at package {package.name}: {e}")
+                return r
 
         r = schema_out.new()
         if package_name:
