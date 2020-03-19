@@ -32,11 +32,11 @@ def chat(bot):
     )
     form.ask()
 
-    inetractive = bot.single_choice(
+    interactive = bot.single_choice(
         "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"]
     )
 
-    env.update({"pub_key": pub_key.value})
+    env.update({"pub_key": pub_key})
     if env_vars.value:
         var_list = env_vars.value.split(",")
         var_dict = {}
@@ -59,12 +59,12 @@ def chat(bot):
     )
     ip_address = config["ip_addresses"][0]
 
-    conatiner_flist = flist.value
+    conatiner_flist = flist
     storage_url = "zdb://hub.grid.tf:9900"
-    if inetractive.value == "YES":
+    if interactive == "YES":
         interactive = True
     else:
-        inetractive = False
+        interactive = False
 
     # create container
     cont = j.sal.zosv2.container.create(
