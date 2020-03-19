@@ -46,11 +46,15 @@ module.exports = new Promise(async (resolve, reject) => {
     mounted() {},
     methods: {
       setSelected(value) {
-        if (value === "All") return this.setNodes(this.registeredNodes);
+        if (value === "All") {
+          this.$emit('custom-event-input-changed', '')
+          return this.setNodes(this.registeredNodes);
+        }
         const filteredNodes = this.registeredNodes.filter(
           node => node.farm_id.toString() === value.id.toString()
         );
         this.setNodes(filteredNodes);
+        this.$emit('custom-event-input-changed', value.name.toString())
       },
       ...vuex.mapMutations("capacity", ["setNodes"])
     }

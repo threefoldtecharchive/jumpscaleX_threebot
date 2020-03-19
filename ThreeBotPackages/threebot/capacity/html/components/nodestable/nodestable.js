@@ -7,7 +7,7 @@ module.exports = new Promise(async (resolve, reject) => {
   momentDurationFormat(moment);
   resolve({
     name: "nodestable",
-    props: ['farmselected'],
+    props: ['farmselected', 'searchnodes'],
     components: {
       nodeinfo: httpVueLoader("/capacity/components/nodeinfo/index.vue")
     },
@@ -23,9 +23,9 @@ module.exports = new Promise(async (resolve, reject) => {
         showBadge: true,
         menu: false,
         loadedNodes: false,
+        othersHidden: false,
         itemsPerPage: 4,
         expanded: [],
-        searchNodes: "",
         headers: [
           { text: "ID", value: "id" },
           { text: "Uptime", value: "uptime" },
@@ -105,6 +105,22 @@ module.exports = new Promise(async (resolve, reject) => {
         if (index > -1) this.expanded.splice(index, 1);
         else this.expanded.push(node);
       },
+      hideOthers () {
+        var all = document.getElementsByClassName('others')
+        for (var i = 0; i < all.length; i++) {
+          all[i].style.display = 'none'
+          all[i].classList.remove('flex')
+        }
+        this.othersHidden = true
+      },
+      showOthers () {
+        var all = document.getElementsByClassName('others')
+        for (var i = 0; i < all.length; i++) {
+          all[i].style.display = 'block'
+          all[i].classList.add('flex')
+        }
+        this.othersHidden = false
+      }
     }
   });
 });
