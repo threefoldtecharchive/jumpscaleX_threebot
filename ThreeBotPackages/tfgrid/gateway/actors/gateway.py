@@ -323,6 +323,5 @@ class gateway(j.baseclasses.threebot_actor):
         fqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
         self._gateway.tcpservice_register(fqdn, client_secret=client_secret)
         ips = j.tools.dnstools.default.namerecords_get(THREEBOT_DOMAIN)
-        for ip in ips:
-            self._gateway.domain_register_a(threebot_name, f"{THREEBOT_DOMAIN}", ip)
+        self._gateway.domain_register_a(threebot_name, f"{THREEBOT_DOMAIN}", ips[0])
         return True
