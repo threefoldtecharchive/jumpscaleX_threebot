@@ -34,7 +34,6 @@ module.exports = new Promise(async (resolve, reject) => {
     methods: {
       ...vuex.mapActions("capacity", ["getRegisteredNodes", "getRegisteredFarms"]),
       changeSelectedNode (data) {
-        console.log(data)
         this.selectedNode = data
       }
     }
