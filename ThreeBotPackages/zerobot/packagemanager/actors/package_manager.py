@@ -182,8 +182,9 @@ class package_manager(j.baseclasses.threebot_actor):
                 mdp = j.sal.fs.joinPaths(package.path, "package.toml")
                 if j.sal.fs.exists(mdp):
                     metadata = j.data.serializers.toml.loads(j.sal.fs.readFile(mdp))
-                    if not metadata["source"].get("frontend", False):
+                    if not metadata["source"].get("frontend", False) or not metadata.get("frontend_args"):
                         continue
+                    package.frontend_args = metadata["frontend_args"]
                 else:
                     continue
 

@@ -1,5 +1,6 @@
 import { JetView, plugins } from "webix-jet";
 
+
 export default class TopView extends JetView {
     config() {
         const header = {
@@ -21,88 +22,97 @@ export default class TopView extends JetView {
             ]
         };
 
+        const sidebarData = [{
+            id: "dash",
+            value: "Dashboard",
+            icon: "mdi mdi-view-dashboard"
+        },
+        {
+            id: "wikis",
+            value: "Wikis",
+            icon: "mdi mdi-newspaper"
+        },
+        {
+            id: "alerts",
+            value: "Alerts",
+            icon: "mdi mdi-bell-alert"
+        },
+        {
+            id: "logs",
+            value: "Logs",
+            icon: "mdi mdi-history"
+        },
+        {
+            id: "myjobs_main",
+            value: "My jobs",
+            icon: "mdi mdi-animation-play",
+            data: [{
+                id: "myjobs",
+                icon: "mdi mdi-book-open",
+                value: "Jobs"
+            }, {
+                id: "workers",
+                icon: "mdi mdi-worker",
+                value: "Workers"
+            }]
+        },
+        {
+            id: "packages",
+            value: "Packages",
+            icon: "mdi mdi-package"
+        },
+        {
+            id: "solutions",
+            value: "Solutions",
+            icon: "mdi mdi-animation-play",
+            data: [{
+                id: "ubuntu",
+                value: '<span><img class="solutions-icon" src="static/img/ubuntu.png"/>Ubuntu</span>'
+            }, {
+                id: "flist",
+                value: '<span><img class="solutions-icon" src="static/img/flist.png"/>Generic flist</span>'
+            }, {
+                id: "minio",
+                value: '<span><img class="solutions-icon" src="static/img/minio.png"/>Minio / S3</span>'
+            }, {
+                id: "k8s_cluster",
+                value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes cluster</span>'
+            } //, {
+                //     id: "threebot",
+                //     value: '<span><img class="solutions-icon" src="static/img/3bot.ico"/>Threebot</span>'
+                // }
+            ]
+        },
+        {
+            id: "codeserver",
+            value: "Codeserver",
+            icon: "mdi mdi-code-tags"
+        },
+        {
+            id: "jupyter",
+            value: "Jupyter",
+            icon: "mdi mdi-play"
+        },
+        {
+            id: "settings",
+            value: "Settings",
+            icon: "mdi mdi-settings"
+        },
+        ]
+
+        const response = webix.ajax().sync().get("/zerobot/packagemanager/actors/package_manager/packages_list", { frontend: true, status: "installed" });
+
+        const packages = JSON.parse(response.responseText).packages;
+        for (const p of packages) {
+            sidebarData.push(p.frontend_args);
+        }
+
         const sidebar = {
             localId: "menu",
             view: "sidebar",
             css: "webix_dark",
             width: 200,
-            data: [{
-                id: "dash",
-                value: "Dashboard",
-                icon: "mdi mdi-view-dashboard"
-            },
-            {
-                id: "wikis",
-                value: "Wikis",
-                icon: "mdi mdi-newspaper"
-            },
-            {
-                id: "alerts",
-                value: "Alerts",
-                icon: "mdi mdi-bell-alert"
-            },
-            {
-                id: "logs",
-                value: "Logs",
-                icon: "mdi mdi-history"
-            },
-            {
-                id: "myjobs_main",
-                value: "My jobs",
-                icon: "mdi mdi-animation-play",
-                data: [{
-                    id: "myjobs",
-                    icon: "mdi mdi-book-open",
-                    value: "Jobs"
-                }, {
-                    id: "workers",
-                    icon: "mdi mdi-worker",
-                    value: "Workers"
-                }]
-            },
-            {
-                id: "packages",
-                value: "Packages",
-                icon: "mdi mdi-package"
-            },
-            {
-                id: "solutions",
-                value: "Solutions",
-                icon: "mdi mdi-animation-play",
-                data: [{
-                    id: "ubuntu",
-                    value: '<span><img class="solutions-icon" src="static/img/ubuntu.png"/>Ubuntu</span>'
-                }, {
-                    id: "flist",
-                    value: '<span><img class="solutions-icon" src="static/img/flist.png"/>Generic flist</span>'
-                }, {
-                    id: "minio",
-                    value: '<span><img class="solutions-icon" src="static/img/minio.png"/>Minio / S3</span>'
-                }, {
-                    id: "k8s_cluster",
-                    value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes cluster</span>'
-                } //, {
-                    //     id: "threebot",
-                    //     value: '<span><img class="solutions-icon" src="static/img/3bot.ico"/>Threebot</span>'
-                    // }
-                ]
-            },
-            {
-                id: "codeserver",
-                value: "Codeserver",
-                icon: "mdi mdi-code-tags"
-            },
-            {
-                id: "jupyter",
-                value: "Jupyter",
-                icon: "mdi mdi-play"
-            },
-            {
-                id: "settings",
-                value: "Settings",
-                icon: "mdi mdi-settings"
-            },
-            ]
+            data: sidebarData,
         };
 
         const toolbar = {
