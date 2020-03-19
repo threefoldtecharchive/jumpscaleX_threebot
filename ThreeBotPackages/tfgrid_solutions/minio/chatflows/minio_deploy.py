@@ -75,7 +75,7 @@ def chat(bot):
 
     # register the reservation for zdb db
     expiration = j.data.time.epoch + (60 * 60 * 24)
-    zdb_rid = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
+    zdb_rid = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
     res = (
         f"# Database has been deployed with reservation id: {zdb_rid}. Click next to continue with deployment of minio"
     )
@@ -116,7 +116,7 @@ def chat(bot):
         },
     )
     expiration = j.data.time.epoch + (60 * 60 * 24)
-    resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
+    resv_id = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = f"# Minio cluster has been deployed successfully: your reservation id is: {resv_id}"
 

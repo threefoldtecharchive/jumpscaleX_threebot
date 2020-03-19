@@ -60,7 +60,7 @@ def chat(bot):
         interactive=True,
     )
 
-    resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
+    resv_id = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = f"# Ubuntu has been deployed successfully: your reservation id is: {resv_id} "
 

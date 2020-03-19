@@ -71,7 +71,7 @@ def chat(bot):
 
     # register the reservation
 
-    resv_id = j.sal.zosv2.reservation_register(reservation, expiration, customer_tid=identity.id)
+    resv_id = j.sal.chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     res = """
             ## Kubernetes cluster has been deployed successfully

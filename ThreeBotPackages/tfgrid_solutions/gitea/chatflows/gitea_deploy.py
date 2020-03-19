@@ -101,7 +101,7 @@ def chat(bot):
     wg_quick = j.sal.zosv2.network.add_access(network, node_selected.node_id, network_node, ipv4=True)
     expiration = j.data.time.epoch + (3600 * 24 * 365)
     # register the reservation
-    rid = j.sal.zosv2.reservation_register(reservation, expiration)
+    rid = j.sal.chatflow.reservation_register(reservation, expiration)
 
     # TODO:change the entry point and this configuration
 
@@ -117,7 +117,7 @@ def chat(bot):
     )
 
     expiration = j.data.time.epoch + (3600 * 24 * 365)
-    resv_id = j.sal.zosv2.reservation_register(reservation, expiration)
+    resv_id = j.sal.chatflow.reservation_register(reservation, expiration)
 
     res = f"# Gitea has been deployed successfully: your reservation id is: {resv_id} "
 
