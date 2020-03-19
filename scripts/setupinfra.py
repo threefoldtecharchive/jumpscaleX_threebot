@@ -177,7 +177,6 @@ def configure_wg(ssh_name, privateip, executor):
     executor.execute(f"systemctl enable wg-quick@{wgr.interface_name}")
 
 
-
 def configure_systemd_unit(executor, name, path):
     systemdconfig = unittemplate.format(name=name, path=path)
     executor.file_write(f"/etc/systemd/system/{name}.service", systemdconfig)
