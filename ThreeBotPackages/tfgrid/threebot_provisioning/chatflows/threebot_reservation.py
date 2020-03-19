@@ -9,7 +9,7 @@ def chat(bot):
     """
     This chat is to deploy 3bot container on the grid
     """
-    explorer = j.clients.threebot.explorer
+    explorer = j.clients.explorer.explorer
     cl = j.clients.s3.get("deployer")
 
     AWS_ID = cl.accesskey_
@@ -31,7 +31,7 @@ def chat(bot):
         bot.md_show("Username or email not found in session. Please log in properly")
 
     user_choice = bot.single_choice("This wizard will help you deploy or restore your 3bot.", choose)
-    identity = explorer.actors_all.phonebook.get(name=name, email=email)
+    identity = explorer.users.get(name=name, email=email)
     identity_pubkey = identity.pubkey
     if user_choice == "Restore my 3bot":
         password = bot.secret_ask("Please enter the password you configured to backup your 3bot")
