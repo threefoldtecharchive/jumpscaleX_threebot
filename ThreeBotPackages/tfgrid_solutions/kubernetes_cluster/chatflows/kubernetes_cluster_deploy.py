@@ -13,7 +13,7 @@ def chat(bot):
     default_cluster_name = name.split(".3bot")[0]
     expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
 
-    explorer = j.clients.threebot.explorer
+    explorer = j.clients.explorer.explorer
     if not email:
         raise j.exceptions.BadRequest("Email shouldn't be empty")
 
@@ -33,7 +33,7 @@ def chat(bot):
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
-    identity = explorer.actors_all.phonebook.get(name=name, email=email)
+    identity = explorer.users.get(name=name, email=email)
 
     # Select nodes
     nodes_selected = j.sal.chatflow.nodes_get(workers_number + 1, farm_id=71, ip_version=ip_version)
