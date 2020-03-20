@@ -7,7 +7,7 @@ module.exports = new Promise(async (resolve, reject) => {
   momentDurationFormat(moment);
   resolve({
     name: "nodestable",
-    props: ['farmselected', 'searchnodes'],
+    props: ['farmselected', 'searchnodes', 'registerednodes'],
     components: {
       nodeinfo: httpVueLoader("/capacity/components/nodeinfo/index.vue")
     },
@@ -37,13 +37,12 @@ module.exports = new Promise(async (resolve, reject) => {
     },
     computed: { 
       ...vuex.mapGetters("capacity", [
-        "registeredNodes", 
         "registeredFarms",
         "nodes"
       ]),
       // Parse nodelist to table format here
       parsedNodesList: function() {
-        const nodeList = this.nodes ? this.nodes : this.registeredNodes
+        const nodeList = this.nodes ? this.nodes : this.registerednodes
         const parsedNodes = nodeList.filter(node => !this.farmselected || (this.farmselected.id === node.farm_id)).map(node => {
           const uptime = moment.duration(node.uptime, "seconds").format();
 
@@ -76,11 +75,9 @@ module.exports = new Promise(async (resolve, reject) => {
     },
     mounted () {
       this.resetNodes()
-      this.getRegisteredNodes()
     },
     methods: {
       ...vuex.mapActions("capacity", [
-        "getRegisteredNodes",
         "resetNodes"
       ]),
       getStatus(node) {

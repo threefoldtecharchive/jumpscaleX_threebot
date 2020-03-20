@@ -25,6 +25,7 @@ module.exports = new Promise(async (resolve, reject) => {
     computed: {
       ...vuex.mapGetters("capacity", [
         "nodeSpecs",
+        "registeredNodes"
       ]),
     },
     mounted() {
