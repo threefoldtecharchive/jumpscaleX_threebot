@@ -18,11 +18,11 @@ def chat(bot):
 
     form = bot.new_form()
     flist = form.string_ask(
-        "Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
+        "This wizard will help you deploy a container using any flit provided\n Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
     )
     pub_key = None
     while not pub_key:
-        pub_key = bot.string_ask(
+        pub_key = form.string_ask(
             "Please add your public ssh key, this will allow you to access the deployed container using ssh. Just copy your key from ~/.ssh/id_rsa.pub"
         )
     env_vars = form.string_ask(
@@ -36,7 +36,7 @@ def chat(bot):
         "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"]
     )
 
-    env.update({"pub_key": pub_key})
+    env.update({"pub_key": pub_key.value})
     if env_vars.value:
         var_list = env_vars.value.split(",")
         var_dict = {}
@@ -59,7 +59,7 @@ def chat(bot):
     )
     ip_address = config["ip_addresses"][0]
 
-    conatiner_flist = flist
+    conatiner_flist = flist.value
     storage_url = "zdb://hub.grid.tf:9900"
     if interactive == "YES":
         interactive = True
