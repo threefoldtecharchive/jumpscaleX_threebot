@@ -13,7 +13,7 @@ module.exports = new Promise(async (resolve, reject) => {
       };
     },
     computed: {
-      ...vuex.mapGetters(["registeredFarms", "registeredNodes"]),
+      ...vuex.mapGetters("capacity", ["registeredFarms", "registeredNodes"]),
       allFarmsList: function() {
         const allFarmers = this.registeredFarms.map(farm => {
           return {
@@ -52,7 +52,7 @@ module.exports = new Promise(async (resolve, reject) => {
         );
         this.setNodes(filteredNodes);
       },
-      ...vuex.mapMutations(["setNodes"])
+      ...vuex.mapMutations("capacity", ["setNodes"])
     }
   });
 });

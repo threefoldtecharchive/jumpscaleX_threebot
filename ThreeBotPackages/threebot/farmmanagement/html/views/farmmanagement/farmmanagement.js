@@ -7,15 +7,8 @@ module.exports = new Promise(async (resolve, reject) => {
   resolve({
     name: "farmManagement",
     components: {
-      nodestable: httpVueLoader(
-<<<<<<< HEAD
-        "/weblibs/shared/components/nodestable/index.vue"
-=======
-        "/threebot/farmmanagement/components/nodestable/index.vue"
->>>>>>> rework_webplatform
-      ),
+      nodestable: "url:/farmmanagement/components/nodestable/index.vue"
     },
-    props: [],
     data() {
       return {
         refreshInterval: undefined,
@@ -278,7 +271,7 @@ module.exports = new Promise(async (resolve, reject) => {
       };
     },
     computed: {
-      ...vuex.mapGetters(["farms", "nodes", "user"]),
+      ...vuex.mapGetters("farmmanagement", ["farms", "nodes", "user"]),
       parsedLocation() {
         return {
           lat: this.newFarm.location.latitude,
@@ -293,12 +286,12 @@ module.exports = new Promise(async (resolve, reject) => {
       this.newFarm.threebot_id = this.user.id;
     },
     methods: {
-      ...vuex.mapActions([
+      ...vuex.mapActions("farmmanagement", [
         "getUser",
         "registerFarm",
         "getFarms",
         "updateFarm",
-        "getFarmNodes"
+        "getRegisteredNodes"
       ]),
       initialiseRefresh () {
         const that = this;
@@ -313,7 +306,9 @@ module.exports = new Promise(async (resolve, reject) => {
       },
       viewNodes(item) {
         this.farmSelected = item;
-        //this.getFarmNodes(this.farmSelected.id);
+        this.getRegisteredNodes(this.farmSelected.id);
+        console.log(item)
+        console.log(this.farmSelected)
       },
       viewSettings(farm) {
         this.farmToEdit = farm;
