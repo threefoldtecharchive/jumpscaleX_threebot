@@ -33,8 +33,8 @@ def chat(bot):
         "Please add the secret to be used for minio when logging in to match the previous key. Make sure not to loose it",
         default="secret12345",
     )
-    cpu = bot.int_ask("Resources for minio: Please add the how much cpu is needed. If unsure use 2")
-    memory = bot.int_ask("Resources for minio: Please add the size you need for the memory. If unsure use 2048")
+    cpu = bot.int_ask("Resources for minio: Please add the how much cpu is needed", default=2)
+    memory = bot.int_ask("Resources for minio: Please add the size you need for the memory", default=2048)
     data_number = str(
         bot.string_ask(
             "Resources for minio: Please add the number of data drives you need. Take care of the ratio between the data drives and parity drives you will specify next",

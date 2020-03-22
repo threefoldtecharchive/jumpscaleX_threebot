@@ -44,10 +44,16 @@ var textContentGenerate = function (message, kwargs, idx) {
 }
 
 var intContentGenerate = function (message, kwargs, idx) {
+    let contents = ``
+    if (typeof kwargs['default'] == 'undefined') {
+        contents = `<input type="number" class="form-control" id="value">`
+    } else {
+        contents = `<input type="number" class="form-control" id="value_${idx}" value="${kwargs["default"]}">`
+    }
     return `
     <h4>${message}</h4>
     <div class="form-group">
-		<input type="number" class="form-control" id="value_${idx}">
+        ${contents}
     </div>`
 }
 
