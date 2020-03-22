@@ -7,7 +7,7 @@ from Jumpscale import j
 def _validate_output_type(output_type):
     valid_types = ["csv", "json"]
     if output_type not in valid_types:
-        raise j.exceptions.BadRequest("Invalid output type. Supported types are: {}".format(",".join(valid_types)))
+        raise j.exceptions.Input("Invalid output type. Supported types are: {}".format(",".join(valid_types)))
 
 
 def _format_output(data, output_type):
@@ -61,15 +61,25 @@ class taiga(j.baseclasses.threebot_actor):
     def _get_task_status(self, status_id):
         return self.taiga_client.api.task_statuses.get(status_id).name
 
+    @lru_cache(maxsize=128)
+    def _get_user_id(self, username):
+        user = self.taiga_client.api.users.list(username=username)
+        if user:
+            user = user[0]
+            return user.id
+        else:
+            raise j.exceptions.Input("Couldn't find user with username: {}".format(username))
+
     @j.baseclasses.actor_method
-    def get_user_circles(self, user_id, output_type="csv", user_session=None):
+    def get_user_circles(self, username, output_type="csv", schema_out=None, user_session=None):
         """
         ```in
-        user_id = (I)
+        username = (S)
         output_type = "csv" (S)
         ```
         """
         _validate_output_type(output_type)
+        user_id = self._get_user_id(username)
         circles = self.taiga_client.api.projects.list(member=user_id)
         data = []
         for circle in circles:
@@ -86,7 +96,7 @@ class taiga(j.baseclasses.threebot_actor):
         return _format_output(data, output_type)
 
     @j.baseclasses.actor_method
-    def get_circles_issues(self, project_id, output_type="csv", user_session=None):
+    def get_circles_issues(self, project_id, output_type="csv", schema_out=None, user_session=None):
         """
         ```in
         project_id = (I)
@@ -97,7 +107,7 @@ class taiga(j.baseclasses.threebot_actor):
         try:
             circle = self.taiga_client.api.projects.get(project_id)
         except Exception:
-            j.exceptions.BadRequest("Couldn't find project with id: {}".format(project_id))
+            raise j.exceptions.RemoteException("Couldn't find project with id: {}".format(project_id))
 
         data = []
         for issue in circle.list_issues():
@@ -121,14 +131,15 @@ class taiga(j.baseclasses.threebot_actor):
         return _format_output(data, output_type)
 
     @j.baseclasses.actor_method
-    def get_user_stories(self, user_id, output_type="csv", user_session=None):
+    def get_user_stories(self, username, output_type="csv", schema_out=None, user_session=None):
         """
         ```in
-        user_id = (I)
+        username = (S)
         output_type = "csv" (S)
         ```
         """
         _validate_output_type(output_type)
+        user_id = self._get_user_id(username)
         user_stories = self.taiga_client.api.user_stories.list(assigned_to=user_id)
         data = []
         for user_story in user_stories:
@@ -148,14 +159,15 @@ class taiga(j.baseclasses.threebot_actor):
         return _format_output(data, output_type)
 
     @j.baseclasses.actor_method
-    def get_user_tasks(self, user_id, output_type="csv", user_session=None):
+    def get_user_tasks(self, username, output_type="csv", schema_out=None, user_session=None):
         """
         ```in
-        user_id = (I)
+        username = (S)
         output_type = "csv" (S)
         ```
         """
         _validate_output_type(output_type)
+        user_id = self._get_user_id(username)
         user_tasks = self.taiga_client.api.tasks.list(assigned_to=user_id)
         data = []
         for user_task in user_tasks:
@@ -175,7 +187,7 @@ class taiga(j.baseclasses.threebot_actor):
         return _format_output(data, output_type)
 
     @j.baseclasses.actor_method
-    def move_story_to_cirlce(self, story_id, project_id, user_session=None):
+    def move_story_to_cirlce(self, story_id, project_id, schema_out=None, user_session=None):
         """
         ```in
         story_id = (I)
@@ -191,7 +203,7 @@ class taiga(j.baseclasses.threebot_actor):
         try:
             user_story = self.taiga_client.api.user_stories.get(story_id)
         except Exception:
-            j.exceptions.BadRequest("Couldn't find user story with id: {}".format(story_id))
+            raise j.exceptions.RemoteException("Couldn't find user story with id: {}".format(story_id))
 
         project_stories_statuses = self.taiga_client.api.user_story_statuses.list(project=project_id)
         status = self._get_user_stories_status(user_story.status)
@@ -207,7 +219,7 @@ class taiga(j.baseclasses.threebot_actor):
                 tags=user_story.tags,
             )
         except Exception:
-            j.exceptions.BadRequest("No project with id: {} found".format(project_id))
+            raise j.exceptions.RemoteException("No project with id: {} found".format(project_id))
         try:
             comments = self.taiga_client.api.history.user_story.get(story_id)
             comments = sorted(comments, key=lambda c: dateutil.parser.isoparse(c["created_at"]))
@@ -237,7 +249,7 @@ class taiga(j.baseclasses.threebot_actor):
 
         except Exception as e:
             self.taiga_client.api.user_stories.delete(migrate_story.id)
-            j.exceptions.RuntimeError("Failed to migrate story error was: {}".format(str(e)))
+            raise j.exceptions.RuntimeError("Failed to migrate story error was: {}".format(str(e)))
 
         self.taiga_client.api.user_stories.delete(story_id)
         return migrate_story.id
