@@ -73,40 +73,46 @@ def chat(bot):
 
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
-    res = """
-            ## Kubernetes cluster has been deployed successfully
-            # your reservation id is: {}
-            Click next to proceed the wireguard configurations that need to be setup on your machine
-            """.format(
-        resv_id
-    )
-    res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-    bot.md_show(res)
+    if j.sal.reservation_chatflow.reservation_failed(bot=bot, category="ZDB", resv_id=resv_id):
+        return
 
-    filename = "{}_{}.conf".format(f"{default_cluster_name}_{i}", resv_id)
-
-    res = """
-            ## Use the following template to configure your wireguard connection. This will give you access to your 3bot.
-            # Make sure you have wireguard ```https://www.wireguard.com/install/``` installed
-            ## ```wg-quick up /etc/wireguard/{}```
-            Click next
-            to download your configuration
-            """.format(
-        filename
-    )
-    res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-    bot.md_show(res)
-
-    res = j.tools.jinja2.template_render(text=configs["wg"], **locals())
-    bot.download_file(res, filename)
-
-    for i, ip in enumerate(configs["ip_addresses"]):
+    else:
         res = """
-            kubernete {} IP : {}
-            To connect ssh rancher@{}
-        """.format(
-            i + 1, ip, ip
+                ## Kubernetes cluster has been deployed successfully
+                # your reservation id is: {}
+                Click next to proceed the wireguard configurations that need to be setup on your machine
+                """.format(
+            resv_id
         )
-
-        res = j.tools.jinja2.template_render(text=res, **locals())
+        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)
+        
+        filename = "{}_{}.conf".format(f"{default_cluster_name}_{i}", resv_id)
+        
+
+        res = """
+                # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
+                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed:
+                ## ```wg-quick up /etc/wireguard/{}```
+                Click next
+                to download your configuration
+                """.format(
+            filename
+        )
+        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
+        bot.md_show(res)
+        
+        res = j.tools.jinja2.template_render(text=configs["wg"], **locals())
+        bot.download_file(res, filename)
+        
+        for i, ip in enumerate(configs["ip_addresses"]):
+            res = """
+                kubernete {} IP : {}
+                To connect ssh rancher@{}
+            """.format(
+                i + 1, ip, ip
+            )
+        
+            res = j.tools.jinja2.template_render(text=res, **locals())
+            bot.md_show(res)
+        

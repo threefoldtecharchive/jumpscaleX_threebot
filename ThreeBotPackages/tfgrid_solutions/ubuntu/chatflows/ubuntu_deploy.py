@@ -60,29 +60,35 @@ def chat(bot):
         interactive=True,
     )
 
+
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
-    res = f"# Ubuntu has been deployed successfully: your reservation id is: {resv_id} "
+    if j.sal.reservation_chatflow.reservation_failed(bot=bot, category="CONTAINER", resv_id=resv_id):
+        return
 
-    bot.md_show(res)
+    else:
 
-    filename = "{}_{}.conf".format(name, resv_id)
+        res = f"# Ubuntu has been deployed successfully: your reservation id is: {resv_id} "
 
-    res = """
-            # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
-            ## Make sure you have wireguard ```https://www.wireguard.com/install/``` installed:
-            ## ```wg-quick up /etc/wireguard/{}```
-            Click next
-            to download your configuration
-            """.format(
-        filename
-    )
-    res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-    bot.md_show(res)
+        bot.md_show(res)
 
-    res = j.tools.jinja2.template_render(text=config["wg"], **locals())
-    bot.download_file(res, filename)
+        filename = "{}_{}.conf".format(name, resv_id)
 
-    res = "# Open your browser at ```{}:7681``` It may take a few minutes.".format(ip_address)
-    res = j.tools.jinja2.template_render(text=res, **locals())
-    bot.md_show(res)
+        res = """
+                # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
+                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed:
+                ## ```wg-quick up /etc/wireguard/{}```
+                Click next
+                to download your configuration
+                """.format(
+            filename
+        )
+        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
+        bot.md_show(res)
+
+        res = j.tools.jinja2.template_render(text=config["wg"], **locals())
+        bot.download_file(res, filename)
+
+        res = "# Open your browser at ```{}:7681``` It may take a few minutes.".format(ip_address)
+        res = j.tools.jinja2.template_render(text=res, **locals())
+        bot.md_show(res)
