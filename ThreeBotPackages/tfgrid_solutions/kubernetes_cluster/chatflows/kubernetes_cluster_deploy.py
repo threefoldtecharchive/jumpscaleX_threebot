@@ -86,9 +86,8 @@ def chat(bot):
         )
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)
-        
+
         filename = "{}_{}.conf".format(f"{default_cluster_name}_{i}", resv_id)
-        
 
         res = """
                 # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
@@ -101,10 +100,10 @@ def chat(bot):
         )
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)
-        
+
         res = j.tools.jinja2.template_render(text=configs["wg"], **locals())
         bot.download_file(res, filename)
-        
+
         for i, ip in enumerate(configs["ip_addresses"]):
             res = """
                 kubernete {} IP : {}
@@ -112,7 +111,6 @@ def chat(bot):
             """.format(
                 i + 1, ip, ip
             )
-        
+
             res = j.tools.jinja2.template_render(text=res, **locals())
             bot.md_show(res)
-        

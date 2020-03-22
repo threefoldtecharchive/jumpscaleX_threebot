@@ -89,7 +89,6 @@ def chat(bot):
 
         filename = "{}_{}.conf".format(name, resv_id)
 
-
         res = """
                 # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
                 ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed:

@@ -145,7 +145,6 @@ def chat(bot):
 
         filename = "{}_{}.conf".format(name, resv_id)
 
-
         res = """
                 # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
                 ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed:
@@ -157,10 +156,10 @@ def chat(bot):
         )
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)
-        
+
         res = j.tools.jinja2.template_render(text=config["wg"], **locals())
         bot.download_file(res, filename)
-        
+
         res = "# Open your browser at ```{}:1500``` It may take a few minutes.".format(ip_address)
         res = j.tools.jinja2.template_render(text=res, **locals())
         bot.md_show(res)
