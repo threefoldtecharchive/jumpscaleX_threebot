@@ -104,7 +104,7 @@ def test006_check_web_interfaces():
     j.tools.packages.webinterface.test()
 
 
-def test008_wiki_is_loaded():
+def test007_wiki_is_loaded():
     """
     Test case for checking wikis.
 
@@ -116,13 +116,14 @@ def test008_wiki_is_loaded():
     """
 
     info("Load test wikis using markdowndocs.")
+    j.servers.threebot.start(background=True)
     gedis_client = j.clients.gedis.get(
         name="test_wiki", host="127.0.0.1", port=8901, package_name="zerobot.packagemanager"
     )
-    wiki_path = j.core.tools.text_replace(
-        "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/wiki_examples"
+    gedis_client.actors.package_manager.package_add(
+        path=j.core.tools.text_replace(
+            "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/wiki_examples")
     )
-    gedis_client.actors.package_manager.package_add(path=wiki_path)
     sleep(20)
 
     info("Check the wikis is loaded, should be found.")
