@@ -22,7 +22,7 @@ def chat(bot):
         ips,
     )
 
-    workers_number = bot.int_ask("Please specify the number of worker nodes")  # minimum should be 1
+    workers_number = bot.int_ask("Please specify the number of worker nodes",default=1)  # minimum should be 1
     cluster_size = workers_number + 1  # number of workers + the master node
     ssh_keys = bot.upload_file(
         """"Please add your public ssh key, this will allow you to access the deployed container using ssh. 
