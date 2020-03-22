@@ -233,7 +233,7 @@ var generateDownloadAsFile = function (message, filename) {
     return `
     <h4>${msg}</h4>
     <div class="form-group">
-        <button class="btndownload" style="width:100%" onclick="download(${msg_with_trim},'${filename}')"><i class="fa fa-download"></i> Download</button>
+        <button class="btndownload" style="width:100%" onclick="event.preventDefault();download(${msg_with_trim},'${filename}')"><i class="fa fa-download"></i> Download</button>
     </div>`
 }
 
@@ -342,7 +342,7 @@ var generateSlide = function (message) {
                 break;
             case "location_ask":
                 contents += locationContentGenerate(res['msg'], res['options'], res['kwargs'])
-                break
+                break;
         }
     }
     if (res['cat'] === "user_info") {
