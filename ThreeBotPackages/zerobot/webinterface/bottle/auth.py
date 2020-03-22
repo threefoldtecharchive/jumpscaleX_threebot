@@ -12,14 +12,15 @@ PROVIDERS = list(client.providers_list())
 def login():
     provider = request.query.get("provider")
     next_url = request.query.get("next_url")
+    host = request.get_header("host")
 
     if provider:
         if provider == "3bot":
             if next_url:
                 bot_app.session["next_url"] = next_url
-            return bot_app.login(request.headers["HOST"], "/auth/3bot_callback")
+            return bot_app.login(host, "/auth/3bot_callback")
 
-        redirect_url = f"https://{request.headers['HOST']}/auth/oauth_callback"
+        redirect_url = f"https://{host}/auth/oauth_callback"
         return oauth_app.login(provider, redirect_url=redirect_url)
 
     return env.get_template("auth/login.html").render(providers=PROVIDERS, next_url=next_url)
