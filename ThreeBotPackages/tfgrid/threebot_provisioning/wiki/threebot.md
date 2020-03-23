@@ -1,16 +1,17 @@
 ## Threebot reservation
 
-#### This package is used to deploy a threebot on a machine using a chatflow:
+#### This package is used to deploy a 3bot in a container on the grid using a chatflow:
+You can both restore a previously backed up 3bot or deploy a new one using chatflow.
+Your deployed 3bot container will have started from jsx flist.
 
-* **URL**: {IP}/tfgrid/threebot_provisioning/chat/threebot_reservation
-* **description**: your 3bot deployed machine will be an ubuntu machine using specific flist have jumpscale with threebot installed. You can either deploy a new one or restore your threebot.
-* **User inputs**:
-   - Deploy a new 3bot (if you don't have any 3bot container) or Restore my 3bot (if you already have one and you want to restore it)
-   - **ssh key** : add your public ssh key `~/.ssh/id_rsa.pub` that helps to connect using ssh 
-   - **corex user**: add a username for your 3bot (this will allow you secure access to the 3bot from your web browser) using coreX
-   - **corex password**: add a password for your 3bot (this will allow you secure access to the 3bot from your web browser) using coreX
-   - **Ip version**: choose what your prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4
-   - **IP range**: Configure IP to manually provide an IP range to use or Choose IP range for me to generate an IP range automatically
+* **URL**: {host}/tfgrid/threebot_provisioning/chat/threebot_reservation
+* **Inputs**:
+   - You can choose to deploy a new 3bot or restore my 3bot (if you already have one that has been backed up and you want to restore it)
+   - **ssh key** : add your public ssh key `~/.ssh/id_rsa.pub` that will allow you ssh access to your 3bot container
+   - **corex user**: setting username which will allow you secure access to the 3bot from your web browser using coreX
+   - **corex password**: setting password which will allow you secure access to the 3bot from your web browser using coreX
+   - **IP version**: choose whether you prefer to access your 3bot using IPv4 or IPv6. If unsure, chooose IPv4
+   - **IP range**: Configure network to manually by choosing an IP range to use or the deployer can choose for you and generate an IP range automatically
    - **Network name**: a name for the network to deploy on,  if left empty it will be a generated name
    - **IP Address**: choose the ip address for your 3bot machine.
    - **Backup password**: in case you want your 3bot to be automatically backed up (in s3) a password should be provided. You will later use it to restore your 3bot.
