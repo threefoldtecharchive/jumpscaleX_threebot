@@ -26,7 +26,7 @@ After the deployment of the threebot is complete,  a url will be returned that c
 -  When accessing the link provided and directed to the 3bot deployed, you will be directed to corex of the machine shown in the following:
     * need your username and password of corex to access the web browser
 ![](3.png)
-    * this is the process running in your 3bot 
+    * The process of the 3bot on your 3bot are shown in the following:
 ![](4.png)
-    * those the packages installed in your 3bot
+    * The wikis of the packages installed on your 3bot are shown in the following:
 ![](5.png)
