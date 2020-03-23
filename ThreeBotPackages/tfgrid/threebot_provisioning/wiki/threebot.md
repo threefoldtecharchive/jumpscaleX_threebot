@@ -20,3 +20,8 @@
 
 
 After the deployment of the threebot is complete,  a url will be returned that can be used to access it after up your wireguard configuration.
+
+## Screenshots:
+![](3.png)
+![](4.png)
+![](5.png)
