@@ -16,12 +16,14 @@ class Package(j.baseclasses.threebot_package):
         Open voila directly through /simulator/threefold/show/
         :return:
         """
-        j.tools.tfsimulation.simulation_get()
+        j.tools.tfgrid_simulator.simulation_get()
 
-        j.tools.tfsimulation.start(
+        j.tools.tfgrid_simulator.start(
             voila=False, background=True, base_url="/simulator/threefold/notebook/", ip="127.0.0.1"
         )
-        j.tools.tfsimulation.start(voila=True, background=True, base_url="/simulator/threefold/show/", ip="127.0.0.1")
+        j.tools.tfgrid_simulator.start(
+            voila=True, background=True, base_url="/simulator/threefold/show/", ip="127.0.0.1"
+        )
 
         # find token (sleep for 5 seconds until server starts)
         time.sleep(5)

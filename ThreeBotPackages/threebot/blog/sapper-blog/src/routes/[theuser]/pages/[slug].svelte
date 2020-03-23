@@ -1,17 +1,8 @@
 <script context="module">
-  import axios from "axios";
-  axios.defaults.headers.post["Content-Type"] = "application/json";
+    import {
+        getPages
+    } from "../../_api";
 
-  const BLOG_API = "/web/gedis/http/blog";
-  export async function callActorWithArgs(actorCmd, actorArgs) {
-    let p = () =>
-      axios.post(`${BLOG_API}/${actorCmd}`, {
-        args: actorArgs
-      });
-
-    let resp = await p();
-    return new Promise((resolve, reject) => resolve(resp.data));
-  }
 
   export async function preload({ params, query }) {
     // the `slug` parameter is available because
@@ -19,9 +10,7 @@
 
     let blogName = params.theuser;
     let slug = params.slug;
-    let pages = await callActorWithArgs("get_pages", {
-      blog_name: blogName
-    });
+    let pages = await getPages(blogName)
 
     const lookup = new Map();
     pages.forEach(page => {

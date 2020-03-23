@@ -25,7 +25,7 @@ module.exports = new Promise(async (resolve, reject) => {
         loadedNodes: false,
         itemsPerPage: 4,
         expanded: [],
-        'searchnodes': "",
+        searchNodes: "",
         headers: [
           { text: "ID", value: "id" },
           { text: "Uptime", value: "uptime" },

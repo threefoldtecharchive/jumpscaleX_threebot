@@ -26,14 +26,14 @@ h1, h2 {
 
 h3 {
 	font-size: 22px;
-    font-weight: 300;
+    font-weight: 400;
     color: #555;
     line-height: 30px;
 }
 
 h4 {
 	font-size: 18px;
-    font-weight: 300;
+    font-weight: 400;
     color: #555;
     line-height: 26px;
 }
@@ -223,7 +223,19 @@ only screen and (                min-resolution: 2dppx) {
     opacity: 1;
 }
 
+.btndownload {
+  background-color: DodgerBlue;
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  cursor: pointer;
+  font-size: 20px;
+}
 
+/* Darker background on mouse-over */
+.btndownload:hover {
+  background-color: RoyalBlue;
+}
 .funkyradio div {
 	clear: both;
 	/* overflow: hidden; */

@@ -6,14 +6,14 @@ class blog(j.baseclasses.threebot_actor):
         self.blog_model = self.package.bcdb.model_get(url="threebot.blog.blog")
 
     @j.baseclasses.actor_method
-    def get_blogs(self, user_session=None):
+    def get_blogs(self, schema_out=None, user_session=None):
         blogs = []
         for blog in self.blog_model.find():
             if blog.name:
                 blogs.append(blog.name)
         return j.data.serializers.json.dumps(blogs)
 
-    def _list_blogs(self, user_session=None):
+    def _list_blogs(self, schema_out=None, user_session=None):
         blogs = []
         for blog in self.blog_model.find():
             if blog.name:
@@ -21,7 +21,7 @@ class blog(j.baseclasses.threebot_actor):
         return blogs
 
     @j.baseclasses.actor_method
-    def get_metadata(self, blog_name, user_session=None):
+    def get_metadata(self, blog_name, schema_out=None, user_session=None):
         """
         ```in
             blog_name = (S)
@@ -36,7 +36,7 @@ class blog(j.baseclasses.threebot_actor):
         return {}
 
     @j.baseclasses.actor_method
-    def get_posts(self, blog_name, page=0, user_session=None):
+    def get_posts(self, blog_name, page=0, schema_out=None, user_session=None):
         """
         ```in
             blog_name = (S)
@@ -51,7 +51,7 @@ class blog(j.baseclasses.threebot_actor):
             return j.data.serializers.json.dumps(res)
 
     @j.baseclasses.actor_method
-    def get_pages(self, blog_name, page=0, user_session=None):
+    def get_pages(self, blog_name, page=0, schema_out=None, user_session=None):
         """
         ```in
             blog_name = (S)
@@ -65,7 +65,7 @@ class blog(j.baseclasses.threebot_actor):
             res = [p._ddict for p in found_blog.pages]
             return j.data.serializers.json.dumps(res)
 
-    def _list_posts(self, blog_name, page=0, user_session=None):
+    def _list_posts(self, blog_name, page=0, schema_out=None, user_session=None):
         """
         ```in
             blog_name = (S)
@@ -76,7 +76,7 @@ class blog(j.baseclasses.threebot_actor):
         if found_blog:
             return found_blog.posts
 
-    def _list_pages(self, blog_name, page=0, user_session=None):
+    def _list_pages(self, blog_name, page=0, schema_out=None, user_session=None):
         """
         ```in
             blog_name = (S)
@@ -88,7 +88,7 @@ class blog(j.baseclasses.threebot_actor):
             return found_blog.pages
 
     @j.baseclasses.actor_method
-    def get_post_by_slug(self, blog_name, slug, user_session=None):
+    def get_post_by_slug(self, blog_name, slug, schema_out=None, user_session=None):
         """
         ```in
             blog_name = (S)
@@ -104,7 +104,7 @@ class blog(j.baseclasses.threebot_actor):
                 return {}
 
     @j.baseclasses.actor_method
-    def get_posts_by_tag(self, blog_name, tag, page=0, user_session=None):
+    def get_posts_by_tag(self, blog_name, tag, page=0, schema_out=None, user_session=None):
         """
         ```in
             blog_name = (S)
@@ -121,7 +121,7 @@ class blog(j.baseclasses.threebot_actor):
         return j.data.serializers.json.dumps(posts)
 
     @j.baseclasses.actor_method
-    def get_tags(self, blog_name, user_session=None):
+    def get_tags(self, blog_name, schema_out=None, user_session=None):
         """
         ```in
             blog_name = (S)
@@ -139,7 +139,7 @@ class blog(j.baseclasses.threebot_actor):
         return j.data.serializers.json.dumps(tags)
 
     @j.baseclasses.actor_method
-    def search(self, blog_name, query, user_session=None):
+    def search(self, blog_name, query, schema_out=None, user_session=None):
         """
         ```in
             blog_name = (S)

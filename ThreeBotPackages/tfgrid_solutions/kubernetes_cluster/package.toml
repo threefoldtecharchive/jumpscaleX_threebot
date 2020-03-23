@@ -1,0 +1,10 @@
+[source]
+name = "kubernetes_cluster"
+description = "TBD"
+threebot = "tfgrid_solutions"
+version = "1.0.0"
+
+[[bcdbs]]
+namespace = "tfgrid_solutions"
+type = "zdb"
+instance = "default"

@@ -3,8 +3,30 @@ name = "taiga"
 description = "Taiga is a free and open-source project management system"
 threebot = "tfgrid"
 version = "1.0.0"
+frontend = true
 
 [[bcdbs]]
-namespace = "tfgrid_solutions"
+name = "tfgrid_taiga"
+namespace = "tfgrid_taiga"
 type = "zdb"
 instance = "default"
+
+[frontend_args]
+id = "circlesmenu"
+value = "Circles"
+icon = "mdi mdi-chevron-up-circle-outline"
+
+[[frontend_args.data]]
+id = "circles"
+value = "My Circles"
+icon = "mdi mdi-account-supervisor-circle"
+
+[[frontend_args.data]]
+id = "circlestories"
+value = "My Stories"
+icon = "mdi mdi-book-multiple"
+
+[[frontend_args.data]]
+id = "circletasks"
+value = "My Tasks"
+icon = "mdi mdi-calendar-multiple-check"

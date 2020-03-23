@@ -102,5 +102,4 @@ function countOnlineNodes(data) {
   });
   return onlinecounter;
 }
-
 export { namespaced, state, actions, mutations, getters };

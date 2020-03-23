@@ -1,23 +1,27 @@
-## Ubuntu
 
+## Ubuntu deploy
+### ubuntu:
 A free and open-source Linux distribution based on Debian.
-Ubuntu is officially released in three editions: Desktop, Server, and Core
-(for internet of things devices and robots).
+Ubuntu is officially released in three editions: Desktop, Server, and Core(for internet of things devices and robots).
 
-All the editions can run on the computer alone, or in a virtual machine.
-Ubuntu is a popular operating system for cloud computing, with support for OpenStack.
+#### This package is used to deploy a ubuntu in a container on the grid using a chatflow:
+Your deployed a ubuntu container will have started from container flist.
 
-Ubuntu is released every six months, with long-term support (LTS) releases every two years.
-The latest release is 19.04 ("Disco Dingo"), and the most recent long-term support release is
-18.04 LTS ("Bionic Beaver"), which is supported until 2023 under public support and until 2028
-as a paid option.
+* **URL**: {host}/tfgrid_solutions/ubuntu/chat/ubuntu_deploy
+* **Inputs**:
+   - **Ubuntu version**: choose ubuntu version flist for your container
+   - **environment variables**: set environment variables on your deployed container, enter comma-separated variable=value For example: var1=value1, var2=value2. Leave empty if not needed
+   - **IP version**: choose whether you prefer to access your ubuntu container using IPv4 or IPv6. If unsure, chooose IPv4
+   - **IP range**: Configure network to manually by choosing an IP range to use or the deployer can choose for you and generate an IP range automatically
+   - **Network name**: a name for the network to deploy on,  if left empty it will be a generated name
+   - **IP Address**: choose the ip address for your ubuntu machine.
+* **User setup** 
+    - register user threebot on explorer ```kosmos "j.tools.threebot.init_my_threebot(name=3bot_NAME,email=EMAIL)"``` Note: name of 3bot is (your 3bot name).3bot , email is your 3bot email
+    - Install [wireguard](https://www.wireguard.com/install/)
 
-Ubuntu is developed by Canonical and the community under a meritocratic governance model.
 
-Canonical provides security updates and support for each Ubuntu release, starting from the
-release date and until the release reaches its designated end-of-life (EOL) date.
+After the deployment of the ubuntu is complete, a url will be returned that can be used to access the container through web browser (corex) after up your wireguard configuration.
 
-Canonical generates revenue through the sale of premium services related to Ubuntu.
-
-Ubuntu is named after the African philosophy of ubuntu, which Canonical translates as
-"humanity to others" or "I am what I am because of who we all are".
+## Screenshots:
+  * When accessing the link provided and directed to the ubuntu deployed, you will be directed to corex of the machine shown in the following:
+![ubuntu deploy](1.png)

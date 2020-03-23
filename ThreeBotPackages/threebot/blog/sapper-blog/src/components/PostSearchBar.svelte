@@ -1,5 +1,8 @@
 <script>
-  import axios from "axios";
+    import {
+        search
+    } from "../routes/_api";
+
   import { stores } from "@sapper/app";
 
   const { preloading, page, session } = stores();
@@ -8,23 +11,10 @@
   let query = "";
   export let search_res = "";
 
-  const BLOG_API = "/web/gedis/http/blog";
   export async function search_method(e) {
+
     e.preventDefault();
-    search_res = await callActorWithArgs("search", {
-      blog_name: blogName,
-      query: query
-    });
-  }
-
-  export async function callActorWithArgs(actorCmd, actorArgs) {
-    let p = () =>
-      axios.post(`${BLOG_API}/${actorCmd}`, {
-        args: actorArgs
-      });
-
-    let resp = await p();
-    return new Promise((resolve, reject) => resolve(resp.data));
+    search_res = await search(blogName, query);
   }
   export function clear_results(e) {
     if (e.key === "Escape" || e.type === "click") {

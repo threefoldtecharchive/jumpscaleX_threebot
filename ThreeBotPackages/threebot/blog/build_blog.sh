@@ -3,6 +3,6 @@ cd sapper-blog
     npm install
     npm run export
 cd ..
-mkdir -p html/
-cp sapper-blog/__sapper__/export/blog/* html/ -R
+mkdir -p frontend/
+cp sapper-blog/__sapper__/export/blog/* frontend/ -R
 echo "BUILD DONE!"

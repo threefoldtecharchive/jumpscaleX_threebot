@@ -7,7 +7,7 @@ module.exports = new Promise(async (resolve, reject) => {
   resolve({
     name: "farmManagement",
     components: {
-      nodestable: "url:/components/nodestable/index.vue"
+      nodestable: "url:/farmmanagement/components/nodestable/index.vue"
     },
     data() {
       return {
@@ -307,6 +307,7 @@ module.exports = new Promise(async (resolve, reject) => {
       viewNodes(item) {
         this.farmSelected = item;
         this.getRegisteredNodes(this.farmSelected.id);
+        console.log(item)
         console.log(this.farmSelected)
       },
       viewSettings(farm) {

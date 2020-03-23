@@ -8,6 +8,7 @@ module.exports = new Promise(async (resolve, reject) => {
   resolve({
     name: "nodestable",
     props: ['farmselected', 'searchnodes', 'registerednodes'],
+
     components: {
       nodeinfo: httpVueLoader("/capacity/components/nodeinfo/index.vue")
     },
@@ -26,6 +27,7 @@ module.exports = new Promise(async (resolve, reject) => {
         othersHidden: false,
         itemsPerPage: 4,
         expanded: [],
+
         headers: [
           { text: "ID", value: "id" },
           { text: "Uptime", value: "uptime" },

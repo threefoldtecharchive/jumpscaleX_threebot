@@ -1,5 +1,6 @@
 #!/bin/bash
 
+rm -rf ../output/static/*
 mkdir -p ../output/codebase
 mkdir -p ../output/static/
 
