@@ -1,7 +1,7 @@
 ## Kubernetes cluster deployment
 
 #### This package is used to deploy a Kubernetes cluster with zdb using a chatflow:
-Description
+A Kubernetes cluster is a set of node machines for running containerized applications. At a minimum, a cluster contains a worker node and a master node.
 
 * **URL**: *{host}/tfgrid_solutions/kubernetes_cluster/chat/kubernetes_cluster_deploy*
 * **Inputs**
@@ -24,7 +24,7 @@ Once the user added the wireguard configuration and made sure it is up and runni
 ```bash
 ssh rancher@IP_OF_CONTAINER
 ```
-To verify the nodes created on the machine
+To verify the nodes created on the machine after ssh
 ```bash
 kubectl get nodes
 ```
