@@ -102,6 +102,7 @@ def test006_check_web_interfaces():
     """
     info("Running bottle web server test")
     j.tools.packages.webinterface.test()
+    j.servers.threebot.start(background=True)
 
 
 def test007_wiki_is_loaded():
@@ -116,7 +117,7 @@ def test007_wiki_is_loaded():
     """
 
     info("Load test wikis using markdowndocs.")
-    j.servers.threebot.start(background=True)
+
     gedis_client = j.clients.gedis.get(
         name="test_wiki", host="127.0.0.1", port=8901, package_name="zerobot.packagemanager"
     )
