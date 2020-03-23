@@ -128,7 +128,7 @@ def test007_wiki_is_loaded():
     sleep(20)
 
     info("Check the wikis is loaded, should be found.")
-    r = requests.get("http://127.0.0.1/zerobot/wiki_examples/wiki")
+    r = requests.get("http://127.0.0.1/3git/wikis/zerobot.wiki_examples/test_include.md")
     assert r.status_code == 200
 
     info("Remove the added test wiki.")
