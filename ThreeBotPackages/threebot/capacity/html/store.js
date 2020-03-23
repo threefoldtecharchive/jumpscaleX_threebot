@@ -32,7 +32,6 @@ const actions = {
   },
   getRegisteredNodes(context) {
     tfService.registered3bots().then(response => {
-      console.log(response)
       context.commit("setRegisteredNodes", response.data);
       context.commit("setTotalSpecs", response.data);
     });
@@ -73,7 +72,7 @@ const mutations = {
   },
   setTotalSpecs(state, value) {
     state.nodeSpecs.amountregisteredNodes = value.length;
-    state.nodeSpecs.onlinenodes = value.length;
+    state.nodeSpecs.onlinenodes = countOnlineNodes(value);
     state.nodeSpecs.countries = lodash.uniqBy(
       value,
       node => node.location.country
@@ -94,4 +93,13 @@ const getters = {
   nodeSpecs: state => state.nodeSpecs
 };
 
+function countOnlineNodes(data) {
+  let onlinecounter = 0;
+  data.forEach(node => {
+    const timestamp = new Date().getTime() / 1000;
+    const minutes = (timestamp - node.updated) / 60;
+    if (minutes < 20) onlinecounter++;
+  });
+  return onlinecounter;
+}
 export { namespaced, state, actions, mutations, getters };

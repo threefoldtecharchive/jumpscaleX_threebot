@@ -20,7 +20,7 @@ module.exports = new Promise(async (resolve, reject) => {
           "This farm is located in the 3fold office in Lochristi",
         farmDescriptionRules: [v => v.length <= 250 || "Max 250 characters"],
         searchFarms: "",
-        searchNodes: "",
+        'searchnodes': "",
         farmSelected: {},
         farmToEdit: {},
         treebotId: "LochristiFarm12",

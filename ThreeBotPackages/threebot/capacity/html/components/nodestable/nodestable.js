@@ -7,7 +7,8 @@ module.exports = new Promise(async (resolve, reject) => {
   momentDurationFormat(moment);
   resolve({
     name: "nodestable",
-    props: ['farmselected'],
+    props: ['farmselected', 'searchnodes', 'registerednodes'],
+
     components: {
       nodeinfo: httpVueLoader("/capacity/components/nodeinfo/index.vue")
     },
@@ -23,9 +24,10 @@ module.exports = new Promise(async (resolve, reject) => {
         showBadge: true,
         menu: false,
         loadedNodes: false,
+        othersHidden: false,
         itemsPerPage: 4,
         expanded: [],
-        searchNodes: "",
+
         headers: [
           { text: "ID", value: "id" },
           { text: "Uptime", value: "uptime" },
@@ -37,13 +39,12 @@ module.exports = new Promise(async (resolve, reject) => {
     },
     computed: { 
       ...vuex.mapGetters("capacity", [
-        "registeredNodes", 
         "registeredFarms",
         "nodes"
       ]),
       // Parse nodelist to table format here
       parsedNodesList: function() {
-        const nodeList = this.nodes ? this.nodes : this.registeredNodes
+        const nodeList = this.nodes ? this.nodes : this.registerednodes
         const parsedNodes = nodeList.filter(node => !this.farmselected || (this.farmselected.id === node.farm_id)).map(node => {
           const uptime = moment.duration(node.uptime, "seconds").format();
 
@@ -76,11 +77,9 @@ module.exports = new Promise(async (resolve, reject) => {
     },
     mounted () {
       this.resetNodes()
-      this.getRegisteredNodes()
     },
     methods: {
       ...vuex.mapActions("capacity", [
-        "getRegisteredNodes",
         "resetNodes"
       ]),
       getStatus(node) {
@@ -105,6 +104,22 @@ module.exports = new Promise(async (resolve, reject) => {
         if (index > -1) this.expanded.splice(index, 1);
         else this.expanded.push(node);
       },
+      hideOthers () {
+        var all = document.getElementsByClassName('others')
+        for (var i = 0; i < all.length; i++) {
+          all[i].style.display = 'none'
+          all[i].classList.remove('flex')
+        }
+        this.othersHidden = true
+      },
+      showOthers () {
+        var all = document.getElementsByClassName('others')
+        for (var i = 0; i < all.length; i++) {
+          all[i].style.display = 'block'
+          all[i].classList.add('flex')
+        }
+        this.othersHidden = false
+      }
     }
   });
 });
