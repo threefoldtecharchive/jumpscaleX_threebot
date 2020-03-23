@@ -165,11 +165,12 @@ class package_manager(j.baseclasses.threebot_actor):
         package.enable()
 
     @j.baseclasses.actor_method
-    def packages_list(self, status="all", frontend=False, schema_out=None, user_session=None):
+    def packages_list(self, status="all", frontend=False, has_frontend_args=False, schema_out=None, user_session=None):
         """
         ```in
         status = "all,init,config,toinstall,installed,tostart,disabled,error" (E)
         frontend = (B) false  # list only frontend packages
+        has_frontend_args = (B) false # list only package with defined frontend args for admin menu
         ```
 
         ```out
@@ -178,13 +179,16 @@ class package_manager(j.baseclasses.threebot_actor):
         """
         packages = []
         for package in j.tools.threebot_packages.find():
-            if frontend:
+            if frontend or has_frontend_args:
                 mdp = j.sal.fs.joinPaths(package.path, "package.toml")
                 if j.sal.fs.exists(mdp):
                     metadata = j.data.serializers.toml.loads(j.sal.fs.readFile(mdp))
-                    if not metadata["source"].get("frontend", False) or not metadata.get("frontend_args"):
+                    if frontend and not metadata["source"].get("frontend", False):
                         continue
-                    package.frontend_args = metadata["frontend_args"]
+                    if has_frontend_args and metadata.get("frontend_args"):
+                        package.frontend_args = metadata["frontend_args"]
+                    else:
+                        continue
                 else:
                     continue
 

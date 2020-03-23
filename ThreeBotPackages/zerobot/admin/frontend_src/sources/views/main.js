@@ -100,7 +100,7 @@ export default class TopView extends JetView {
         },
         ]
 
-        const response = webix.ajax().sync().get("/zerobot/packagemanager/actors/package_manager/packages_list", { frontend: true, status: "installed" });
+        const response = webix.ajax().sync().get("/zerobot/packagemanager/actors/package_manager/packages_list", { has_frontend_args: true, status: "installed" });
 
         const packages = JSON.parse(response.responseText).packages;
         for (const p of packages) {
