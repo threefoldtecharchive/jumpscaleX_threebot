@@ -1,6 +1,7 @@
-from time import sleep
-
+import os.path
 import requests
+import subprocess
+from time import sleep
 from Jumpscale import j
 
 skip = j.baseclasses.testtools._skip
@@ -17,6 +18,12 @@ def before_all():
 
 def after_all():
     j.sal.process.killall("tmux")
+
+
+def os_command(command):
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    output, error = process.communicate()
+    return output, error
 
 
 def test001_check_threebot_ports():
@@ -138,3 +145,36 @@ def test007_wiki_is_loaded():
     info("Check the added wiki, should not be found.")
     r = requests.get("http://127.0.0.1/3git/wikis/zerobot.wiki_examples/test_include.md")
     assert r.status_code == 404
+
+
+def test008_wiki_reload():
+    """
+    Test case for checking wikis reload.
+
+    **Test scenario**
+    #. Load the info_grid wiki.
+    #. Touch a file in the docsite dir (.
+        Ex: /sandbox/var/docsites/info_grid.
+    #. Reload wikis.
+    #. Check if the file exists, It shouldn't be there.
+    #. Make sure the other files in docsite dir still exists.
+    """
+
+    info("Load the info_grid wiki")
+
+    os_command(
+        "jsx wiki-load -n info_grid -u https://github.com/threefoldfoundation/info_grid/tree/development/docs -f")
+
+    info("Touch a file in the docsite dir")
+    open("/sandbox/var/docsites/info_grid/test.md", "w+")
+
+    info("Reload info_grid wikis")
+    os_command("jsx wiki-reload -n info_grid -r")
+
+    info("Check if the file exists, It shouldn't be there")
+    assert not os.path.isfile("/sandbox/var/docsites/info_grid/test.md")
+
+    info("Make sure the other files in docsite dir still exists")
+    assert os.path.isdir("/sandbox/var/docsites/info_grid/updates/")
+
+
