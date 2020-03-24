@@ -1,3 +1,4 @@
+import binascii
 from Jumpscale import j
 
 THREEBOT_DOMAIN = j.core.myenv.config.get("THREEBOT_DOMAIN")
@@ -13,11 +14,14 @@ class gateway(j.baseclasses.threebot_actor):
         if j.sal.nettools.waitConnectionTest(MASTERIP, port=6378, timeout=1):
             redisclient = j.clients.redis.get(MASTERIP, port=6378)
             self._gateway = j.tools.tf_gateway.get(redisclient)
-            self.explorer = j.clients.gedis.get(
-                name="phonebook_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.phonebook"
-            )
+            self._explorer = j.clients.explorer.default
         else:
-            self._log_error(f"CONNECTION ERROR TO {MASTERIP}")
+            raise j.exceptions.Timeout(f"Failed to connect to {MASTERIP}")
+
+    def _is_valid_signature(self, threebot_name, signature):
+        user = self._explorer.users.get(name=threebot_name)
+        payload = binascii.hexlify(threebot_name.encode()).decode()
+        return self._explorer.users.validate(tid=user.id, payload=payload, signature=signature)
 
     @j.baseclasses.actor_method
     def domain_list(self, schema_out=None, user_session=None):
@@ -289,10 +293,7 @@ class gateway(j.baseclasses.threebot_actor):
         signature = (S) #the signature of the payload "{threebot_name}"
         ```
         """
-        result = self.explorer.actors.phonebook.validate_signature(
-            name=threebot_name, payload=threebot_name, signature=signature
-        )
-        if not result.is_valid:
+        if not self._is_valid_signature(threebot_name, signature):
             raise j.exceptions.Value("Invalid signature")
 
         fqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
@@ -313,15 +314,21 @@ class gateway(j.baseclasses.threebot_actor):
         client_secret = (S)
         signature = (S) #the signature of the payload "{threebot_name}"
         ```
+
+        ```out
+        ip_address = (S)
+        ```
         """
-        result = self.explorer.actors.phonebook.validate_signature(
-            name=threebot_name, payload=threebot_name, signature=signature
-        )
-        if not result.is_valid:
+        if not self._is_valid_signature(threebot_name, signature):
             raise j.exceptions.Value("Invalid signature")
 
         fqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
         self._gateway.tcpservice_register(fqdn, client_secret=client_secret)
         ips = j.tools.dnstools.default.namerecords_get(THREEBOT_DOMAIN)
-        self._gateway.domain_register_a(threebot_name, f"{THREEBOT_DOMAIN}", ips[0])
-        return True
+        ip_address = ips[0]
+
+        self._gateway.domain_register_a(threebot_name, f"{THREEBOT_DOMAIN}", ip_address)
+
+        out = schema_out.new()
+        out.ip_address = ip_address
+        return out
