@@ -29,7 +29,7 @@ If any optional part is not specefied, it will be replaced by current wiki or re
 If you need to match only with path (repo and account will be current docsite repo and account), you have to start your link with a colon to mark this link as a custom link for processing, like:
 
 ```
-[foobar][:foobar.md]
+[foobar](:foobar.md)
 ```
 
 ### Examples
