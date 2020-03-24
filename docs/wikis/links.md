@@ -26,6 +26,12 @@ This can be broken down into:
 
 If any optional part is not specefied, it will be replaced by current wiki or repository information (see the following examples).
 
+If you need to match only with path (repo and account will be current docsite repo and account), you have to start your link with a colon to mark this link as a custom link for processing, like:
+
+```
+[foobar][:foobar.md]
+```
+
 ### Examples
 
 #### Regular links (full url)
@@ -80,4 +86,17 @@ Will be replaced by
 
 ```
 [Issue][https://github.com/threefoldfoundation/info_tokens/issues/122]
+```
+
+#### A custom link with only paths
+
+Match with paths only (will try to find first match if not found inside current directory)
+
+```
+- [Foobar](:foobar.md)
+- [Foobar 2](:foobar2.md)
+- [Nested foobar](:nested/foobar.md)
+- [Nested foobar 2](:nested/foobar2.md)
+- [Nested2 foobar](:nested2/foobar.md)
+- [Nested2 foobar 2](:nested2/foobar2.md)
 ```
