@@ -1,25 +1,12 @@
 <script context="module">
-  import axios from "axios";
-  axios.defaults.headers.post["Content-Type"] = "application/json";
-  const BLOG_API = "/web/gedis/http/blog";
-  export async function callActorWithArgs(actorCmd, actorArgs) {
-    let p = () =>
-      axios.post(`${BLOG_API}/${actorCmd}`, {
-        args: actorArgs
-      });
-
-    let resp = await p();
-    return new Promise((resolve, reject) => resolve(resp.data));
-  }
+  import { getBlogs, getMetadata } from "./_api";
 
   export async function preload({ host, path, params, query }) {
-    let blogName = params.theuser;
     try {
-      const blogs = await callActorWithArgs("get_blogs", {
-        blog_name: blogName
-      });
+      const blogs = await getBlogs();
+      const metadata = await getMetadata(params.theuser);
 
-      return { blogs };
+      return { blogs, metadata };
     } catch (error) {
       console.log(error);
     }
@@ -35,6 +22,7 @@
   import Header from "../components/Header.svelte";
 
   export let segment;
+  export let metadata = {};
 </script>
 
 <style>
@@ -76,7 +64,8 @@
 <svelte:head>
   <title>Blogs</title>
 </svelte:head>
-<Nav {segment} />
+
+<Nav {segment} {metadata} />
 
 <BlogsList {blogs} />
 

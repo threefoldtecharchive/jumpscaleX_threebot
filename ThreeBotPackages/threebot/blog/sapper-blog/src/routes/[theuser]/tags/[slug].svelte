@@ -1,27 +1,10 @@
 <script context="module">
-  import axios from "axios";
-  import PostList from "../../../components/PostList.svelte";
-  export let posts = [];
-  export let tag = "";
-  axios.defaults.headers.post["Content-Type"] = "application/json";
-
-  const BLOG_API = "/web/gedis/http/blog";
-  export async function callActorWithArgs(actorCmd, actorArgs) {
-    let p = () =>
-      axios.post(`${BLOG_API}/${actorCmd}`, {
-        args: actorArgs
-      });
-
-    let resp = await p();
-    return new Promise((resolve, reject) => resolve(resp.data));
-  }
+  import { getPosts } from "../../_api";
 
   export async function preload({ params }) {
-    let blogName = params.theuser;
     let slug = params.slug;
-    let allPosts = await callActorWithArgs("get_posts", {
-      blog_name: blogName
-    });
+    let allPosts = await getPosts(params.theuser);
+
     const lookup = new Map();
     allPosts.forEach(post => {
       post.tags.forEach(tag => {
@@ -32,17 +15,25 @@
         }
       });
     });
-    posts = lookup.get(slug);
+
+    let posts = lookup.get(slug);
     return { posts, tag: params.slug };
   }
+</script>
+
+<script>
+  import PostList from "../../../components/PostList.svelte";
+  export let posts = [];
+  export let tag = "";
+  console.log("tag", tag);
 </script>
 
 <svelte:head>
   <title>Blog</title>
 </svelte:head>
 
-{#await posts}
-  Loading
-{:then value}
-  <PostList title="Posts with tag {tag}" posts={value} />
+{#await tag then tagvalue}
+  {#await posts then postsvalue}
+    <PostList title="Posts with tag {tagvalue}" posts={postsvalue} />
+  {/await}
 {/await}

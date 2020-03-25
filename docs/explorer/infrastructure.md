@@ -90,11 +90,16 @@ A machine that has jumpscale can act as a threebot machine where threebot server
     ```bash
     EXPLORER_ADDR = "128.199.32.174"
     THREEBOT_DOMAIN = "threebot.gateway.tf"
+    SSH_KEY_NAME = "AMSKey"
+    DROPLET_PREFIX = "router"
+    DROPLET_POSTFIX = "Staging"
     ```
 
     where:
     _EXPLORER_ADDR_  is the domain/IP of the explorer machine that has all the actors
     _THREEBOT_DOMAIN_ The main domain used in registering any subdomains for the threebots
+    _SSH_KEY_NAME_ is the ssh key name in DigitalOcean
+    _DROPLET_PREFIX_, _DROPLET_POSTFIX_ droplets will be named in format {DROPLET_PREFIX}{n}{DROPLET_POSTFIX}
  3. Initiate digital ocean instance to be used in deployment with the name "main" and project name "3bot Infra Staging"
 
     ```python3

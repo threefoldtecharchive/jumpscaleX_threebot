@@ -37,6 +37,7 @@ author_email = "" (S)
 author_image = "" (S)
 post_image = "" (S)
 excerpt = "" (S)
+description = "" (S)
 
 @url = threebot.blog.link
 title** = "" (S)

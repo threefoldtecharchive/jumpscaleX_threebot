@@ -16,5 +16,5 @@ install:
   - source /sandbox/env.sh; kosmos "j.builders.runtimes.lua.install_autossl()"
 
 script:
-  - source /sandbox/env.sh; python3 /sandbox/code/github/threefoldtech/jumpscaleX_core/cmds/js_testrun --with-xml  --xml-path /test.xml --xml-testsuite-name "UI_tests" -p "/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tests/";yes | bcdb delete --all
-  - source /sandbox/env.sh; python3 /sandbox/code/github/threefoldtech/jumpscaleX_core/cmds/js_testrun --with-xml  --xml-path /test.xml --xml-testsuite-name "wikis_tests" -p "/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/webinterface/tests";yes | bcdb delete --all
+  - source /sandbox/env.sh && python3 /sandbox/code/github/threefoldtech/jumpscaleX_core/cmds/js_testrun --with-xml  --xml-path /test.xml --xml-testsuite-name "UI_tests" -p "/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tests/" && yes | bcdb delete --all
+  - source /sandbox/env.sh && python3 /sandbox/code/github/threefoldtech/jumpscaleX_core/cmds/js_testrun --with-xml  --xml-path /test.xml --xml-testsuite-name "wikis_tests" -p "/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/webinterface/tests" && yes | bcdb delete --all

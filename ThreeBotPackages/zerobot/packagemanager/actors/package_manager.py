@@ -85,6 +85,8 @@ class package_manager(j.baseclasses.threebot_actor):
         if start:
             package.start()
 
+        j.servers.threebot.default.openresty_server.reload()
+
         return "OK"
 
     @j.baseclasses.actor_method
@@ -215,13 +217,18 @@ class package_manager(j.baseclasses.threebot_actor):
         """
 
         def do(r, package):
-            if package.status not in ["installed"]:
-                package.install()
-            pdef = r.packages.new()
-            pdef.package_name = package.name
-            actor_names = list(package.actors.keys())
-            pdef.actor_names = actor_names
-            return r
+            try:
+                # if package.status not in ["installed"]:
+                #     package.install()
+                pdef = r.packages.new()
+                pdef.package_name = package.name
+                actor_names = list(package.actors.keys())
+                pdef.actor_names = actor_names
+                if pdef.package_name:
+                    return r
+            except Exception as e:
+                self._log_error(f"Error occured at package {package.name}: {e}")
+                return r
 
         r = schema_out.new()
         if package_name:

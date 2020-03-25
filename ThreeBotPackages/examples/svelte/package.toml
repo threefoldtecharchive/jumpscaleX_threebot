@@ -1,0 +1,10 @@
+[source]
+name = "svelte"
+threebot = "jumpscale"
+version = "1.0.0"
+
+[[bcdbs]]
+name = "svelte_example"
+namespace = "jumpscale"
+type = "zdb"
+instance = "default"

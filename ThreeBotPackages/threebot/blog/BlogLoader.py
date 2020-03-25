@@ -4,6 +4,7 @@ from JumpscaleLibs.data.markdown.mistune import markdown
 from os.path import dirname, abspath, join, splitext
 import re
 import unicodedata
+import requests
 
 
 def get_excerpt(content, maxlen=400):
@@ -28,6 +29,9 @@ class BlogLoader(j.baseclasses.object):
         self.blog_name = blog_name
         self.repo_url = repo_url
         self.post_model = post_model
+        self.package = j.tools.threebot_packages.get(
+            path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog/"
+        )
 
     def _remove_date(self, filename):
         return re.sub(r"(\d+\-)+", "", filename)
@@ -86,6 +90,7 @@ class BlogLoader(j.baseclasses.object):
         self.blog.metadata.github_username = self.meta["github_username"]
         self.blog.metadata.posts_per_page = int(self.meta.get("posts_per_page", "3"))
         self.blog.metadata.github_repo_url = self.repo_url
+        self.blog.git_repo_url = self.repo_url
         self.blog.metadata.blog_name = self.blog_name
         self.blog.posts = []
         self.blog.save()
@@ -106,7 +111,9 @@ class BlogLoader(j.baseclasses.object):
             if "title" in meta:
                 the_title = meta["title"][0]
             get_post = self.post_model.find(title=the_title)
-
+            post_description = meta.get("description", "")
+            if post_description:
+                post_description = post_description[0]
             if get_post:
                 post_obj = get_post[0]
             else:
@@ -116,6 +123,7 @@ class BlogLoader(j.baseclasses.object):
             post_obj.slug = self._slugify(post_title)
             post_obj.content_with_meta = content
             post_obj.content = parsed.strip_meta(content)
+            post_obj.description = post_description
             if len(meta.get("tags", [])) > 0:
                 tags = meta.get("tags", [])[0]
                 tags = [t.strip() for t in tags.split(",")]
@@ -181,18 +189,41 @@ class BlogLoader(j.baseclasses.object):
                 self.blog.pages.append(post_obj)
                 self.blog.save()
 
-    def _load_blog(self):
+    def update_dummydata(self, blog_name=None):
+        """
+        update the static dummy files
+        :param blog_name:
+        :return:
+        """
+        blog_name = "blog" or blog_name
+        blog_path = "/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog/sapper-blog/src/routes/"
 
+        def _get_data(cmd_name):
+            base_url = "http://localhost/threebot/blog/actors/blog"
+            if cmd_name == "get_blogs":
+                res = requests.post(url=f"{base_url}/get_blogs")
+            else:
+                res = requests.post(url=f"{base_url}/{cmd_name}", json={"args": {"blog_name": blog_name}})
+            return res.json()
+
+        cmds = ["get_blogs", "get_metadata", "get_posts", "get_pages", "get_tags"]
+
+        for cmd in cmds:
+            res = _get_data(cmd)
+            data_name = cmd.split("get_")[1]  # ex: blogs, pages, posts
+            content = f"""let {data_name};
+export default {data_name} = {res}
+            """
+            j.sal.fs.writeFile(filename=f"{blog_path}_{data_name}.js", contents=content)
+            print(f"file {data_name} created successfully ")
+
+    def _load_blog(self):
         self.dest = j.clients.git.pullGitRepo(self.repo_url)
-        bcdb = j.data.bcdb.threebot
-        bcdb.models_add(
-            path=j.core.tools.text_replace(
-                "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog/models"
-            )
-        )
+        bcdb = j.data.bcdb.get("threebot.blog")
+        bcdb.models_add(path=j.core.tools.text_replace(f"{self.package.path}/models"))
         self.post_model = bcdb.model_get(url="threebot.blog.post")
 
-        blog_model = bcdb.model_get(url="threebot.blog")
+        blog_model = bcdb.model_get(url="threebot.blog.blog")
 
         # dirs = j.sal.fs.listDirsInDir(dest)
         files = j.sal.fs.listFilesInDir(self.dest)

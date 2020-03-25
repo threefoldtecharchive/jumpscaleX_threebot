@@ -1,84 +1,52 @@
-from bottle import Bottle, abort, post, request, response, run
 from Jumpscale import j
-from .rooter import env, app, get_ws_url
 
-client = j.clients.oauth_proxy.get("main")
-oauth_app = j.tools.oauth_proxy.get(app, client, "/auth/login")
-bot_app = j.tools.threebotlogin_proxy.get(app)
-PROVIDERS = list(client.providers_list())
+from .auth import is_admin, oauth_app
+from .rooter import abort, request, response, env, app, get_ws_url, package_route, PACKAGE_BASE_URL
 
 
-@app.route("/auth/login")
-def login():
-    provider = request.query.get("provider")
-    if provider:
-        if provider == "3bot":
-            return bot_app.login(request.headers["HOST"], "/auth/3botlogin")
-
-        redirect_url = f"https://{request.headers['HOST']}/auth/authorize"
-        return oauth_app.login(provider, redirect_url=redirect_url)
-
-    return env.get_template("chat/login.html").render(providers=PROVIDERS)
+CHAT_HOME_URL = f"{PACKAGE_BASE_URL}/chat"
+CHAT_URL = f"{CHAT_HOME_URL}/<chat_name>"
+# for now, we should add this as e.g. a config to packages
+ADMIN_ONLY_PACKAGES = ["tfgrid_solutions"]
 
 
-@app.route("/auth/3botlogin")
-def chat_botcallback():
-    bot_app.callback()
-
-
-@app.route("/auth/authorize")
-def chat_authorize():
-    user_info = oauth_app.callback()
-    oauth_app.session["email"] = user_info["email"]
-    return redirect(oauth_app.next_url)
-
-
-@app.route("/<threebot_name>/<package_name>/chat", method=["get"])
-def gedis_http_chat(threebot_name, package_name):
-    try:
-        package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-    except j.exceptions.NotFound:
-        print(f"couldn't load chats for {threebot_name}.{package_name}")
-        abort(404)
-
+@app.get(CHAT_HOME_URL)
+@package_route
+def chat_home(package):
     data = [(chatflow, chatflow.capitalize().replace("_", " ")) for chatflow in package.chat_names]
     return env.get_template("chat/home.html").render(
-        chatflows=data, threebot_name=threebot_name, package_name=package_name
+        chatflows=data, threebot_name=package.source.threebot, package_name=package.source.name
     )
 
 
-@app.route("/<threebot_name>/<package_name>/chat/<chat_name>", method=["get"])
+@app.get(CHAT_URL)
 @oauth_app.login_required
-def gedis_http_chat(threebot_name, package_name, chat_name):
+@package_route
+def chat_handler(package, chat_name):
     session = request.environ.get("beaker.session", {})
-    try:
-        package = j.tools.threebot_packages.get(name=f"{threebot_name}.{package_name}")
-    except j.exceptions.NotFound:
-        print(f"couldn't load chat {chat_name} for {threebot_name}.{package_name}")
-        abort(404)
-    query = request.urlparts.query
-    if query:
-        query = query.split("&")
-        query_params = {}
-        for q in query:
-            try:
-                k, v = q.split("=")
-                query_params[k] = v
-            except:
-                query_params["referral"] = q
+    username = session.get("username", "")
+    query = dict(**request.query)  # converts from FormDict to dict
+    session["kwargs"] = j.data.serializers.json.dumps(query)
 
-        session["kwargs"] = query_params
-    else:
-        session["kwargs"] = {}
-    if chat_name not in package.chat_names:
+    chat_name = chat_name.strip().lower()
+
+    chat_found = False
+    for package_chat_name in package.chat_names:
+        if chat_name in package_chat_name.strip().lower():
+            chat_found = True
+            break
+
+    if not chat_found:
         response.status = 404
-        error = f"Specified chatflow {chat_name} is not registered on the system"
-        return env.get_template("chat/error.html").render(error=error, email=session.get("email", ""))
+        error = f"Specified chatflow '{chat_name}' is not registered on the system"
+        return env.get_template("chat/error.html").render(package=package, error=error, email=session.get("email", ""))
+
     ws_url = get_ws_url()
     return env.get_template("chat/index.html").render(
         topic=chat_name,
         url=ws_url,
+        username=username,
         email=session.get("email", ""),
         qs=session.get("kwargs", ""),
-        username=session.get("username", ""),
+        noheader=query.get("noheader", False),
     )

@@ -10,13 +10,16 @@ class alerta(j.baseclasses.threebot_actor):
         :return: dict with alert info
         :rtype: dict
         """
-        alert_dict = alert._ddict_hr
+        alert_dict = alert._ddict
         if not alert.tracebacks:
             return alert_dict
 
         # re-populate tracebacks with formatted lines
         tbs = []
         for tb in alert.tracebacks:
+            if not tb.items:
+                continue
+
             tb_dict = {}
             tb_dict["process_id"] = tb.process_id
             tb_dict["threebot_name"] = tb.threebot_name
@@ -75,6 +78,16 @@ class alerta(j.baseclasses.threebot_actor):
         ```
         """
         j.tools.alerthandler.delete(identifier)
+
+    @j.baseclasses.actor_method
+    def delete_alerts(self, identifiers, schema_out=None, user_session=None):
+        """
+        ```in
+        identifiers = (LS)
+        ```
+        """
+        for identifier in identifiers:
+            j.tools.alerthandler.delete(identifier)
 
     @j.baseclasses.actor_method
     def delete_all_alerts(self, schema_out=None, user_session=None):

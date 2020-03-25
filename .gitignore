@@ -110,5 +110,9 @@ package-lock.json
 .vscode
 .idea
 weblibs
+
+# svelte, transcrypt
 __sapper__
+__target__
+nodemodules
 
