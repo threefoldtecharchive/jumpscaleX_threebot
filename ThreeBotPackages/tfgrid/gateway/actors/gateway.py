@@ -329,13 +329,15 @@ class gateway(j.baseclasses.threebot_actor):
         """
         if not self._is_valid_signature(threebot_name, signature):
             raise j.exceptions.Value("Invalid signature")
+        
+        subdomain = self._normalize_threebot_name(threebot_name)
 
-        fqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
+        fqdn = f"{subdomain}.{THREEBOT_DOMAIN}"
         self._gateway.tcpservice_register(fqdn, client_secret=client_secret)
+        
         ips = j.tools.dnstools.default.namerecords_get(THREEBOT_DOMAIN)
         ip_address = ips[0]
 
-        subdomain = self._normalize_threebot_name(threebot_name)
         self._gateway.domain_register_a(subdomain, f"{THREEBOT_DOMAIN}", ip_address)
 
         out = schema_out.new()
