@@ -1,0 +1,6 @@
+[source]
+name = "farmmanagement_standalone"
+description = "TBD"
+threebot = "threebot"
+version = "1.0.0"
+frontend = true
