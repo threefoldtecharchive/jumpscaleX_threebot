@@ -76,10 +76,10 @@ def admin_only(handler):
     """
 
     def inner(*args, **kwargs):
-        username = request.environ.get("beaker.session", {}).get("username")
-        if not username or not is_admin(username):
-            return abort(403)
-
+        if j.tools.threebot.with_threebotconnect:
+            username = request.environ.get("beaker.session", {}).get("username")
+            if not username or not is_admin(username):
+                return abort(403)
         return handler(*args, **kwargs)
 
     return inner

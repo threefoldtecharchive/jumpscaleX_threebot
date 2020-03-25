@@ -177,3 +177,15 @@ class Package(j.baseclasses.threebot_package):
         # self.gevent_rack.webapp_root = webapp
 
 ```
+
+### Custom configs for package
+
+```
+JSX> p.zerobot.chatbot_examples.install(install_kwargs={"mode":"staging"})     
+JSX> p.zerobot.chatbot_examples.start()                                        
+```
+
+
+- `self._package.install_kwargs` to can be used to access the `install_kwargs` in package.py
+- `self.package.install_kwargs` can be used to access the `install_kwargs` in actor
+

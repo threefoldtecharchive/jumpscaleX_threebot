@@ -7,7 +7,24 @@ class wiki_content(j.baseclasses.threebot_actor):
         j.servers.myjobs.wait([job.id])
 
     @j.baseclasses.actor_method
-    def reload(self, wiki_name, user_session=None, schema_out=None):
+    def pull(self, wiki_name, user_session=None, pull=False, schema_out=None):
+        """
+        pull the git repository of any wiki
+
+        :param name: name of the wiki to pull
+
+        ```in
+        wiki_name = (S)
+        ```
+        """
+        if j.tools.threegit.exists(wiki_name):
+            docsite = j.tools.threegit.get(wiki_name).docsite
+            repo = docsite.metadata["repo"]
+            if repo:
+                j.clients.git.pullGitRepo(repo)
+
+    @j.baseclasses.actor_method
+    def reload(self, wiki_name, user_session=None, pull=False, schema_out=None):
         """
         :param name: name of the wiki to reload
 

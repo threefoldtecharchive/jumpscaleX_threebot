@@ -18,12 +18,14 @@ module.exports = new Promise(async (resolve, reject) => {
         dialogImage: null,
         block: null,
         showBadge: true,
-        menu: false
+        menu: false,
+        selectedNode: ''
       };
     },
     computed: {
       ...vuex.mapGetters("capacity", [
         "nodeSpecs",
+        "registeredNodes"
       ]),
     },
     mounted() {
@@ -31,7 +33,10 @@ module.exports = new Promise(async (resolve, reject) => {
       this.getRegisteredFarms();
     },
     methods: {
-      ...vuex.mapActions("capacity", ["getRegisteredNodes", "getRegisteredFarms"])
+      ...vuex.mapActions("capacity", ["getRegisteredNodes", "getRegisteredFarms"]),
+      changeSelectedNode (data) {
+        this.selectedNode = data
+      }
     }
   });
 });

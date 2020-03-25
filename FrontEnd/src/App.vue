@@ -100,14 +100,14 @@ export default {
 
 <style lang="scss">
 .topround {
-  border-radius: 10px 10px 0 0 !important;
+  border-radius: 4px 4px 0 0 !important;
 }
 .rounded {
-  border-radius: 0 10px 10px 0 !important;
+  border-radius: 0 4px 4px 0 !important;
 }
 .v-menu__content,
 .v-card {
-  border-radius: 10px !important;
+  border-radius: 4px !important;
   overflow: hidden;
 }
 .v-card__title {
