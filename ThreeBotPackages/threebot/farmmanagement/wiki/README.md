@@ -16,3 +16,15 @@ The structure of data during those client /server exchanges are called models an
 to sum up an external client would call this threebot actors method through redis protocol exchanging data according to the models.
 
 ![3Bot module example with mail module](../doc/images/3bot_actors_models.jpg)
+
+## Installation
+
+from 3bot shell
+
+```python
+p.threebot.farmmanagement.install()
+p.threebot.farmmanagement.start()
+
+```
+
+or using the admin dashboard from the farmmanagement submenu
