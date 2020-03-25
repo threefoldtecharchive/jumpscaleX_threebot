@@ -1,6 +1,6 @@
 import { ExternalView } from "../external";
 
-const URL = "/#/farmmanagement";
+const URL = "/threebot/farmmanagement";
 const REQUIRED_PACKAGES = {
     "threebot.farmmanagement": "https://github.com/threefoldtech/jumpscaleX_threebot/tree/development/ThreeBotPackages/threebot/farmmanagement"
 }

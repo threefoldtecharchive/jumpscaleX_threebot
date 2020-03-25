@@ -42,7 +42,6 @@ def chat(bot):
     reservation, config = j.sal.reservation_chatflow.network_configure(
         bot, reservation, [node_selected], customer_tid=identity.id, ip_version=ip_version
     )
-
     ip_address = config["ip_addresses"][0]
 
     container_flist = f"{HUB_URL}/{version}.flist"
