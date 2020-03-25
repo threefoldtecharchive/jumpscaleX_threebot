@@ -53,8 +53,8 @@ def gedis_http(name, cmd, threebot_name=None, package_name=None):
         return f"Actor {name} does not have command {cmd}"
 
     if request.method == "GET":
-        params = dict(request.params)
-        data = {"args": params}
+        args = dict(request.params)
+        data = {"args": args}
     else:
         default_args = {"args": {}}
         try:
