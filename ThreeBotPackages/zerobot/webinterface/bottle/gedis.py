@@ -8,6 +8,9 @@ from .rooter import app, enable_cors, response, request
 GEDIS_PORT = 8901
 
 
+CODES_MAP = {j.exceptions.Permission: 403, j.exceptions.NotFound: 404}
+
+
 def _log(msg, level=20):
     j.core.tools.log(msg=msg, level=level, context="bottle", replace=True)
 
@@ -56,6 +59,7 @@ def gedis_http(name, cmd, threebot_name=None, package_name=None):
         default_args = {"args": {}}
         try:
             data = request.json or default_args
+            args = data["args"]
         except Exception as ex:
             response.status = 400
             _log(str(ex))
@@ -69,11 +73,11 @@ def gedis_http(name, cmd, threebot_name=None, package_name=None):
     response.headers["Content-Type"] = f"application/{content_type}"
     try:
 
-        result = command(**data["args"])
+        result = command(**args)
     except Exception as ex:
         err = format_err(ex)
-        response.status = 400
-        result = {"error": err}
+        response.status = CODES_MAP.get(type(ex), 400)
+        result = {"error": getattr(ex, "message", str(ex))}
         _log(f"{err}")
         if content_type == "json":
             result = j.data.serializers.json.dumps(result)
