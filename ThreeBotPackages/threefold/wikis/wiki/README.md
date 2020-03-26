@@ -25,6 +25,4 @@ j.servers.threebot.start()
 
 - Wait for the first time cloning then from the browser go to your wiki:
 
-    - grid -> https://172.17.0.2/wiki/grid
-    - foundation -> https://172.17.0.2/wiki/foundation
-    - tokens -> https://172.17.0.2/wiki/tokens#/
+    - threefold -> https://172.17.0.2/wiki/threefold
