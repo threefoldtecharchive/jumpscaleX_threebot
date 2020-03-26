@@ -98,7 +98,7 @@ def chat(bot):
         secret_env.update({"HASH": hash_encrypted})
         env.update({"backup": "True", "FOLDER": backup_directory})
 
-    env.update({"pub_key": pub_key})
+    env.update({"pub_key": pub_key,"botname": name, "botemail": email})
     secret_env.update(
         {
             "AWS_ID": aws_id_encrypted,
