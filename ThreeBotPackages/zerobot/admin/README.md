@@ -2,17 +2,43 @@
 
 This package provides an admin dashboard interface with some actors for your 3Bot health, logs..etc.
 
+## What's included
 
+### Home
+
+Shows system versions, network, processes status, memory consumptions and some health checks
 ![images/dashboard.png](images/dashboard.png)
 
+### Logs
+Allows seeing logs per application
 
-### Installation
+![logs](./images/logs.png)
+
+
+### Alerts
+Advanced alerts system
+
+![alerts](./images/alerts.png)
+
+### Package management system
+Easy way to install/stop packages available on the filesystem or from a trusted git repository
+
+![packagemanager](./images/packagemanager.png)
+
+
+### Online code editor
+
+If you want to edit code from the dashboard directly you can do so using CodeServer package
+
+![codeserver](./images/codeserverterminal.png)
+
+## Installation
 
 Admin dashboard is installed by default, you also can install it by path or git url as any other package.
 
 You can view the dashboard by navigating to `http://<host>/admin`.
 
-### Login
+## Login
 
 The dashboard is protected by 3Bot connect, you need to register your current 3Bot, from 3Bot server shell (for now, you need to suffix your name with `.3bot`):
 
@@ -29,6 +55,17 @@ j.tools.threebot.me.default.admins.append("ahmed.3bot")
 j.tools.threebot.me.default.save()
 ```
 
-### Frontend
+
+
+## Frontend
 
 The frontend is written in webix, and located at `frontend_src`, the build is at `frontend`, for more go to [frontend_src/README.md](frontend_src/README.md).
+
+
+### To rebuild frontend
+
+- `cd frontend_src`
+- `bash build_frontend.sh`
+
+
+## Including other packages in the admin panel
