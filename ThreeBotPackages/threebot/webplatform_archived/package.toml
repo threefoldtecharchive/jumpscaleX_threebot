@@ -1,7 +1,7 @@
 [source]
-name = "webplatform"
+name = "webplatform_archived"
 description = "TBD"
-threebot = "zerobot"
+threebot = "threebot"
 version = "1.0.0"
 
 

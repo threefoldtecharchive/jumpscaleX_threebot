@@ -23,6 +23,12 @@ class gateway(j.baseclasses.threebot_actor):
         payload = binascii.hexlify(threebot_name.encode()).decode()
         return self._explorer.users.validate(tid=user.id, payload=payload, signature=signature)
 
+    def _normalize_threebot_name(self, threebot_name):
+        parts = threebot_name.split(".") 
+        if parts[-1] == '3bot':
+            parts.pop()
+        return ".".join(parts)
+
     @j.baseclasses.actor_method
     def domain_list(self, schema_out=None, user_session=None):
         return self._gateway.domain_list()
@@ -296,10 +302,12 @@ class gateway(j.baseclasses.threebot_actor):
         if not self._is_valid_signature(threebot_name, signature):
             raise j.exceptions.Value("Invalid signature")
 
-        fqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
+        subdomain = self._normalize_threebot_name(threebot_name)
+
+        fqdn = f"{subdomain}.{THREEBOT_DOMAIN}"
         self._gateway.tcpservice_register(fqdn, privateip)
-        self._gateway.domain_register_cname("@", f"{threebot_name}.{THREEBOT_DOMAIN}", f"{THREEBOT_DOMAIN}.")
-        self._gateway.domain_register_a(threebot_name, f"{THREEBOT_DOMAIN}", privateip)
+        self._gateway.domain_register_cname("@", f"{subdomain}.{THREEBOT_DOMAIN}", f"{THREEBOT_DOMAIN}.")
+        self._gateway.domain_register_a(subdomain, f"{THREEBOT_DOMAIN}", privateip)
         return True
 
     @j.baseclasses.actor_method
@@ -321,13 +329,16 @@ class gateway(j.baseclasses.threebot_actor):
         """
         if not self._is_valid_signature(threebot_name, signature):
             raise j.exceptions.Value("Invalid signature")
+        
+        subdomain = self._normalize_threebot_name(threebot_name)
 
-        fqdn = f"{threebot_name}.{THREEBOT_DOMAIN}"
+        fqdn = f"{subdomain}.{THREEBOT_DOMAIN}"
         self._gateway.tcpservice_register(fqdn, client_secret=client_secret)
+        
         ips = j.tools.dnstools.default.namerecords_get(THREEBOT_DOMAIN)
         ip_address = ips[0]
 
-        self._gateway.domain_register_a(threebot_name, f"{THREEBOT_DOMAIN}", ip_address)
+        self._gateway.domain_register_a(subdomain, f"{THREEBOT_DOMAIN}", ip_address)
 
         out = schema_out.new()
         out.ip_address = ip_address

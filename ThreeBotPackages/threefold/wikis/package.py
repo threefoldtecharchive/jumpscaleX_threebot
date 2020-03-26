@@ -2,14 +2,10 @@ import re
 from Jumpscale import j
 from Jumpscale.tools.threegit.ThreeGit import load_wiki
 
-WIKIS = {"info_grid": "wiki.grid.tf", "info_foundation": "wiki.threefold.tf", "info_tokens": "wiki.tokens.tf"}
+WIKIS = {"info_threefold": "wiki.threefold.io"}
 
 BRANCH = "development"
-TF_WIKIS_LINKS = {
-    "info_grid": f"https://github.com/threefoldfoundation/info_grid/tree/{BRANCH}/docs",
-    "info_foundation": f"https://github.com/threefoldfoundation/info_foundation/tree/{BRANCH}/docs",
-    "info_tokens": f"https://github.com/threefoldfoundation/info_tokens/tree/{BRANCH}/docs",
-}
+TF_WIKIS_LINKS = {"info_threefold": f"https://github.com/threefoldfoundation/info_threefold/tree/{BRANCH}/docs"}
 
 
 class Package(j.baseclasses.threebot_package):
