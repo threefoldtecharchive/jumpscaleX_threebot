@@ -1,0 +1,5 @@
+[source]
+name = "capacity_standalone"
+description = "TBD"
+threebot = "threebot"
+version = "1.0.0"
