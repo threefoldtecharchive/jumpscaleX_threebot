@@ -14,7 +14,7 @@ def chat(bot):
     expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
     explorer = j.clients.explorer.explorer
     if not email:
-        raise j.exceptions.BadRequest("Email shouldn't be empty")
+        raise j.exceptions.Value("Email shouldn't be empty")
 
     ip_version = bot.single_choice(
         "This wizard will help you deploy a minio cluster, do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4",

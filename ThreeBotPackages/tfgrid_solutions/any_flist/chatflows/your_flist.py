@@ -14,7 +14,7 @@ def chat(bot):
     expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
     explorer = j.clients.explorer.explorer
     if not email:
-        raise j.exceptions.BadRequest("Email shouldn't be empty")
+        raise j.exceptions.Value("Email shouldn't be empty")
 
     form = bot.new_form()
     flist = form.string_ask(

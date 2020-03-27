@@ -15,14 +15,14 @@ def chat(bot):
 
     explorer = j.clients.explorer.explorer
     if not email:
-        raise j.exceptions.BadRequest("Email shouldn't be empty")
+        raise j.exceptions.Value("Email shouldn't be empty")
 
     ip_version = bot.single_choice(
         "This wizard will help you deploy a kubernetes cluster, do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4",
         ips,
     )
 
-    workers_number = bot.int_ask("Please specify the number of worker nodes",default=1)  # minimum should be 1
+    workers_number = bot.int_ask("Please specify the number of worker nodes", default=1)  # minimum should be 1
     cluster_size = workers_number + 1  # number of workers + the master node
     ssh_keys = bot.upload_file(
         """"Please add your public ssh key, this will allow you to access the deployed container using ssh. 

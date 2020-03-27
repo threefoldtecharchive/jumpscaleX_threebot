@@ -61,7 +61,7 @@ def chat(bot):
     entry_point = "/bin/bash"
     explorer = j.clients.threebot.explorer
     if not email:
-        raise j.exceptions.BadRequest("Email shouldn't be empty")
+        raise j.exceptions.Value("Email shouldn't be empty")
 
     ip_range = bot.string_ask("Please add ip range of the network")
 
