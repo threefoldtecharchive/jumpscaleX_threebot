@@ -17,7 +17,7 @@ def chat(bot):
         raise j.exceptions.Value("Email shouldn't be empty")
 
     ip_version = bot.single_choice(
-        "This wizard will help you deploy a minio cluster, do you prefer to access your 3bot using IPv4 or IPv6? If unsure, chooose IPv4",
+        "This wizard will help you deploy a minio cluster, do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4",
         ips,
     )
 

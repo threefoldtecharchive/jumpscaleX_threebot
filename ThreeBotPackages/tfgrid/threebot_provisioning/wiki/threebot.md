@@ -10,7 +10,7 @@ Your deployed 3bot container will have started from jsx flist.
    - **ssh key** : add your public ssh key `~/.ssh/id_rsa.pub` that will allow you ssh access to your 3bot container
    - **corex user**: setting username which will allow you secure access to the 3bot from your web browser using coreX
    - **corex password**: setting password which will allow you secure access to the 3bot from your web browser using coreX
-   - **IP version**: choose whether you prefer to access your 3bot using IPv4 or IPv6. If unsure, chooose IPv4
+   - **IP version**: choose whether you prefer to access your 3bot using IPv4 or IPv6. If unsure, choose IPv4
    - **IP range**: Configure network to manually by choosing an IP range to use or the deployer can choose for you and generate an IP range automatically
    - **Network name**: a name for the network to deploy on,  if left empty it will be a generated name
    - **IP Address**: choose the ip address for your 3bot machine.

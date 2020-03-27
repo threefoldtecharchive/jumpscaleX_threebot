@@ -5,7 +5,7 @@ A Kubernetes cluster is a set of node machines for running containerized applica
 
 * **URL**: *{host}/tfgrid_solutions/kubernetes_cluster/chat/kubernetes_cluster_deploy*
 * **Inputs**
-   - **Ip version** : (IPv4 or IPv6) Version of the machine that will be used to access the cluster. If unsure, chooose IPv4.
+   - **Ip version** : (IPv4 or IPv6) Version of the machine that will be used to access the cluster. If unsure, choose IPv4.
    - **number of workers** : number of worker nodes to be deployed, the cluster size will then be the number of workers + 1(master node)
    - **ssh keys** : ssh keys which will be used to allow access for the ssh key holders to the deployed cluster. They should be in a file where each ssh key is on a seperate line
    - **cluster secret** : the secret that will be used to access the cluster deployed. Please keep it safe.

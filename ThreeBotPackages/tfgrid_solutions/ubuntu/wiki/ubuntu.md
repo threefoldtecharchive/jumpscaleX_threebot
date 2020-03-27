@@ -11,7 +11,7 @@ Your deployed a ubuntu container will have started from container flist.
 * **Inputs**:
    - **Ubuntu version**: choose ubuntu version flist for your container
    - **environment variables**: set environment variables on your deployed container, enter comma-separated variable=value For example: var1=value1, var2=value2. Leave empty if not needed
-   - **IP version**: choose whether you prefer to access your ubuntu container using IPv4 or IPv6. If unsure, chooose IPv4
+   - **IP version**: choose whether you prefer to access your ubuntu container using IPv4 or IPv6. If unsure, choose IPv4
    - **IP range**: Configure network to manually by choosing an IP range to use or the deployer can choose for you and generate an IP range automatically
    - **Network name**: a name for the network to deploy on,  if left empty it will be a generated name
    - **IP Address**: choose the ip address for your ubuntu machine.

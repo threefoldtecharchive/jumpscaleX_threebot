@@ -5,7 +5,7 @@ MinIO is a high performance object storage. With the assist of the chatflow the 
 
 * **URL**: *{host}/tfgrid_solutions/minio/chat/minio_deploy*
 * **Inputs**
-   - **Ip version** : (IPv4 or IPv6) Version of the machine that will be used to access MinIO. If unsure, chooose IPv4.
+   - **Ip version** : (IPv4 or IPv6) Version of the machine that will be used to access MinIO. If unsure, choose IPv4.
    - **db password** : password used for all zdb storage
    - **disk type for storage** : (SSD or HDD) disk type to be used by zdb databases where storage will take place
    - **database mode** : (seq or user) mode in which all zdb databases will run with
