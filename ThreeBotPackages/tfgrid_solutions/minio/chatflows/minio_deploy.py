@@ -5,56 +5,71 @@ import time
 def chat(bot):
     """
     """
-
+    user_form_data = {}
     user_info = bot.user_info()
     name = user_info["username"]
     email = user_info["email"]
     ips = ["IPv6", "IPv4"]
     flist_url = "https://hub.grid.tf/azmy.3bot/minio.flist"
     expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
-    explorer = j.clients.explorer.explorer
+    explorer = j.clients.explorer.default
     if not email:
         raise j.exceptions.Value("Email shouldn't be empty")
 
-    ip_version = bot.single_choice(
+    user_form_data["IP version"] = bot.single_choice(
         "This wizard will help you deploy a minio cluster, do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4",
         ips,
     )
 
-    password = bot.string_ask("Please add a password to be used for all zdb storage", default="password")
-    disk_type = bot.drop_down_choice("Please choose a disk type to be for zdb", ["SSD", "HDD"])
-    mode = bot.drop_down_choice(
+    user_form_data["Password"] = bot.string_ask(
+        "Please add a password to be used for all zdb storage", default="password"
+    )
+    user_form_data["Disk type"] = bot.drop_down_choice("Please choose a disk type to be for zdb", ["SSD", "HDD"])
+    user_form_data["Mode"] = bot.drop_down_choice(
         "Please choose the mode to be used for the database. If unsure, choose seq", ["seq", "user"]
     )
-    access_key = bot.string_ask(
+    user_form_data["Access key"] = bot.string_ask(
         "Please add the key to be used for minio when logging in. Make sure not to loose it", default=name.split(".")[0]
     )
-    secret = bot.string_ask(
+    user_form_data["Secret"] = bot.string_ask(
         "Please add the secret to be used for minio when logging in to match the previous key. Make sure not to loose it",
         default="secret12345",
     )
-    cpu = bot.int_ask("Resources for minio: Please add the how much cpu is needed", default=2)
-    memory = bot.int_ask("Resources for minio: Please add the size you need for the memory", default=2048)
-    data_number = str(
+    user_form_data["CPU"] = bot.int_ask("Resources for minio: Please add the how much cpu is needed", default=2)
+    user_form_data["Memory"] = bot.int_ask(
+        "Resources for minio: Please add the size you need for the memory", default=2048
+    )
+    user_form_data["Data number"] = str(
         bot.string_ask(
             "Resources for minio: Please add the number of data drives you need. Take care of the ratio between the data drives and parity drives you will specify next",
             default="1",
         )
     )
-    parity = str(bot.string_ask("Resources for minio: Please add the number of parity drives you need", default="0"))
-    zdb_number = int(data_number) + int(parity)
+    user_form_data["Parity"] = str(
+        bot.string_ask("Resources for minio: Please add the number of parity drives you need", default="0")
+    )
+    user_form_data["ZDB number"] = int(user_form_data["Data number"]) + int(user_form_data["Parity"])
+
+    bot.md_show_confirm(user_form_data)
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
     identity = explorer.users.get(name=name, email=email)
 
-    nodes_selected = j.sal.reservation_chatflow.nodes_get(zdb_number + 1, ip_version=ip_version, farm_id=71)
+    nodes_selected = j.sal.reservation_chatflow.nodes_get(
+        user_form_data["ZDB number"] + 1, ip_version=user_form_data["IP version"], farm_id=71
+    )
     selected_node = nodes_selected[0]
 
     # Create network of reservation and add peers
     reservation, configs = j.sal.reservation_chatflow.network_configure(
-        bot, reservation, nodes_selected, customer_tid=identity.id, ip_version=ip_version, number_of_ipaddresses=1
+        bot,
+        reservation,
+        nodes_selected,
+        customer_tid=identity.id,
+        ip_version=user_form_data["IP version"],
+        number_of_ipaddresses=1,
     )
     rid = configs["rid"]
 
@@ -67,9 +82,9 @@ def chat(bot):
             reservation=reservation,
             node_id=nodes_selected[i].node_id,
             size=10,
-            mode=mode,
-            password=password,
-            disk_type=disk_type,
+            mode=user_form_data["Mode"],
+            password=user_form_data["Password"],
+            disk_type=user_form_data["Disk type"],
             public=False,
         )
 
@@ -88,7 +103,7 @@ def chat(bot):
         for result in reservation_result:
             if result.category == "ZDB":
                 number_of_zdbs_found += 1
-        if number_of_zdbs_found == zdb_number:
+        if number_of_zdbs_found == user_form_data["ZDB number"]:
             zdbs_found = True
 
         trials = trials - 1
@@ -99,7 +114,7 @@ def chat(bot):
     for result in reservation_result:
         if result.category == "ZDB":
             data = result.data_json
-            cfg = f"{data['Namespace']}:{password}@[{data['IP']}]:{data['Port']}"
+            cfg = f"{data['Namespace']}:{user_form_data['Password']}@[{data['IP']}]:{data['Port']}"
             namespace_config.append(cfg)
 
     entry_point = "/bin/entrypoint"
@@ -112,14 +127,14 @@ def chat(bot):
         ip_address=ip_address,
         flist=flist_url,
         entrypoint=entry_point,
-        cpu=cpu,
-        memory=memory,
+        cpu=user_form_data["CPU"],
+        memory=user_form_data["Memory"],
         env={
             "SHARDS": ",".join(namespace_config),
-            "DATA": data_number,
-            "PARITY": parity,
-            "ACCESS_KEY": access_key,
-            "SECRET_KEY": secret,
+            "DATA": user_form_data["Data number"],
+            "PARITY": user_form_data["Parity"],
+            "ACCESS_KEY": user_form_data["Access key"],
+            "SECRET_KEY": user_form_data["Secret"],
         },
     )
 
@@ -135,19 +150,25 @@ def chat(bot):
 
         res = """
                 # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
-                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed:
-                ## ```wg-quick up /etc/wireguard/{}```
+                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed
                 Click next
                 to download your configuration
-                """.format(
-            filename
-        )
+                """
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)
 
         res = j.tools.jinja2.template_render(text=wg_quick, **locals())
         bot.download_file(res, filename)
+        res = """
+                # In order to have the network active and accessible from your local machine. To do this, execute this command: 
+                ## ```wg-quick up /etc/wireguard/{}```
+                Click next
+                """.format(
+            filename
+        )
 
+        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
+        bot.md_show(res)
         res = "# Open your browser at ```{}:9000```. It may take a few minutes.".format(ip_address)
         res = j.tools.jinja2.template_render(text=res, **locals())
         bot.md_show(res)

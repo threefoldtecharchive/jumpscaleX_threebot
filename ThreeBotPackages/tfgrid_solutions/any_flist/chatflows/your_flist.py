@@ -6,39 +6,39 @@ def chat(bot):
     """
     """
 
+    user_form_data = {}
     user_info = bot.user_info()
     name = user_info["username"]
     email = user_info["email"]
     ips = ["IPv6", "IPv4"]
     env = dict()
     expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
-    explorer = j.clients.explorer.explorer
+    explorer = j.clients.explorer.default
     if not email:
         raise j.exceptions.Value("Email shouldn't be empty")
 
     form = bot.new_form()
-    flist = form.string_ask(
+    user_form_data["Flist link"] = form.string_ask(
         "This wizard will help you deploy a container using any flit provided\n Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
-    )
-    pub_key = None
-    while not pub_key:
-        pub_key = form.string_ask(
+    ).value
+    while not user_form_data.get("Public key"):
+        user_form_data["Public key"] = form.string_ask(
             "Please add your public ssh key, this will allow you to access the deployed container using ssh. Just copy your key from ~/.ssh/id_rsa.pub"
-        )
-    env_vars = form.string_ask(
+        ).value
+    user_form_data["Env variables"] = form.string_ask(
         """To set environment variables on your deployed container, enter comma-separated variable=value
         For example: var1=value1, var2=value2.
         Leave empty if not needed"""
-    )
+    ).value
     form.ask()
 
-    interactive = bot.single_choice(
+    user_form_data["Interactive"] = bot.single_choice(
         "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"]
     )
 
-    env.update({"pub_key": pub_key.value})
-    if env_vars.value:
-        var_list = env_vars.value.split(",")
+    env.update({"pub_key": user_form_data["Public key"]})
+    if user_form_data["Env variables"]:
+        var_list = user_form_data["Env variables"].split(",")
         var_dict = {}
         for item in var_list:
             splitted_item = item.split("=")
@@ -47,21 +47,26 @@ def chat(bot):
 
         env.update(var_dict)
 
+    user_form_data["IP version"] = bot.single_choice(
+        "Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips
+    )
+
+    bot.md_show_confirm(user_form_data)
+
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
     identity = explorer.users.get(name=name, email=email)
 
-    ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips)
-    node_selected = j.sal.reservation_chatflow.nodes_get(1, ip_version=ip_version)[0]
+    node_selected = j.sal.reservation_chatflow.nodes_get(1, ip_version=user_form_data["IP version"])[0]
 
     reservation, config = j.sal.reservation_chatflow.network_configure(
-        bot, reservation, [node_selected], customer_tid=identity.id, ip_version=ip_version
+        bot, reservation, [node_selected], customer_tid=identity.id, ip_version=user_form_data["IP version"]
     )
     ip_address = config["ip_addresses"][0]
 
-    conatiner_flist = flist.value
+    conatiner_flist = user_form_data["Flist link"]
     storage_url = "zdb://hub.grid.tf:9900"
-    if interactive == "YES":
+    if user_form_data["Interactive"] == "YES":
         interactive = True
     else:
         interactive = False
@@ -91,18 +96,26 @@ def chat(bot):
 
         res = """
                 # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
-                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed:
-                ## ```wg-quick up /etc/wireguard/{}```
+                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed
                 Click next
                 to download your configuration
-                """.format(
-            filename
-        )
+                """
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)
 
         res = j.tools.jinja2.template_render(text=config["wg"], **locals())
         bot.download_file(res, filename)
+        res = """
+                # In order to have the network active and accessible from your local machine. To do this, execute this command: 
+                ## ```wg-quick up /etc/wireguard/{}```
+                Click next
+                """.format(
+            filename
+        )
+
+        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
+        bot.md_show(res)
+
         if interactive:
             res = "# Open your browser at ```{}:7681```".format(ip_address)
             res = j.tools.jinja2.template_render(text=res, **locals())

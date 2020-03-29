@@ -6,6 +6,7 @@ import ipaddress
 def chat(bot):
     """
     """
+    user_form_data = {}
     user_info = bot.user_info()
     name = user_info["username"]
     email = user_info["email"]
@@ -13,34 +14,41 @@ def chat(bot):
     default_cluster_name = name.split(".3bot")[0]
     expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
 
-    explorer = j.clients.explorer.explorer
+    explorer = j.clients.explorer.default
     if not email:
         raise j.exceptions.Value("Email shouldn't be empty")
 
-    ip_version = bot.single_choice(
+    user_form_data["IP version"] = bot.single_choice(
         "This wizard will help you deploy a kubernetes cluster, do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4",
         ips,
     )
 
-    workers_number = bot.int_ask("Please specify the number of worker nodes", default=1)  # minimum should be 1
-    cluster_size = workers_number + 1  # number of workers + the master node
-    ssh_keys = bot.upload_file(
+    user_form_data["Workers number"] = bot.int_ask(
+        "Please specify the number of worker nodes", default=1
+    )  # minimum should be 1
+    cluster_size = user_form_data["Workers number"] + 1  # number of workers + the master node
+    user_form_data["SSH keys"] = bot.upload_file(
         """"Please add your public ssh key, this will allow you to access the deployed container using ssh. 
             Just upload the ssh keys file with each key on a seperate line"""
-    ).split("\n")
+    )
+    ssh_keys_list = user_form_data["SSH keys"].split("\n")
 
-    cluster_secret = bot.string_ask("Please add the cluster secret", default="secret")
+    user_form_data["Cluster secret"] = bot.string_ask("Please add the cluster secret", default="secret")
+
+    bot.md_show_confirm(user_form_data)
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
     identity = explorer.users.get(name=name, email=email)
 
     # Select nodes
-    nodes_selected = j.sal.reservation_chatflow.nodes_get(workers_number + 1, farm_id=71, ip_version=ip_version)
+    nodes_selected = j.sal.reservation_chatflow.nodes_get(
+        cluster_size, farm_id=71, ip_version=user_form_data["IP version"]
+    )
 
     # Create network of reservation and add peers
     reservation, configs = j.sal.reservation_chatflow.network_configure(
-        bot, reservation, nodes_selected, customer_tid=identity.id, ip_version=ip_version
+        bot, reservation, nodes_selected, customer_tid=identity.id, ip_version=user_form_data["IP version"]
     )
     rid = configs["rid"]
 
@@ -50,10 +58,10 @@ def chat(bot):
         reservation=reservation,
         node_id=nodes_selected[0].node_id,
         network_name=configs["name"],
-        cluster_secret=cluster_secret,
+        cluster_secret=user_form_data["Cluster secret"],
         ip_address=configs["ip_addresses"][0],
         size=cluster_size,
-        ssh_keys=ssh_keys,
+        ssh_keys=ssh_keys_list,
     )
 
     # Workers are in the rest of the nodes
@@ -62,11 +70,11 @@ def chat(bot):
             reservation=reservation,
             node_id=nodes_selected[i].node_id,
             network_name=configs["name"],
-            cluster_secret=cluster_secret,
+            cluster_secret=user_form_data["Cluster secret"],
             ip_address=configs["ip_addresses"][i],
             size=cluster_size,
             master_ip=master.ipaddress,
-            ssh_keys=ssh_keys,
+            ssh_keys=ssh_keys_list,
         )
 
     # register the reservation
@@ -91,19 +99,25 @@ def chat(bot):
 
         res = """
                 # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
-                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed:
-                ## ```wg-quick up /etc/wireguard/{}```
+                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed
                 Click next
                 to download your configuration
-                """.format(
-            filename
-        )
+                """
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)
 
         res = j.tools.jinja2.template_render(text=configs["wg"], **locals())
         bot.download_file(res, filename)
+        res = """
+                # In order to have the network active and accessible from your local machine. To do this, execute this command: 
+                ## ```wg-quick up /etc/wireguard/{}```
+                Click next
+                """.format(
+            filename
+        )
 
+        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
+        bot.md_show(res)
         for i, ip in enumerate(configs["ip_addresses"]):
             res = """
                 kubernete {} IP : {}
