@@ -2,9 +2,9 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
-    
-    def install(self):
+    def prepare(self):
         if not j.sal.fs.exists("{DIR_BIN}/code-server"):
+            # should be included in the image already, but no harm.
             j.builders.apps.codeserver.install()
 
     def start(self):
@@ -37,6 +37,7 @@ class Package(j.baseclasses.threebot_package):
         if not j.sal.fs.exists("{DIR_BIN}/code-server"):
             raise Exception("Code server is not installed, call install first")
         self.startupcmd.start()
+
     def stop(self):
         # Stop code server
         if not j.sal.fs.exists("{DIR_BIN}/code-server"):
