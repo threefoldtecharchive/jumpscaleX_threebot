@@ -63,6 +63,9 @@ class Package(j.baseclasses.threebot_package):
 
         self.setup_locations()
 
+        # init proxy instance to use in bottle
+        j.clients.oauth_proxy.get("main")
+
         from threebot_packages.zerobot.webinterface.bottle import app_with_session
 
         self.gevent_rack.bottle_server_add(name="bottle_web_interface", port=9999, app=app_with_session, websocket=True)
