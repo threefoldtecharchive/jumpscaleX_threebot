@@ -12,7 +12,7 @@ def chat(bot):
     ips = ["IPv6", "IPv4"]
     flist_url = "https://hub.grid.tf/azmy.3bot/minio.flist"
     expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
-    explorer = j.clients.explorer.explorer
+    explorer = j.clients.explorer.default
     if not email:
         raise j.exceptions.Value("Email shouldn't be empty")
 
@@ -135,19 +135,25 @@ def chat(bot):
 
         res = """
                 # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
-                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed:
-                ## ```wg-quick up /etc/wireguard/{}```
+                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed
                 Click next
                 to download your configuration
-                """.format(
-            filename
-        )
+                """
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)
 
         res = j.tools.jinja2.template_render(text=wg_quick, **locals())
         bot.download_file(res, filename)
+        res = """
+                # In order to have the network active and accessible from your local machine. To do this, execute this command: 
+                ## ```wg-quick up /etc/wireguard/{}```
+                Click next
+                """.format(
+            filename
+        )
 
+        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
+        bot.md_show(res)
         res = "# Open your browser at ```{}:9000```. It may take a few minutes.".format(ip_address)
         res = j.tools.jinja2.template_render(text=res, **locals())
         bot.md_show(res)
