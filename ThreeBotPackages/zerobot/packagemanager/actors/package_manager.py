@@ -83,7 +83,11 @@ class package_manager(j.baseclasses.threebot_actor):
         if not install:
             package.status = "toinstall"
         if start:
-            package.start()
+            try:
+                package.start()
+            except Exception as e:
+                package.status = "error"
+                raise e
 
         j.servers.threebot.default.openresty_server.reload()
 
