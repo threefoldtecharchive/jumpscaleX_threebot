@@ -77,7 +77,8 @@ class alerta(j.baseclasses.threebot_actor):
         identifier = (S)
         ```
         """
-        j.tools.alerthandler.delete(identifier)
+        alert_obj = j.tools.alerthandler.get(identifier)
+        j.tools.alerthandler.delete(alert_obj)
 
     @j.baseclasses.actor_method
     def delete_alerts(self, identifiers, schema_out=None, user_session=None):
@@ -87,7 +88,8 @@ class alerta(j.baseclasses.threebot_actor):
         ```
         """
         for identifier in identifiers:
-            j.tools.alerthandler.delete(identifier)
+            alert_obj = j.tools.alerthandler.get(identifier)
+            j.tools.alerthandler.delete(alert_obj)
 
     @j.baseclasses.actor_method
     def delete_all_alerts(self, schema_out=None, user_session=None):
