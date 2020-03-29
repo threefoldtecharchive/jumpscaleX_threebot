@@ -28,14 +28,15 @@ class Package(j.baseclasses.threebot_package):
 
         # Start code server
         cmd_start = "./code-server --auth none --host 127.0.0.1"
-        self.startupcmd = j.servers.startupcmd.get("codeserver", cmd_start=cmd_start, path="/sandbox/bin", ports=8080)
-        if not j.sal.fs.exists("/sandbox/bin/code-server"):
+        self.startupcmd = j.servers.startupcmd.get("codeserver", cmd_start=cmd_start, path="/sandbox/bin", ports=8080,
+                                                   timeout=5)
+        if not j.sal.fs.exists("{DIR_BIN}/code-server"):
             j.builders.apps.codeserver.install()
 
         self.startupcmd.start()
 
     def stop(self):
         # Stop code server
-        if not j.sal.fs.exists("/sandbox/bin/code-server"):
+        if not j.sal.fs.exists("{DIR_BIN}/code-server"):
             j.builders.apps.codeserver.install()
         self.startupcmd.stop()
