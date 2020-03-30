@@ -6,6 +6,7 @@ version = "1.0.0"
 
 
 [[bcdbs]]
-namespace = "threefold"
+name = "threefold_simplemail"
+namespace = "threefold_simplemail"
 type = "zdb"
 instance = "default"
