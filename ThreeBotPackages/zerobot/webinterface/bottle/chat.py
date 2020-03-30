@@ -1,6 +1,6 @@
 from Jumpscale import j
 
-from .auth import is_admin, oauth_app
+from .auth import is_admin, bot_app
 from .rooter import abort, request, response, env, app, get_ws_url, package_route, PACKAGE_BASE_URL
 
 
@@ -20,7 +20,7 @@ def chat_home(package):
 
 
 @app.get(CHAT_URL)
-@oauth_app.login_required
+@bot_app.login_required
 @package_route
 def chat_handler(package, chat_name):
     session = request.environ.get("beaker.session", {})

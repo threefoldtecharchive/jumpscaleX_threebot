@@ -2,16 +2,18 @@ from Jumpscale import j
 
 from .rooter import app, abort, env, redirect, response, request
 
+LOGIN_URL = "/auth/login"
+
 client = j.clients.oauth_proxy.get("main")
-oauth_app = j.tools.oauth_proxy.get(app, client, "/auth/login")
-bot_app = j.tools.threebotlogin_proxy.get(app)
+oauth_app = j.tools.oauth_proxy.get(app, client, LOGIN_URL)
+bot_app = j.tools.threebotlogin_proxy.get(app, LOGIN_URL)
 PROVIDERS = list(client.providers_list())
 
 
-@app.route("/auth/login")
+@app.route(LOGIN_URL)
 def login():
     provider = request.query.get("provider")
-    next_url = request.query.get("next_url")
+    next_url = request.query.get("next_url") or bot_app.session.get("next_url")
     host = request.get_header("host")
 
     if provider:
