@@ -16,6 +16,8 @@ function docsifyConfig(name, repo) {
         repo: repo || ('https://github.com/threefoldfoundation/' + name),
         loadSidebar: true,
         executeScript: true,
+        relativePath: true,
+        auto2top: true,
         markdown: {
             renderer: {
                 code: function (code, lang) {
