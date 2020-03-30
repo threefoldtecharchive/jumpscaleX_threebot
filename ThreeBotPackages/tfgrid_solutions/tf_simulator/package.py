@@ -67,7 +67,7 @@ class Package(j.baseclasses.threebot_package):
             website_2 = self.openresty.websites.get(f"tf_simulator_chat_{client_port}_tcprouter")
             website_2.port = server_port
             website_2.ssl = client_port == 4430
-            website_2.domain = "*.play.grid.tf"
+            website_2.domain = ".*\.play.grid.tf"
 
             locations_2 = website_2.locations.get(f"tcprouter_{client_port}")
             proxy_location = locations_2.get_location_proxy(f"tcprouter_{client_port}")

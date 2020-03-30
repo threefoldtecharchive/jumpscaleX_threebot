@@ -130,7 +130,7 @@ def chat(bot):
 
         message = """
         ### Visit your container using this link: 
-        #### [https://{url}](http://{url}) 
+        #### [http://{url}](http://{url}) 
         > Note: Your container will be destroyed after 1 hour
         """.format(
             url=url
