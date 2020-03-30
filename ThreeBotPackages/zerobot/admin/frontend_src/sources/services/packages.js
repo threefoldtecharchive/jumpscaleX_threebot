@@ -8,6 +8,13 @@ class PackagesService extends Service {
         super(BASE_URL);
     }
 
+    getStatus(names) {
+        // post call to send args as json
+        return this.postCall("packages_get_status", {
+            names: names
+        });
+    }
+
     list() {
         return this.getCall("packages_list");
     }

@@ -2,6 +2,11 @@ from Jumpscale import j
 
 
 class Package(j.baseclasses.threebot_package):
+    @property
+    def startupcmd(self):
+        cmd_start = "./code-server --auth none --host 127.0.0.1"
+        return j.servers.startupcmd.get("codeserver", cmd_start=cmd_start, path="/sandbox/bin", ports=8080)
+
     def prepare(self):
         if not j.sal.fs.exists("{DIR_BIN}/code-server"):
             # should be included in the image already, but no harm.
@@ -32,8 +37,6 @@ class Package(j.baseclasses.threebot_package):
             website.configure()
 
         # Start code server
-        cmd_start = "./code-server --auth none --host 127.0.0.1"
-        self.startupcmd = j.servers.startupcmd.get("codeserver", cmd_start=cmd_start, path="/sandbox/bin", ports=8080)
         if not j.sal.fs.exists("{DIR_BIN}/code-server"):
             raise Exception("Code server is not installed, call install first")
         self.startupcmd.start()

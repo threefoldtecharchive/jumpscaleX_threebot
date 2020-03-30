@@ -213,6 +213,7 @@ class package_manager(j.baseclasses.threebot_actor):
 
         package = j.tools.threebot_packages.get(name)
         package.enable()
+        package.start()
 
         return self._to_schema(schema_out, package)
 
@@ -253,6 +254,34 @@ class package_manager(j.baseclasses.threebot_actor):
         out = schema_out.new()
         out.packages = packages
         return out
+
+    @j.baseclasses.actor_method
+    def packages_get_status(self, names=None, schema_out=None, user_session=None):
+        """get packages status info given a list of full names
+
+        the result will be json object with package name as a key
+        and package object as a value
+
+        :param names: list of package names, defaults to None
+        :type names: list of str, optional
+        :param schema_out: schema out, defaults to None
+        :type schema_out: Schema, optional
+        :param user_session: user session, defaults to None
+        :type user_session: UserSession, optional
+
+        ```in
+        names = (LS)
+        ```
+        """
+        packages = {}
+
+        for name in names:
+            if j.tools.threebot_packages.exists(name):
+                packages[name] = j.tools.threebot_packages.get(name).status.value
+            else:
+                packages[name] = 0  # status: init
+
+        return j.data.serializers.json.dumps(packages)
 
     @j.baseclasses.actor_method
     def actors_list(self, package_name=None, schema_out=None, user_session=None):
