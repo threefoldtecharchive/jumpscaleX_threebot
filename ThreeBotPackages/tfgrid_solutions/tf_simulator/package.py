@@ -21,13 +21,6 @@ class Package(j.baseclasses.threebot_package):
     def _init(self, **kwargs):
         pass
 
-    def prepare(self):
-        """
-        is called at install time
-        :return:
-        """
-        pass
-
     def start(self):
         """
         called when the 3bot starts
@@ -81,15 +74,3 @@ class Package(j.baseclasses.threebot_package):
 
             locations_2.configure()
             website_2.configure()
-
-    def stop(self):
-        """
-        called when the 3bot stops
-        :return:
-        """
-
-    def uninstall(self):
-        """
-        called when the package is no longer needed and will be removed from the threebot
-        :return:
-        """
