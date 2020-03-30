@@ -8,6 +8,18 @@ class package_manager(j.baseclasses.threebot_actor):
         self._gedis_server = self.package.gedis_server
         j.data.schema.get_from_text(j.tools.threebot_packages._model.schema.text)
 
+    def _to_schema(self, schema_out, package):
+        """a helper method to return a package as schema out
+
+        :param schema_out: schema out
+        :type schema_out: schema object
+        :param package: package
+        :type package: ThreeBotPackage
+        """
+        out = schema_out.new()
+        out.package = package
+        return out
+
     @j.baseclasses.actor_method
     def package_add(
         self,
@@ -30,6 +42,11 @@ class package_manager(j.baseclasses.threebot_actor):
         install_kwargs= (dict)
 
         ```
+
+        ```out
+        package = (O) !jumpscale.threebot.package.1
+        ```
+
         can use a git_url or a path
         path needs to exist on the threebot server
         the git_url will get the code on the server (package source code) if its not there yet
@@ -83,17 +100,25 @@ class package_manager(j.baseclasses.threebot_actor):
         if not install:
             package.status = "toinstall"
         if start:
-            package.start()
+            try:
+                package.start()
+            except Exception as e:
+                package.status = "error"
+                raise e
 
         j.servers.threebot.default.openresty_server.reload()
 
-        return "OK"
+        return self._to_schema(schema_out, package)
 
     @j.baseclasses.actor_method
     def package_delete(self, name, schema_out=None, user_session=None):
         """
         ```in
         name = ""
+        ```
+
+        ```out
+        package = (O) !jumpscale.threebot.package.1
         ```
         remove this package from the threebot
         will call package.uninstall()
@@ -107,12 +132,19 @@ class package_manager(j.baseclasses.threebot_actor):
         package.uninstall()
         package.delete()
 
+        return self._to_schema(schema_out, package)
+
     @j.baseclasses.actor_method
     def package_stop(self, name, schema_out=None, user_session=None):
         """
         ```in
         name = ""
         ```
+
+        ```out
+        package = (O) !jumpscale.threebot.package.1
+        ```
+
         stop a package, which means will call package.stop()
         """
         user_session.admin_check()
@@ -122,11 +154,17 @@ class package_manager(j.baseclasses.threebot_actor):
         package = j.tools.threebot_packages.get(name)
         package.stop()
 
+        return self._to_schema(schema_out, package)
+
     @j.baseclasses.actor_method
     def package_start(self, name, schema_out=None, user_session=None):
         """
         ```in
         name = ""
+        ```
+
+        ```out
+        package = (O) !jumpscale.threebot.package.1
         ```
         """
         user_session.admin_check()
@@ -136,11 +174,17 @@ class package_manager(j.baseclasses.threebot_actor):
         package = j.tools.threebot_packages.get(name)
         package.start()
 
+        return self._to_schema(schema_out, package)
+
     @j.baseclasses.actor_method
     def package_disable(self, name, schema_out=None, user_session=None):
         """
         ```in
         name = ""
+        ```
+
+        ```out
+        package = (O) !jumpscale.threebot.package.1
         ```
         """
         user_session.admin_check()
@@ -150,11 +194,17 @@ class package_manager(j.baseclasses.threebot_actor):
         package = j.tools.threebot_packages.get(name)
         package.disable()
 
+        return self._to_schema(schema_out, package)
+
     @j.baseclasses.actor_method
     def package_enable(self, name, schema_out=None, user_session=None):
         """
         ```in
         name = ""
+        ```
+
+        ```out
+        package = (O) !jumpscale.threebot.package.1
         ```
         """
         user_session.admin_check()
@@ -163,6 +213,8 @@ class package_manager(j.baseclasses.threebot_actor):
 
         package = j.tools.threebot_packages.get(name)
         package.enable()
+
+        return self._to_schema(schema_out, package)
 
     @j.baseclasses.actor_method
     def packages_list(self, status="all", frontend=False, has_frontend_args=False, schema_out=None, user_session=None):
@@ -294,6 +346,10 @@ class package_manager(j.baseclasses.threebot_actor):
         package_name = (S)
         reset = False (B)
         ```
+
+        ```out
+        package = (O) !jumpscale.threebot.package.1
+        ```
         """
 
         def do(package):
@@ -305,3 +361,5 @@ class package_manager(j.baseclasses.threebot_actor):
         else:
             for package in j.tools.threebot_packages.find():
                 do(package)
+
+        return self._to_schema(schema_out, package)

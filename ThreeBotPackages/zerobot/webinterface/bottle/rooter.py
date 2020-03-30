@@ -13,7 +13,6 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from Jumpscale import j
 from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
 
-
 app = Bottle()
 
 # to check beaker session

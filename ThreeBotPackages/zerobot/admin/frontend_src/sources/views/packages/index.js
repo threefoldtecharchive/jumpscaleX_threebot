@@ -3,38 +3,38 @@ import { JetView } from "webix-jet";
 import { ErrorView } from "../errors/dialog";
 import { packages } from "../../services/packages";
 
-const UNKNOWN_STATUS = 'Unkown';
+const UNKNOWN_STATUS = 'Unknown';
 
 const PACKAGE_STATES = [
     {
         name: "Init",
-        actions: ["delete"]
+        actions: []
     },
     {
         name: "Config",
-        actions: ['install', 'delete'],
+        actions: ['install'],
     },
     {
         name: "Installed",
-        actions: ['delete', "start"]
+        actions: ['start']
     },
     {
         name: "Running",
-        actions: ['delete', "stop"]
+        actions: ["stop"]
     },
     {
         name: "Halted",
-        actions: ['delete', "start", "disable"]
+        actions: ["start", "disable"]
     },
     {
         name: "Disabled",
-        actions: ['delete', "enable"]
+        actions: ["enable"]
     },
     {
         name: "Error",
-        actions: ["delete"]
+        actions: ['install']
     }
-]
+];
 
 export default class PackagesView extends JetView {
     config() {
@@ -96,7 +96,7 @@ export default class PackagesView extends JetView {
                     sort: "string",
                     width: 200
                 }, {
-                    id: "name",
+                    id: "source_name",
                     header: ["Name", {
                         content: "textFilter"
                     }],
@@ -106,7 +106,11 @@ export default class PackagesView extends JetView {
                 {
                     id: "status",
                     header: "Status",
-                    sort: "string"
+                    sort: "string",
+                    format: (value) => {
+                        const status = PACKAGE_STATES[value];
+                        return status && status.name || UNKNOWN_STATUS;
+                    },
                 }, {
                     id: "path",
                     header: "Path",
@@ -116,6 +120,8 @@ export default class PackagesView extends JetView {
                 ],
                 scheme: {
                     $init: function (obj) {
+                        obj.source_name = obj.source.name;
+                        obj.author = obj.source.threebot;
                         obj.index = this.count();
                     }
                 }
@@ -133,14 +139,16 @@ export default class PackagesView extends JetView {
         this.packageTable.showProgress({ hide: false });
 
         promise.then((data) => {
+            const packageItem = data.json().package;
             if (callback instanceof Function) {
-                callback(data);
+                callback(packageItem);
             }
 
             webix.message({
                 type: "success",
                 text: "The operation has beed done successfully"
             });
+
             this.packageTable.showProgress({ hide: true });
         }).catch(error => {
             this.showError("Error has happened during this operation: " + error.response, "Error");
@@ -148,33 +156,50 @@ export default class PackagesView extends JetView {
         })
     }
 
-    addPackage(path, gitUrl) {
-        this.handleResult(packages.add(path, gitUrl));
-    }
-
-
-    deletePackage(packageName, elementID) {
-        this.handleResult(packages.delete(packageName), () => {
-            this.packageTable.remove(elementID)
+    addPackage(path, gitUrl, itemId) {
+        this.handleResult(packages.add(path, gitUrl), (item) => {
+            if (itemId) {
+                this.packageTable.updateItem(itemId, item);
+            } else {
+                this.packageTable.add(item);
+            }
         });
     }
 
-    startPackage(packageName) {
-        this.handleResult(packages.start(packageName));
+    deletePackage(packageName, itemId) {
+        this.handleResult(packages.delete(packageName), () => {
+            this.packageTable.remove(itemId)
+        });
     }
 
-    stopPackage(packageName) {
-        this.handleResult(packages.stop(packageName));
-
+    startPackage(packageName, itemId) {
+        this.handleResult(packages.start(packageName), (item) => {
+            this.packageTable.updateItem(itemId, item);
+        });
     }
 
-    enablePackage(packageName) {
-        this.handleResult(packages.enablePackage(packageName));
+    stopPackage(packageName, itemId) {
+        this.handleResult(packages.stop(packageName), (item) => {
+            this.packageTable.updateItem(itemId, item);
+        });
     }
 
-    disablePackage(packageName) {
-        this.handleResult(packages.disable(packageName));
+    enablePackage(packageName, itemId) {
+        this.handleResult(packages.enable(packageName), (item) => {
+            this.packageTable.updateItem(itemId, item);
+        });
+    }
 
+    disablePackage(packageName, itemId) {
+        this.handleResult(packages.disable(packageName), (item) => {
+            this.packageTable.updateItem(itemId, item);
+        });
+    }
+
+    loadPackages() {
+        packages.list().then(data => {
+            this.packageTable.parse(data.json().packages);
+        });
     }
 
     init(view) {
@@ -191,32 +216,31 @@ export default class PackagesView extends JetView {
         webix.extend(this.packageTable, webix.ProgressBar);
 
         function checkAction(action, selectedItemId) {
-            if (self.packageTable.getItem(selectedItemId)) {
-                let name = self.packageTable.getItem(selectedItemId).name
-                let author = self.packageTable.getItem(selectedItemId).author
-                let elementID = self.packageTable.getItem(selectedItemId).id
-                let packageName = author + "." + name
-                if (action == 'delete') {
-                    //deletePackage(packageName)
-                    // self.packageTable.remove(elementID)
-                    //
+            const item = self.packageTable.getItem(selectedItemId);
+            if (item) {
+                let itemId = item.id;
+                let packageName = item.name;
+
+                if (action == 'install') {
+                    self.addPackage(item.path, null, itemId);
+                } else if (action == 'delete') {
                     webix.confirm({
                         title: "Delete Package",
                         ok: "Yes",
-                        text: `Are you sure you want to delete ${author}.${name}?`,
+                        text: `Are you sure you want to delete ${packageName}?`,
                         cancel: "No",
                     }).then(() => {
-                        self.deletePackage(packageName, elementID)
+                        self.deletePackage(packageName, itemId)
                     });
                     //
                 } else if (action == 'start') {
-                    self.startPackage(packageName)
+                    self.startPackage(packageName, itemId)
                 } else if (action == 'stop') {
-                    self.stopPackage(packageName)
+                    self.stopPackage(packageName, itemId)
                 } else if (action == 'disable') {
-                    self.disablePackage(packageName)
+                    self.disablePackage(packageName, itemId)
                 } else if (action == 'enable') {
-                    self.enablePackage(packageName)
+                    self.enablePackage(packageName, itemId)
                 }
             } else {
                 webix.message("you have to select a package")
@@ -248,53 +272,18 @@ export default class PackagesView extends JetView {
 
 
         webix.event(self.packageTable.$view, "contextmenu", function (e /*MouseEvent*/) {
-            var pos = self.packageTable.locate(e);
-            var menudata = [];
+            const pos = self.packageTable.locate(e);
             if (pos) {
-                var item = self.packageTable.getItem(pos.row);
-                for (var i = 0; i < PACKAGE_STATES.length; i++) {
-                    if (PACKAGE_STATES[i].name == item.status) {
-                        menudata = addActions(menudata, i)
-                    }
+                const item = self.packageTable.getItem(pos.row);
+                const actions = [...PACKAGE_STATES[item.status].actions, 'delete'];
 
-                }
+                menu.clearAll();
+                menu.parse(actions);
+                menu.show(e);
             }
-            menu.clearAll();
-            menu.parse(menudata);
-            menu.show(e);
             return webix.html.preventEvent(e);
         })
 
-        /////////////////////////////////////////
-
-
-        // Helper functions
-
-        // Mapping the data to the right format to be able to diplay the actual status
-        function mapData(allItems) {
-            return allItems.map(item => {
-                const status = PACKAGE_STATES[item.status];
-                return {
-                    "name": item.source.name,
-                    "author": item.source.threebot,
-                    "path": item.path,
-                    "status": status && status.name || UNKNOWN_STATUS
-                }
-            });
-        }
-
-        function addActions(menudata, pkgIndex) {
-            for (var j = 0; j < PACKAGE_STATES[pkgIndex].actions.length; j++)
-                menudata.push(PACKAGE_STATES[pkgIndex].actions[j]);
-            return menudata
-
-        }
-
-        packages.list().then(data => {
-            const allPackages = data.json().packages;
-            self.packageTable.parse(mapData(allPackages));
-        });
-
-
+        self.loadPackages();
     }
 }
