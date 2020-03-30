@@ -9,7 +9,7 @@ FARM_ID = 71
 DOMAIN = "play.grid.tf"
 NETWORK_NAME = "pub.play.grid.tf"
 NETWORK = netaddr.IPNetwork("10.40.0.0/16")
-FLIST = "https://hub.grid.tf/ahmedelsayed.3bot/ahmedelsayed93-flist-latest.flist"
+FLIST = "https://hub.grid.tf/ahmedelsayed.3bot/threefoldtech-simulator-latest.flist"
 LIFETIME = 60 * 60
 
 
