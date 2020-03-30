@@ -130,7 +130,8 @@ def chat(bot):
         secret_env=secret_env,
     )
 
-    j.sal.zosv2.volume.attach_existing(cont, vol, rid, "/sandbox/var")
+    volume_id = f"{rid}-{vol.workload_id}"
+    j.sal.zosv2.volume.attach_existing(cont, volume_id, "/sandbox/var")
 
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
