@@ -16,7 +16,7 @@ class gateway(j.baseclasses.threebot_actor):
             self._gateway = j.tools.tf_gateway.get(redisclient)
             self._explorer = j.clients.explorer.default
         else:
-            raise j.exceptions.Timeout(f"Failed to connect to {MASTERIP}")
+            raise j.exceptions.Timeout(f"Failed to connect to master redis {MASTERIP} (probably it's down)")
 
     def _is_valid_signature(self, threebot_name, signature):
         user = self._explorer.users.get(name=threebot_name)
@@ -24,8 +24,8 @@ class gateway(j.baseclasses.threebot_actor):
         return self._explorer.users.validate(tid=user.id, payload=payload, signature=signature)
 
     def _normalize_threebot_name(self, threebot_name):
-        parts = threebot_name.split(".") 
-        if parts[-1] == '3bot':
+        parts = threebot_name.split(".")
+        if parts[-1] == "3bot":
             parts.pop()
         return ".".join(parts)
 
@@ -329,12 +329,12 @@ class gateway(j.baseclasses.threebot_actor):
         """
         if not self._is_valid_signature(threebot_name, signature):
             raise j.exceptions.Value("Invalid signature")
-        
+
         subdomain = self._normalize_threebot_name(threebot_name)
 
         fqdn = f"{subdomain}.{THREEBOT_DOMAIN}"
         self._gateway.tcpservice_register(fqdn, client_secret=client_secret)
-        
+
         ips = j.tools.dnstools.default.namerecords_get(THREEBOT_DOMAIN)
         ip_address = ips[0]
 
