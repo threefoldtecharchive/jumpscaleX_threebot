@@ -5,7 +5,7 @@ import netaddr
 def chat(bot):
     """
     """
-
+    user_form_data = {}
     user_info = bot.user_info()
     name = user_info["username"]
     email = user_info["email"]
@@ -17,15 +17,21 @@ def chat(bot):
     if not email:
         raise j.exceptions.Value("Email shouldn't be empty")
 
-    version = bot.single_choice(
+    user_form_data["Version"] = bot.single_choice(
         "This wizard will help you deploy an ubuntu container, please choose ubuntu version", IMAGES
     )
-    env_vars = bot.string_ask(
+    user_form_data["Env variables"] = bot.string_ask(
         """To set environment variables on your deployed container, enter comma-separated variable=value
         For example: var1=value1, var2=value2.
         Leave empty if not needed"""
     )
-    var_list = env_vars.split(",")
+    user_form_data["IP version"] = bot.single_choice(
+        "Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips
+    )
+
+    bot.md_show_confirm(user_form_data)
+
+    var_list = user_form_data["Env variables"].split(",")
     var_dict = {}
     for item in var_list:
         splitted_item = item.split("=")
@@ -36,15 +42,14 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
     identity = explorer.users.get(name=name, email=email)
 
-    ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips)
-    node_selected = j.sal.reservation_chatflow.nodes_get(1, ip_version=ip_version)[0]
+    node_selected = j.sal.reservation_chatflow.nodes_get(1, ip_version=user_form_data["IP version"])[0]
 
     reservation, config = j.sal.reservation_chatflow.network_configure(
-        bot, reservation, [node_selected], customer_tid=identity.id, ip_version=ip_version
+        bot, reservation, [node_selected], customer_tid=identity.id, ip_version=user_form_data["IP version"]
     )
     ip_address = config["ip_addresses"][0]
 
-    container_flist = f"{HUB_URL}/{version}.flist"
+    container_flist = f"{HUB_URL}/{user_form_data['Version']}.flist"
     storage_url = "zdb://hub.grid.tf:9900"
 
     # create container
