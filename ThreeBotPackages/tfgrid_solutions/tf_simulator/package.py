@@ -38,10 +38,10 @@ class Package(j.baseclasses.threebot_package):
         j.builders.network.tcprouter.start()
 
         if not j.sal.fs.exists("/etc/wireguard/network.conf"):
-            from threebot_packages.tfgrid_solutions.tf_simulator.chatflows.tf_simulator_deploy import Play
+            from threebot_packages.tfgrid_solutions.tf_simulator.chatflows.tf_simulator_deploy import Deployer
 
-            play = Play()
-            play.deploy_network()
+            deployer = Deployer()
+            deployer.deploy_network()
 
         for server_port, client_port in ((443, 4430), (80, 8000)):
             website = self.openresty.websites.get(f"tf_simulator_chat_{server_port}")

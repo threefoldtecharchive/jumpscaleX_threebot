@@ -13,7 +13,7 @@ FLIST = "https://hub.grid.tf/ahmedelsayed.3bot/threefoldtech-simulator-latest.fl
 LIFETIME = 60 * 60
 
 
-class Play:
+class Deployer:
     def __init__(self):
         self._zos = j.sal.zosv2
         self._redis = j.clients.redis.get()
@@ -118,7 +118,7 @@ class Play:
         return domain
 
 
-play = Play()
+deployer = Deployer()
 
 
 def chat(bot):
@@ -126,7 +126,7 @@ def chat(bot):
     confirm = bot.single_choice("Do you want to deploy a threefold simulator container ?", options)
 
     if confirm == "Continue":
-        url = play.deploy_container()
+        url = deployer.deploy_container()
 
         message = """
         ### Visit your container using this link: 
