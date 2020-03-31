@@ -86,6 +86,11 @@ def gedis_http(name, cmd, threebot_name=None, package_name=None):
     else:
         if content_type:
             result = getattr(result, f"_{content_type}", result)
+            if not isinstance(result, str):
+                if content_type == "json":
+                    result = j.data.serializers.json.dumps(result)
+                elif content_type == "msgpack":
+                    result = j.data.serializers.msgpack.dumps(result)
     j.application.reset_context()
 
     return result
