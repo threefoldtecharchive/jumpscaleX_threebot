@@ -1,14 +1,15 @@
 import { JetView } from "webix-jet";
 
 import { inputDialog } from "../../common/dialogs";
+import { admin } from "../../services/admin";
 
 export default class AdminsView extends JetView {
     config() {
         var self = this;
 
         return {
-            cols: [{
-                rows: [{
+            rows: [{
+                cols: [{
                     view: "template",
                     template: "All of the following 3Bot names can access dashboard, you can add or remove them from here",
                     autoheight: true,
@@ -53,9 +54,9 @@ export default class AdminsView extends JetView {
         const self = this;
 
         inputDialog("Add admin", "3Bot name", "Add", (input) => {
-            // TODO: call actor.add
-            // TODO: check if already exists (can be actor too, other session may have added or removed it)
-            self.table.add({ name: input });
+            if (admin.add(input)) {
+                self.table.add({ name: input });
+            }
         });
     }
 
@@ -70,14 +71,19 @@ export default class AdminsView extends JetView {
             text: `Are you sure you want to delete "${item.name}"?`,
             cancel: "No",
         }).then(() => {
-            // TODO: call actor.delete
-            self.table.remove(itemId);
+            if (admin.delete(item.name)) {
+                self.table.remove(itemId);
+            }
         });
     }
 
     init() {
         this.table = this.$$("admins-table");
 
-        webix.extend(this.table, webix.ProgressBar);
+        admin.list().then(data => {
+            this.table.parse(data.json());
+        });
+
+        //webix.extend(this.table, webix.ProgressBar);
     }
 }
