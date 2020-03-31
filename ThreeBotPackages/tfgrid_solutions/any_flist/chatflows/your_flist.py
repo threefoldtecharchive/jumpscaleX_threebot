@@ -15,6 +15,8 @@ def chat(bot):
     explorer = j.clients.explorer.default
     if not email:
         raise j.exceptions.Value("Email shouldn't be empty")
+    if not name:
+        raise j.exceptions.Value("Name of logged in user shouldn't be empty")
 
     user_form_data["Flist link"] = bot.string_ask(
         "This wizard will help you deploy a container using any flist provided\n Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
