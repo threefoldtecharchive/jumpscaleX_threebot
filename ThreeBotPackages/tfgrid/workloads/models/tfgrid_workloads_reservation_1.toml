@@ -46,3 +46,12 @@ tid = (I)
 signature = (S)
 #time of signature
 epoch = (T)
+
+@url = tfgrid.workloads.reservation.create.1
+reservation_id = (I)
+escrow_information = (LO) !tfgrid.workloads.reservation.escrow.1
+
+@url = tfgrid.workloads.reservation.escrow.1
+farmer_id = (I)
+escrow_address = (S)
+total_amount = (I)
