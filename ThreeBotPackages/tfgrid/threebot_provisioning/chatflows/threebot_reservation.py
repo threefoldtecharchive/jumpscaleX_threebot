@@ -108,7 +108,7 @@ def chat(bot):
         }
     )
 
-    container_flist = "https://hub.grid.tf/bola_nasr_1/threefoldtech-3bot-corex.flist"
+    container_flist = "https://hub.grid.tf/bola_nasr_1/threefoldtech-3bot2-corex.flist"
     entry_point = "/usr/bin/zinit init -d"
     storage_url = "zdb://hub.grid.tf:9900"
 
@@ -168,6 +168,6 @@ def chat(bot):
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)
 
-        res = "# Open your browser at ```{}:1500``` It may take a few minutes.".format(ip_address)
+        res = "# your 3bot container is ready. please continue initialization on ```{}:8000``` It may take a few minutes.".format(ip_address)
         res = j.tools.jinja2.template_render(text=res, **locals())
         bot.md_show(res)
