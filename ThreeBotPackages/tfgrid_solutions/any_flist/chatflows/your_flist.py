@@ -50,7 +50,6 @@ def chat(bot):
         "Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips
     )
 
-    bot.md_show_confirm(user_form_data)
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
@@ -69,7 +68,7 @@ def chat(bot):
         interactive = True
     else:
         interactive = False
-
+    bot.md_show_confirm(user_form_data)
     # create container
     cont = j.sal.zosv2.container.create(
         reservation=reservation,

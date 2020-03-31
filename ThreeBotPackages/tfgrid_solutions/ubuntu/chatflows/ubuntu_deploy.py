@@ -31,7 +31,6 @@ def chat(bot):
         "Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips
     )
 
-    bot.md_show_confirm(user_form_data)
 
     var_list = user_form_data["Env variables"].split(",")
     var_dict = {}
@@ -50,6 +49,7 @@ def chat(bot):
         bot, reservation, [node_selected], customer_tid=identity.id, ip_version=user_form_data["IP version"]
     )
     ip_address = config["ip_addresses"][0]
+    bot.md_show_confirm(user_form_data)
 
     container_flist = f"{HUB_URL}/{user_form_data['Version']}.flist"
     storage_url = "zdb://hub.grid.tf:9900"

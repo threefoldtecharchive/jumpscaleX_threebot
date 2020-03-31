@@ -37,7 +37,7 @@ def chat(bot):
 
     user_form_data["Cluster secret"] = bot.string_ask("Please add the cluster secret", default="secret")
 
-    bot.md_show_confirm(user_form_data)
+
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
@@ -54,6 +54,7 @@ def chat(bot):
     )
     rid = configs["rid"]
 
+    bot.md_show_confirm(user_form_data)
     # Create master and workers
     # Master is in the first node from the selected nodes
     master = j.sal.zosv2.kubernetes.add_master(

@@ -52,7 +52,7 @@ def chat(bot):
     )
     user_form_data["ZDB number"] = int(user_form_data["Data number"]) + int(user_form_data["Parity"])
 
-    bot.md_show_confirm(user_form_data)
+
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
@@ -73,7 +73,7 @@ def chat(bot):
         number_of_ipaddresses=1,
     )
     rid = configs["rid"]
-
+    bot.md_show_confirm(user_form_data)
     ip_address = configs["ip_addresses"][0]
     wg_quick = configs["wg"]
     network_name = configs["name"]
