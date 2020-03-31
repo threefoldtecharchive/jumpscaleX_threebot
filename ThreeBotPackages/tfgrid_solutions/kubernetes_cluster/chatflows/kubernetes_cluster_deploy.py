@@ -15,6 +15,13 @@ def chat(bot):
     expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
 
     explorer = j.clients.explorer.default
+
+    if not j.tools.threebot.with_threebotconnect:
+        error_msg = """
+        This chatflow is not supported when Threebot is in dev mode.
+        To enable Threebot connect : `j.tools.threebot.threebotconnect_disable()`
+        """
+        raise j.exceptions.Runtime(error_msg)
     if not email:
         raise j.exceptions.Value("Email shouldn't be empty")
     if not name:
@@ -36,8 +43,6 @@ def chat(bot):
     ssh_keys_list = user_form_data["SSH keys"].split("\n")
 
     user_form_data["Cluster secret"] = bot.string_ask("Please add the cluster secret", default="secret")
-
-
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()

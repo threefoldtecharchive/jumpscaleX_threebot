@@ -13,6 +13,13 @@ def chat(bot):
     flist_url = "https://hub.grid.tf/tf-official-apps/minio-2020-01-25T02-50-51Z.flist"
     expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
     explorer = j.clients.explorer.default
+
+    if not j.tools.threebot.with_threebotconnect:
+        error_msg = """
+        This chatflow is not supported when Threebot is in dev mode.
+        To enable Threebot connect : `j.tools.threebot.threebotconnect_disable()`
+        """
+        raise j.exceptions.Runtime(error_msg)
     if not email:
         raise j.exceptions.Value("Email shouldn't be empty")
     if not name:
@@ -51,8 +58,6 @@ def chat(bot):
         bot.string_ask("Resources for minio: Please add the number of parity drives you need", default="0")
     )
     user_form_data["ZDB number"] = int(user_form_data["Data number"]) + int(user_form_data["Parity"])
-
-
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()

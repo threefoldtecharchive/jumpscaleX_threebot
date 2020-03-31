@@ -13,6 +13,13 @@ def chat(bot):
     env = dict()
     expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
     explorer = j.clients.explorer.default
+
+    if not j.tools.threebot.with_threebotconnect:
+        error_msg = """
+        This chatflow is not supported when Threebot is in dev mode.
+        To enable Threebot connect : `j.tools.threebot.threebotconnect_disable()`
+        """
+        raise j.exceptions.Runtime(error_msg)
     if not email:
         raise j.exceptions.Value("Email shouldn't be empty")
     if not name:
@@ -49,7 +56,6 @@ def chat(bot):
     user_form_data["IP version"] = bot.single_choice(
         "Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips
     )
-
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
