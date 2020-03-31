@@ -25,8 +25,15 @@ def login():
         redirect_url = f"https://{host}/auth/oauth_callback"
         return oauth_app.login(provider, redirect_url=redirect_url)
 
+    elif bot_app.session.get("authorized", False) or oauth_app.session.get("authorized", False):
+        redirect("/auth/accessdenied")
+        
     return env.get_template("auth/login.html").render(providers=PROVIDERS, next_url=next_url)
 
+@app.route("/auth/accessdenied")
+def access_denied():
+    email = bot_app.session.get("email") or oauth_app.session.get("email")
+    return env.get_template("auth/access_denied.html").render(email=email)
 
 @app.route("/auth/3bot_callback")
 def threebot_callback():
