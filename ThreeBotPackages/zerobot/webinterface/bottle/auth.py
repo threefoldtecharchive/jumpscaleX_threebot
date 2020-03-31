@@ -10,6 +10,10 @@ bot_app = j.tools.threebotlogin_proxy.get(app, LOGIN_URL)
 PROVIDERS = list(client.providers_list())
 
 
+def get_session():
+    return request.environ.get("beaker.session")
+
+
 @app.route(LOGIN_URL)
 def login():
     provider = request.query.get("provider")
@@ -25,15 +29,15 @@ def login():
         redirect_url = f"https://{host}/auth/oauth_callback"
         return oauth_app.login(provider, redirect_url=redirect_url)
 
-    elif bot_app.session.get("authorized", False) or oauth_app.session.get("authorized", False):
-        redirect("/auth/accessdenied")
-        
     return env.get_template("auth/login.html").render(providers=PROVIDERS, next_url=next_url)
+
 
 @app.route("/auth/accessdenied")
 def access_denied():
-    email = bot_app.session.get("email") or oauth_app.session.get("email")
-    return env.get_template("auth/access_denied.html").render(email=email)
+    email = get_session().get("email")
+    next_url = request.query.get("next_url")
+    return env.get_template("auth/access_denied.html").render(email=email, next_url=next_url)
+
 
 @app.route("/auth/3bot_callback")
 def threebot_callback():
@@ -63,18 +67,6 @@ def is_admin(tname):
     return threebot_me.tname == tname or tname in threebot_me.admins
 
 
-@app.route("/auth/authenticated")
-def is_authenticated():
-    session = request.environ.get("beaker.session", {})
-    if session.get("authorized"):
-        tname = session["username"]
-        if is_admin(tname):
-            temail = session["email"]
-            response.content_type = "application/json"
-            return j.data.serializers.json.dumps({"username": tname, "email": temail})
-    return abort(403)
-
-
 def admin_only(handler):
     """a decorator to only allow admin access to specific routes
 
@@ -87,8 +79,21 @@ def admin_only(handler):
     def inner(*args, **kwargs):
         if j.tools.threebot.with_threebotconnect:
             username = request.environ.get("beaker.session", {}).get("username")
-            if not username or not is_admin(username):
-                return abort(403)
+            if username:
+                if not is_admin(username):
+                    return abort(403)
+            else:
+                return abort(401)
         return handler(*args, **kwargs)
 
     return inner
+
+
+@app.route("/auth/authenticated")
+@admin_only
+def is_authenticated():
+    session = request.environ.get("beaker.session", {})
+    tname = session["username"]
+    temail = session["email"]
+    response.content_type = "application/json"
+    return j.data.serializers.json.dumps({"username": tname, "email": temail})
