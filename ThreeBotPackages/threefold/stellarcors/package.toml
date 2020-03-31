@@ -1,0 +1,5 @@
+[source]
+name = "stellarcors"
+description = "Add the Cors header to .well-known/stellar.toml"
+threebot = "threefold"
+version = "1.0.0"
