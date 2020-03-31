@@ -19,10 +19,10 @@ class Package(j.baseclasses.threebot_package):
         j.tools.tfgrid_simulator.simulation_get()
 
         j.tools.tfgrid_simulator.start(
-            voila=False, background=True, base_url="/threefold/simulator/notebook/", port=8888
+            voila=False, background=True, base_url="/threefold/simulator/notebook/", port=8888, pname="notebook"
         )
         j.tools.tfgrid_simulator.start(
-            voila=False, background=True, base_url="/threefold/simulator/show/", port=8866
+            voila=True, background=True, base_url="/threefold/simulator/show/", port=8866, pname="simulator"
         )
 
         # find token (sleep for 5 seconds until server starts)
@@ -56,8 +56,8 @@ class Package(j.baseclasses.threebot_package):
 
     def stop(self):
         j.tools.tfgrid_simulator.stop(
-            voila=False, background=True, base_url="/threefold/simulator/notebook/"
+            voila=False, background=True, base_url="/threefold/simulator/notebook/", pname="notebook"
         )
         j.tools.tfgrid_simulator.stop(
-            voila=True, background=True, base_url="/threefold/simulator/show/"
+            voila=True, background=True, base_url="/threefold/simulator/show/", pname="simulator"
         )
