@@ -93,7 +93,7 @@ def admin_only(handler):
 @admin_only
 def is_authenticated():
     session = request.environ.get("beaker.session", {})
-    tname = session.get("username")
-    temail = session.get("email")
+    tname = session.get("username", "")
+    temail = session.get("email", "")
     response.content_type = "application/json"
     return j.data.serializers.json.dumps({"username": tname, "email": temail})
