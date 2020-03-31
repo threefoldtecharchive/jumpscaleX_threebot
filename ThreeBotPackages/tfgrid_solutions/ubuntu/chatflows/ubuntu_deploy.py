@@ -16,6 +16,8 @@ def chat(bot):
     explorer = j.clients.explorer.default
     if not email:
         raise j.exceptions.Value("Email shouldn't be empty")
+    if not name:
+        raise j.exceptions.Value("Name of logged in user shouldn't be empty")
 
     user_form_data["Version"] = bot.single_choice(
         "This wizard will help you deploy an ubuntu container, please choose ubuntu version", IMAGES
@@ -90,7 +92,7 @@ def chat(bot):
         bot.download_file(res, filename)
 
         res = """
-                # In order to have the network active and accessible from your local machine. To do this, execute this command: 
+                # In order to have the network active and accessible from your local machine. To do this, execute this command:
                 ## ```wg-quick up /etc/wireguard/{}```
                 Click next
                 """.format(

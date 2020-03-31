@@ -17,6 +17,8 @@ def chat(bot):
     explorer = j.clients.explorer.default
     if not email:
         raise j.exceptions.Value("Email shouldn't be empty")
+    if not name:
+        raise j.exceptions.Value("Name of logged in user shouldn't be empty")
 
     user_form_data["IP version"] = bot.single_choice(
         "This wizard will help you deploy a kubernetes cluster, do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4",
@@ -28,7 +30,7 @@ def chat(bot):
     )  # minimum should be 1
     cluster_size = user_form_data["Workers number"] + 1  # number of workers + the master node
     user_form_data["SSH keys"] = bot.upload_file(
-        """"Please add your public ssh key, this will allow you to access the deployed container using ssh. 
+        """"Please add your public ssh key, this will allow you to access the deployed container using ssh.
             Just upload the ssh keys file with each key on a seperate line"""
     )
     ssh_keys_list = user_form_data["SSH keys"].split("\n")
@@ -109,7 +111,7 @@ def chat(bot):
         res = j.tools.jinja2.template_render(text=configs["wg"], **locals())
         bot.download_file(res, filename)
         res = """
-                # In order to have the network active and accessible from your local machine. To do this, execute this command: 
+                # In order to have the network active and accessible from your local machine. To do this, execute this command:
                 ## ```wg-quick up /etc/wireguard/{}```
                 Click next
                 """.format(

@@ -10,11 +10,13 @@ def chat(bot):
     name = user_info["username"]
     email = user_info["email"]
     ips = ["IPv6", "IPv4"]
-    flist_url = "https://hub.grid.tf/azmy.3bot/minio.flist"
+    flist_url = "https://hub.grid.tf/tf-official-apps/minio-2020-01-25T02-50-51Z.flist"
     expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
     explorer = j.clients.explorer.default
     if not email:
         raise j.exceptions.Value("Email shouldn't be empty")
+    if not name:
+        raise j.exceptions.Value("Name of logged in user shouldn't be empty")
 
     user_form_data["IP version"] = bot.single_choice(
         "This wizard will help you deploy a minio cluster, do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4",
@@ -61,7 +63,6 @@ def chat(bot):
         user_form_data["ZDB number"] + 1, ip_version=user_form_data["IP version"], farm_id=71
     )
     selected_node = nodes_selected[0]
-
     # Create network of reservation and add peers
     reservation, configs = j.sal.reservation_chatflow.network_configure(
         bot,
@@ -87,6 +88,7 @@ def chat(bot):
             disk_type=user_form_data["Disk type"],
             public=False,
         )
+    volume = j.sal.zosv2.volume.create(reservation, selected_node.node_id, size=10, type=user_form_data["Disk type"])
 
     # register the reservation for zdb db
     zdb_rid = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
@@ -95,9 +97,9 @@ def chat(bot):
     )
 
     reservation_result = []
-    trials = 20
     zdbs_found = False
-    while not zdbs_found:
+
+    while not zdbs_found and reservation.data_reservation.expiration_provisioning > j.data.time.epoch:
         number_of_zdbs_found = 0
         reservation_result = explorer.reservations.get(zdb_rid).results
         for result in reservation_result:
@@ -106,9 +108,6 @@ def chat(bot):
         if number_of_zdbs_found == user_form_data["ZDB number"]:
             zdbs_found = True
 
-        trials = trials - 1
-        if trials == 0:
-            break
     # read the IP address of the 0-db namespaces after they are deployed to be used in the creation of the minio container
     namespace_config = []
     for result in reservation_result:
@@ -138,6 +137,8 @@ def chat(bot):
         },
     )
 
+    j.sal.zosv2.volume.attach_existing(container=cont, volume_id=f"{zdb_rid}-{volume.workload_id}", mount_point="/data")
+
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     if j.sal.reservation_chatflow.reservation_failed(bot=bot, category="CONTAINER", resv_id=resv_id):
@@ -160,7 +161,7 @@ def chat(bot):
         res = j.tools.jinja2.template_render(text=wg_quick, **locals())
         bot.download_file(res, filename)
         res = """
-                # In order to have the network active and accessible from your local machine. To do this, execute this command: 
+                # In order to have the network active and accessible from your local machine. To do this, execute this command:
                 ## ```wg-quick up /etc/wireguard/{}```
                 Click next
                 """.format(
