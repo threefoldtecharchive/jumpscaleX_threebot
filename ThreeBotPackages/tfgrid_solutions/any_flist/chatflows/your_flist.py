@@ -5,7 +5,6 @@ import netaddr
 def chat(bot):
     """
     """
-
     user_form_data = {}
     user_info = bot.user_info()
     name = user_info["username"]
@@ -17,20 +16,18 @@ def chat(bot):
     if not email:
         raise j.exceptions.Value("Email shouldn't be empty")
 
-    form = bot.new_form()
-    user_form_data["Flist link"] = form.string_ask(
-        "This wizard will help you deploy a container using any flit provided\n Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
-    ).value
+    user_form_data["Flist link"] = bot.string_ask(
+        "This wizard will help you deploy a container using any flist provided\n Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
+    )
     while not user_form_data.get("Public key"):
-        user_form_data["Public key"] = form.string_ask(
+        user_form_data["Public key"] = bot.string_ask(
             "Please add your public ssh key, this will allow you to access the deployed container using ssh. Just copy your key from ~/.ssh/id_rsa.pub"
-        ).value
-    user_form_data["Env variables"] = form.string_ask(
+        )
+    user_form_data["Env variables"] = bot.string_ask(
         """To set environment variables on your deployed container, enter comma-separated variable=value
         For example: var1=value1, var2=value2.
         Leave empty if not needed"""
-    ).value
-    form.ask()
+    )
 
     user_form_data["Interactive"] = bot.single_choice(
         "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"]
@@ -106,7 +103,7 @@ def chat(bot):
         res = j.tools.jinja2.template_render(text=config["wg"], **locals())
         bot.download_file(res, filename)
         res = """
-                # In order to have the network active and accessible from your local machine. To do this, execute this command: 
+                # In order to have the network active and accessible from your local machine. To do this, execute this command:
                 ## ```wg-quick up /etc/wireguard/{}```
                 Click next
                 """.format(
