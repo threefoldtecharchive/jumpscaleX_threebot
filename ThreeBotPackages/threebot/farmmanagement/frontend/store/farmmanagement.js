@@ -66,7 +66,7 @@ export default {
       state.nodes = value;
     },
     setUser: (state, user) => {
-      state.user = user;
+      state.user = user[0];
     },
     setAmountOfFarms(state, value) {
       state.nodeSpecs.amountregisteredFarms = value.length;

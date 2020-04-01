@@ -281,7 +281,7 @@ module.exports = new Promise(async (resolve, reject) => {
         },
         async mounted() {
             await this.getUser();
-            this.getFarms();
+            this.getFarms(this.user.id);
             this.initialiseRefresh()
             this.newFarm.threebot_id = this.user.id;
         },
