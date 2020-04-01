@@ -3,15 +3,14 @@ As you already figured out we use `openresty` for running applications and proxy
 
 Inside a package, you can define one of the following location types:
 
-- [Locations](#locations)
-  - [Static:](#static)
-  - [Proxy](#proxy)
-  - [Single page apps (SPA)](#single-page-apps-spa)
-  - [Custom](#custom)
-      - [Example for custom location](#example-for-custom-location)
-  - [Conventions for web app directories](#conventions-for-web-app-directories)
-  - [Serving from domains](#serving-from-domains)
-  - [Threebot Connect](#threebot-connect)
+- [Static:](#static)
+- [Proxy](#proxy)
+- [Single page apps (SPA)](#single-page-apps-spa)
+- [Custom](#custom)
+    - [Example for custom location](#example-for-custom-location)
+- [Conventions for web app directories](#conventions-for-web-app-directories)
+- [Serving from domains](#serving-from-domains)
+- [Threebot Connect](#threebot-connect)
 
 All `openresty/nginx` configuration files will be generated from this locations, also, there's [a convention for some directories](#conventions-for-web-app-directories) inside a package (if found), also auto-created locations are registered under `<threebot_name>/<package_name>`.
 

@@ -3,7 +3,7 @@
 - [Creating a new package](#creating-a-new-package)
 - [Registering package](#registering-package)
 - [Package structure](#package-structure)
-- [Locations](#more-on-locations)
+- [Locations](#locations)
 - [Authentication](#authentication)
 - [Example package.toml](#example-package.toml)
 - [Example package.py](#example-package.py)
@@ -186,6 +186,6 @@ JSX> p.zerobot.chatbot_examples.start()
 ```
 
 
-- `self._package.install_kwargs` to can be used to access the `install_kwargs` in package.py
-- `self.package.install_kwargs` can be used to access the `install_kwargs` in actor
+- `self._package.install_kwargs` to can be used to access the `install_kwargs` in `package.py`
+- `self.package.install_kwargs` can be used to access the `install_kwargs` in the actors
 

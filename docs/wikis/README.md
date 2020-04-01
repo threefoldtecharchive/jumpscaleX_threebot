@@ -21,6 +21,7 @@ Editing the content of the wikis are done collaboratively in the previous reposi
 * [Macros](macro/README.md)
 * [Custom link format](links.md)
 * [Inline HTML](html.md)
+* [Markers](markers.md)
 
 ## Running your own wiki
 
