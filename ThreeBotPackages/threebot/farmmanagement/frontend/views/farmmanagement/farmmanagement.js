@@ -299,6 +299,12 @@ module.exports = new Promise(async (resolve, reject) => {
                     that.getFarms();
                 }, 60000)
             },
+            isLoggedIn() {
+                if (this.user.id) {
+                    return true;
+                }
+                return false;
+            },
             refreshFarms() {
                 clearInterval(this.refreshInterval);
                 this.getFarms();

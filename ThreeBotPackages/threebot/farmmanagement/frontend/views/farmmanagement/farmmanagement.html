@@ -1,4 +1,5 @@
-<section class="farmmanagement">
+
+<section v-if="isLoggedIn()" class="farmmanagement">
   <v-row class="my-3 mx-1">
     <v-card style="width: 100%;">
       <v-card-title primary-title class="primary py-3 mb-5 white--text">
@@ -157,3 +158,4 @@
     </v-card>
   </v-dialog>
 </section>
+<section v-else>Not logged in with 3bot or in dev mode.</section>
