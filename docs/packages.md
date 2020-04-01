@@ -3,10 +3,13 @@
 - [Creating a new package](#creating-a-new-package)
 - [Registering package](#registering-package)
 - [Package structure](#package-structure)
-- [Locations](#locations)
+- [Package basic functions](#package-basic-functions)
+- [Package properties](#package-properties)
+- [Locations](#more-on-locations)
 - [Authentication](#authentication)
 - [Example package.toml](#example-package.toml)
 - [Example package.py](#example-package.py)
+- [Package manager](#package-manager)
 
 ## What is a package
 
@@ -63,10 +66,28 @@ After starting threebot you can go to `3BOT_URL/zerobot/packagemanager`
 - **Models directory** registers the model on the package loading. There is no need to manually add the models
 
     _note_: Crud model actors are automatically generated and added to the package actors, to disable this option add `disable_crud = true` to the package.toml file
-- **Actors directory** is registered automatically when loading the package. There is no need to manually add actors, they can be accessed via http at `3BOT_URL/<threefold_name>/<package_name>/actors/<actor_name>/<actor_method>`.
-- **Wiki directory** is loaded automatically and can be accessed via `3BOT_URL/<threefold_name>/<package_name>/wiki`.
-- **Chatflows directory** is loaded automatically, can be access via `3BOT_URL/<threefold_name>/<package_name>/chat`.
-
+- **Actors directory** 
+    - is registered automatically when loading the package. There is no need to manually add actors, they can be accessed via http at `3BOT_URL/<threefold_name>/<package_name>/actors/<actor_name>/<actor_method>`.
+    - is the logic inside a package
+    - the code inside an actor should call as much as possible libraries in jumpscale (sals, clients, ...)
+    - is also the implementation of our api for this package to the outside world, our interface basically
+- **Wiki directory** 
+    - is loaded automatically and can be accessed via `3BOT_URL/<threefold_name>/<package_name>/wiki`.
+    - how to use wiki check [wiki](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/docs/wikis/README.md)
+- **Chatflows directory** 
+    - is loaded automatically, can be access via `3BOT_URL/<threefold_name>/<package_name>/chat`.
+    - interactive communication, implemented as chat bots
+    - each file inside is a chat bot
+- **Html**
+    - adds html in http(s)://$threeboturl/$packagename/  
+    - you can add simple static html pages 
+    - you can add a fully functional website using frontend framework (example ```Svelte``` or ```Vue.js```) that can use the package
+- **docsites**
+    - markdown documentation sites, published under /wiki/$docsite_prefix/...
+    - each subdir is a docsite
+- **docmacros**
+    - macro's as used in docsite(s)
+    - each file inside is a docmacro (can be in subdirs)
 - **package.py**  is where the  package logic is defined.
 
     For packages that need their own bcdb, you need to override bcdb property like this
@@ -80,6 +101,82 @@ After starting threebot you can go to `3BOT_URL/zerobot/packagemanager`
         ...
     ```
 - **package.toml**  is where the package information is defined, such as bcdb's and actors' namespaces.
+
+**All of these are optional and other loading logic can be used they will be automatically loaded, do not do manually.**
+
+
+## Package basic functions
+Please do not put any load/install/uninstall logic on any other location.
+
+The basic functions that you can override there 
+```python
+class Package(j.baseclasses.threebot_package):
+
+    def _init(self, **kwargs):
+        #if you want to initialize something you might need for your package, is optional !!!
+        self.actors_namespace = "someothernamespace" #default is 'default' can overrule like this
+        self.giturl = ...
+
+    @property
+    def bcdb(self):
+        #is the default implementation, if you want to overrule, provide this method
+        return self.threebot_server.bcdb_get("$packagename")
+
+    def prepare(self):
+        """
+        is called at install time
+        :return:
+        """
+        #use this to e.g. checkout git files use
+        codepath = j.clients.git.getContentPathFromURLorPath(urlOrPath=self.giturl, pull=True, branch=None):
+        #e.g. when you have developed a website can use this to check out the git code
+        #the codepath will be where the code is checked out        
+        #can now e.g. 
+
+    def upgrade(self):
+        """
+        used to upgrade
+        """
+        codepath = j.clients.git.getContentPathFromURLorPath(urlOrPath=self.giturl, pull=True, branch=None):
+        #note pull is True here
+        #std is to call prepare again, if nothing filled in
+
+    def start(self):
+        """
+        called when the 3bot starts
+        :return:
+        """
+        #std will load the actors & models & the wiki's, no need to specify
+        #can add anything else which could be relevant
+        pass
+
+    def stop(self):
+        """
+        called when the 3bot stops
+        :return:
+        """
+        pass
+
+    def uninstall(self):
+        """
+        called when the package is no longer needed and will be removed from the threebot
+        :return:
+        """
+        # TODO: clean up bcdb ?
+        pass
+```
+
+
+## Package properties
+properties available in the package object
+```python
+self.package_root =     #path of this dir
+self.gedis_server =     #gedis server which will serve actors in this package
+self.openresty =        #openresty which is active in the threebot server
+self.threebot_server =  #the threebot server itself
+self.rack_server =      #the gevent rackserver dealing with all gevent greenlets running in a gevent rack
+self.bcdb =             #can be overruled by you (is a property), default is the system bcdb
+```
 
 ## Locations
 Detailed types of `openresty/nginx` locations that can be defined inside are documented [here](locations.md).
@@ -109,7 +206,10 @@ instance = "default"
 ## Example package.py
 
 
-Packages does the lifecycle management of your application
+- Packages does the lifecycle management of your application
+- Package.py file which is read when a package get's loaded.
+- This is the ONLY file which deals with installing, start/stop, remove a package from a 3bot.
+
 
 typical `package.py` should look like
 
@@ -189,3 +289,42 @@ JSX> p.zerobot.chatbot_examples.start()
 - `self._package.install_kwargs` to can be used to access the `install_kwargs` in `package.py`
 - `self.package.install_kwargs` can be used to access the `install_kwargs` in the actors
 
+
+## Package manager
+is an actor on threebot, any user with admin rights can call this actor to remotely instruct HIS 3bot to install/remove/start/stop a package
+package can be identified by means of git_url
+if the package is already on the server (normally not the case) can use the path
+
+```python
+def package_add(self, git_url=None, path=None):
+    """
+    can use a git_url or a path
+    path needs to exist on the threebot server
+    the git_url will get the code on the server (package source code) if its not there yet
+    it will not update if its already there
+    """
+
+def package_delete(self, name):
+    """
+    remove this package from the threebot server
+    will call package.uninstall()
+    """
+
+def package_stop(self, name):
+    """
+    stop a package, which means will call package.stop()
+    """
+
+def package_start(self, name):
+    """
+    start a package, which means will call package.start()
+    """
+
+def package_upgrade(self, name):
+    """
+    start a package, which means will call package.start()
+    """
+
+```
+
+the package creator needs to fill in ```package.py``` to define how a package gets installed/...
