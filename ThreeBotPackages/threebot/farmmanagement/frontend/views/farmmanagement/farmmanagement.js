@@ -300,10 +300,7 @@ module.exports = new Promise(async (resolve, reject) => {
                 }, 60000)
             },
             isLoggedIn() {
-                if (this.user.id) {
-                    return true;
-                }
-                return false;
+                return Boolean(this.user.id)
             },
             refreshFarms() {
                 clearInterval(this.refreshInterval);

@@ -24,12 +24,14 @@ export default {
   actions: {
     getName: async context => {
       var response = await tfService.getName();
-      return response.data.name;
+      return response.data.username;
     },
     getUser: async context => {
       var name = await context.dispatch("getName");
       var response = await tfService.getUser(name);
-      context.commit("setUser", response.data);
+      if (name.length > 0) {
+        context.commit("setUser", response.data[0]);
+      }
     },
     getRegisteredNodes(context) {
       tfService.registered3bots().then(response => {
@@ -66,7 +68,7 @@ export default {
       state.nodes = value;
     },
     setUser: (state, user) => {
-      state.user = user[0];
+      state.user = user;
     },
     setAmountOfFarms(state, value) {
       state.nodeSpecs.amountregisteredFarms = value.length;

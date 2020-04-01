@@ -3,7 +3,7 @@ import config from "../config/farmmanagement.config.local.js";
 
 export default {
   getName() {
-    return axios.post(`/${window.config.identityActor}/threebot_name`, {
+    return axios.get("/auth/authenticated", {
       args: {}
     });
   },
