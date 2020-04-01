@@ -63,31 +63,26 @@ After starting threebot you can go to `3BOT_URL/zerobot/packagemanager`
 ![packagemanager](../docs/images/packagemanager.jpg)
 
 ## Package structure
-- **Models directory** registers the model on the package loading. There is no need to manually add the models
+- **models directory** registers the model on the package loading. There is no need to manually add the models
 
     _note_: Crud model actors are automatically generated and added to the package actors, to disable this option add `disable_crud = true` to the package.toml file
-- **Actors directory** 
+- **actors directory** 
     - is registered automatically when loading the package. There is no need to manually add actors, they can be accessed via http at `3BOT_URL/<threefold_name>/<package_name>/actors/<actor_name>/<actor_method>`.
     - is the logic inside a package
     - the code inside an actor should call as much as possible libraries in jumpscale (sals, clients, ...)
     - is also the implementation of our api for this package to the outside world, our interface basically
-- **Wiki directory** 
+- **wiki directory** 
     - is loaded automatically and can be accessed via `3BOT_URL/<threefold_name>/<package_name>/wiki`.
     - how to use wiki check [wiki](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/docs/wikis/README.md)
-- **Chatflows directory** 
+- **chatflows directory** 
     - is loaded automatically, can be access via `3BOT_URL/<threefold_name>/<package_name>/chat`.
     - interactive communication, implemented as chat bots
     - each file inside is a chat bot
-- **Html**
-    - adds html in http(s)://$threeboturl/$packagename/  
+- **html**
+    - adds html in `http(s)://$threeboturl/$packagename/` 
     - you can add simple static html pages 
-    - you can add a fully functional website using frontend framework (example ```Svelte``` or ```Vue.js```) that can use the package
-- **docsites**
-    - markdown documentation sites, published under /wiki/$docsite_prefix/...
-    - each subdir is a docsite
-- **docmacros**
-    - macro's as used in docsite(s)
-    - each file inside is a docmacro (can be in subdirs)
+- **frontend**
+- you can add a fully functional website using frontend framework (example ```Svelte``` or ```Vue.js```) that can use the package
 - **package.py**  is where the  package logic is defined.
 
     For packages that need their own bcdb, you need to override bcdb property like this
@@ -291,7 +286,7 @@ JSX> p.zerobot.chatbot_examples.start()
 
 
 ## Package manager
-is an actor on threebot, any user with admin rights can call this actor to remotely instruct HIS 3bot to install/remove/start/stop a package
+is an actor on threebot, any user with admin rights can call this actor to remotely instruct his 3bot to install/remove/start/stop a package
 package can be identified by means of git_url
 if the package is already on the server (normally not the case) can use the path
 
