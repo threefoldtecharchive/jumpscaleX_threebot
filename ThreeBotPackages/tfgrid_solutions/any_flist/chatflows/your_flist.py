@@ -30,16 +30,13 @@ def chat(bot):
             "This wizard will help you deploy a container using any flist provided\n Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
         )
 
-        flist_split = user_form_data["Flist link"].split("/")
-        if len(flist_split) != 5:
+        if "hub.grid.tf" not in user_form_data["Flist link"]:
             res = "# This flist doesn't correct. Please make sure you enter a valid link to an existing flist"
             res = j.tools.jinja2.template_render(text=res, **locals())
             bot.md_show(res)
             continue
 
-        url = f"https://hub.grid.tf/api/flist/{flist_split[3]}/{flist_split[4]}"
-        response = requests.get(url)
-
+        response = requests.head(user_form_data["Flist link"])
         if response.status_code == 200:
             not_found = False
         else:
