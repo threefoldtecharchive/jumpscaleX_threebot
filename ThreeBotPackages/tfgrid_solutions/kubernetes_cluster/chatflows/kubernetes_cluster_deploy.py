@@ -100,7 +100,7 @@ def chat(bot):
 
     else:
         j.sal.reservation_chatflow.save_reservation(
-            resv_id, user_form_data["solution name"], "tfgrid.solutions.kubernetes.instance.1"
+            resv_id, user_form_data["Solution name"], "tfgrid.solutions.kubernetes.instance.1"
         )
         res = """
                 ## Kubernetes cluster has been deployed successfully

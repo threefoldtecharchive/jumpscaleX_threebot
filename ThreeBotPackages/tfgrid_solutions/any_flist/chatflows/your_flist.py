@@ -116,7 +116,7 @@ def chat(bot):
         return
     else:
         j.sal.reservation_chatflow.save_reservation(
-            resv_id, user_form_data["solution name"], "tfgrid.solutions.flist.instance.1"
+            resv_id, user_form_data["Solution name"], "tfgrid.solutions.flist.instance.1"
         )
         res = f"# Container has been deployed successfully: your reservation id is: {resv_id} "
 
