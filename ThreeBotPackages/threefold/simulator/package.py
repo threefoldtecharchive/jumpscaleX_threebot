@@ -40,7 +40,7 @@ class Package(j.baseclasses.threebot_package):
             jupyter_proxy_location.port_dest = 8888
             jupyter_proxy_location.path_dest = "/threefold/simulator/notebook/"
             jupyter_proxy_location.scheme = "http"
-            jupyter_proxy_location.is_auth = True
+            jupyter_proxy_location.is_admin = True
             # voila
             voila_proxy_location = locations.get_location_proxy("voila")
             voila_proxy_location.path_url = "/threefold/simulator/show/"
@@ -48,7 +48,7 @@ class Package(j.baseclasses.threebot_package):
             voila_proxy_location.port_dest = 8866
             voila_proxy_location.path_dest = "/threefold/simulator/show/"
             voila_proxy_location.scheme = "http"
-            voila_proxy_location.is_auth = True
+            voila_proxy_location.is_admin = True
 
             website.configure()
 

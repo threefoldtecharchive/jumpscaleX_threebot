@@ -89,25 +89,23 @@ def admin_only(handler):
     return decorator
 
 
-def _get_user_info():
+def get_user_info():
     session = get_session()
     tname = session.get("username", "")
     temail = session.get("email", "")
+
+    response.content_type = "application/json"
     return j.data.serializers.json.dumps({"username": tname, "email": temail})
 
 
 @app.route("/auth/authenticated")
 @authenticated
 def is_authenticated():
-    userinfo = _get_user_info()
-    response.content_type = "application/json"
-    return userinfo
+    return get_user_info()
 
 
 @app.route("/auth/authorized")
 @authenticated
 @admin_only
 def is_authorized():
-    userinfo = _get_user_info()
-    response.content_type = "application/json"
-    return userinfo
+    return get_user_info()

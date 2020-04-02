@@ -31,7 +31,7 @@ class Package(j.baseclasses.threebot_package):
             codeserver_proxy_location.path_dest = "/"
             codeserver_proxy_location.type = "websocket"
             codeserver_proxy_location.scheme = "http"
-            codeserver_proxy_location.is_auth = True
+            codeserver_proxy_location.is_admin = True
 
             locations.configure()
             website.configure()

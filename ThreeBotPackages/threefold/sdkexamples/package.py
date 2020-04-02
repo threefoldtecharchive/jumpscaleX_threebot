@@ -20,7 +20,10 @@ class Package(j.baseclasses.threebot_package):
         j.tools.tfgrid_simulator.start(
             voila=False,
             background=True,
-            base_url="/threefold/sdkexamples/notebook/", port=7809, pname="sdkexamples", path_source="{DIR_CODE}/github/threefoldtech/jumpscaleX_libs_extra/JumpscaleLibsExtra/tools/threefold_simulation/sdk_examples"
+            base_url="/threefold/sdkexamples/notebook/",
+            port=7809,
+            pname="sdkexamples",
+            path_source="{DIR_CODE}/github/threefoldtech/jumpscaleX_libs_extra/JumpscaleLibsExtra/tools/threefold_simulation/sdk_examples",
         )
 
         time.sleep(5)
@@ -37,7 +40,7 @@ class Package(j.baseclasses.threebot_package):
             jupyter_proxy_location.port_dest = 7809
             jupyter_proxy_location.path_dest = "/threefold/sdkexamples/notebook/"
             jupyter_proxy_location.scheme = "http"
-            jupyter_proxy_location.is_auth = True
+            jupyter_proxy_location.is_admin = True
             locations.configure()
             website.configure()
 
@@ -47,4 +50,3 @@ class Package(j.baseclasses.threebot_package):
         j.tools.tfgrid_simulator.stop(
             voila=False, background=True, base_url="/threefold/sdkexamples/notebook/", pname="sdkexamples"
         )
-    
