@@ -1,16 +1,18 @@
 # MyJobs
 
-Job visualizer for myjobs
+Job visualizer for myjobs built using Webix UI and gedis actors.
 
-![myjobs1](./images/myjobs1.png)
-![myjobs2](./images/myjobs2.png)
+![myjobs1](./images/jobs.png)
+![myjobs2](./images/workers.png)
 
 ## Running
 
-- install frontend dependencies `cd jobvis && npm install`
-- build frontend `./build_frontend.sh`
-- execute `kosmos -p 'j.threebot.package.myjobs_dashboard.start()'`
-- server will start at `https://172.17.0.2/zerobot/myjobs`
+- start your threebot `j.servers.threebot.start()`
+- server will start for jobs  at `https://docker_ip_address/admin/#!/main/myjobs.jobs`
+and for workers at `https://docker_ip_address/admin/#!/main/myjobs.workers`
+**example** 
+`https://172.17.0.2/admin/#!/main/myjobs.jobs`
+`https://172.17.0.2/admin/#!/main/myjobs.workers`
 
 
 ## Package file
@@ -20,9 +22,11 @@ Job visualizer for myjobs
 
 See [package.py](../package.py).
 
+we left it empty as we want to use the default openresty configuration
+
 ## Actors
 
 See [actors](../actors), for example, myjobs actor have the following methods:
 
 - `list_workers`: list all the workers
-- `list_tasks`: list all tasks
+- `list_jobs`: list all the jobs
