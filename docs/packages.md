@@ -5,7 +5,7 @@
 - [Package structure](#package-structure)
 - [Package basic functions](#package-basic-functions)
 - [Package properties](#package-properties)
-- [Locations](#more-on-locations)
+- [Locations](#locations)
 - [Authentication](#authentication)
 - [Example package.toml](#example-package.toml)
 - [Example package.py](#example-package.py)
@@ -97,7 +97,7 @@ After starting threebot you can go to `3BOT_URL/zerobot/packagemanager`
     ```
 - **package.toml**  is where the package information is defined, such as bcdb's and actors' namespaces.
 
-**All of these are optional and other loading logic can be used they will be automatically loaded, do not do manually.**
+All of these except **package.py** and **package.toml** are optional and other loading logic can be used they will be automatically loaded, do not do manually.
 
 
 ## Package basic functions
@@ -128,13 +128,11 @@ class Package(j.baseclasses.threebot_package):
         #the codepath will be where the code is checked out        
         #can now e.g. 
 
-    def upgrade(self):
+    def install(self):
         """
-        used to upgrade
+        called when the 3bot will install your package
         """
-        codepath = j.clients.git.getContentPathFromURLorPath(urlOrPath=self.giturl, pull=True, branch=None):
-        #note pull is True here
-        #std is to call prepare again, if nothing filled in
+        pass
 
     def start(self):
         """
@@ -142,15 +140,47 @@ class Package(j.baseclasses.threebot_package):
         :return:
         """
         #std will load the actors & models & the wiki's, no need to specify
-        #can add anything else which could be relevant
-        pass
+        #you can leave it empty or add specific configuration you want to specify
+        self.openresty.install()
+        self.openresty.configure()
+
+        for port in (443, 80):
+            default_website = self.openresty.get_from_port(port)
+            locations = default_website.locations.get(name=f"admin_{port}")
+
+            admin_location = locations.get_location_static("admin")
+            admin_location.path_url = "/admin"
+            admin_location.path_location = f"{self._dirpath}/output"
+            admin_location.is_auth = True
+
+            # another website/server config for /
+            root_website = self.openresty.websites.get(f"admin_root_{port}")
+            root_website.port = port
+            root_website.ssl = port == 443
+            root_locations = root_website.locations.get(name=f"admin_root_{port}")
+
+            root_location = root_locations.get_location_static("admin_home")
+            root_location.path_url = "/"
+            root_location.path_location = f"{self._dirpath}/output"
+            root_location.is_auth = True
+            # include default website locations
+            root_include_location = root_locations.get_location_custom("admin_home_includes")
+            root_include_location.config = (
+                f"include {default_website.path_cfg_dir}/{default_website.name}_locations/*.conf;"
+            )
+
+            default_website.configure()
+            root_website.configure()
 
     def stop(self):
         """
         called when the 3bot stops
         :return:
         """
-        pass
+        if not j.sal.fs.exists("{DIR_BIN}/code-server"):
+            j.builders.apps.codeserver.install()
+        self.startupcmd.stop()
+
 
     def uninstall(self):
         """
@@ -161,6 +191,7 @@ class Package(j.baseclasses.threebot_package):
         pass
 ```
 
+If method is not needed you can omit it. 
 
 ## Package properties
 properties available in the package object
@@ -314,12 +345,5 @@ def package_start(self, name):
     """
     start a package, which means will call package.start()
     """
-
-def package_upgrade(self, name):
-    """
-    start a package, which means will call package.start()
-    """
-
 ```
-
-the package creator needs to fill in ```package.py``` to define how a package gets installed/...
+For more information about package manager you can [check](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/ThreeBotPackages/zerobot/packagemanager/actors/package_manager.py)
