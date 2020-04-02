@@ -24,8 +24,8 @@ def chat(bot):
         raise j.exceptions.Value("Email shouldn't be empty")
     if not name:
         raise j.exceptions.Value("Name of logged in user shouldn't be empty")
-    not_found = True
-    while not_found:
+    found = False
+    while not found:
         user_form_data["Flist link"] = bot.string_ask(
             "This wizard will help you deploy a container using any flist provided\n Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
         )
@@ -38,7 +38,7 @@ def chat(bot):
 
         response = requests.head(user_form_data["Flist link"])
         if response.status_code == 200:
-            not_found = False
+            found = True
         else:
             res = "# This flist doesn't exist. Please make sure you enter a valid link to an existing flist"
             res = j.tools.jinja2.template_render(text=res, **locals())
