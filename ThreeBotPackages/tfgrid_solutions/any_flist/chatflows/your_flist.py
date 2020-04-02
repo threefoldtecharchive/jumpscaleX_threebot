@@ -12,6 +12,7 @@ def chat(bot):
     email = user_info["email"]
     ips = ["IPv6", "IPv4"]
     env = dict()
+    model = j.threebot.packages.tfgrid_solutions.any_flist.bcdb_model_get("tfgrid.solutions.flist.instance.1")
     explorer = j.clients.explorer.default
 
     if not j.tools.threebot.with_threebotconnect:
@@ -94,6 +95,8 @@ def chat(bot):
         interactive = True
     else:
         interactive = False
+
+    user_form_data["Solution name"] = j.sal.reservation_chatflow.add_solution_name(bot, model)
     bot.md_show_confirm(user_form_data)
     # create container
     cont = j.sal.zosv2.container.create(
@@ -112,6 +115,9 @@ def chat(bot):
     if j.sal.reservation_chatflow.reservation_failed(bot=bot, category="CONTAINER", resv_id=resv_id):
         return
     else:
+        j.sal.reservation_chatflow.save_reservation(
+            resv_id, user_form_data["solution name"], "tfgrid.solutions.flist.instance.1"
+        )
         res = f"# Container has been deployed successfully: your reservation id is: {resv_id} "
 
         bot.md_show(res)

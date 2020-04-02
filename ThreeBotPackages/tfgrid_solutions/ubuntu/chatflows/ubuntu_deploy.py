@@ -12,6 +12,7 @@ def chat(bot):
     HUB_URL = "https://hub.grid.tf/tf-bootable"
     IMAGES = ["ubuntu:16.04", "ubuntu:18.04"]
     explorer = j.clients.explorer.default
+    model = j.threebot.packages.tfgrid_solutions.ubuntu.bcdb_model_get("tfgrid.solutions.ubuntu.instance.1")
 
     if not j.tools.threebot.with_threebotconnect:
         error_msg = """
@@ -60,6 +61,7 @@ def chat(bot):
         bot, reservation, [node_selected], customer_tid=identity.id, ip_version=user_form_data["IP version"]
     )
     ip_address = config["ip_addresses"][0]
+    user_form_data["Solution name"] = j.sal.reservation_chatflow.add_solution_name(bot, model)
     bot.md_show_confirm(user_form_data)
 
     container_flist = f"{HUB_URL}/{user_form_data['Version']}.flist"
@@ -85,7 +87,9 @@ def chat(bot):
         return
 
     else:
-
+        j.sal.reservation_chatflow.save_reservation(
+            resv_id, user_form_data["solution name"], "tfgrid.solutions.ubuntu.instance.1"
+        )
         res = f"# Ubuntu has been deployed successfully: your reservation id is: {resv_id} "
 
         bot.md_show(res)

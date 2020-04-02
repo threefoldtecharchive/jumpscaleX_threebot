@@ -10,6 +10,7 @@ def chat(bot):
     email = user_info["email"]
     ips = ["IPv6", "IPv4"]
     flist_url = "https://hub.grid.tf/tf-official-apps/minio-2020-01-25T02-50-51Z.flist"
+    model = j.threebot.packages.tfgrid_solutions.minio.bcdb_model_get("tfgrid.solutions.minio.instance.1")
     explorer = j.clients.explorer.default
 
     if not j.tools.threebot.with_threebotconnect:
@@ -79,6 +80,7 @@ def chat(bot):
         number_of_ipaddresses=1,
     )
     rid = configs["rid"]
+    user_form_data["Solution name"] = j.sal.reservation_chatflow.add_solution_name(bot, model)
     bot.md_show_confirm(user_form_data)
     ip_address = configs["ip_addresses"][0]
     wg_quick = configs["wg"]
@@ -150,7 +152,9 @@ def chat(bot):
     if j.sal.reservation_chatflow.reservation_failed(bot=bot, category="CONTAINER", resv_id=resv_id):
         return
     else:
-
+        j.sal.reservation_chatflow.save_reservation(
+            resv_id, user_form_data["solution name"], "tfgrid.solutions.minio.instance.1"
+        )
         res = f"# Minio cluster has been deployed successfully: your reservation id is: {resv_id}"
         bot.md_show(res)
         filename = "{}_{}.conf".format(name.split(".3bot")[0], resv_id)

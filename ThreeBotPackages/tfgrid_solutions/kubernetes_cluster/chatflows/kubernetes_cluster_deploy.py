@@ -12,7 +12,9 @@ def chat(bot):
     email = user_info["email"]
     ips = ["IPv6", "IPv4"]
     default_cluster_name = name.split(".3bot")[0]
-
+    model = j.threebot.packages.tfgrid_solutions.kubernetes_cluster.bcdb_model_get(
+        "tfgrid.solutions.kubernetes.instance.1"
+    )
     explorer = j.clients.explorer.default
 
     if not j.tools.threebot.with_threebotconnect:
@@ -61,6 +63,7 @@ def chat(bot):
         bot, reservation, nodes_selected, customer_tid=identity.id, ip_version=user_form_data["IP version"]
     )
     rid = configs["rid"]
+    user_form_data["Solution name"] = j.sal.reservation_chatflow.add_solution_name(bot, model)
 
     bot.md_show_confirm(user_form_data)
     # Create master and workers
@@ -96,6 +99,9 @@ def chat(bot):
         return
 
     else:
+        j.sal.reservation_chatflow.save_reservation(
+            resv_id, user_form_data["solution name"], "tfgrid.solutions.kubernetes.instance.1"
+        )
         res = """
                 ## Kubernetes cluster has been deployed successfully
                 # your reservation id is: {}
