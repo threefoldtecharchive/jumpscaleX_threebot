@@ -47,12 +47,12 @@ def chat(bot):
     user_form_data["Locations"] = str(
         bot.string_ask(
             "Resources for minio: Please add the number of locations you need. Take care of the ratio between the locations and locations allowed to fail that you will specify next",
-            default="6",
+            default="2",
         )
     )
     data_number = user_form_data["Locations"]
     user_form_data["Locations allowed to fail"] = str(
-        bot.string_ask("Resources for minio: Please add the number of locations allowed to fail", default="3")
+        bot.string_ask("Resources for minio: Please add the number of locations allowed to fail", default="1")
     )
     parity = user_form_data["Locations allowed to fail"]
     user_form_data["ZDB number"] = int(data_number) + int(parity)
