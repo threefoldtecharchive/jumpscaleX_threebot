@@ -1,10 +1,13 @@
-import { JetView } from "webix-jet";
+import {
+    JetView
+} from "webix-jet";
 
 import ProcessesChildView from "./processesChildView";
-import { health } from "../../services/health";
+import {
+    health
+} from "../../services/health";
 
-const colorsDataset = [
-    {
+const colorsDataset = [{
         color: "#ee3639"
     },
     {
@@ -38,17 +41,16 @@ export default class ProcessesView extends JetView {
             width: 500,
             height: 400,
             color: "#color#",
-            value: "#vms#",
+            value: "#rss#",
             label: "<h4>#name#</h4>",
-            pieInnerText: "<h4>#vms#</h4>",
+            pieInnerText: "<h4>#rss#</h4>",
             data: "#chartsData#",
         }
 
         return {
             type: "space",
-            rows: [
-                {
-                    template: "<div style='width:auto;text-align:center'><h3>Running processes memory usage (MB)<h3/></div>",
+            rows: [{
+                    template: "<div style='width:auto;text-align:center'><h3>Running processes memory usage (RSS) (MB)<h3/></div>",
                     height: 50
                 },
                 processesInfo,
@@ -93,8 +95,7 @@ export default class ProcessesView extends JetView {
             self.runProcessInfo.define("legend", {
                 layout: "x",
                 width: 110,
-                values: [
-                    {
+                values: [{
                         text: `<b>Total memory: </b>${self.totalMemory}GB`
                     },
                     {
@@ -112,7 +113,7 @@ export default class ProcessesView extends JetView {
                 var temp = {
                     "color": colorsDataset[i].color,
                     "name": self.processesList[i].name,
-                    "vms": Math.ceil(self.processesList[i].vms),
+                    "rss": Math.ceil(self.processesList[i].rss),
                 }
                 chartsData.push(temp)
                 // console.log(myArray[i]);
