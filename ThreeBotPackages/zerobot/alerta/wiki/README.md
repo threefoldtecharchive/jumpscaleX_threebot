@@ -1,17 +1,18 @@
 # Alerta
 
-Central monitoring system built using sapper and gedis actors (with jumpscale alert handler integration).
+Central monitoring system built using Webix UI and gedis actors (with jumpscale alert handler integration).
 
-![alerta](./images/alerta1.png)
-![alerta](./images/alerta2.png)
+![alerta](./images/alerts1.png)
+![alerta](./images/alerts2.png)
+![alerta](./images/alerts3.png)
+![alerta](./images/alerts4.png)
+![alerta](./images/alerts5.png)
 
 ## Running
 
-- install bottle module `pip3 install bottle`
-- install frontend dependencies `cd alerta && npm install`
-- build frontend `./build_frontend.sh`
-- execute `kosmos -p 'j.threebot.package.alerta.start()'`
-- server will start at `172.17.0.2/zerobot/alerta`
+- server will start at `https://docker_ip_address/admin/#!/main/alerts`
+example:
+`https://172.17.0.2/admin/#!/main/alerts`
 
 ## The package file
 
@@ -21,6 +22,8 @@ See [package.py](../package.py) where the following is done
 - create a location to serve static files (or a proxy).
 - add actors and expose them via gedis http interface
 
+we left it empty as we want to use the default openresty configuration
+
 
 Note that base package do some automatic loading at creation of locations.
 
@@ -29,8 +32,12 @@ Note that base package do some automatic loading at creation of locations.
 See [actors](../actors), for example we have alerta actor with the following methods:
 
 - `list_alerts` : list all alerts
-- `list_alerts_by_env`: get alerts by environment
+- `list_alerts_by_category`: get alerts by category
 - `new_alert`: create new alert in system
+- `get_alert`: get alert in system with identifier
+- `delete_alert`: delete alert in system with identifier
+- `delete_alerts`: delete some alerts in system with identifiers
+- `delete_all_alerts`: delete all alerts
 
 
 ## Alert handler integration
