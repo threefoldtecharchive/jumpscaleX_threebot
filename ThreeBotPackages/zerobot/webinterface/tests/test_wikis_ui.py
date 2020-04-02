@@ -3,33 +3,21 @@ import os
 import random
 import subprocess
 import time
-import unittest
-import uuid
 
 from Jumpscale import j
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
-from testconfig import config
 
-wikis_url = "http://127.0.0.1/wiki/"
+
+wikis_url = "http://172.17.0.2/wiki/"
+card = ""
 
 
 def info(message):
     j.tools.logger._log_info(message)
 
 
-def change_wiki_dir(action_name):
-    info("Change in sidebar in wiki_example page")
-    with open("/sandbox/var/docsites/zerobot.wiki_examples/test_wiki_{}.md".format(action_name), "a") as test_wiki:
-        test_wiki.write("test wiki {}".format(action_name))
-
-    with open("/sandbox/var/docsites/zerobot.wiki_examples/_sidebar.md", "a") as sidebar:
-        sidebar.write("* [Test wiki {}](test_wiki_{}.md)".format(action_number, action_number))
-
-
 def find_wiki_example_card():
+    global card
     for i in range(len(driver.find_elements_by_class_name("card-title"))):
         if driver.find_elements_by_class_name("card-title")[i].text == 'zerobot.wiki_examples':
             card = driver.find_elements_by_class_name("card-title")[i]
@@ -137,17 +125,24 @@ def test002_test_reload_button():
     #. Click view button.
     #. Check that sidebar is changed.
     """
-    change_wiki_dir("reload")
+
+    info("Change in sidebar in wiki_example page")
+    with open("/sandbox/var/docsites/zerobot.wiki_examples/test_wiki_reload.md", "a") as test_wiki:
+        test_wiki.write("test wiki reload")
+
+    with open("/sandbox/var/docsites/zerobot.wiki_examples/_sidebar.md", "a") as sidebar:
+        sidebar.write("* [Test wiki reload](test_wiki_reload.md)")
+
     info("Click reload button in wikis_example wiki, should succeed")
 
-    card = find_wiki_example_card()
-    card.find_element_by_xpath("/html/body/div/div/div/div[2]/div/ul/li[6]/div/div/div/a[2]").click()
+    wiki_example_card = find_wiki_example_card()
+    wiki_example_card.find_element_by_xpath("/html/body/div/div/div/div[2]/div/ul/li[6]/div/div/div/a[2]").click()
 
     info("Click view button")
-    card.find_element_by_link_text("View").click()
+    wiki_example_card.find_element_by_link_text("View").click()
 
     info("Check that sidebar is changed")
-    wiki_reload_page = requests.get("https://127.0.0.1/wiki/zerobot.wiki_examples#/test_wiki_reload")
+    wiki_reload_page = requests.get("https://172.17.0.2/wiki/zerobot.wiki_examples#/test_wiki_reload")
     assert wiki_reload_page.status_code == 200
 
 
@@ -157,19 +152,22 @@ def test003_test_pull_button():
 
     **Test scenario**
     #. Get wikis page.
-    #. Change in wiki directory.
+    #. Change the current commit id to an older one.
     #. Click pull button.
-    #. Check that the changed file is removed.
+    #. Check that the latest changed is pulled.
     
     """
-    info("Change in wiki directory")
-    change_wiki_dir("pull")
+    info("Change the current commit id to an older one")
+    GIT_REPO = "/sandbox/code/github/threefoldtech/jumpscaleX_threebot"
+    older_commit_id = os_command("cd {} && git log -4 | grep commit | tail -1 | cut -d " " -f 2".format(GIT_REPO))
+    os_command("cd {} && git reset {}".format(GIT_REPO, older_commit_id))
 
     info("Click pull button")
-    card = find_wiki_example_card()
-    card.find_element_by_xpath("/html/body/div/div/div/div[2]/div/ul/li[6]/div/div/div/a[3]").click()
+    wiki_example_card = find_wiki_example_card()
+    wiki_example_card.find_element_by_xpath("/html/body/div/div/div/div[2]/div/ul/li[6]/div/div/div/a[3]").click()
 
-    info("Check that the changed file is removed")
-    wiki_reload_page = requests.get("https://127.0.0.1/wiki/zerobot.wiki_examples#/test_wiki_pull")
-    assert wiki_reload_page.status_code == 404
+    info("Check that the latest changed is pulled")
+    current_commit_id = os_command("cd {} && git rev-parse HEAD".format(GIT_REPO))
+    assert current_commit_id != older_commit_id
+
 
