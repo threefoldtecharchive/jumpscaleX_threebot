@@ -67,33 +67,47 @@ def is_admin(tname):
     return threebot_me.tname == tname or tname in threebot_me.admins
 
 
-def admin_only(handler):
-    """a decorator to only allow admin access to specific routes
-
-    :param handler: handler function
-    :type handler: function
-    :return: function or abort with 405 (forbidden)
-    :rtype: function
-    """
-
-    def inner(*args, **kwargs):
+def authenticated(handler):
+    def decorator(*args, **kwargs):
         if j.tools.threebot.with_threebotconnect:
-            username = request.environ.get("beaker.session", {}).get("username")
-            if username:
-                if not is_admin(username):
-                    return abort(403)
-            else:
+            if not get_session().get("authorized", False):
                 return abort(401)
         return handler(*args, **kwargs)
 
-    return inner
+    return decorator
+
+
+def admin_only(handler):
+    def decorator(*args, **kwargs):
+        if j.tools.threebot.with_threebotconnect:
+            username = get_session().get("username")
+            if not is_admin(username):
+                return abort(403)
+
+        return handler(*args, **kwargs)
+
+    return decorator
+
+
+def _get_user_info():
+    session = get_session()
+    tname = session.get("username", "")
+    temail = session.get("email", "")
+    return j.data.serializers.json.dumps({"username": tname, "email": temail})
 
 
 @app.route("/auth/authenticated")
-@admin_only
+@authenticated
 def is_authenticated():
-    session = request.environ.get("beaker.session", {})
-    tname = session.get("username", "")
-    temail = session.get("email", "")
+    userinfo = _get_user_info()
     response.content_type = "application/json"
-    return j.data.serializers.json.dumps({"username": tname, "email": temail})
+    return userinfo
+
+
+@app.route("/auth/authorized")
+@authenticated
+@admin_only
+def is_authorized():
+    userinfo = _get_user_info()
+    response.content_type = "application/json"
+    return userinfo
