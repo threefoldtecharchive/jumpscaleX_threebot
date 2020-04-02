@@ -111,8 +111,14 @@ export default class TopView extends JetView {
         ]
 
         const response = webix.ajax().sync().get("/zerobot/packagemanager/actors/package_manager/packages_list", { has_frontend_args: true, status: "installed" });
+        let packages;
 
-        const packages = JSON.parse(response.responseText).packages;
+        try {
+            packages = JSON.parse(response.responseText).packages;
+        } catch (error) {
+            packages = [];
+        }
+
         for (const p of packages) {
             sidebarData.push(p.frontend_args);
         }
@@ -240,6 +246,8 @@ export default class TopView extends JetView {
 
             self.userMenu.add({ id: 'email', value: info.email })
             self.userMenu.add({ id: 'logout', value: "Logout" })
+        }).catch((error) => {
+            console.log(error);
         });
     }
 

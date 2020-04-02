@@ -9,8 +9,6 @@ export class ExternalView extends JetView {
 
         this.targetUrl = targetUrl || "/";
         this.requiredPackages = requiredPackages || {}; // required packages as name: git_url pairs
-        this.packageNames = Object.keys(this.requiredPackages); // only names
-        this.packagesToInstall = {}; // what we will install
     }
 
     config() {
@@ -74,16 +72,27 @@ export class ExternalView extends JetView {
         });
     }
 
+    showIframe() {
+        this.externalIframe.show();
+        this.externalIframe.showProgress({ type: "icon" });
+        this.externalIframe.load(this.targetUrl);
+    }
+
     init(view) {
+        this.externalIframe = this.$$("iframe-external");
+        this.externalIframe.disable();
+        webix.extend(this.externalIframe, webix.ProgressBar);
+
+        this.packageNames = Object.keys(this.requiredPackages); // only names
+
+        if (!this.packageNames.length) {
+            this.showIframe();
+            return;
+        }
+
         this.requiredPackagesDiv = this.$$("required_packages_div");
-        view.installPackageContainer = this.$$("install-packages");
+        this.installPackageContainer = this.$$("install-packages");
         this.installButton = this.$$("install_btn");
-
-        view.externalIframe = this.$$("iframe-external");
-        webix.extend(view.externalIframe, webix.ProgressBar);
-        view.externalIframe.disable();
-        view.externalIframe.showProgress({ type: "icon" });
-
 
         // check which packages to install
         this.packagesToInstall = {};
@@ -105,17 +114,16 @@ export class ExternalView extends JetView {
             // check packages to be installed again if still need to install any of them
             const packageNamesToInstall = Object.keys(this.packagesToInstall);
             if (packageNamesToInstall.length) {
-                view.installPackageContainer.show();
-                view.externalIframe.hide();
+                this.installPackageContainer.show();
+                this.externalIframe.hide();
 
                 const names = packageNamesToInstall.join(", ");
                 this.requiredPackagesDiv.setHTML(
                     `<div style='width:auto;text-align:center'><h3>You need to install the following required packages: ${names}<h3/></div>`
                 );
             } else {
-                view.installPackageContainer.hide();
-                view.externalIframe.show();
-                view.externalIframe.load(this.targetUrl);
+                this.installPackageContainer.hide();
+                this.showIframe()
             }
         });
     }

@@ -13,7 +13,7 @@ class Package(j.baseclasses.threebot_package):
             admin_location = locations.get_location_static("admin")
             admin_location.path_url = "/admin"
             admin_location.path_location = f"{self._dirpath}/output"
-            admin_location.is_auth = True
+            admin_location.is_admin = True
 
             # another website/server config for /
             root_website = self.openresty.websites.get(f"admin_root_{port}")
@@ -24,7 +24,7 @@ class Package(j.baseclasses.threebot_package):
             root_location = root_locations.get_location_static("admin_home")
             root_location.path_url = "/"
             root_location.path_location = f"{self._dirpath}/output"
-            root_location.is_auth = True
+            root_location.is_admin = True
             # include default website locations
             root_include_location = root_locations.get_location_custom("admin_home_includes")
             root_include_location.config = (

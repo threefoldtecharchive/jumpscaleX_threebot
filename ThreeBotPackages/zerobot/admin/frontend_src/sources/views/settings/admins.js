@@ -25,6 +25,7 @@ export default class AdminsView extends JetView {
                 autoheight: true,
                 columns: [{
                     id: "name",
+                    width: 500,
                     header: [
                         "Name",
                         {
@@ -33,6 +34,7 @@ export default class AdminsView extends JetView {
                     ],
                     sort: "string",
                 }, {
+                    header: "Delete",
                     template: function (obj) {
                         return "<span class='webix_icon mdi mdi-trash-can webix_danger delete_admin'></span>";
                     }

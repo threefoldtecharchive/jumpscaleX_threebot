@@ -14,9 +14,18 @@ def Convert(tup):
     return ports
 
 
+STATUS_INSTALLED = 3
+
+
 class health(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         self.gedis_client = j.clients.gedis.get("health_actor", package_name="zerobot.webinterface")
+
+    def _is_installed(self, package_name):
+        status = 0
+        if j.tools.threebot_packages.exists(package_name):
+            status = j.tools.threebot_packages.get(package_name).status.value
+        return status == STATUS_INSTALLED
 
     @j.baseclasses.actor_method
     def network_info(self, schema_out=None, user_session=None):
@@ -62,27 +71,29 @@ class health(j.baseclasses.threebot_actor):
             self._log_error(f"error happend at wikis ping: {e}")
             data["wikis"] = "Error"
 
-        # codeserver is running
-        try:
-            codeserver = j.sal.nettools.checkUrlReachable("http://127.0.0.1:8080")
-            if codeserver:
-                data["codeserver"] = "OK"
-            else:
+        if self._is_installed("zerobot.codeserver"):
+            # codeserver is running
+            try:
+                codeserver = j.sal.nettools.checkUrlReachable("http://127.0.0.1:8080")
+                if codeserver:
+                    data["codeserver"] = "OK"
+                else:
+                    data["codeserver"] = "Error"
+            except Exception as e:
+                self._log_error(f"error happend at codeserver ping: {e}")
                 data["codeserver"] = "Error"
-        except Exception as e:
-            self._log_error(f"error happend at codeserver ping: {e}")
-            data["codeserver"] = "Error"
 
-        # Jupyter is running
-        try:
-            jupyter = j.sal.nettools.checkUrlReachable("http://127.0.0.1/simulator/threefold/show/")
-            if jupyter:
-                data["jupyter"] = "OK"
-            else:
+        if self._is_installed("threefold.simulator"):
+            # Jupyter is running
+            try:
+                jupyter = j.sal.nettools.checkUrlReachable("http://127.0.0.1/threefold/simlator/show/")
+                if jupyter:
+                    data["jupyter"] = "OK"
+                else:
+                    data["jupyter"] = "Error"
+            except Exception as e:
+                self._log_error(f"error happend at jupyter ping: {e}")
                 data["jupyter"] = "Error"
-        except Exception as e:
-            self._log_error(f"error happend at jupyter ping: {e}")
-            data["jupyter"] = "Error"
 
         return data
 
