@@ -33,9 +33,6 @@ def chat(bot):
         "Please add a password to be used for all zdb storage", default="password"
     )
     user_form_data["Disk type"] = bot.drop_down_choice("Please choose a disk type to be for zdb", ["SSD", "HDD"])
-    user_form_data["Mode"] = bot.drop_down_choice(
-        "Please choose the mode to be used for the database. If unsure, choose seq", ["seq", "user"]
-    )
     user_form_data["Access key"] = bot.string_ask(
         "Please add the key to be used for minio when logging in. Make sure not to loose it", default=name.split(".")[0]
     )
@@ -47,16 +44,18 @@ def chat(bot):
     user_form_data["Memory"] = bot.int_ask(
         "Resources for minio: Please add the size you need for the memory", default=2048
     )
-    user_form_data["Data number"] = str(
+    user_form_data["Locations"] = str(
         bot.string_ask(
-            "Resources for minio: Please add the number of data drives you need. Take care of the ratio between the data drives and parity drives you will specify next",
-            default="1",
+            "Resources for minio: Please add the number of locations you need. Take care of the ratio between the locations and locations allowed to fail that you will specify next",
+            default="6",
         )
     )
-    user_form_data["Parity"] = str(
-        bot.string_ask("Resources for minio: Please add the number of parity drives you need", default="0")
+    data_number = user_form_data["Locations"]
+    user_form_data["Locations allowed to fail"] = str(
+        bot.string_ask("Resources for minio: Please add the number of locations allowed to fail", default="3")
     )
-    user_form_data["ZDB number"] = int(user_form_data["Data number"]) + int(user_form_data["Parity"])
+    parity = user_form_data["Locations allowed to fail"]
+    user_form_data["ZDB number"] = int(data_number) + int(parity)
 
     user_form_data["Solution expiration"] = bot.time_delta_ask("Please enter solution expiration time.", default="1d")
 
@@ -91,7 +90,7 @@ def chat(bot):
             reservation=reservation,
             node_id=nodes_selected[i].node_id,
             size=10,
-            mode=user_form_data["Mode"],
+            mode="seq",
             password=user_form_data["Password"],
             disk_type=user_form_data["Disk type"],
             public=False,
@@ -138,8 +137,8 @@ def chat(bot):
         memory=user_form_data["Memory"],
         env={
             "SHARDS": ",".join(namespace_config),
-            "DATA": user_form_data["Data number"],
-            "PARITY": user_form_data["Parity"],
+            "DATA": data_number,
+            "PARITY": parity,
             "ACCESS_KEY": user_form_data["Access key"],
             "SECRET_KEY": user_form_data["Secret"],
         },
