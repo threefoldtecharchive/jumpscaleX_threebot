@@ -98,12 +98,12 @@ class health(j.baseclasses.threebot_actor):
             try:
                 # Fetch process details as dict
                 pinfo = proc.as_dict(attrs=["pid", "name", "username"])
-                pinfo["vms"] = proc.memory_info().vms / (1024 * 1024)
+                pinfo["rss"] = proc.memory_info().rss / (1024 * 1024)
                 # Append dict to list
                 processes_list.append(pinfo)
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
-        processes_list = sorted(processes_list, key=lambda procObj: procObj["vms"], reverse=True)
+        processes_list = sorted(processes_list, key=lambda procObj: procObj["rss"], reverse=True)
         all_data["processes_list"] = processes_list
 
         # memory data
