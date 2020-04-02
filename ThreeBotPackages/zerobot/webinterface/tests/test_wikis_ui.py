@@ -6,7 +6,9 @@ import time
 
 from Jumpscale import j
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 
+driver = webdriver.Chrome(ChromeDriverManager().install())
 
 wikis_url = "http://172.17.0.2/wiki/"
 card = ""
