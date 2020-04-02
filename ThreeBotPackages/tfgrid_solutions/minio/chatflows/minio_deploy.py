@@ -11,7 +11,6 @@ def chat(bot):
     email = user_info["email"]
     ips = ["IPv6", "IPv4"]
     flist_url = "https://hub.grid.tf/tf-official-apps/minio-2020-01-25T02-50-51Z.flist"
-    expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
     explorer = j.clients.explorer.default
 
     if not j.tools.threebot.with_threebotconnect:
@@ -58,6 +57,10 @@ def chat(bot):
         bot.string_ask("Resources for minio: Please add the number of parity drives you need", default="0")
     )
     user_form_data["ZDB number"] = int(user_form_data["Data number"]) + int(user_form_data["Parity"])
+
+    user_form_data["Solution expiration"] = bot.time_delta_ask("Please enter solution expiration time.", default="1d")
+
+    expiration = j.data.time.epoch + int(user_form_data["Solution expiration"])
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
