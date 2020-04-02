@@ -12,7 +12,6 @@ def chat(bot):
     email = user_info["email"]
     ips = ["IPv6", "IPv4"]
     default_cluster_name = name.split(".3bot")[0]
-    expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
 
     explorer = j.clients.explorer.default
 
@@ -41,6 +40,10 @@ def chat(bot):
             Just upload the ssh keys file with each key on a seperate line"""
     )
     ssh_keys_list = user_form_data["SSH keys"].split("\n")
+
+    user_form_data["Solution expiration"] = bot.time_delta_ask("Please enter solution expiration time.", default="1d")
+
+    expiration = j.data.time.epoch + int(user_form_data["Solution expiration"])
 
     user_form_data["Cluster secret"] = bot.string_ask("Please add the cluster secret", default="secret")
 

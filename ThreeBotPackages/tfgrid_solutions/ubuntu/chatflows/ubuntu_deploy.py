@@ -12,7 +12,6 @@ def chat(bot):
     ips = ["IPv6", "IPv4"]
     HUB_URL = "https://hub.grid.tf/tf-bootable"
     IMAGES = ["ubuntu:16.04", "ubuntu:18.04"]
-    expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
     explorer = j.clients.explorer.default
 
     if not j.tools.threebot.with_threebotconnect:
@@ -37,6 +36,10 @@ def chat(bot):
     user_form_data["IP version"] = bot.single_choice(
         "Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips
     )
+
+    user_form_data["Solution expiration"] = bot.time_delta_ask("Please enter solution expiration time.", default="1d")
+
+    expiration = j.data.time.epoch + int(user_form_data["Solution expiration"])
 
     var_list = user_form_data["Env variables"].split(",")
     var_dict = {}

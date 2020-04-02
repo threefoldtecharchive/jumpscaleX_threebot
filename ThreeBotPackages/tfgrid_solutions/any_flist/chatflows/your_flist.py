@@ -12,7 +12,6 @@ def chat(bot):
     email = user_info["email"]
     ips = ["IPv6", "IPv4"]
     env = dict()
-    expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
     explorer = j.clients.explorer.default
 
     if not j.tools.threebot.with_threebotconnect:
@@ -61,6 +60,10 @@ def chat(bot):
     user_form_data["Interactive"] = bot.single_choice(
         "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"]
     )
+
+    user_form_data["Solution expiration"] = bot.time_delta_ask("Please enter solution expiration time.", default="1d")
+
+    expiration = j.data.time.epoch + int(user_form_data["Solution expiration"])
 
     env.update({"pub_key": user_form_data["Public key"]})
     if user_form_data["Env variables"]:
