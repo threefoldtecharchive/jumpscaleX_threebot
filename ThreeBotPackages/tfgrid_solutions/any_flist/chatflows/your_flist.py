@@ -1,5 +1,6 @@
 from Jumpscale import j
 import netaddr
+import requests
 
 
 def chat(bot):
@@ -24,10 +25,29 @@ def chat(bot):
         raise j.exceptions.Value("Email shouldn't be empty")
     if not name:
         raise j.exceptions.Value("Name of logged in user shouldn't be empty")
+    not_found = True
+    while not_found:
+        user_form_data["Flist link"] = bot.string_ask(
+            "This wizard will help you deploy a container using any flist provided\n Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
+        )
 
-    user_form_data["Flist link"] = bot.string_ask(
-        "This wizard will help you deploy a container using any flist provided\n Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
-    )
+        flist_split = user_form_data["Flist link"].split("/")
+        if len(flist_split) != 5:
+            res = "# This flist doesn't correct. Please make sure you enter a valid link to an existing flist"
+            res = j.tools.jinja2.template_render(text=res, **locals())
+            bot.md_show(res)
+            continue
+
+        url = f"https://hub.grid.tf/api/flist/{flist_split[3]}/{flist_split[4]}"
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            not_found = False
+        else:
+            res = "# This flist doesn't exist. Please make sure you enter a valid link to an existing flist"
+            res = j.tools.jinja2.template_render(text=res, **locals())
+            bot.md_show(res)
+
     while not user_form_data.get("Public key"):
         user_form_data["Public key"] = bot.string_ask(
             "Please add your public ssh key, this will allow you to access the deployed container using ssh. Just copy your key from ~/.ssh/id_rsa.pub"
