@@ -1,4 +1,5 @@
 import { JetView, plugins } from "webix-jet";
+import { auth } from "../services/auth";
 
 
 export default class TopView extends JetView {
@@ -232,22 +233,28 @@ export default class TopView extends JetView {
         this.userMenu = $$("user_menu");
         this.userMenu.attachEvent("onItemClick", function (id, e, node) {
             if (id == "logout") {
-                window.location.href = "/auth/logout?next_url=/admin";
+                auth.logout();
             }
         });
 
         this.usernameLabel = $$("username_label");
 
-        webix.ajax().get("/auth/authenticated", function (data) {
-            const info = JSON.parse(data);
-            self.usernameLabel.config.label = info.username;
-            self.usernameLabel.config.width = webix.html.getTextSize(info.username) + 10;
+        auth.getCurrentUser().then(data => {
+            const info = data.json()
+            let username = info.username;
+
+            if (info.devmode) {
+                username += " [development]"
+            }
+
+            self.usernameLabel.config.label = username;
+            self.usernameLabel.config.width = webix.html.getTextSize(username) + 10;
             self.usernameLabel.refresh();
 
             self.userMenu.add({ id: 'email', value: info.email })
             self.userMenu.add({ id: 'logout', value: "Logout" })
-        }).catch((error) => {
-            console.log(error);
+        }).catch(() => {
+            auth.logout();
         });
     }
 

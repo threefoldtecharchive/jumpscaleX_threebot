@@ -15,7 +15,8 @@ class PackagesService extends Service {
         });
     }
 
-    list() {
+    list(opts) {
+        opts = opts || {};
         return this.getCall("packages_list");
     }
 

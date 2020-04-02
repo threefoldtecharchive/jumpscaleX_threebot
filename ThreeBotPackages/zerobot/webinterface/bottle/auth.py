@@ -59,7 +59,8 @@ def logout():
     except AttributeError:
         pass
 
-    redirect(request.query.get("next_url", "/"))
+    next_url = request.query.get("next_url", "/")
+    redirect(f"{LOGIN_URL}?next_url={next_url}")
 
 
 def is_admin(tname):
@@ -95,7 +96,9 @@ def get_user_info():
     temail = session.get("email", "")
 
     response.content_type = "application/json"
-    return j.data.serializers.json.dumps({"username": tname, "email": temail})
+    return j.data.serializers.json.dumps(
+        {"username": tname, "email": temail, "devmode": not j.tools.threebot.with_threebotconnect}
+    )
 
 
 @app.route("/auth/authenticated")
