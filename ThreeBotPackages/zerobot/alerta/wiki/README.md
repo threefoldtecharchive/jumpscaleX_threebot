@@ -9,10 +9,9 @@ Central monitoring system built using Webix UI and gedis actors (with jumpscale 
 ![alerta](./images/alerts5.png)
 
 ## Running
-
+- start your threebot `j.servers.threebot.start()`
 - server will start at `https://docker_ip_address/admin/#!/main/alerts`
-example:
-`https://172.17.0.2/admin/#!/main/alerts`
+**example** `https://172.17.0.2/admin/#!/main/alerts`
 
 ## The package file
 
