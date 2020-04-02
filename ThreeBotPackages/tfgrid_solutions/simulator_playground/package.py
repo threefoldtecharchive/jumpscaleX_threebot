@@ -31,33 +31,33 @@ class Package(j.baseclasses.threebot_package):
         j.builders.network.tcprouter.start()
 
         if not j.sal.fs.exists("/etc/wireguard/network.conf"):
-            from threebot_packages.tfgrid_solutions.tf_simulator.chatflows.tf_simulator_deploy import Deployer
+            from threebot_packages.tfgrid_solutions.simulator_playground.chatflows.simulator_playground import Deployer
 
             deployer = Deployer()
             deployer.deploy_network()
 
         for server_port, client_port in ((443, 4430), (80, 8000)):
-            website = self.openresty.websites.get(f"tf_simulator_chat_{server_port}")
+            website = self.openresty.websites.get(f"simulator_playground_chat_{server_port}")
             website.port = server_port
             website.ssl = server_port == 443
             website.domain = "play.grid.tf"
 
-            locations = website.locations.get(name=f"tf_simulator_chat_{server_port}_locations")
+            locations = website.locations.get(name=f"simulator_playground_chat_{server_port}_locations")
             location = locations.locations_custom.new()
-            location.name = f"tf_simulator_chat_{server_port}"
+            location.name = f"simulator_playground_chat_{server_port}"
             location.is_auth = False
 
             default_website_name = self.openresty.get_from_port(server_port).name
             location.config = f"""
             include {website.path_cfg_dir}/{default_website_name}_locations/*.conf;
             location / {{
-                rewrite ^(.+) /tfgrid_solutions/tf_simulator/chat/tf_simulator_deploy;
+                rewrite ^(.+) /tfgrid_solutions/simulator_playground/chat/simulator_playground;
             }}"""
 
             locations.configure()
             website.configure()
 
-            website_2 = self.openresty.websites.get(f"tf_simulator_chat_{client_port}_tcprouter")
+            website_2 = self.openresty.websites.get(f"simulator_playground_chat_{client_port}_tcprouter")
             website_2.port = server_port
             website_2.ssl = client_port == 4430
             website_2.domain = ".*\.play.grid.tf"

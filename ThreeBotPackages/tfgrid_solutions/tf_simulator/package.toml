@@ -1,5 +1,0 @@
-[source]
-name = "tf_simulator"
-description = "chatbot to deploy tf_simulator on a container in the grid"
-threebot = "tfgrid_solutions"
-version = "1.0.0"
