@@ -7,7 +7,7 @@ module.exports = new Promise(async (resolve, reject) => {
     resolve({
         name: "farmManagement",
         components: {
-            nodestable: "url:/farmmanagement/components/nodestable/index.vue"
+            nodestable: "url:/threebot/farmmanagement/components/nodestable/index.vue"
         },
         data() {
             return {

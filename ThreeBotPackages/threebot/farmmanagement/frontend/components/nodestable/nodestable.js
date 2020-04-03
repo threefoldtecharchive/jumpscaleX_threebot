@@ -9,7 +9,7 @@ module.exports = new Promise(async (resolve, reject) => {
         name: "nodestable",
         props: ['farmselected'],
         components: {
-            nodeinfo: "url:/farmmanagement/components/nodeinfo/index.vue"
+            nodeinfo: "url:/threebot/farmmanagement/components/nodeinfo/index.vue"
         },
         data() {
             return {
