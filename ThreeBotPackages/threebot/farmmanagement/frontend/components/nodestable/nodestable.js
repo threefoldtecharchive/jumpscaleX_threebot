@@ -30,7 +30,6 @@ module.exports = new Promise(async (resolve, reject) => {
                     { text: "ID", value: "id" },
                     { text: "Uptime", value: "uptime" },
                     { text: "Version", value: "version" },
-                    { text: "Farmer", value: "farmer" },
                     { text: "Status", value: "status", align: "center" }
                 ]
             };
