@@ -34,9 +34,14 @@ export default {
       }
     },
     getRegisteredNodes(context) {
-      tfService.registered3bots().then(response => {
+      tfService.getNodes().then(response => {
         context.commit("setRegisteredNodes", response.data);
         context.commit("setTotalSpecs", response.data);
+      });
+    },
+    setNodeFree(context, node_id, free) {
+      tfService.setNodeFree(node_id, free).then(response => {
+        console.log("node set free");
       });
     },
     getRegisteredFarms(context, farm_id) {
@@ -48,6 +53,12 @@ export default {
     getFarms: context => {
       tfService.getFarms(context.getters.user.id).then(response => {
         context.commit("setFarms", response.data);
+      });
+    },
+    updateFarm(context, farm) {
+      tfService.updateFarm(farm.id, farm).then(response => {
+        console.log("farm updated");
+        console.log(response);
       });
     },
     resetNodes: context => {

@@ -41,13 +41,6 @@ module.exports = new Promise(async (resolve, reject) => {
                     { text: "Wallet addresses", value: "wallet_addresses" },
                     { text: "Actions", value: "action", sortable: false }
                 ],
-                nodeHeaders: [
-                    { text: "ID", value: "node_id" },
-                    { text: "Uptime", value: "uptime" },
-                    { text: "Version", value: "os_version" },
-                    { text: "Farmer", value: "farmer" },
-                    { text: "Status", value: "status", align: "center" }
-                ],
                 newFarm: {
                     threebot_id: "",
                     location: {

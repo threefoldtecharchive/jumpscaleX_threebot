@@ -1,4 +1,3 @@
-
 <section v-if="isLoggedIn()" class="farmmanagement">
   <v-row class="my-3 mx-1">
     <v-card style="width: 100%;">
@@ -61,7 +60,8 @@
         <p class="text-center">please select a farm to view the nodes.</p>
       </v-card-text>
     </v-card>
-    <nodesTable style="height: 100%; width:100%;" :farmselected="farmSelected" v-if="farmSelected && farmSelected.name"></nodesTable>
+    <nodesTable style="height: 100%; width:100%;" :farmselected="farmSelected" v-if="farmSelected && farmSelected.name">
+    </nodesTable>
   </v-row>
   <v-dialog v-model="settingsDialog" scrollable v-if="settingsDialog" max-width="700px">
     <v-card style="width: 100%;">
@@ -108,7 +108,8 @@
                 <v-text-field v-model="farmToEdit.location.longitude" label="Longitude"></v-text-field>
               </v-col>
             </v-row> -->
-            <v-select v-model="farmToEdit.location.country" menu-props="auto" :items="countries" label="Country"></v-select>
+            <v-select v-model="farmToEdit.location.country" menu-props="auto" :items="countries" label="Country">
+            </v-select>
 
             <v-text-field v-model="farmToEdit.email" label="Email"></v-text-field>
 
@@ -136,9 +137,11 @@
 
       </v-card-title>
       <v-card-text>
-        <v-text-field v-model="newFarm.name" label="Farm name" :rules="namerules" :error-messages="nameError" @input="nameError = []"></v-text-field>
+        <v-text-field v-model="newFarm.name" label="Farm name" :rules="namerules" :error-messages="nameError"
+          @input="nameError = []"></v-text-field>
         <v-text-field v-model="newFarm.iyo_organization" label="Organization ID"></v-text-field>
-        <v-text-field v-model="newFarm.email" required label="Email addrress" :error-messages="mailError" @input="mailError = []"></v-text-field>
+        <v-text-field v-model="newFarm.email" required label="Email addrress" :error-messages="mailError"
+          @input="mailError = []"></v-text-field>
         <v-text-field v-model="newFarm.wallet_addresses" label="TFT Wallet address"></v-text-field>
         <!-- <v-checkbox
           label="Check me if you don't want to provide a Wallet Address now. Without wallet, you won't be paid.">
