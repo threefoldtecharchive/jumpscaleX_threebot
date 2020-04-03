@@ -20,6 +20,7 @@ exit_node = (B)
 approved = false (B)
 public_key_hex = "" (S)     #hex representation of public key of the TF node
 wg_ports = (LI)
+free_to_use = (B)
 
 #following info is not usable for provisioning, its convenience info for the farmer
 #e.g. to know which interface names there are
