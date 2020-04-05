@@ -28,7 +28,7 @@ class registration(j.baseclasses.threebot_actor):
         if email is None:
             raise j.exceptions.Value("email can not be empty")
 
-        nacl = j.data.nacl.default
+        nacl = j.me.encryptor
 
         phonebook_explorer = j.clients.gedis.get(
             name="phonebook_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.phonebook"
@@ -77,4 +77,4 @@ class registration(j.baseclasses.threebot_actor):
         pubkey = (S)
         ```
         """
-        j.tools.threebot.me.get(name="default", tid=tid, tname=tname, email=email, pubkey=pubkey).save()
+        j.me_identities.me.get(name="default", tid=tid, tname=tname, email=email, pubkey=pubkey).save()

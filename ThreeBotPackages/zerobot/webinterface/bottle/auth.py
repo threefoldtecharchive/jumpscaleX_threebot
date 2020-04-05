@@ -64,7 +64,7 @@ def logout():
 
 
 def is_admin(tname):
-    threebot_me = j.tools.threebot.me.default
+    threebot_me = j.me_identities.me.default
     return threebot_me.tname == tname or tname in threebot_me.admins
 
 

@@ -4,11 +4,11 @@ from Jumpscale import j
 class identity(j.baseclasses.threebot_actor):
     @j.baseclasses.actor_method
     def email(self, schema_out=None, user_session=None):
-        return j.tools.threebot.me.default.email
+        return j.me_identities.me.default.email
 
     @j.baseclasses.actor_method
     def pubkey(self, schema_out=None, user_session=None):
-        return j.tools.threebot.me.default.pubkey
+        return j.me_identities.me.default.pubkey
 
     @j.baseclasses.actor_method
     def threebot_name(self, name="default", schema_out=None, user_session=None):
@@ -23,7 +23,7 @@ class identity(j.baseclasses.threebot_actor):
         admins = (LS)
         ```
         """
-        identity = j.tools.threebot.me.get(name=name, needexist=True)
+        identity = j.me_identities.me.get(name=name, needexist=True)
         if identity.tid == 0:
             raise j.exceptions.RuntimeError(f"Threebot me {name} has not been initialized yet")
 

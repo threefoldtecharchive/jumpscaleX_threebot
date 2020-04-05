@@ -21,7 +21,7 @@ class explorer_proxy(j.baseclasses.threebot_actor):
 
         """
         out = schema_out.new()
-        nacl = j.data.nacl.default
+        nacl = j.me.encryptor
 
         # TODO: not working !!!
 

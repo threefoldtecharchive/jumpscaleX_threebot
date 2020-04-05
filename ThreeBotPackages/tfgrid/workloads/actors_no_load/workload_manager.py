@@ -73,7 +73,7 @@ class workload_manager(j.baseclasses.threebot_actor):
         self.node_model = directory_package.bcdb.model_get(url="tfgrid.directory.node.2")
         self.farm_model = directory_package.bcdb.model_get(url="tfgrid.directory.farm.1")
         self.workload_actionable_model = workloads_package.bcdb.model_get(url="tfgrid.workload.actionable.1")
-        self.nacl = j.data.nacl.default
+        self.nacl = j.me.encryptor
 
         index_table = reservation_index_model()
         index_table._meta.database = self.reservation_model.bcdb.sqlite_index_client
