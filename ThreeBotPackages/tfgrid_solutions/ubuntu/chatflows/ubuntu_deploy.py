@@ -38,7 +38,7 @@ def chat(bot):
     )
 
     user_form_data["CPU"] = bot.int_ask("Please add the how much cpu is needed", default=1)
-    user_form_data["Memory"] = bot.int_ask("Please add the size you need for the memory", default=1024)
+    user_form_data["Memory"] = bot.int_ask("Please add the size you need for the memory in MB", default=1024)
 
     user_form_data["Solution expiration"] = bot.time_delta_ask("Please enter solution expiration time.", default="1d")
 

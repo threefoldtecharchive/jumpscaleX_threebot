@@ -42,7 +42,7 @@ def chat(bot):
     )
     user_form_data["CPU"] = bot.int_ask("Resources for minio: Please add the how much cpu is needed", default=2)
     user_form_data["Memory"] = bot.int_ask(
-        "Resources for minio: Please add the size you need for the memory", default=2048
+        "Resources for minio: Please add the size you need for the memory in MB", default=2048
     )
     user_form_data["Locations"] = str(
         bot.string_ask(
