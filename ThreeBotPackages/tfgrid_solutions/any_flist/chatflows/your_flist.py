@@ -44,6 +44,7 @@ def chat(bot):
             res = "# This flist doesn't exist. Please make sure you enter a valid link to an existing flist"
             res = j.tools.jinja2.template_render(text=res, **locals())
             bot.md_show(res)
+    user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
 
     while not user_form_data.get("Public key"):
         user_form_data["Public key"] = bot.string_ask(
@@ -96,7 +97,6 @@ def chat(bot):
     else:
         interactive = False
 
-    user_form_data["Solution name"] = j.sal.reservation_chatflow.add_solution_name(bot, model)
     bot.md_show_confirm(user_form_data)
     # create container
     cont = j.sal.zosv2.container.create(
@@ -115,7 +115,7 @@ def chat(bot):
     if j.sal.reservation_chatflow.reservation_failed(bot=bot, category="CONTAINER", resv_id=resv_id):
         return
     else:
-        j.sal.reservation_chatflow.save_reservation(
+        j.sal.reservation_chatflow.reservation_save(
             resv_id, user_form_data["Solution name"], "tfgrid.solutions.flist.instance.1"
         )
         res = f"# Container has been deployed successfully: your reservation id is: {resv_id} "

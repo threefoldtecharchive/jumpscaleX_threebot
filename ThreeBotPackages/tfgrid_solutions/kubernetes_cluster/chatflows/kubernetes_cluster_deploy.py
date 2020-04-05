@@ -32,6 +32,7 @@ def chat(bot):
         "This wizard will help you deploy a kubernetes cluster, do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4",
         ips,
     )
+    user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
 
     user_form_data["Workers number"] = bot.int_ask(
         "Please specify the number of worker nodes", default=1
@@ -63,7 +64,6 @@ def chat(bot):
         bot, reservation, nodes_selected, customer_tid=identity.id, ip_version=user_form_data["IP version"]
     )
     rid = configs["rid"]
-    user_form_data["Solution name"] = j.sal.reservation_chatflow.add_solution_name(bot, model)
 
     bot.md_show_confirm(user_form_data)
     # Create master and workers
@@ -99,7 +99,7 @@ def chat(bot):
         return
 
     else:
-        j.sal.reservation_chatflow.save_reservation(
+        j.sal.reservation_chatflow.reservation_save(
             resv_id, user_form_data["Solution name"], "tfgrid.solutions.kubernetes.instance.1"
         )
         res = """

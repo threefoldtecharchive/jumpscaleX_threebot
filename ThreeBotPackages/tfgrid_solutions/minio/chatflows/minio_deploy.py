@@ -28,6 +28,7 @@ def chat(bot):
         "This wizard will help you deploy a minio cluster, do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4",
         ips,
     )
+    user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
 
     user_form_data["Password"] = bot.string_ask(
         "Please add a password to be used for all zdb storage", default="password"
@@ -80,7 +81,6 @@ def chat(bot):
         number_of_ipaddresses=1,
     )
     rid = configs["rid"]
-    user_form_data["Solution name"] = j.sal.reservation_chatflow.add_solution_name(bot, model)
     bot.md_show_confirm(user_form_data)
     ip_address = configs["ip_addresses"][0]
     wg_quick = configs["wg"]
@@ -152,7 +152,7 @@ def chat(bot):
     if j.sal.reservation_chatflow.reservation_failed(bot=bot, category="CONTAINER", resv_id=resv_id):
         return
     else:
-        j.sal.reservation_chatflow.save_reservation(
+        j.sal.reservation_chatflow.reservation_save(
             resv_id, user_form_data["Solution name"], "tfgrid.solutions.minio.instance.1"
         )
         res = f"# Minio cluster has been deployed successfully: your reservation id is: {resv_id}"

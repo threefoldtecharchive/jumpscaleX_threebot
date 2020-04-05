@@ -28,6 +28,8 @@ def chat(bot):
     user_form_data["Version"] = bot.single_choice(
         "This wizard will help you deploy an ubuntu container, please choose ubuntu version", IMAGES
     )
+    user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
+
     user_form_data["Env variables"] = bot.string_ask(
         """To set environment variables on your deployed container, enter comma-separated variable=value
         For example: var1=value1, var2=value2.
@@ -61,7 +63,6 @@ def chat(bot):
         bot, reservation, [node_selected], customer_tid=identity.id, ip_version=user_form_data["IP version"]
     )
     ip_address = config["ip_addresses"][0]
-    user_form_data["Solution name"] = j.sal.reservation_chatflow.add_solution_name(bot, model)
     bot.md_show_confirm(user_form_data)
 
     container_flist = f"{HUB_URL}/{user_form_data['Version']}.flist"
@@ -87,7 +88,7 @@ def chat(bot):
         return
 
     else:
-        j.sal.reservation_chatflow.save_reservation(
+        j.sal.reservation_chatflow.reservation_save(
             resv_id, user_form_data["Solution name"], "tfgrid.solutions.ubuntu.instance.1"
         )
         res = f"# Ubuntu has been deployed successfully: your reservation id is: {resv_id} "
