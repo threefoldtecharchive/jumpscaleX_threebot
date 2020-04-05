@@ -343,3 +343,13 @@ class gateway(j.baseclasses.threebot_actor):
         out = schema_out.new()
         out.ip_address = ip_address
         return out
+
+
+    @j.baseclasses.actor_method
+    def subdomain_register(self, threebot_name, subdomain, ip_address, port, signature, schema_out=None, user_session=None):
+        if not self._is_valid_signature(threebot_name, signature):
+            raise j.exceptions.Value("Invalid signature")
+
+        threebot_name = self._normalize_threebot_name(threebot_name)
+        domain = f"{subdomain}.{threebot_name}.{THREEBOT_DOMAIN}"
+        self.tfgateway.tcpservice_register(domain, ip_address, service_http_port=port)
