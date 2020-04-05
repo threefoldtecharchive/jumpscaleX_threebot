@@ -344,9 +344,10 @@ class gateway(j.baseclasses.threebot_actor):
         out.ip_address = ip_address
         return out
 
-
     @j.baseclasses.actor_method
-    def subdomain_register(self, threebot_name, subdomain, ip_address, port, signature, schema_out=None, user_session=None):
+    def subdomain_register(
+        self, threebot_name, subdomain, ip_address, port, signature, schema_out=None, user_session=None
+    ):
         """
         Registers a subdomain ex: {subdomain}.{threebot_name}.{THREEBOT_DOMAIN}
 
@@ -364,4 +365,4 @@ class gateway(j.baseclasses.threebot_actor):
 
         threebot_name = self._normalize_threebot_name(threebot_name)
         domain = f"{subdomain}.{threebot_name}.{THREEBOT_DOMAIN}"
-        self.tfgateway.tcpservice_register(domain, ip_address, service_http_port=port)
+        self._gateway.tcpservice_register(domain, ip_address, service_http_port=port)
