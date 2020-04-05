@@ -1,5 +1,4 @@
 from Jumpscale import j
-import time
 
 
 def chat(bot):
@@ -57,9 +56,9 @@ def chat(bot):
     parity = user_form_data["Locations allowed to fail"]
     user_form_data["ZDB number"] = int(data_number) + int(parity)
 
-    user_form_data["Solution expiration"] = bot.time_delta_ask("Please enter solution expiration time.", default="1d")
-
-    expiration = j.data.time.epoch + int(user_form_data["Solution expiration"])
+    expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
+    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
+    expiration = j.data.time.epoch + expirationdelta
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()

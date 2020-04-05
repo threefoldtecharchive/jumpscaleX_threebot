@@ -1,5 +1,4 @@
 from Jumpscale import j
-import netaddr
 
 
 def chat(bot):
@@ -40,9 +39,9 @@ def chat(bot):
     user_form_data["CPU"] = bot.int_ask("Please add the how much cpu is needed", default=1)
     user_form_data["Memory"] = bot.int_ask("Please add the size you need for the memory in MB", default=1024)
 
-    user_form_data["Solution expiration"] = bot.time_delta_ask("Please enter solution expiration time.", default="1d")
-
-    expiration = j.data.time.epoch + int(user_form_data["Solution expiration"])
+    expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
+    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
+    expiration = j.data.time.epoch + expirationdelta
 
     var_list = user_form_data["Env variables"].split(",")
     var_dict = {}

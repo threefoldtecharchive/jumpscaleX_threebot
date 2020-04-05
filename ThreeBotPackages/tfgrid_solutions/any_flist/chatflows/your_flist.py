@@ -58,9 +58,9 @@ def chat(bot):
         "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"]
     )
 
-    user_form_data["Solution expiration"] = bot.time_delta_ask("Please enter solution expiration time.", default="1d")
-
-    expiration = j.data.time.epoch + int(user_form_data["Solution expiration"])
+    expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
+    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
+    expiration = j.data.time.epoch + expirationdelta
 
     env.update({"pub_key": user_form_data["Public key"]})
     if user_form_data["Env variables"]:
