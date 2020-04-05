@@ -351,10 +351,10 @@ class gateway(j.baseclasses.threebot_actor):
         Registers a subdomain ex: {subdomain}.{threebot_name}.{THREEBOT_DOMAIN}
 
         ```in
-        threebot_name = (S) # 3bot threebot_name
-        subdomain = (S) subdomain
+        threebot_name = (S) #3bot threebot_name
+        subdomain = (S) #subdomain
         ip_address = (S) #ip address
-        port = (I) port
+        port = (I) #port
         signature = (S) #the signature of the payload "{threebot_name}"
         ```
         """
