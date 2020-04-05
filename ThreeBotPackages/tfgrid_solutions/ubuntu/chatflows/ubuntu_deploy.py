@@ -37,6 +37,9 @@ def chat(bot):
         "Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips
     )
 
+    user_form_data["CPU"] = bot.int_ask("Please add the how much cpu is needed", default=1)
+    user_form_data["Memory"] = bot.int_ask("Please add the size you need for the memory", default=1024)
+
     user_form_data["Solution expiration"] = bot.time_delta_ask("Please enter solution expiration time.", default="1d")
 
     expiration = j.data.time.epoch + int(user_form_data["Solution expiration"])
@@ -73,6 +76,8 @@ def chat(bot):
         storage_url=storage_url,
         env=var_dict,
         interactive=True,
+        cpu=user_form_data["CPU"],
+        memory=user_form_data["Memory"],
     )
 
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
