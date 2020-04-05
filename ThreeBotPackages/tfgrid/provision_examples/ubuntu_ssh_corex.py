@@ -30,7 +30,7 @@ def find_free_wg_port(node):
 def deploy_ubuntu_container_corex():
     j.clients.threebot.explorer_addr_set("explorer.testnet.grid.tf")
     explorer = j.clients.threebot.explorer
-    me = j.me_identities.me.default
+    me = j.myidentities.me.default
 
     nodes = explorer.actors_all.nodes.list().nodes
     selected_node = find_node_public(nodes)

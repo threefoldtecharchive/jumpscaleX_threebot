@@ -61,9 +61,9 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         tid_2 = j.data.idgenerator.generateRandomInt(201, 300)
         tid_3 = j.data.idgenerator.generateRandomInt(301, 400)
 
-        first_author = j.me_identities.me.get("first_id", tid=tid_1, email="test@test.com", tname="first")
-        authorized_reader = j.me_identities.me.get("second_id", tid=tid_2, email="test@test.com", tname="second")
-        unauthorized_reader = j.me_identities.me.get("third_id", tid=tid_3, email="test@test.com", tname="third")
+        first_author = j.myidentities.me.get("first_id", tid=tid_1, email="test@test.com", tname="first")
+        authorized_reader = j.myidentities.me.get("second_id", tid=tid_2, email="test@test.com", tname="second")
+        unauthorized_reader = j.myidentities.me.get("third_id", tid=tid_3, email="test@test.com", tname="third")
 
         # we should create 2 examples, one where we encrypt for multiple threebot identities (j.tools.threebot...)
         # non-encrypted example
