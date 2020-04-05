@@ -6,9 +6,7 @@ import time
 
 from Jumpscale import j
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
 
-driver = webdriver.Chrome(ChromeDriverManager().install())
 
 wikis_url = "http://172.17.0.2/wiki/"
 card = ""
@@ -144,7 +142,7 @@ def test002_test_reload_button():
     wiki_example_card.find_element_by_link_text("View").click()
 
     info("Check that sidebar is changed")
-    wiki_reload_page = requests.get("https://172.17.0.2/wiki/zerobot.wiki_examples#/test_wiki_reload")
+    wiki_reload_page = requests.get("http://172.17.0.2/wiki/zerobot.wiki_examples#/test_wiki_reload")
     assert wiki_reload_page.status_code == 200
 
 
@@ -162,7 +160,7 @@ def test003_test_pull_button():
     info("Change the current commit id to an older one")
     GIT_REPO = "/sandbox/code/github/threefoldtech/jumpscaleX_threebot"
     older_commit_id = os_command("cd {} && git log -4 | grep commit | tail -1 | cut -d " " -f 2".format(GIT_REPO))
-    os_command("cd {} && git reset {}".format(GIT_REPO, older_commit_id))
+    os_command("cd {} && git reset --soft {}".format(GIT_REPO, older_commit_id))
 
     info("Click pull button")
     wiki_example_card = find_wiki_example_card()
@@ -172,4 +170,30 @@ def test003_test_pull_button():
     current_commit_id = os_command("cd {} && git rev-parse HEAD".format(GIT_REPO))
     assert current_commit_id != older_commit_id
 
+
+def test004_test_wiki_example():
+    """
+    Test case for github icon in wiki_examples.
+
+    **Test scenario**
+    #. Get wiki page.
+    #. Click view button on web_examples wiki.
+    #. Click github icon in the top right.
+    #. Check that github icon forwards to jumpscaleX_threebot repo.
+    #. Test wiki_example readme.
+    """
+    info("Click view button on web_examples wiki")
+    wiki_example_card = find_wiki_example_card()
+    wiki_example_card.find_element_by_link_text("View").click()
+
+    info("Click github icon in the top right")
+    wiki_example_card.find_element_by_class_name("github-corner").click()
+
+    info("Check that github icon forwarded to jumpscaleX_threebot repo")
+    assert driver.current_url == "https://github.com/threefoldtech/jumpscaleX_threebot"
+
+    info("Test wiki_example readme")
+    url = 'http://172.17.0.2/wiki/zerobot.wiki_examples#/'
+    driver.get(url)
+    assert driver.find_element_by_class_name("markdown-section").text == "test wikis file"
 
