@@ -347,6 +347,18 @@ class gateway(j.baseclasses.threebot_actor):
 
     @j.baseclasses.actor_method
     def subdomain_register(self, threebot_name, subdomain, ip_address, port, signature, schema_out=None, user_session=None):
+        """
+        Registers a subdomain ex: {subdomain}.{threebot_name}.{THREEBOT_DOMAIN}
+
+        ```in
+        threebot_name = (S) # 3bot threebot_name
+        subdomain = (S) subdomain
+        ip_address = (S) #ip address
+        port = (I) port
+        signature = (S) #the signature of the payload "{threebot_name}"
+        ```
+        """
+
         if not self._is_valid_signature(threebot_name, signature):
             raise j.exceptions.Value("Invalid signature")
 
