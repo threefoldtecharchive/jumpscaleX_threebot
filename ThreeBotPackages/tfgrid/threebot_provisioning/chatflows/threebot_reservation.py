@@ -27,21 +27,23 @@ def chat(bot):
     env = dict()
     secret_env = dict()
 
-    if not name or not email:
-        bot.md_show("Username or email not found in session. Please log in properly")
+    identity = j.sal.reservation_chatflow.validate_user(user_info)
 
     user_choice = bot.single_choice("This wizard will help you deploy or restore your 3bot.", choose)
-    identity = explorer.users.get(name=name, email=email)
     identity_pubkey = identity.pubkey
     if user_choice == "Restore my 3bot":
         password = bot.secret_ask("Please enter the password you configured to backup your 3bot")
         hash_restore = nacl.hash.blake2b(password.encode(), key=identity_pubkey.encode()).decode()
 
+    network = j.sal.reservation_chatflow.network_select(bot, identity.id)
+    if not network:
+        return
+
     # ask user about corex user:password and ssh-key to give him full access to his container
     pub_key = None
     while not pub_key:
         pub_key = bot.string_ask(
-            """Please add your public ssh key, this will allow you to access the deployed container using ssh. 
+            """Please add your public ssh key, this will allow you to access the deployed container using ssh.
             Just copy your key from `~/.ssh/id_rsa.pub`"""
         )
 
@@ -54,19 +56,19 @@ def chat(bot):
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
+    node_selected = j.sal.reservation_chatflow.nodes_get(1, cru=4, sru=8)[0]
+    if not node_selected:
+        res = "# We are sorry we don't have empty Node to deploy your 3bot"
+        res = j.tools.jinja2.template_render(text=res, **locals())
+        bot.md_show(res)
+        return
 
-    ip_version = bot.single_choice("Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips)
-    node_selected = j.sal.reservation_chatflow.nodes_get(1, cru=4, sru=8, ip_version=ip_version)
-    if len(node_selected) != 0:
-        node_selected = node_selected[0]
-    else:
-        node_selected = j.sal.reservation_chatflow.nodes_get(1, cru=4, hru=8, ip_version=ip_version)
-        if len(node_selected) != 0:
-            res = "# We are sorry we don't have empty Node to deploy your 3bot"
-            res = j.tools.jinja2.template_render(text=res, **locals())
-            bot.md_show(res)
-            return
-        node_selected = node_selected[0]
+    network_reservation, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node_selected, network)
+    if network_reservation:
+        j.sal.reservation_chatflow.reservation_register(network_reservation, network.expiration, identity.id)
+    ip_address = bot.drop_down_choice(
+        f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)
+    )
 
     # Encrypt AWS ID and AWS Secret to send it in secret env
     aws_id_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, AWS_ID)
@@ -80,17 +82,11 @@ def chat(bot):
         env.update({"restore": "True"})
         secret_env.update({"HASH": hash_encrypt})
 
-    reservation, config = j.sal.reservation_chatflow.network_configure(
-        bot, reservation, [node_selected], customer_tid=identity.id, ip_version=ip_version
-    )
-
-    ip_address = config["ip_addresses"][0]
-
     backup = bot.single_choice("Do you want your 3bot to be automatically backed up?", ["Yes", "No"])
     if backup == "Yes":
         password = bot.secret_ask(
             """The password you add here will be used to encrypt your backup to keep your 3bot safe.
-            please make sure to keep this password safe so you can later restore your 3bot. 
+            please make sure to keep this password safe so you can later restore your 3bot.
             Remember, this password will not be saved anywhere, so there cannot be recovery for it"""
         )
         hash_backup = nacl.hash.blake2b(password.encode(), key=identity_pubkey.encode()).decode()
@@ -119,7 +115,7 @@ def chat(bot):
     cont = j.sal.zosv2.container.create(
         reservation=reservation,
         node_id=node_selected.node_id,
-        network_name=config["name"],
+        network_name=network.name,
         ip_address=ip_address,
         flist=container_flist,
         storage_url=storage_url,
@@ -138,36 +134,9 @@ def chat(bot):
     if j.sal.reservation_chatflow.reservation_failed(bot=bot, category="CONTAINER", resv_id=resv_id):
         return
     else:
-        res = """# reservation sent. ID: {}
-            """.format(
-            resv_id
-        )
-        bot.md_show(res)
-
-        filename = "{}_{}.conf".format(backup_directory, resv_id)
-
-        res = """
-                # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
-                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed
-                Click next
-                to download your configuration
-                """
+        res = f"""
+            # reservation sent. ID: {resv_id}
+            # your 3bot container is ready. please continue initialization on ```{ip_address}:8000``` It may take a few minutes.
+            """
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-        bot.md_show(res)
-
-        res = j.tools.jinja2.template_render(text=config["wg"], **locals())
-        bot.download_file(res, filename)
-        res = """
-                # In order to have the network active and accessible from your local machine. To do this, execute this command: 
-                ## ```wg-quick up /etc/wireguard/{}```
-                Click next
-                """.format(
-            filename
-        )
-
-        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-        bot.md_show(res)
-
-        res = "# your 3bot container is ready. please continue initialization on ```{}:8000``` It may take a few minutes.".format(ip_address)
-        res = j.tools.jinja2.template_render(text=res, **locals())
         bot.md_show(res)

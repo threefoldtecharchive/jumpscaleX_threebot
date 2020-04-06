@@ -1,6 +1,6 @@
 [source]
-name = "minio"
-description = "TBD"
+name = "network"
+description = "network create"
 threebot = "tfgrid_solutions"
 version = "1.0.0"
 

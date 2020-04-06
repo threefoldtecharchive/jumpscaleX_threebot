@@ -12,32 +12,33 @@ def chat(bot):
     HUB_URL = "https://hub.grid.tf/tf-bootable"
     IMAGES = ["ubuntu:16.04", "ubuntu:18.04"]
     explorer = j.clients.explorer.default
+    model = j.threebot.packages.tfgrid_solutions.ubuntu.bcdb_model_get("tfgrid.solutions.ubuntu.instance.1")
 
-    if not j.tools.threebot.with_threebotconnect:
-        error_msg = """
-        This chatflow is not supported when Threebot is in dev mode.
-        To enable Threebot connect : `j.tools.threebot.threebotconnect_disable()`
-        """
-        raise j.exceptions.Runtime(error_msg)
-    if not email:
-        raise j.exceptions.Value("Email shouldn't be empty")
-    if not name:
-        raise j.exceptions.Value("Name of logged in user shouldn't be empty")
+    identity = j.sal.reservation_chatflow.validate_user(user_info)
+    bot.md_show("This wizard wil help you deploy an ubuntu container")
+    network = j.sal.reservation_chatflow.network_select(bot, identity.id)
+    if not network:
+        return
+    user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
+    user_form_data["Version"] = bot.single_choice("Please choose ubuntu version", IMAGES)
 
-    user_form_data["Version"] = bot.single_choice(
-        "This wizard will help you deploy an ubuntu container, please choose ubuntu version", IMAGES
-    )
+    form = bot.new_form()
+    cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
+    memory = form.int_ask("Please add the amount of memory in MB", default=1024)
+    form.ask()
+    user_form_data["CPU"] = cpu.value
+    user_form_data["Memory"] = memory.value
+
+    while not user_form_data.get("Public key"):
+        user_form_data["Public key"] = bot.string_ask(
+            "Please add your public ssh key, this will allow you to access the deployed container using ssh.\nJust copy your key from ~/.ssh/id_rsa.pub"
+        )
+
     user_form_data["Env variables"] = bot.string_ask(
         """To set environment variables on your deployed container, enter comma-separated variable=value
         For example: var1=value1, var2=value2.
         Leave empty if not needed"""
     )
-    user_form_data["IP version"] = bot.single_choice(
-        "Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips
-    )
-
-    user_form_data["CPU"] = bot.int_ask("Please add the how much cpu is needed", default=1)
-    user_form_data["Memory"] = bot.int_ask("Please add the size you need for the memory in MB", default=1024)
 
     expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
     user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
@@ -50,32 +51,37 @@ def chat(bot):
         if len(splitted_item) == 2:
             var_dict[splitted_item[0]] = splitted_item[1]
 
+    var_dict.update({"pub_key": user_form_data["Public key"]})
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
-    identity = explorer.users.get(name=name, email=email)
 
-    node_selected = j.sal.reservation_chatflow.nodes_get(1, ip_version=user_form_data["IP version"])[0]
-
-    reservation, config = j.sal.reservation_chatflow.network_configure(
-        bot, reservation, [node_selected], customer_tid=identity.id, ip_version=user_form_data["IP version"]
+    node_selected = j.sal.reservation_chatflow.nodes_get(1)[0]
+    network_reservation, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node_selected, network)
+    if network_reservation:
+        j.sal.reservation_chatflow.reservation_register(network_reservation, network.expiration, identity.id)
+    ip_address = bot.drop_down_choice(
+        f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)
     )
-    ip_address = config["ip_addresses"][0]
+    user_form_data["IP Address"] = ip_address
     bot.md_show_confirm(user_form_data)
 
-    container_flist = f"{HUB_URL}/{user_form_data['Version']}.flist"
+    container_flist = f"{HUB_URL}/{user_form_data['Version']}-r1.flist"
     storage_url = "zdb://hub.grid.tf:9900"
+    entry_point = "/bin/bash /start.sh"
 
     # create container
     cont = j.sal.zosv2.container.create(
         reservation=reservation,
         node_id=node_selected.node_id,
-        network_name=config["name"],
+        network_name=network.name,
         ip_address=ip_address,
         flist=container_flist,
         storage_url=storage_url,
         env=var_dict,
-        interactive=True,
+        interactive=False,
+        entrypoint=entry_point,
         cpu=user_form_data["CPU"],
+        public_ipv6=True,
         memory=user_form_data["Memory"],
     )
 
@@ -85,36 +91,13 @@ def chat(bot):
         return
 
     else:
-
-        res = f"# Ubuntu has been deployed successfully: your reservation id is: {resv_id} "
-
-        bot.md_show(res)
-
-        filename = "{}_{}.conf".format(name.split(".3bot")[0], resv_id)
-
-        res = """
-                # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
-                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed
-                Click next
-                to download your configuration
-                """
-        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-        bot.md_show(res)
-
-        res = j.tools.jinja2.template_render(text=config["wg"], **locals())
-        bot.download_file(res, filename)
-
-        res = """
-                # In order to have the network active and accessible from your local machine. To do this, execute this command:
-                ## ```wg-quick up /etc/wireguard/{}```
-                Click next
-                """.format(
-            filename
+        j.sal.reservation_chatflow.reservation_save(
+            resv_id, user_form_data["Solution name"], "tfgrid.solutions.ubuntu.instance.1"
         )
 
+        res = f"""
+            # Ubuntu has been deployed successfully: your reservation id is: {resv_id}
+            To connect ```ssh {ip_address}``` .It may take a few minutes.
+            """
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-        bot.md_show(res)
-
-        res = "# Open your browser at ```{}:7681``` It may take a few minutes.".format(ip_address)
-        res = j.tools.jinja2.template_render(text=res, **locals())
         bot.md_show(res)

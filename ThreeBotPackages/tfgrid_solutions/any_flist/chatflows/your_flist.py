@@ -1,5 +1,4 @@
 from Jumpscale import j
-import netaddr
 import requests
 
 
@@ -8,26 +7,21 @@ def chat(bot):
     """
     user_form_data = {}
     user_info = bot.user_info()
-    name = user_info["username"]
-    email = user_info["email"]
-    ips = ["IPv6", "IPv4"]
     env = dict()
+    model = j.threebot.packages.tfgrid_solutions.any_flist.bcdb_model_get("tfgrid.solutions.flist.instance.1")
     explorer = j.clients.explorer.default
 
-    if not j.tools.threebot.with_threebotconnect:
-        error_msg = """
-        This chatflow is not supported when Threebot is in dev mode.
-        To enable Threebot connect : `j.tools.threebot.threebotconnect_disable()`
-        """
-        raise j.exceptions.Runtime(error_msg)
-    if not email:
-        raise j.exceptions.Value("Email shouldn't be empty")
-    if not name:
-        raise j.exceptions.Value("Name of logged in user shouldn't be empty")
+    identity = j.sal.reservation_chatflow.validate_user(user_info)
+    bot.md_show("This wizard will help you deploy a container using any flist provided")
+    network = j.sal.reservation_chatflow.network_select(bot, identity.id)
+    if not network:
+        return
+
+    user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
     found = False
     while not found:
         user_form_data["Flist link"] = bot.string_ask(
-            "This wizard will help you deploy a container using any flist provided\n Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
+            "Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
         )
 
         if "hub.grid.tf" not in user_form_data["Flist link"]:
@@ -44,9 +38,16 @@ def chat(bot):
             res = j.tools.jinja2.template_render(text=res, **locals())
             bot.md_show(res)
 
+    form = bot.new_form()
+    cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
+    memory = form.int_ask("Please add the amount of memory in MB", default=1024)
+    form.ask()
+    user_form_data["CPU"] = cpu.value
+    user_form_data["Memory"] = memory.value
+
     while not user_form_data.get("Public key"):
         user_form_data["Public key"] = bot.string_ask(
-            "Please add your public ssh key, this will allow you to access the deployed container using ssh. Just copy your key from ~/.ssh/id_rsa.pub"
+            "Please add your public ssh key, this will allow you to access the deployed container using ssh.\nJust copy your key from ~/.ssh/id_rsa.pub"
         )
     user_form_data["Env variables"] = bot.string_ask(
         """To set environment variables on your deployed container, enter comma-separated variable=value
@@ -73,20 +74,18 @@ def chat(bot):
 
         env.update(var_dict)
 
-    user_form_data["IP version"] = bot.single_choice(
-        "Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips
-    )
-
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
-    identity = explorer.users.get(name=name, email=email)
 
-    node_selected = j.sal.reservation_chatflow.nodes_get(1, ip_version=user_form_data["IP version"])[0]
+    node = j.sal.reservation_chatflow.nodes_get(1)[0]
+    network_reservation, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node, network)
+    if network_reservation:
+        j.sal.reservation_chatflow.reservation_register(network_reservation, network.expiration, identity.id)
 
-    reservation, config = j.sal.reservation_chatflow.network_configure(
-        bot, reservation, [node_selected], customer_tid=identity.id, ip_version=user_form_data["IP version"]
+    ip_address = bot.drop_down_choice(
+        f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)
     )
-    ip_address = config["ip_addresses"][0]
+    user_form_data["IP Address"] = ip_address
 
     conatiner_flist = user_form_data["Flist link"]
     storage_url = "zdb://hub.grid.tf:9900"
@@ -94,17 +93,21 @@ def chat(bot):
         interactive = True
     else:
         interactive = False
+
     bot.md_show_confirm(user_form_data)
     # create container
     cont = j.sal.zosv2.container.create(
         reservation=reservation,
-        node_id=node_selected.node_id,
-        network_name=config["name"],
+        node_id=node.node_id,
+        network_name=network.name,
         ip_address=ip_address,
         flist=conatiner_flist,
         storage_url=storage_url,
         env=env,
         interactive=interactive,
+        public_ipv6=True,
+        cpu=user_form_data["CPU"],
+        memory=user_form_data["Memory"],
     )
 
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
@@ -112,39 +115,21 @@ def chat(bot):
     if j.sal.reservation_chatflow.reservation_failed(bot=bot, category="CONTAINER", resv_id=resv_id):
         return
     else:
-        res = f"# Container has been deployed successfully: your reservation id is: {resv_id} "
-
-        bot.md_show(res)
-
-        filename = "{}_{}.conf".format(name.split(".3bot")[0], resv_id)
-
-        res = """
-                # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
-                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed
-                Click next
-                to download your configuration
-                """
-        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-        bot.md_show(res)
-
-        res = j.tools.jinja2.template_render(text=config["wg"], **locals())
-        bot.download_file(res, filename)
-        res = """
-                # In order to have the network active and accessible from your local machine. To do this, execute this command:
-                ## ```wg-quick up /etc/wireguard/{}```
-                Click next
-                """.format(
-            filename
+        j.sal.reservation_chatflow.reservation_save(
+            resv_id, user_form_data["Solution name"], "tfgrid.solutions.flist.instance.1"
         )
 
-        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-        bot.md_show(res)
-
         if interactive:
-            res = "# Open your browser at ```{}:7681```".format(ip_address)
-            res = j.tools.jinja2.template_render(text=res, **locals())
+            res = f"""
+                # Container has been deployed successfully: your reservation id is: {resv_id}
+                Open your browser at ```{ip_address}:7681```
+                """
+            res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
             bot.md_show(res)
         else:
-            res = "# Your IP is  ```{}```".format(ip_address)
-            res = j.tools.jinja2.template_render(text=res, **locals())
+            res = f"""
+                # Container has been deployed successfully: your reservation id is: {resv_id}
+                Your IP is  ```{ip_address}```
+                """
+            res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
             bot.md_show(res)
