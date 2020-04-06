@@ -83,6 +83,7 @@ def chat(bot):
         interactive=False,
         entrypoint=entry_point,
         cpu=user_form_data["CPU"],
+        public_ipv6=True,
         memory=user_form_data["Memory"],
     )
 
