@@ -83,9 +83,10 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
 
     node = j.sal.reservation_chatflow.nodes_get(1)[0]
-    network_reservation, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node, network)
-    if network_reservation:
-        j.sal.reservation_chatflow.reservation_register(network_reservation, network.expiration, identity.id)
+    changed, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node, network)
+    if changed:
+        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
+            return
 
     ip_address = bot.drop_down_choice(
         f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)

@@ -26,13 +26,17 @@ def chat(bot):
         "Please add a password to be used for all zdb storage", default="password"
     )
     user_form_data["Disk type"] = bot.drop_down_choice("Please choose a disk type to be for zdb", ["SSD", "HDD"])
-    user_form_data["Access key"] = bot.string_ask(
+    form = bot.new_form()
+    accesskey = form.string_ask(
         "Please add the key to be used for minio when logging in. Make sure not to loose it", default=name.split(".")[0]
     )
-    user_form_data["Secret"] = bot.string_ask(
+    secret = form.string_ask(
         "Please add the secret to be used for minio when logging in to match the previous key. Make sure not to loose it",
         default="secret12345",
     )
+    form.ask()
+    user_form_data["Access key"] = accesskey.value
+    user_form_data["Secret"] = secret.value
 
     form = bot.new_form()
     cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
@@ -64,16 +68,18 @@ def chat(bot):
     nodes_selected = j.sal.reservation_chatflow.nodes_get(user_form_data["ZDB number"] + 1, farm_name="freefarm")
     selected_node = nodes_selected[0]
 
-    network_reservation = None
     node_ip_ranges = []
+    network_needs_changes = False
     for node_selected in nodes_selected:
-        network_reservation, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(
-            node_selected, network, network_reservation
+        changes, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(
+            node_selected, network
         )
+        network_needs_changes |= changes
         node_ip_ranges.append(node_ip_range)
 
-    if network_reservation:
-        rid = j.sal.reservation_chatflow.reservation_register(network_reservation, network.expiration, identity.id)
+    if changes:
+        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
+            return
     ip_address = bot.drop_down_choice(
         f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_ranges[0])
     )
