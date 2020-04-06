@@ -10,11 +10,10 @@ def chat(bot):
 
     containers_data = {}
     explorer = j.clients.explorer.default
-    reservations = explorer.reservations.list(customer_tid=j.tools.threebot.me.default.tid, next_action=3)
+    reservations = explorer.reservations.list(customer_tid=j.tools.threebot.me.default.tid, next_action="DEPLOY")
 
     for reservation in reservations:
         containers = reservation.data_reservation.containers
-        expiration = reservation.data_reservation.expiration_provisioning
         for container in containers:
             container_id = f"{reservation.id}-{container.workload_id}"
             network = container.network_connection[0]
