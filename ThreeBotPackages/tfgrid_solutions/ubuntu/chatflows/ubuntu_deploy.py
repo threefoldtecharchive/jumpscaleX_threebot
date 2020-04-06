@@ -29,6 +29,10 @@ def chat(bot):
         "This wizard will help you deploy an ubuntu container, please choose ubuntu version", IMAGES
     )
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
+    while not user_form_data.get("Public key"):
+        user_form_data["Public key"] = bot.string_ask(
+            "Please add your public ssh key, this will allow you to access the deployed container using ssh. Just copy your key from ~/.ssh/id_rsa.pub"
+        )
 
     user_form_data["Env variables"] = bot.string_ask(
         """To set environment variables on your deployed container, enter comma-separated variable=value
@@ -53,6 +57,7 @@ def chat(bot):
         if len(splitted_item) == 2:
             var_dict[splitted_item[0]] = splitted_item[1]
 
+    var_dict.update({"pub_key": user_form_data["Public key"]})
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
     identity = explorer.users.get(name=name, email=email)
@@ -63,10 +68,12 @@ def chat(bot):
         bot, reservation, [node_selected], customer_tid=identity.id, ip_version=user_form_data["IP version"]
     )
     ip_address = config["ip_addresses"][0]
+    user_form_data["Solution name"] = j.sal.reservation_chatflow.add_solution_name(bot, model)
     bot.md_show_confirm(user_form_data)
 
-    container_flist = f"{HUB_URL}/{user_form_data['Version']}.flist"
+    container_flist = f"{HUB_URL}/{user_form_data['Version']}-r1.flist"
     storage_url = "zdb://hub.grid.tf:9900"
+    entry_point = "/bin/bash /start.sh"
 
     # create container
     cont = j.sal.zosv2.container.create(
@@ -77,7 +84,8 @@ def chat(bot):
         flist=container_flist,
         storage_url=storage_url,
         env=var_dict,
-        interactive=True,
+        interactive=False,
+        entrypoint=entry_point,
         cpu=user_form_data["CPU"],
         memory=user_form_data["Memory"],
     )
@@ -120,6 +128,6 @@ def chat(bot):
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)
 
-        res = "# Open your browser at ```{}:7681``` It may take a few minutes.".format(ip_address)
+        res = "# To connect ```ssh {}``` It may take a few minutes.".format(ip_address)
         res = j.tools.jinja2.template_render(text=res, **locals())
         bot.md_show(res)
