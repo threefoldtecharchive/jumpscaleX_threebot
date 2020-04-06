@@ -33,10 +33,14 @@ def chat(bot):
         "Please add the secret to be used for minio when logging in to match the previous key. Make sure not to loose it",
         default="secret12345",
     )
-    user_form_data["CPU"] = bot.int_ask("Resources for minio: Please add the how much cpu is needed", default=2)
-    user_form_data["Memory"] = bot.int_ask(
-        "Resources for minio: Please add the size you need for the memory in MB", default=2048
-    )
+
+    form = bot.new_form()
+    cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
+    memory = form.int_ask("Please add the amount of memory in MB", default=1024)
+    form.ask()
+    user_form_data["CPU"] = cpu.value
+    user_form_data["Memory"] = memory.value
+
     user_form_data["Locations"] = str(
         bot.string_ask(
             "Resources for minio: Please add the number of locations you need. Take care of the ratio between the locations and locations allowed to fail that you will specify next",
@@ -57,7 +61,7 @@ def chat(bot):
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
-    nodes_selected = j.sal.reservation_chatflow.nodes_get(user_form_data["ZDB number"] + 1, farm_id=71)
+    nodes_selected = j.sal.reservation_chatflow.nodes_get(user_form_data["ZDB number"] + 1, farm_name="freefarm")
     selected_node = nodes_selected[0]
 
     network_reservation = None
@@ -145,8 +149,8 @@ def chat(bot):
             resv_id, user_form_data["Solution name"], "tfgrid.solutions.minio.instance.1"
         )
         res = f"""
-            # Minio cluster has been deployed successfully: your reservation id is: {resv_id}
-            # Open your browser at ```{ip_address}:9000```. It may take a few minutes.
+            # Minio cluster has been deployed successfully. Your reservation id is: {resv_id}
+            Open your browser at [http://{ip_address}:9000](http://{ip_address}:9000). It may take a few minutes.
             """
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)
