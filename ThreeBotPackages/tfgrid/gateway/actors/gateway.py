@@ -372,4 +372,4 @@ class gateway(j.baseclasses.threebot_actor):
         for record in records:
             ips.append(record["ip"])
 
-        self._gateway.domain_register_aaaa(subdomain, f"{threebot_name}.{THREEBOT_DOMAIN}", ips)
+        self._gateway.domain_register_a(subdomain, f"{threebot_name}.{THREEBOT_DOMAIN}", ips)
