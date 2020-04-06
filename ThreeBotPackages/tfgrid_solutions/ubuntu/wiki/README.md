@@ -23,5 +23,20 @@ Your deployed a ubuntu container will have started from container flist.
 After the deployment of the ubuntu is complete, a url will be returned that can be used to access the container through web browser (corex) after up your wireguard configuration.
 
 ## Screenshots:
+
+  * chatflow steps:
+    ![step1](ubuntu1.png)
+    ![step2](ubuntu2.png)
+    ![step3](ubuntu3.png)
+    ![step4](ubuntu4.png)
+    ![step5](ubuntu5.png)
+    ![step6](ubuntu6.png)
+    ![step7](ubuntu7.png)
+    ![step8](ubuntu8.png)
+    ![step9](ubuntu9.png)
+    ![step10](ubuntu10.png)
+    ![step11](ubuntu11.png)
+    
+    
   * When accessing the link provided and directed to the ubuntu deployed, you will be directed to corex of the machine shown in the following:
 ![ubuntu deploy](1.png)
