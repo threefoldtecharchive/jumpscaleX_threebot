@@ -149,8 +149,8 @@ def chat(bot):
             resv_id, user_form_data["Solution name"], "tfgrid.solutions.minio.instance.1"
         )
         res = f"""
-            # Minio cluster has been deployed successfully: your reservation id is: {resv_id}
-            # Open your browser at [http://{ip_address}:9000](http://{ip_address}:9000). It may take a few minutes.
+            # Minio cluster has been deployed successfully. Your reservation id is: {resv_id}
+            Open your browser at [http://{ip_address}:9000](http://{ip_address}:9000). It may take a few minutes.
             """
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)
