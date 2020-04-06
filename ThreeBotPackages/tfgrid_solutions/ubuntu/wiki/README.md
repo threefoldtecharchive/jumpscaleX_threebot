@@ -9,11 +9,13 @@ Your deployed a ubuntu container will have started from container flist.
 
 * **URL**: {host}/tfgrid_solutions/ubuntu/chat/ubuntu_deploy
 * **Inputs**:
+   - **container name** a name of your conatiner to help you to get it again with reservation id.
    - **Ubuntu version**: choose ubuntu version flist for your container
+   - **cpu needed** : Number of cpu needed
+   - **memory size** : Memory size needed example 2048
+   - **ssh key** : add your public ssh key `~/.ssh/id_rsa.pub`, if your flist supports using the ssh key from the env variables provided to allow future ssh access
    - **environment variables**: set environment variables on your deployed container, enter comma-separated variable=value For example: var1=value1, var2=value2. Leave empty if not needed
-   - **IP version**: choose whether you prefer to access your ubuntu container using IPv4 or IPv6. If unsure, choose IPv4
-   - **IP range**: Configure network to manually by choosing an IP range to use or the deployer can choose for you and generate an IP range automatically
-   - **Network name**: a name for the network to deploy on,  if left empty it will be a generated name
+   - **Expiration time**: a network expiration time (minutes=m ,hour=h, day=d, week=w, month=M)
    - **IP Address**: choose the ip address for your ubuntu machine.
 * **User setup** 
     - register user threebot on explorer ```kosmos "j.tools.threebot.init_my_threebot(name=3bot_NAME,email=EMAIL)"``` Note: name of 3bot is (your 3bot name).3bot , email is your 3bot email

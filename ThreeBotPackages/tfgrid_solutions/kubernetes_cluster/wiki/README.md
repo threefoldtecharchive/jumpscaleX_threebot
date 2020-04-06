@@ -5,9 +5,10 @@ A Kubernetes cluster is a set of node machines for running containerized applica
 
 * **URL**: *{host}/tfgrid_solutions/kubernetes_cluster/chat/kubernetes_cluster_deploy*
 * **Inputs**
-   - **Ip version** : (IPv4 or IPv6) Version of the machine that will be used to access the cluster. If unsure, choose IPv4.
+   - **container name** a name of your conatiner to help you to get it again with reservation id.
    - **number of workers** : number of worker nodes to be deployed, the cluster size will then be the number of workers + 1(master node)
    - **ssh keys** : ssh keys which will be used to allow access for the ssh key holders to the deployed cluster. They should be in a file where each ssh key is on a seperate line
+   - **Expiration time**: a network expiration time (minutes=m ,hour=h, day=d, week=w, month=M)
    - **cluster secret** : the secret that will be used to access the cluster deployed. Please keep it safe.
    - **IP range** : Configure network manually by choosing an IP range to use or the deployer can choose for you and generate an IP range automatically
     - **Network name** : a name for the network to deploy on,  if left empty it will be a generated name
@@ -17,7 +18,17 @@ A Kubernetes cluster is a set of node machines for running containerized applica
     - Install [wireguard](https://www.wireguard.com/install/)
 
 
-
+### Screenshots:
+  * chatflow steps:
+  ![Step1](k8s1.png)
+  ![Step2](k8s2.png)
+  ![Step3](k8s3.png)
+  ![Step4](k8s4.png)
+  ![Step5](k8s5.png)
+  ![Step6](k8s6.png)
+  ![Step7](k8s7.png)
+  ![Step8](k8s8.png)
+  
 After the deployment of the Kubernetes cluster is complete, the user with the ssh keys will have access to the deployed cluster.
 
 Once the user added the wireguard configuration and made sure it is up and running on their machine, they can ssh to the machine using

@@ -5,13 +5,12 @@ Your deployed a container will have started from container flist.
 
 * **URL**: {host}/tfgrid_solutions/any_flist/chat/your_flist
 * **Inputs**:
+   - **container name** a name of your conatiner to help you to get it again with reservation id.
    - **Flist link** : the link of your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist
-   - **ssh key** : add your public ssh key `~/.ssh/id_rsa.pub`, if your flist supports using the ssh key from the env variables provided to allow future ssh access
    - **environment variables**: set environment variables on your deployed container, enter comma-separated variable=value For example: var1=value1, var2=value2. Leave empty if not needed
+   - **Expiration time**: a network expiration time (minutes=m ,hour=h, day=d, week=w, month=M)
    - **Inetractive**:  choose whether you prefer to access to your container through the web browser (coreX) or not.
-   - **IP version**: choose whether you prefer to access your ubuntu container using IPv4 or IPv6. If unsure, choose IPv4
-   - **IP range**: Configure network to manually by choosing an IP range to use or the deployer can choose for you and generate an IP range automatically
-   - **Network name**: a name for the network to deploy on,  if left empty it will be a generated name
+   - **ssh key** : add your public ssh key `~/.ssh/id_rsa.pub`, if your flist supports using the ssh key from the env variables provided to allow future ssh access
    - **IP Address**: choose the ip address for your ubuntu machine.
 * **User setup** 
     - register user threebot on explorer ```kosmos "j.tools.threebot.init_my_threebot(name=3bot_NAME,email=EMAIL)"``` Note: name of 3bot is (your 3bot name).3bot , email is your 3bot email
@@ -21,5 +20,16 @@ Your deployed a container will have started from container flist.
 After the deployment of the flist is complete, a url will be returned that can be used to access the container through web browser (corex) or by ssh if your flist support this after up your wireguard configuration.
 
 ## Screenshots:
+ * chatflow steps:
+ ![Step1](flist1.png)
+ ![Step2](flist2.png)
+ ![Step3](flist3.png)
+ ![Step4](flist4.png)
+ ![Step5](flist5.png)
+ ![Step6](flist6.png)
+ ![Step7](flist7.png)
+ ![Step8](flist8.png)
+ ![Step9](flist9.png)
+ ![Step10](flist10.png)
 - creating flist with https://hub.grid.tf/tf-bootable/ubuntu:18.04
 ![](2.png)

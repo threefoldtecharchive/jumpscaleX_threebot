@@ -45,19 +45,23 @@ def chat(bot):
     user_form_data["CPU"] = cpu.value
     user_form_data["Memory"] = memory.value
 
-    while not user_form_data.get("Public key"):
-        user_form_data["Public key"] = bot.upload_file(
-            """"Please add your public ssh key, this will allow you to access the deployed container using ssh.
-                Just upload the file with the key"""
-        ).split("\n")[0]
+    user_form_data["Interactive"] = bot.single_choice(
+        "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"]
+    )
+    if user_form_data["Interactive"] == "NO":
+        while not user_form_data.get("Public key"):
+            user_form_data["Public key"] = bot.upload_file(
+                """"Please add your public ssh key, this will allow you to access the deployed container using ssh.
+                    Just upload the file with the key"""
+            ).split("\n")[0]
+        user_form_data["Entry point"] = bot.string_ask("Please add your entrypoint for your flist")
+    else:
+        user_form_data["Public key"]=""
+        user_form_data["Entry point"] = ""
     user_form_data["Env variables"] = bot.string_ask(
         """To set environment variables on your deployed container, enter comma-separated variable=value
         For example: var1=value1, var2=value2.
         Leave empty if not needed"""
-    )
-
-    user_form_data["Interactive"] = bot.single_choice(
-        "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"]
     )
 
     expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
@@ -107,6 +111,7 @@ def chat(bot):
         env=env,
         interactive=interactive,
         public_ipv6=True,
+        entrypoint=user_form_data["Entry point"],
         cpu=user_form_data["CPU"],
         memory=user_form_data["Memory"],
     )

@@ -5,7 +5,7 @@ MinIO is a high performance object storage. With the assist of the chatflow the 
 
 * **URL**: *{host}/tfgrid_solutions/minio/chat/minio_deploy*
 * **Inputs**
-   - **Ip version** : (IPv4 or IPv6) Version of the machine that will be used to access MinIO. If unsure, choose IPv4.
+    **container name** a name of your conatiner to help you to get it again with reservation id.
    - **db password** : password used for all zdb storage
    - **disk type for storage** : (SSD or HDD) disk type to be used by zdb databases where storage will take place
    - **database mode** : (seq or user) mode in which all zdb databases will run with
@@ -13,8 +13,7 @@ MinIO is a high performance object storage. With the assist of the chatflow the 
    - **cpu needed** : Number of cpu needed
    - **memory size** : Memory size needed example 2048
    - **number of data drives and parity drives** : number of drives needed and hence the number of zdbs to be created. Take care of the ratio between the number of data drives and the number of parity drives ([more info about drives](https://docs.min.io/docs/minio-erasure-code-quickstart-guide.html))
-   - **IP range** : Configure network manually by choosing an IP range to use or the deployer can choose for you and generate an IP range automatically
-    - **Network name** : a name for the network to deploy on,  if left empty it will be a generated name
+    - **Expiration time**: a network expiration time (minutes=m ,hour=h, day=d, week=w, month=M)
     - **IP Address** : choose the ip address for your MinIO machine.
 
 * **User setup:**
@@ -23,8 +22,25 @@ MinIO is a high performance object storage. With the assist of the chatflow the 
 
 
 
+
 After the deployment of MinIO is complete,  a url will be returned that can be used to access it.
 
+### Screenshots:
+   -![Step1](minio1.png)
+   -![Step2](minio2.png)
+   -![Step3](minio3.png)
+   -![Step4](minio4.png)
+   -![Step5](minio5.png)
+   -![Step6](minio6.png)
+   -![Step7](minio7.png)
+   -![Step8](minio9.png)
+   -![Step9](minio10.png)
+   -![Step10](minio11.png)
+   -![Step11](minio12.png)
+   -![Step12](minio13.png)
+   -![Step13](minio14.png)
+   -![Step14](minio15.png)
+   -![Step15](minio16.jpg)
 #### Login Page
 Once accessing the url the following is shown once redirected to MinIO login(access key and secret are to be used here)
 ![](login.png)
