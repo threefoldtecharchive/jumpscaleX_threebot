@@ -16,6 +16,8 @@ def chat(bot):
 
     identity = j.sal.reservation_chatflow.validate_user(user_info)
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
+    if not network:
+        return
     user_form_data["Solution name"] = j.sal.reservation_chatflow.add_solution_name(bot, model)
 
     user_form_data["Version"] = bot.single_choice(
