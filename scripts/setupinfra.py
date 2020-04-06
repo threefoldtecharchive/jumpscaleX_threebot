@@ -262,7 +262,7 @@ print("Wating for DNS ...")
 j.sal.nettools.waitConnectionTest(THREEBOT_DOMAIN, 443, timeout=60)
 
 print("Start local 3bot")
-client = j.servers.threebot.local_start_explorer(background=True)
+client = j.servers.threebot.default.start(background=True)
 
 gedis_packagemanager = j.clients.gedis.get("packagemanager", port=8901, package_name="zerobot.packagemanager")
 gedis_packagemanager.actors.package_manager.package_add(
