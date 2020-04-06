@@ -46,19 +46,19 @@ def chat(bot):
     # Select nodes
     nodes_selected = j.sal.reservation_chatflow.nodes_get(cluster_size)
     ipaddresses = list()
-    network_reservation = None
+    network_changed = False
     for node_selected in nodes_selected:
-        network_reservation, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(
-            node_selected, network, network_reservation
-        )
+        changed, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node_selected, network)
+        network_changed |= changed
 
         ip_address = bot.drop_down_choice(
             f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)
         )
         ipaddresses.append(ip_address)
 
-    if network_reservation:
-        j.sal.reservation_chatflow.reservation_register(network_reservation, network.expiration, identity.id)
+    if changed:
+        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
+            return
 
     user_form_data["IP Address"] = ipaddresses
 

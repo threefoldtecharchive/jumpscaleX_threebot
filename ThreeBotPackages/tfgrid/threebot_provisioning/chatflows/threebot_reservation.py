@@ -18,7 +18,6 @@ def chat(bot):
     user_info = bot.user_info()
     name = user_info["username"]
     email = user_info["email"]
-    ips = ["IPv6", "IPv4"]
     choose = ["Deploy a new 3bot", "Restore my 3bot"]
     ip_range_choose = ["Specify IP Range", "Choose IP Range for me"]
     expiration = j.data.time.epoch + (60 * 60 * 24)  # for one day
@@ -63,9 +62,10 @@ def chat(bot):
         bot.md_show(res)
         return
 
-    network_reservation, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node_selected, network)
-    if network_reservation:
-        j.sal.reservation_chatflow.reservation_register(network_reservation, network.expiration, identity.id)
+    network_changed, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node_selected, network)
+    if network_changed:
+        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
+            return
     ip_address = bot.drop_down_choice(
         f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)
     )
