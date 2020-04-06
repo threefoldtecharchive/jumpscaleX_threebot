@@ -73,7 +73,6 @@ def chat(bot):
     ip_address = bot.drop_down_choice(
         f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_ranges[0])
     )
-    user_form_data["IP Address"] = ip_address
     bot.md_show_confirm(user_form_data)
 
     for i in range(1, len(nodes_selected)):
