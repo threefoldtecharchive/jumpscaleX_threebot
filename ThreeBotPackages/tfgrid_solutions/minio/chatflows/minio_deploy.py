@@ -144,10 +144,9 @@ def chat(bot):
         j.sal.reservation_chatflow.reservation_save(
             resv_id, user_form_data["Solution name"], "tfgrid.solutions.minio.instance.1"
         )
-        res = f"# Minio cluster has been deployed successfully: your reservation id is: {resv_id}"
-        bot.md_show(res)
-        filename = "{}_{}.conf".format(name.split(".3bot")[0], resv_id)
-
-        res = "# Open your browser at ```{}:9000```. It may take a few minutes.".format(ip_address)
-        res = j.tools.jinja2.template_render(text=res, **locals())
+        res = f"""
+            # Minio cluster has been deployed successfully: your reservation id is: {resv_id}
+            # Open your browser at ```{ip_address}:9000```. It may take a few minutes.
+            """
+        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)

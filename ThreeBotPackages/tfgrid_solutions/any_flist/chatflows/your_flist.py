@@ -118,15 +118,18 @@ def chat(bot):
         j.sal.reservation_chatflow.reservation_save(
             resv_id, user_form_data["Solution name"], "tfgrid.solutions.flist.instance.1"
         )
-        res = f"# Container has been deployed successfully: your reservation id is: {resv_id} "
-
-        bot.md_show(res)
 
         if interactive:
-            res = "# Open your browser at ```{}:7681```".format(ip_address)
-            res = j.tools.jinja2.template_render(text=res, **locals())
+            res = f"""
+                # Container has been deployed successfully: your reservation id is: {resv_id}
+                Open your browser at ```{ip_address}:7681```
+                """
+            res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
             bot.md_show(res)
         else:
-            res = "# Your IP is  ```{}```".format(ip_address)
-            res = j.tools.jinja2.template_render(text=res, **locals())
+            res = f"""
+                # Container has been deployed successfully: your reservation id is: {resv_id}
+                Your IP is  ```{ip_address}```
+                """
+            res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
             bot.md_show(res)

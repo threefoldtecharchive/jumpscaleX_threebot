@@ -20,9 +20,7 @@ def chat(bot):
     if not network:
         return
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
-    user_form_data["Version"] = bot.single_choice(
-        "Please choose ubuntu version", IMAGES
-    )
+    user_form_data["Version"] = bot.single_choice("Please choose ubuntu version", IMAGES)
 
     form = bot.new_form()
     cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
@@ -96,10 +94,10 @@ def chat(bot):
         j.sal.reservation_chatflow.reservation_save(
             resv_id, user_form_data["Solution name"], "tfgrid.solutions.ubuntu.instance.1"
         )
-        res = f"# Ubuntu has been deployed successfully: your reservation id is: {resv_id} "
 
-        bot.md_show(res)
-
-        res = "# To connect ```ssh {}``` It may take a few minutes.".format(ip_address)
-        res = j.tools.jinja2.template_render(text=res, **locals())
+        res = f"""
+            # Ubuntu has been deployed successfully: your reservation id is: {resv_id}
+            To connect ```ssh {ip_address}``` .It may take a few minutes.
+            """
+        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)

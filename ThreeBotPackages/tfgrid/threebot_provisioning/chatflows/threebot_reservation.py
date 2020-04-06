@@ -43,7 +43,7 @@ def chat(bot):
     pub_key = None
     while not pub_key:
         pub_key = bot.string_ask(
-            """Please add your public ssh key, this will allow you to access the deployed container using ssh. 
+            """Please add your public ssh key, this will allow you to access the deployed container using ssh.
             Just copy your key from `~/.ssh/id_rsa.pub`"""
         )
 
@@ -86,7 +86,7 @@ def chat(bot):
     if backup == "Yes":
         password = bot.secret_ask(
             """The password you add here will be used to encrypt your backup to keep your 3bot safe.
-            please make sure to keep this password safe so you can later restore your 3bot. 
+            please make sure to keep this password safe so you can later restore your 3bot.
             Remember, this password will not be saved anywhere, so there cannot be recovery for it"""
         )
         hash_backup = nacl.hash.blake2b(password.encode(), key=identity_pubkey.encode()).decode()
@@ -134,14 +134,9 @@ def chat(bot):
     if j.sal.reservation_chatflow.reservation_failed(bot=bot, category="CONTAINER", resv_id=resv_id):
         return
     else:
-        res = """# reservation sent. ID: {}
-            """.format(
-            resv_id
-        )
-        bot.md_show(res)
-
-        res = "# your 3bot container is ready. please continue initialization on ```{}:8000``` It may take a few minutes.".format(
-            ip_address
-        )
-        res = j.tools.jinja2.template_render(text=res, **locals())
+        res = f"""
+            # reservation sent. ID: {resv_id}
+            # your 3bot container is ready. please continue initialization on ```{ip_address}:8000``` It may take a few minutes.
+            """
+        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)

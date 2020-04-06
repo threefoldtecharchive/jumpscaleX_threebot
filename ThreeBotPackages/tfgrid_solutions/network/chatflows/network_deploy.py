@@ -19,7 +19,6 @@ def chat(bot):
     )
 
     # create new reservation
-    extargs = {"name": network_name}
     reservation = j.sal.zosv2.reservation_create()
     ip_range = j.sal.reservation_chatflow.ip_range_get(bot)
     config = j.sal.reservation_chatflow.network_create(
