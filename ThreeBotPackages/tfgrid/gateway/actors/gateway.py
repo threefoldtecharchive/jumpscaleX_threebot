@@ -52,7 +52,7 @@ class gateway(j.baseclasses.threebot_actor):
         return self._gateway.domain_dump(domain)
 
     @j.baseclasses.actor_method
-    def subdomain_get(self, domain, subdomain):
+    def subdomain_get(self, domain, subdomain, user_session=None):
         """
         ```in
         domain = (S)
@@ -366,3 +366,10 @@ class gateway(j.baseclasses.threebot_actor):
         threebot_name = self._normalize_threebot_name(threebot_name)
         domain = f"{subdomain}.{threebot_name}.{THREEBOT_DOMAIN}"
         self._gateway.tcpservice_register(domain, ip_address, service_http_port=port)
+
+        ips = []
+        records = self._gateway.subdomain_get(THREEBOT_DOMAIN, "@")["a"]
+        for record in records:
+            ips.append(record["ip"])
+
+        self._gateway.domain_register_aaaa(subdomain, f"{threebot_name}.{THREEBOT_DOMAIN}", ips)
