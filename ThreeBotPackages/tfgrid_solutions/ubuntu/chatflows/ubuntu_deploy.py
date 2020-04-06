@@ -30,7 +30,7 @@ def chat(bot):
     user_form_data["Memory"] = memory.value
 
     while not user_form_data.get("Public key"):
-        user_form_data["Public key"] = bot.string_ask(
+        user_form_data["Public key"] = bot.text_ask(
             "Please add your public ssh key, this will allow you to access the deployed container using ssh.\nJust copy your key from ~/.ssh/id_rsa.pub"
         )
 
@@ -97,7 +97,7 @@ def chat(bot):
 
         res = f"""
             # Ubuntu has been deployed successfully: your reservation id is: {resv_id}
-            To connect ```ssh {ip_address}``` .It may take a few minutes.
+            To connect ```ssh root@{ip_address}``` .It may take a few minutes.
             """
         res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)

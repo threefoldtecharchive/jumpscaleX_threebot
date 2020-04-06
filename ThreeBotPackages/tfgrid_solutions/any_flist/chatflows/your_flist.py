@@ -46,8 +46,8 @@ def chat(bot):
     user_form_data["Memory"] = memory.value
 
     while not user_form_data.get("Public key"):
-        user_form_data["Public key"] = bot.string_ask(
-            "Please add your public ssh key, this will allow you to access the deployed container using ssh.\nJust copy your key from ~/.ssh/id_rsa.pub"
+        user_form_data["Public key"] = bot.text_ask(
+            "Please add your public ssh key, this will allow you to access the deployed container using ssh.\n  Just copy your key from ~/.ssh/id_rsa.pub"
         )
     user_form_data["Env variables"] = bot.string_ask(
         """To set environment variables on your deployed container, enter comma-separated variable=value
@@ -122,7 +122,7 @@ def chat(bot):
         if interactive:
             res = f"""
                 # Container has been deployed successfully: your reservation id is: {resv_id}
-                Open your browser at ```{ip_address}:7681```
+                Open your browser at [http://{ip_address}:7681](http://{ip_address}:7681)
                 """
             res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
             bot.md_show(res)
