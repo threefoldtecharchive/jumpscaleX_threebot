@@ -12,14 +12,16 @@ def chat(bot):
     explorer = j.clients.explorer.default
 
     identity = j.sal.reservation_chatflow.validate_user(user_info)
+    bot.md_show("This wizard will help you deploy a container using any flist provided")
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
     if not network:
         return
 
+    user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
     found = False
     while not found:
         user_form_data["Flist link"] = bot.string_ask(
-            "This wizard will help you deploy a container using any flist provided\n Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
+            "Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
         )
 
         if "hub.grid.tf" not in user_form_data["Flist link"]:
@@ -35,11 +37,17 @@ def chat(bot):
             res = "# This flist doesn't exist. Please make sure you enter a valid link to an existing flist"
             res = j.tools.jinja2.template_render(text=res, **locals())
             bot.md_show(res)
-    user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
+
+    form = bot.new_form()
+    cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
+    memory = form.int_ask("Please add the amount of memory in MB", default=1024)
+    form.ask()
+    user_form_data["CPU"] = cpu.value
+    user_form_data["Memory"] = memory.value
 
     while not user_form_data.get("Public key"):
         user_form_data["Public key"] = bot.string_ask(
-            "Please add your public ssh key, this will allow you to access the deployed container using ssh. Just copy your key from ~/.ssh/id_rsa.pub"
+            "Please add your public ssh key, this will allow you to access the deployed container using ssh.\nJust copy your key from ~/.ssh/id_rsa.pub"
         )
     user_form_data["Env variables"] = bot.string_ask(
         """To set environment variables on your deployed container, enter comma-separated variable=value
@@ -97,6 +105,8 @@ def chat(bot):
         storage_url=storage_url,
         env=env,
         interactive=interactive,
+        cpu=user_form_data["CPU"],
+        memory=user_form_data["Memory"],
     )
 
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)

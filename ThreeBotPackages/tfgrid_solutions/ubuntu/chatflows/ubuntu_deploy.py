@@ -15,18 +15,25 @@ def chat(bot):
     model = j.threebot.packages.tfgrid_solutions.ubuntu.bcdb_model_get("tfgrid.solutions.ubuntu.instance.1")
 
     identity = j.sal.reservation_chatflow.validate_user(user_info)
+    bot.md_show("This wizard wil help you deploy an ubuntu container")
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
     if not network:
         return
-    user_form_data["Solution name"] = j.sal.reservation_chatflow.add_solution_name(bot, model)
-
-    user_form_data["Version"] = bot.single_choice(
-        "This wizard will help you deploy an ubuntu container, please choose ubuntu version", IMAGES
-    )
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
+    user_form_data["Version"] = bot.single_choice(
+        "Please choose ubuntu version", IMAGES
+    )
+
+    form = bot.new_form()
+    cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
+    memory = form.int_ask("Please add the amount of memory in MB", default=1024)
+    form.ask()
+    user_form_data["CPU"] = cpu.value
+    user_form_data["Memory"] = memory.value
+
     while not user_form_data.get("Public key"):
         user_form_data["Public key"] = bot.string_ask(
-            "Please add your public ssh key, this will allow you to access the deployed container using ssh. Just copy your key from ~/.ssh/id_rsa.pub"
+            "Please add your public ssh key, this will allow you to access the deployed container using ssh.\nJust copy your key from ~/.ssh/id_rsa.pub"
         )
 
     user_form_data["Env variables"] = bot.string_ask(
@@ -34,8 +41,6 @@ def chat(bot):
         For example: var1=value1, var2=value2.
         Leave empty if not needed"""
     )
-    user_form_data["CPU"] = bot.int_ask("Please add the how much cpu is needed", default=1)
-    user_form_data["Memory"] = bot.int_ask("Please add the size you need for the memory in MB", default=1024)
 
     expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
     user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
@@ -51,7 +56,6 @@ def chat(bot):
     var_dict.update({"pub_key": user_form_data["Public key"]})
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
-    identity = explorer.users.get(name=name, email=email)
 
     node_selected = j.sal.reservation_chatflow.nodes_get(1)[0]
     network_reservation, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node_selected, network)
