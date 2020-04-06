@@ -45,9 +45,7 @@ def chat(bot):
         "Resources for minio: Please add the number of locations you need. Take care of the ratio between the locations and locations allowed to fail that you will specify next",
         default=2,
     )
-    parity = form.int_ask(
-        "Resources for minio: Please add the number of locations allowed to fail", default=1
-    )
+    parity = form.int_ask("Resources for minio: Please add the number of locations allowed to fail", default=1)
 
     form.ask()
     user_form_data["Locations"] = data_number.value
