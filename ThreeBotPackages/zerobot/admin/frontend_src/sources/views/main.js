@@ -67,9 +67,13 @@ export default class TopView extends JetView {
             value: "Solutions",
             icon: "mdi mdi-animation-play",
             data: [{
+                id: "network",
+                value: '<span><img class="solutions-icon" src="static/img/network.png"/>Network</span>'
+            }, {
                 id: "ubuntu",
                 value: '<span><img class="solutions-icon" src="static/img/ubuntu.png"/>Ubuntu</span>'
             }, {
+
                 id: "flist",
                 value: '<span><img class="solutions-icon" src="static/img/flist.png"/>Generic flist</span>'
             }, {
@@ -209,6 +213,7 @@ export default class TopView extends JetView {
                 myjobs: "myjobs.jobs",
                 workers: "myjobs.workers",
                 ubuntu: "solutions.chatflow?author=tfgrid_solutions&package=ubuntu&chat=ubuntu_deploy",
+                network: "solutions.chatflow?author=tfgrid_solutions&package=network&chat=network_deploy",
                 flist: "solutions.chatflow?author=tfgrid_solutions&package=any_flist&chat=your_flist",
                 minio: "solutions.chatflow?author=tfgrid_solutions&package=minio&chat=minio_deploy",
                 k8s_cluster: "solutions.chatflow?author=tfgrid_solutions&package=kubernetes_cluster&chat=kubernetes_cluster_deploy",

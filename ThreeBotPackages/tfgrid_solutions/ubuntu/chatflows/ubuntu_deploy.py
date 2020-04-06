@@ -14,16 +14,9 @@ def chat(bot):
     explorer = j.clients.explorer.default
     model = j.threebot.packages.tfgrid_solutions.ubuntu.bcdb_model_get("tfgrid.solutions.ubuntu.instance.1")
 
-    if not j.tools.threebot.with_threebotconnect:
-        error_msg = """
-        This chatflow is not supported when Threebot is in dev mode.
-        To enable Threebot connect : `j.tools.threebot.threebotconnect_disable()`
-        """
-        raise j.exceptions.Runtime(error_msg)
-    if not email:
-        raise j.exceptions.Value("Email shouldn't be empty")
-    if not name:
-        raise j.exceptions.Value("Name of logged in user shouldn't be empty")
+    identity = j.sal.reservation_chatflow.validate_user(user_info)
+    network = j.sal.reservation_chatflow.network_select(bot, identity.id)
+    user_form_data["Solution name"] = j.sal.reservation_chatflow.add_solution_name(bot, model)
 
     user_form_data["Version"] = bot.single_choice(
         "This wizard will help you deploy an ubuntu container, please choose ubuntu version", IMAGES
@@ -39,10 +32,6 @@ def chat(bot):
         For example: var1=value1, var2=value2.
         Leave empty if not needed"""
     )
-    user_form_data["IP version"] = bot.single_choice(
-        "Do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4", ips
-    )
-
     user_form_data["CPU"] = bot.int_ask("Please add the how much cpu is needed", default=1)
     user_form_data["Memory"] = bot.int_ask("Please add the size you need for the memory in MB", default=1024)
 
@@ -62,13 +51,14 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
     identity = explorer.users.get(name=name, email=email)
 
-    node_selected = j.sal.reservation_chatflow.nodes_get(1, ip_version=user_form_data["IP version"])[0]
-
-    reservation, config = j.sal.reservation_chatflow.network_configure(
-        bot, reservation, [node_selected], customer_tid=identity.id, ip_version=user_form_data["IP version"]
+    node_selected = j.sal.reservation_chatflow.nodes_get(1)[0]
+    network_reservation, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node_selected, network)
+    if network_reservation:
+        j.sal.reservation_chatflow.reservation_register(network_reservation, network.expiration, identity.id)
+    ip_address = bot.drop_down_choice(
+        f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)
     )
-    ip_address = config["ip_addresses"][0]
-    user_form_data["Solution name"] = j.sal.reservation_chatflow.add_solution_name(bot, model)
+    user_form_data["IP Address"] = ip_address
     bot.md_show_confirm(user_form_data)
 
     container_flist = f"{HUB_URL}/{user_form_data['Version']}-r1.flist"
@@ -79,7 +69,7 @@ def chat(bot):
     cont = j.sal.zosv2.container.create(
         reservation=reservation,
         node_id=node_selected.node_id,
-        network_name=config["name"],
+        network_name=network.name,
         ip_address=ip_address,
         flist=container_flist,
         storage_url=storage_url,
@@ -101,31 +91,6 @@ def chat(bot):
         )
         res = f"# Ubuntu has been deployed successfully: your reservation id is: {resv_id} "
 
-        bot.md_show(res)
-
-        filename = "{}_{}.conf".format(name.split(".3bot")[0], resv_id)
-
-        res = """
-                # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
-                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed
-                Click next
-                to download your configuration
-                """
-        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-        bot.md_show(res)
-
-        res = j.tools.jinja2.template_render(text=config["wg"], **locals())
-        bot.download_file(res, filename)
-
-        res = """
-                # In order to have the network active and accessible from your local machine. To do this, execute this command:
-                ## ```wg-quick up /etc/wireguard/{}```
-                Click next
-                """.format(
-            filename
-        )
-
-        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
         bot.md_show(res)
 
         res = "# To connect ```ssh {}``` It may take a few minutes.".format(ip_address)
