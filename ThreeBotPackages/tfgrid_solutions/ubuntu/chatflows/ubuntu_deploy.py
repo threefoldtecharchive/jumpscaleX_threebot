@@ -30,9 +30,10 @@ def chat(bot):
     user_form_data["Memory"] = memory.value
 
     while not user_form_data.get("Public key"):
-        user_form_data["Public key"] = bot.text_ask(
-            "Please add your public ssh key, this will allow you to access the deployed container using ssh.\nJust copy your key from ~/.ssh/id_rsa.pub"
-        )
+        user_form_data["Public key"] = bot.upload_file(
+            """"Please add your public ssh key, this will allow you to access the deployed container using ssh.
+                Just upload the file with the key"""
+        ).split("\n")[0]
 
     user_form_data["Env variables"] = bot.string_ask(
         """To set environment variables on your deployed container, enter comma-separated variable=value
