@@ -17,23 +17,13 @@ def chat(bot):
     )
     explorer = j.clients.explorer.default
 
-    if not j.tools.threebot.with_threebotconnect:
-        error_msg = """
-        This chatflow is not supported when Threebot is in dev mode.
-        To enable Threebot connect : `j.tools.threebot.threebotconnect_disable()`
-        """
-        raise j.exceptions.Runtime(error_msg)
-    if not email:
-        raise j.exceptions.Value("Email shouldn't be empty")
-    if not name:
-        raise j.exceptions.Value("Name of logged in user shouldn't be empty")
+    identity = j.sal.reservation_chatflow.validate_user(user_info)
 
-    user_form_data["IP version"] = bot.single_choice(
-        "This wizard will help you deploy a kubernetes cluster, do you prefer to access your 3bot using IPv4 or IPv6? If unsure, choose IPv4",
-        ips,
-    )
+    bot.md_show("This wizard will help you deploy a kubernetes cluster")
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
-
+    network = j.sal.reservation_chatflow.network_select(bot, identity.id)
+    if not network:
+        return
     user_form_data["Workers number"] = bot.int_ask(
         "Please specify the number of worker nodes", default=1
     )  # minimum should be 1
@@ -52,18 +42,25 @@ def chat(bot):
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
-    identity = explorer.users.get(name=name, email=email)
 
     # Select nodes
-    nodes_selected = j.sal.reservation_chatflow.nodes_get(
-        cluster_size, farm_id=71, ip_version=user_form_data["IP version"]
-    )
+    nodes_selected = j.sal.reservation_chatflow.nodes_get(cluster_size)
+    ipaddresses = list()
+    network_reservation = None
+    for node_selected in nodes_selected:
+        network_reservation, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(
+            node_selected, network, network_reservation
+        )
 
-    # Create network of reservation and add peers
-    reservation, configs = j.sal.reservation_chatflow.network_configure(
-        bot, reservation, nodes_selected, customer_tid=identity.id, ip_version=user_form_data["IP version"]
-    )
-    rid = configs["rid"]
+        ip_address = bot.drop_down_choice(
+            f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)
+        )
+        ipaddresses.append(ip_address)
+
+    if network_reservation:
+        j.sal.reservation_chatflow.reservation_register(network_reservation, network.expiration, identity.id)
+
+    user_form_data["IP Address"] = ipaddresses
 
     bot.md_show_confirm(user_form_data)
     # Create master and workers
@@ -71,9 +68,9 @@ def chat(bot):
     master = j.sal.zosv2.kubernetes.add_master(
         reservation=reservation,
         node_id=nodes_selected[0].node_id,
-        network_name=configs["name"],
+        network_name=network.name,
         cluster_secret=user_form_data["Cluster secret"],
-        ip_address=configs["ip_addresses"][0],
+        ip_address=ipaddresses[0],
         size=cluster_size,
         ssh_keys=ssh_keys_list,
     )
@@ -83,9 +80,9 @@ def chat(bot):
         worker = j.sal.zosv2.kubernetes.add_worker(
             reservation=reservation,
             node_id=nodes_selected[i].node_id,
-            network_name=configs["name"],
+            network_name=network.name,
             cluster_secret=user_form_data["Cluster secret"],
-            ip_address=configs["ip_addresses"][i],
+            ip_address=ipaddresses[i],
             size=cluster_size,
             master_ip=master.ipaddress,
             ssh_keys=ssh_keys_list,
@@ -102,46 +99,16 @@ def chat(bot):
         j.sal.reservation_chatflow.reservation_save(
             resv_id, user_form_data["Solution name"], "tfgrid.solutions.kubernetes.instance.1"
         )
-        res = """
-                ## Kubernetes cluster has been deployed successfully
-                # your reservation id is: {}
-                Click next to proceed the wireguard configurations that need to be setup on your machine
-                """.format(
-            resv_id
-        )
-        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
+
+        res = f"# Kubernetes cluster has been deployed successfully: your reservation id is: {resv_id} "
         bot.md_show(res)
 
-        filename = "{}_{}.conf".format(f"{default_cluster_name}_{i}", resv_id)
-
-        res = """
-                # Use the following template to configure your wireguard connection. This will give you access to your 3bot.
-                ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed
-                Click next
-                to download your configuration
-                """
-        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-        bot.md_show(res)
-
-        res = j.tools.jinja2.template_render(text=configs["wg"], **locals())
-        bot.download_file(res, filename)
-        res = """
-                # In order to have the network active and accessible from your local machine. To do this, execute this command:
-                ## ```wg-quick up /etc/wireguard/{}```
-                Click next
-                """.format(
-            filename
-        )
-
-        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-        bot.md_show(res)
-        for i, ip in enumerate(configs["ip_addresses"]):
+        for i, ip in enumerate(ipaddresses):
             res = """
                 kubernete {} IP : {}
                 To connect ssh rancher@{}
             """.format(
                 i + 1, ip, ip
             )
-
             res = j.tools.jinja2.template_render(text=res, **locals())
             bot.md_show(res)
