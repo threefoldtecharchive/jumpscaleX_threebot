@@ -1,6 +1,4 @@
 from Jumpscale import j
-import netaddr
-import ipaddress
 
 
 def chat(bot):
@@ -47,13 +45,15 @@ def chat(bot):
     nodes_selected = j.sal.reservation_chatflow.nodes_get(cluster_size)
     ipaddresses = list()
     network_changed = False
-    for node_selected in nodes_selected:
+    for idx, node_selected in enumerate(nodes_selected):
         changed, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node_selected, network)
         network_changed |= changed
 
-        ip_address = bot.drop_down_choice(
-            f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)
-        )
+        if idx == 0:
+            msg = "Please choose IP Address for master node of your kubernets cluster"
+        else:
+            msg = f"Please choose IP Address for worker node {idx}  master node of your kubernets cluster"
+        ip_address = bot.drop_down_choice(msg, j.sal.reservation_chatflow.get_all_ips(node_ip_range))
         ipaddresses.append(ip_address)
 
     user_form_data["IP Address"] = ipaddresses
@@ -73,7 +73,6 @@ def chat(bot):
         network_name=network.name,
         cluster_secret=user_form_data["Cluster secret"],
         ip_address=ipaddresses[0],
-        public_ipv6=True,
         size=cluster_size,
         ssh_keys=ssh_keys_list,
     )
@@ -95,7 +94,7 @@ def chat(bot):
 
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
-    if j.sal.reservation_chatflow.reservation_failed(bot=bot, category="ZDB", resv_id=resv_id):
+    if not j.sal.reservation_chatflow.reservation_wait(bot, resv_id):
         return
 
     else:
