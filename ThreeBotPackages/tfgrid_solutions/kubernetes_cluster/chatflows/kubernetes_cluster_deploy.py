@@ -73,6 +73,7 @@ def chat(bot):
         network_name=network.name,
         cluster_secret=user_form_data["Cluster secret"],
         ip_address=ipaddresses[0],
+        public_ipv6=True,
         size=cluster_size,
         ssh_keys=ssh_keys_list,
     )

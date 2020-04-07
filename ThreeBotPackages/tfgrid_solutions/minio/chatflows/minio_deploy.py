@@ -135,6 +135,7 @@ def chat(bot):
         flist=flist_url,
         entrypoint=entry_point,
         cpu=user_form_data["CPU"],
+        public_ipv6=True,
         memory=user_form_data["Memory"],
         env={
             "SHARDS": ",".join(namespace_config),

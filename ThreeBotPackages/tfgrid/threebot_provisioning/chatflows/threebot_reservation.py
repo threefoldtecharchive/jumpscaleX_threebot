@@ -117,6 +117,7 @@ def chat(bot):
         entrypoint=entry_point,
         cpu=4,
         memory=4096,
+        public_ipv6=True,
         secret_env=secret_env,
     )
 
