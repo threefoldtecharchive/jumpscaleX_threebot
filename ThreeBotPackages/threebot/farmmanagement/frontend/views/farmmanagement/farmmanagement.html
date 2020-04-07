@@ -93,13 +93,11 @@
           </v-col>-->
 
           <v-col>
-            <h2>Public information</h2>
-            <br>
             <v-text-field v-model="farmToEdit.threebot_id" label="3bot ID" disabled></v-text-field>
             <v-text-field v-model="farmToEdit.name" label="Farm name"></v-text-field>
-            </v-textarea>
+            <!-- </v-textarea> -->
 
-            <h3>Location</h3>
+            <!-- <h3>Location</h3> -->
             <!-- <v-row>
               <v-col cols=6>
                 <v-text-field v-model="farmToEdit.location.latitude" label="Latitude"></v-text-field>
@@ -113,9 +111,16 @@
 
             <v-text-field v-model="farmToEdit.email" label="Email"></v-text-field>
 
-            <h2>Private information</h2> <br>
-
-            <v-text-field v-model="farmToEdit.wallet_addresses" label="Wallet address"></v-text-field>
+            <v-container>
+              <v-row v-for="wallet in farmToEdit.wallet_addresses" :key="wallet.id">
+                <v-col cols="12" sm="4">
+                  <v-text-field v-model="wallet.address" label="Wallet address"></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <v-text-field v-model="wallet.asset" label="Asset Code"></v-text-field>
+                </v-col>
+              </v-row>
+            </v-container>
 
           </v-col>
         </v-row>

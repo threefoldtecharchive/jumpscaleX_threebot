@@ -15,21 +15,14 @@ module.exports = new Promise(async (resolve, reject) => {
                 addFarmDialog: false,
                 addNodeDialog: false,
                 settingsDialog: false,
-                companyRegistrationNumber: "BE 0684 939 2659",
-                farmDescription:
-                    "This farm is located in the 3fold office in Lochristi",
                 farmDescriptionRules: [v => v.length <= 250 || "Max 250 characters"],
                 searchFarms: "",
                 'searchnodes': "",
                 farmSelected: {},
                 farmToEdit: {},
-                treebotId: "LochristiFarm12",
-                treebotName: "Lochristi Farm",
-                VAT: "BE 0684 939 2659",
                 showResult: false,
                 itemsPerPage: 4,
                 expanded: [],
-                walletAddress: "eioeZMImsnvqimZMIJDmnv93Dmvciqmoef",
                 headers: [
                     { text: "Id", value: "id" },
                     {
@@ -38,7 +31,6 @@ module.exports = new Promise(async (resolve, reject) => {
                         sortable: false,
                         value: "name"
                     },
-                    { text: "Wallet addresses", value: "wallet_addresses" },
                     { text: "Actions", value: "action", sortable: false }
                 ],
                 newFarm: {
@@ -338,6 +330,7 @@ module.exports = new Promise(async (resolve, reject) => {
                 console.log(this.newFarm);
             },
             saveFarm() {
+                // TODO: handle error and show error message
                 this.updateFarm(this.farmToEdit);
                 this.settingsDialog = false;
             },
