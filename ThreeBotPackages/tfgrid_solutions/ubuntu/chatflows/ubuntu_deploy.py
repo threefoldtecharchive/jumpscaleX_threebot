@@ -57,23 +57,18 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
 
     node_selected = j.sal.reservation_chatflow.nodes_get(1)[0]
-    network_changed, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node_selected, network)
-    ip_address = bot.drop_down_choice(
-        f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)
-    )
+    network.add_node(node_selected)
+    ip_address = network.ask_ip_from_node(node_selected, "Please choose IP Address for your solution")
     user_form_data["IP Address"] = ip_address
     bot.md_show_confirm(user_form_data)
-
-    if network_changed:
-        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
-            return
+    network.update(identity.id)
 
     container_flist = f"{HUB_URL}/{user_form_data['Version']}-r1.flist"
     storage_url = "zdb://hub.grid.tf:9900"
     entry_point = "/bin/bash /start.sh"
 
     # create container
-    cont = j.sal.zosv2.container.create(
+    j.sal.zosv2.container.create(
         reservation=reservation,
         node_id=node_selected.node_id,
         network_name=network.name,
@@ -90,16 +85,13 @@ def chat(bot):
 
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
-    if not j.sal.reservation_chatflow.reservation_wait(bot, resv_id):
-        return
-    else:
-        j.sal.reservation_chatflow.reservation_save(
-            resv_id, user_form_data["Solution name"], "tfgrid.solutions.ubuntu.instance.1"
-        )
+    j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
+    j.sal.reservation_chatflow.reservation_save(
+        resv_id, user_form_data["Solution name"], "tfgrid.solutions.ubuntu.instance.1"
+    )
 
-        res = f"""
-            # Ubuntu has been deployed successfully: your reservation id is: {resv_id}
-            To connect ```ssh root@{ip_address}``` .It may take a few minutes.
-            """
-        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-        bot.md_show(res)
+    res = f"""\
+        # Ubuntu has been deployed successfully: your reservation id is: {resv_id}
+        To connect ```ssh root@{ip_address}``` .It may take a few minutes.
+        """
+    bot.md_show(j.core.text.strip(res))

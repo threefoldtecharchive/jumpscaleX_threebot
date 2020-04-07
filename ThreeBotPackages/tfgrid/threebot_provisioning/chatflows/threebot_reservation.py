@@ -32,8 +32,6 @@ def chat(bot):
         hash_restore = nacl.hash.blake2b(password.encode(), key=identity_pubkey.encode()).decode()
 
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
-    if not network:
-        return
 
     # ask user about corex user:password and ssh-key to give him full access to his container
     pub_key = None
@@ -59,10 +57,8 @@ def chat(bot):
         bot.md_show(res)
         return
 
-    network_changed, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node_selected, network)
-    ip_address = bot.drop_down_choice(
-        f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)
-    )
+    network.add_node(node_selected)
+    ip_address = network.ask_ip_from_node(node_selected, "Please choose IP Address for your solution")
 
     # Encrypt AWS ID and AWS Secret to send it in secret env
     aws_id_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, AWS_ID)
@@ -102,11 +98,12 @@ def chat(bot):
     entry_point = "/usr/bin/zinit init -d"
     storage_url = "zdb://hub.grid.tf:9900"
 
+    network.update(identity.id)
     # Add volume and create container schema
     vol = j.sal.zosv2.volume.create(reservation, node_selected.node_id, size=8)
     rid = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
-    if not j.sal.reservation_chatflow.reservation_wait(bot, rid):
-        return
+    j.sal.reservation_chatflow.reservation_wait(bot, rid)
+
     # create container
     cont = j.sal.zosv2.container.create(
         reservation=reservation,
@@ -126,18 +123,11 @@ def chat(bot):
     volume_id = f"{rid}-{vol.workload_id}"
     j.sal.zosv2.volume.attach_existing(cont, volume_id, "/sandbox/var")
 
-    if network_changed:
-        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
-            return
-
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
-    if not j.sal.reservation_chatflow.reservation_wait(bot, resv_id):
-        return
-    else:
-        res = f"""
-            # reservation sent. ID: {resv_id}
-            # your 3bot container is ready. please continue initialization on ```{ip_address}:8000``` It may take a few minutes.
-            """
-        res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-        bot.md_show(res)
+    j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
+    res = f"""
+        # reservation sent. ID: {resv_id}
+        # your 3bot container is ready. please continue initialization on ```{ip_address}:8000``` It may take a few minutes.
+        """
+    bot.md_show(j.core.text.strip(res))
