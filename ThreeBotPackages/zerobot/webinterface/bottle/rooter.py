@@ -1,4 +1,4 @@
-from bottle import Bottle, abort, post, request, response, run, redirect
+from bottle import Bottle, abort, post, request, response, run, redirect, static_file
 
 
 try:
