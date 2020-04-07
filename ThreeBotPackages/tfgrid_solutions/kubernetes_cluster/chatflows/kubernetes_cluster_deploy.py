@@ -56,13 +56,15 @@ def chat(bot):
         )
         ipaddresses.append(ip_address)
 
-    if changed:
-        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
-            return
-
     user_form_data["IP Address"] = ipaddresses
 
     bot.md_show_confirm(user_form_data)
+    # update network
+
+    if network_changed:
+        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
+            return
+
     # Create master and workers
     # Master is in the first node from the selected nodes
     master = j.sal.zosv2.kubernetes.add_master(

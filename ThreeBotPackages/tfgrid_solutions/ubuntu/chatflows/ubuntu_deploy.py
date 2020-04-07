@@ -57,15 +57,16 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
 
     node_selected = j.sal.reservation_chatflow.nodes_get(1)[0]
-    changed, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node_selected, network)
-    if changed:
-        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
-            return
+    network_changed, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node_selected, network)
     ip_address = bot.drop_down_choice(
         f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)
     )
     user_form_data["IP Address"] = ip_address
     bot.md_show_confirm(user_form_data)
+
+    if network_changed:
+        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
+            return
 
     container_flist = f"{HUB_URL}/{user_form_data['Version']}-r1.flist"
     storage_url = "zdb://hub.grid.tf:9900"
