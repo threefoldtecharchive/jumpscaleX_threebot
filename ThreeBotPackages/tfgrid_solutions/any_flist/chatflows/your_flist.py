@@ -56,7 +56,7 @@ def chat(bot):
             ).split("\n")[0]
         user_form_data["Entry point"] = bot.string_ask("Please add your entrypoint for your flist")
     else:
-        user_form_data["Public key"]=""
+        user_form_data["Public key"] = ""
         user_form_data["Entry point"] = ""
     user_form_data["Env variables"] = bot.string_ask(
         """To set environment variables on your deployed container, enter comma-separated variable=value
@@ -81,13 +81,8 @@ def chat(bot):
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
-
     node = j.sal.reservation_chatflow.nodes_get(1)[0]
-    changed, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node, network)
-    if changed:
-        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
-            return
-
+    network_changed, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node, network)
     ip_address = bot.drop_down_choice(
         f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)
     )
@@ -101,6 +96,12 @@ def chat(bot):
         interactive = False
 
     bot.md_show_confirm(user_form_data)
+
+    # update network
+    if network_changed:
+        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
+            return
+
     # create container
     cont = j.sal.zosv2.container.create(
         reservation=reservation,

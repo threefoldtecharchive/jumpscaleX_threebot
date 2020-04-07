@@ -77,13 +77,14 @@ def chat(bot):
         network_needs_changes |= changes
         node_ip_ranges.append(node_ip_range)
 
-    if changes:
-        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
-            return
     ip_address = bot.drop_down_choice(
         f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_ranges[0])
     )
     bot.md_show_confirm(user_form_data)
+
+    if network_needs_changes:
+        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
+            return
 
     for i in range(1, len(nodes_selected)):
         zdb = j.sal.zosv2.zdb.create(

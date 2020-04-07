@@ -1,8 +1,5 @@
 from Jumpscale import j
-import netaddr
-import random
 import nacl
-import os
 
 
 def chat(bot):
@@ -41,10 +38,10 @@ def chat(bot):
     # ask user about corex user:password and ssh-key to give him full access to his container
     pub_key = None
     while not pub_key:
-        pub_key = bot.string_ask(
-            """Please add your public ssh key, this will allow you to access the deployed container using ssh.
-            Just copy your key from `~/.ssh/id_rsa.pub`"""
-        )
+        pub_key = bot.upload_file(
+            """"Please add your public ssh key, this will allow you to access the deployed container using ssh.
+                Just upload the file with the key"""
+        ).split("\n")[0]
 
     form = bot.new_form()
     user_corex = form.string_ask(
@@ -63,9 +60,6 @@ def chat(bot):
         return
 
     network_changed, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node_selected, network)
-    if network_changed:
-        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
-            return
     ip_address = bot.drop_down_choice(
         f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)
     )
@@ -128,6 +122,10 @@ def chat(bot):
 
     volume_id = f"{rid}-{vol.workload_id}"
     j.sal.zosv2.volume.attach_existing(cont, volume_id, "/sandbox/var")
+
+    if network_changed:
+        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
+            return
 
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
