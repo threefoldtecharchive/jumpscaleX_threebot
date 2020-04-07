@@ -90,9 +90,8 @@ def chat(bot):
 
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
-    if j.sal.reservation_chatflow.reservation_failed(bot=bot, category="CONTAINER", resv_id=resv_id):
+    if not j.sal.reservation_chatflow.reservation_wait(bot, resv_id):
         return
-
     else:
         j.sal.reservation_chatflow.reservation_save(
             resv_id, user_form_data["Solution name"], "tfgrid.solutions.ubuntu.instance.1"

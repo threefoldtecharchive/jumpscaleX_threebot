@@ -105,6 +105,8 @@ def chat(bot):
     # Add volume and create container schema
     vol = j.sal.zosv2.volume.create(reservation, node_selected.node_id, size=8)
     rid = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
+    if not j.sal.reservation_chatflow.reservation_wait(bot, rid):
+        return
     # create container
     cont = j.sal.zosv2.container.create(
         reservation=reservation,
@@ -130,7 +132,7 @@ def chat(bot):
 
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
-    if j.sal.reservation_chatflow.reservation_failed(bot=bot, category="CONTAINER", resv_id=resv_id):
+    if not j.sal.reservation_chatflow.reservation_wait(bot, resv_id):
         return
     else:
         res = f"""

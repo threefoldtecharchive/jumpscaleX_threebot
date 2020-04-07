@@ -104,17 +104,9 @@ def chat(bot):
         f"# Database has been deployed with reservation id: {zdb_rid}. Click next to continue with deployment of minio"
     )
 
-    reservation_result = []
-    zdbs_found = False
-
-    while not zdbs_found and reservation.data_reservation.expiration_provisioning > j.data.time.epoch:
-        number_of_zdbs_found = 0
-        reservation_result = explorer.reservations.get(zdb_rid).results
-        for result in reservation_result:
-            if result.category == "ZDB":
-                number_of_zdbs_found += 1
-        if number_of_zdbs_found == user_form_data["ZDB number"]:
-            zdbs_found = True
+    reservation_result = j.sal.reservation_chatflow.reservation_wait(bot, zdb_rid)
+    if not reservation_result:
+        return
 
     # read the IP address of the 0-db namespaces after they are deployed to be used in the creation of the minio container
     namespace_config = []
@@ -150,7 +142,7 @@ def chat(bot):
 
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
-    if j.sal.reservation_chatflow.reservation_failed(bot=bot, category="CONTAINER", resv_id=resv_id):
+    if not j.sal.reservation_chatflow.reservation_wait(bot, resv_id):
         return
     else:
         j.sal.reservation_chatflow.reservation_save(
