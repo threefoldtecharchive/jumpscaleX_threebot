@@ -73,7 +73,6 @@ export default class TopView extends JetView {
                 id: "ubuntu",
                 value: '<span><img class="solutions-icon" src="static/img/ubuntu.png"/>Ubuntu</span>'
             }, {
-
                 id: "flist",
                 value: '<span><img class="solutions-icon" src="static/img/flist.png"/>Generic flist</span>'
             }, {
@@ -82,10 +81,11 @@ export default class TopView extends JetView {
             }, {
                 id: "k8s_cluster",
                 value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes cluster</span>'
-            } //, {
-                //     id: "threebot",
-                //     value: '<span><img class="solutions-icon" src="static/img/3bot.ico"/>Threebot</span>'
-                // }
+            }, {
+                id: "webgateway",
+                value: 'Web Gateway',
+                icon: "mdi mdi-network"
+            } 
             ]
         },
         {
