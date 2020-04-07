@@ -18,24 +18,21 @@ def chat(bot):
         return
 
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
-    found = False
-    while not found:
+    while True:
         user_form_data["Flist link"] = bot.string_ask(
             "Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
         )
 
         if "hub.grid.tf" not in user_form_data["Flist link"]:
-            res = "# This flist doesn't correct. Please make sure you enter a valid link to an existing flist"
-            res = j.tools.jinja2.template_render(text=res, **locals())
+            res = "This flist is not correct. Please make sure you enter a valid link to an existing flist"
             bot.md_show(res)
             continue
 
         response = requests.head(user_form_data["Flist link"])
         if response.status_code == 200:
-            found = True
+            break
         else:
-            res = "# This flist doesn't exist. Please make sure you enter a valid link to an existing flist"
-            res = j.tools.jinja2.template_render(text=res, **locals())
+            res = "This flist doesn't exist. Please make sure you enter a valid link to an existing flist"
             bot.md_show(res)
 
     form = bot.new_form()
@@ -49,14 +46,8 @@ def chat(bot):
         "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"]
     )
     if user_form_data["Interactive"] == "NO":
-        while not user_form_data.get("Public key"):
-            user_form_data["Public key"] = bot.upload_file(
-                """"Please add your public ssh key, this will allow you to access the deployed container using ssh.
-                    Just upload the file with the key"""
-            ).split("\n")[0]
         user_form_data["Entry point"] = bot.string_ask("Please add your entrypoint for your flist")
     else:
-        user_form_data["Public key"] = ""
         user_form_data["Entry point"] = ""
     user_form_data["Env variables"] = bot.string_ask(
         """To set environment variables on your deployed container, enter comma-separated variable=value
@@ -68,7 +59,6 @@ def chat(bot):
     user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
     expiration = j.data.time.epoch + expirationdelta
 
-    env.update({"pub_key": user_form_data["Public key"]})
     if user_form_data["Env variables"]:
         var_list = user_form_data["Env variables"].split(",")
         var_dict = {}
@@ -82,10 +72,8 @@ def chat(bot):
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
     node = j.sal.reservation_chatflow.nodes_get(1)[0]
-    network_changed, node_ip_range = j.sal.reservation_chatflow.add_node_to_network(node, network)
-    ip_address = bot.drop_down_choice(
-        f"Please choose IP Address for your solution", j.sal.reservation_chatflow.get_all_ips(node_ip_range)
-    )
+    network.add_node(node)
+    ip_address = network.ask_ip_from_node(node, "Please choose your IP Address for this solution")
     user_form_data["IP Address"] = ip_address
 
     conatiner_flist = user_form_data["Flist link"]
@@ -98,12 +86,10 @@ def chat(bot):
     bot.md_show_confirm(user_form_data)
 
     # update network
-    if network_changed:
-        if not j.sal.reservation_chatflow.network_update(bot, network, identity.id):
-            return
+    network.update(identity.id)
 
     # create container
-    cont = j.sal.zosv2.container.create(
+    j.sal.zosv2.container.create(
         reservation=reservation,
         node_id=node.node_id,
         network_name=network.name,
@@ -120,24 +106,20 @@ def chat(bot):
 
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
-    if not j.sal.reservation_chatflow.reservation_wait(bot, resv_id):
-        return
-    else:
-        j.sal.reservation_chatflow.reservation_save(
-            resv_id, user_form_data["Solution name"], "tfgrid.solutions.flist.instance.1"
-        )
+    j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
+    j.sal.reservation_chatflow.reservation_save(
+        resv_id, user_form_data["Solution name"], "tfgrid.solutions.flist.instance.1"
+    )
 
-        if interactive:
-            res = f"""
-                # Container has been deployed successfully: your reservation id is: {resv_id}
-                Open your browser at [http://{ip_address}:7681](http://{ip_address}:7681)
-                """
-            res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-            bot.md_show(res)
-        else:
-            res = f"""
-                # Container has been deployed successfully: your reservation id is: {resv_id}
-                Your IP is  ```{ip_address}```
-                """
-            res = j.tools.jinja2.template_render(text=j.core.text.strip(res), **locals())
-            bot.md_show(res)
+    if interactive:
+        res = f"""\
+            # Container has been deployed successfully: your reservation id is: {resv_id}
+            Open your browser at [http://{ip_address}:7681](http://{ip_address}:7681)
+            """
+        bot.md_show(j.core.text.strip(res))
+    else:
+        res = f"""\
+            # Container has been deployed successfully: your reservation id is: {resv_id}
+            Your IP is  ```{ip_address}```
+            """
+        bot.md_show(j.core.text.strip(res))
