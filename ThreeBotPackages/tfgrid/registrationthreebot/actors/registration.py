@@ -39,7 +39,7 @@ class registration(j.baseclasses.threebot_actor):
         record = phonebook_explorer.actors.phonebook.name_register(
             name=threebot_name, pubkey=pubkey, email=email, wallet_name=threebot_name
         )
-        sender_signature_hex = j.data.nacl.payload_sign(
+        sender_signature_hex = j.me.encryptor.payload_sign(
             record.id, threebot_name, email, "", description, pubkey, nacl=nacl
         )
         phonebook_explorer.actors.phonebook.record_register(
@@ -62,7 +62,7 @@ class registration(j.baseclasses.threebot_actor):
             name="gateway_explorer", host=EXPLORER_DOMAIN, port=8901, package_name="tfgrid.gateway"
         )
         privateip = wireguard.network_private.split("/")[0]
-        signature = j.data.nacl.payload_sign(threebot_name, nacl=nacl)
+        signature = j.me.encryptor.payload_sign(threebot_name, nacl=nacl)
         gateway_explorer.actors.gateway.domain_tcpservice_ip_expose(threebot_name, privateip, signature)
 
         print(f"Done, your url is: {threebot_name}.{THREEBOT_DOMAIN}")
