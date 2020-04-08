@@ -48,18 +48,19 @@ def chat(bot):
     parity = form.int_ask("Resources for minio: Please add the number of locations allowed to fail", default=1)
 
     form.ask()
-    user_form_data["Locations"] = data_number.value
-    user_form_data["Locations allowed to fail"] = parity.value
-    user_form_data["ZDB number"] = data_number.value + parity.value
+    user_form_data["Locations"] = int(data_number.value)
+    user_form_data["Locations allowed to fail"] = int(parity.value)
+    user_form_data["ZDB number"] = int(data_number.value) + int(parity.value)
 
     expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
     user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
     expiration = j.data.time.epoch + expirationdelta
-
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
-    nodes_selected = j.sal.reservation_chatflow.nodes_get(user_form_data["ZDB number"] + 1, farm_name="freefarm")
+    nodes_selected = j.sal.reservation_chatflow.nodes_get(
+        number_of_nodes=user_form_data["ZDB number"] + 1, farm_name="freefarm"
+    )
     selected_node = nodes_selected[0]
 
     for node_selected in nodes_selected:
