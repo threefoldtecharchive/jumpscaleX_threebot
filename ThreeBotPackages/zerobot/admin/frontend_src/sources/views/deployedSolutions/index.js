@@ -3,6 +3,8 @@ import { JetView } from "webix-jet";
 import { ErrorView } from "../errors/dialog";
 import { solutions } from "../../services/deployedSolutions";
 
+import ReservationView from "./reservation";
+
 const UNKNOWN_STATUS = 'Unknown';
 
 
@@ -33,18 +35,25 @@ export default class DeployedSolutionsView extends JetView {
                     header: "#",
                     sort: "int",
                     autowidth: true,
-                },
-                {
-                    id: "solutionType",
-                    header: ["Solution", {
-                        content: "selectFilter"
+                }, {
+                    id: "solutionName",
+                    header: ["Solution Name", {
+                        content: "textFilter"
                     }],
                     sort: "string",
                     width: 200
                 }, {
-                    id: "solutionName",
-                    header: ["Name", {
+                    id: "resvId",
+                    header: ["Reservation Id", {
                         content: "textFilter"
+                    }],
+                    sort: "string",
+                    width: 200
+                },
+                {
+                    id: "solutionType",
+                    header: ["Solution Type", {
+                        content: "selectFilter"
                     }],
                     sort: "string",
                     width: 200
@@ -61,8 +70,9 @@ export default class DeployedSolutionsView extends JetView {
                 scheme: {
                     $init: function (obj) {
                         obj.solutionName = obj.name;
-                        obj.nextAction = obj.reservation.next_action;
+                        obj.resvId = obj.reservation.id;
                         obj.solutionType = obj.type;
+                        obj.nextAction = obj.reservation.next_action;
                         obj.index = this.count();
                     }
                 }
@@ -115,10 +125,15 @@ export default class DeployedSolutionsView extends JetView {
         });
     }
 
+    viewItem(id) {
+        this.reservationView.showFor(this.solutionsTable.getItem(id));
+    }
+
     init(view) {
         const self = this;
 
         self.errorView = this.ui(ErrorView);
+        self.reservationView = self.ui(ReservationView);
 
         const menu = webix.ui({
             view: "contextmenu",
@@ -156,6 +171,9 @@ export default class DeployedSolutionsView extends JetView {
             checkAction(id, self.solutionsTable.getSelectedId());
         });
 
+        self.solutionsTable.attachEvent("onItemDblClick", function () {
+            self.viewItem(self.solutionsTable.getSelectedId());
+        });
 
         webix.event(self.solutionsTable.$view, "contextmenu", function (e /*MouseEvent*/) {
             const pos = self.solutionsTable.locate(e);
@@ -170,6 +188,5 @@ export default class DeployedSolutionsView extends JetView {
             return webix.html.preventEvent(e);
         })
 
-        // self.loadSolutions();
     }
 }
