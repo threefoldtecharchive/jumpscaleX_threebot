@@ -27,7 +27,7 @@ def encrypt_password(password, public_key):
 def deploy_zdbs():
     j.clients.threebot.explorer_addr_set("explorer.testnet.grid.tf")
     explorer = j.clients.threebot.explorer
-    me = j.myidentities.me.default
+    me = j.myidentities.me
 
     # list all nodes that have 10 GiB of SSD
     nodes = explorer.actors_all.nodes.list(sru=10).nodes

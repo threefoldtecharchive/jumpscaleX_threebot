@@ -77,4 +77,4 @@ class registration(j.baseclasses.threebot_actor):
         pubkey = (S)
         ```
         """
-        j.myidentities.me.get(name="default", tid=tid, tname=tname, email=email, pubkey=pubkey).save()
+        j.myidentities.get(name="default", tid=tid, tname=tname, email=email, pubkey=pubkey).save()

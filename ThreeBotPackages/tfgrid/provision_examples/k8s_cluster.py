@@ -45,7 +45,7 @@ def encrypt_password(password, public_key):
 def deploy_k8s_cluster():
     j.clients.threebot.explorer_addr_set("explorer.testnet.grid.tf")
     explorer = j.clients.threebot.explorer
-    me = j.myidentities.me.default
+    me = j.myidentities.me
 
     nodes = explorer.actors_all.nodes.list().nodes
 
