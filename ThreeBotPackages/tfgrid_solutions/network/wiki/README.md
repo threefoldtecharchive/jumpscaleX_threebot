@@ -12,11 +12,11 @@ Go to your admin dashboard `https://localhost:4000/admin` and click on Network
 ## Inputs
 
 The solution takes some configurations from the user, we will list them and explain their meaning
-- `Network name` : a name for the network to deploy on,  if left empty it will be a generated name
+- `Network name` : a name for the network to deploy on and also to reference in the reservation manager.
 - `Expiration time`: a network expiration time (minutes=m ,hour=h, day=d, week=w, month=M) is how long you want that solution to live on the grid
 - `IP version` : (IPv4 or IPv6) Version of the entrypoint node.
 - `IP range` : Configure network manually by choosing an IP range to use or the deployer can choose for you and generate an IP range automatically
-- `Network name` : a name for the network to deploy on,  if left empty it will be a generated name
+
 
 
 ## User setup
