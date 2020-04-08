@@ -1,0 +1,11 @@
+[source]
+name = "tfgrid_solutions"
+description = "Deployment solutions"
+threebot = "tfgrid_solutions"
+version = "1.0.0"
+
+[[bcdbs]]
+namespace = "tfgrid_solutions"
+name="tfgrid_solutions"
+type = "zdb"
+instance = "tfgrid_solutions"
