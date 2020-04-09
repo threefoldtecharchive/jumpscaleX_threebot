@@ -355,6 +355,6 @@ class registry(j.baseclasses.threebot_actor):
         return out
 
     def validate_signature(self, tid=None, verifykey=None, payload=None, signature=None):
-        nacl = j.data.nacl.get()
+        nacl = j.me.encryptor
         is_valid = nacl.verify(payload, verify_key=verifykey, signature=signature)
         return is_valid

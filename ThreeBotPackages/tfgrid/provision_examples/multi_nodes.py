@@ -29,7 +29,7 @@ def find_free_wg_port(node):
 def deploy_multi_node_network():
     j.clients.threebot.explorer_addr_set("explorer.testnet.grid.tf")
     explorer = j.clients.threebot.explorer
-    me = j.tools.threebot.me.default
+    me = j.myidentities.me
 
     nodes = explorer.actors_all.nodes.list().nodes
 
@@ -150,7 +150,7 @@ def deploy_multi_node_network():
     print(reservation.data_reservation._json)
 
     reservation.json = reservation.data_reservation._json
-    reservation.customer_signature = me.nacl.sign_hex(reservation.json.encode())
+    reservation.customer_signature = me.encryptor.sign_hex(reservation.json.encode())
 
     print("sending reservation")
     resp = explorer.actors_all.workload_manager.reservation_register(reservation)

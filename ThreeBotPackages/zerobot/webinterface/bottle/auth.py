@@ -64,13 +64,13 @@ def logout():
 
 
 def is_admin(tname):
-    threebot_me = j.tools.threebot.me.default
+    threebot_me = j.me
     return threebot_me.tname == tname or tname in threebot_me.admins
 
 
 def authenticated(handler):
     def decorator(*args, **kwargs):
-        if j.tools.threebot.with_threebotconnect:
+        if j.core.myenv.config.get("THREEBOT_CONNECT", False):
             if not get_session().get("authorized", False):
                 return abort(401)
         return handler(*args, **kwargs)
@@ -80,7 +80,7 @@ def authenticated(handler):
 
 def admin_only(handler):
     def decorator(*args, **kwargs):
-        if j.tools.threebot.with_threebotconnect:
+        if j.core.myenv.config.get("THREEBOT_CONNECT", False):
             username = get_session().get("username")
             if not is_admin(username):
                 return abort(403)
@@ -97,12 +97,7 @@ def get_user_info():
     signed_attempt = session.get("signedAttempt", "")
     response.content_type = "application/json"
     return j.data.serializers.json.dumps(
-        {
-            "username": tname,
-            "email": temail,
-            "signed_attempt": signed_attempt,
-            "devmode": not j.tools.threebot.with_threebotconnect,
-        }
+        {"username": tname, "email": temail, "devmode": not j.core.myenv.config.get("THREEBOT_CONNECT", False)}
     )
 
 

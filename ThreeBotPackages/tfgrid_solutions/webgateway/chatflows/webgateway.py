@@ -4,14 +4,14 @@ from Jumpscale import j
 def chat(bot):
     """
     """
-    if not j.tools.threebot.me.default.tid:
+    if not j.me.tid:
         bot.md_show("You need to init your threebot to be able to use this chatflow")
         return
 
     explorer = j.clients.explorer.default
     bcdb = j.data.bcdb.get("tfgrid_solutions")
     base_domain = j.core.myenv.config.get("THREEBOT_DOMAIN")
-    threebot_name = j.tools.threebot.me.default.tname
+    threebot_name = j.me.name
     nl_threebot_name = threebot_name.replace(".3bot", "")
 
     solutions = {}
@@ -55,7 +55,7 @@ def chat(bot):
         port = bot.int_ask("Port")
 
     ip_address = container["ip_address"]
-    signature = j.tools.threebot.me.default.nacl.sign_hex(threebot_name)
+    signature = j.me.encryptor.sign_hex(threebot_name)
     explorer.gateway.subdomain_register(
         threebot_name=threebot_name, subdomain=subdomain, ip_address=ip_address, port=port, signature=signature
     )
