@@ -75,6 +75,14 @@ export default class DeployedSolutionsView extends JetView {
                         obj.nextAction = obj.reservation.next_action;
                         obj.index = this.count();
                     }
+                },
+                on: {
+                    onAfterLoad: function () {
+                        if (!this.count())
+                            this.showOverlay("Sorry, there is no data");
+                        else
+                            this.hideOverlay();
+                    }
                 }
             }
             ]
