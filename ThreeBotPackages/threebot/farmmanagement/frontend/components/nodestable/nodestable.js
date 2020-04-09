@@ -9,7 +9,7 @@ module.exports = new Promise(async (resolve, reject) => {
         name: "nodestable",
         props: ['farmselected'],
         components: {
-            nodeinfo: "url:/farmmanagement/components/nodeinfo/index.vue"
+            nodeinfo: "url:/threebot/farmmanagement/components/nodeinfo/index.vue"
         },
         data() {
             return {
@@ -30,7 +30,6 @@ module.exports = new Promise(async (resolve, reject) => {
                     { text: "ID", value: "id" },
                     { text: "Uptime", value: "uptime" },
                     { text: "Version", value: "version" },
-                    { text: "Farmer", value: "farmer" },
                     { text: "Status", value: "status", align: "center" }
                 ]
             };

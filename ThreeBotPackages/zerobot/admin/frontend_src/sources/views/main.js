@@ -63,6 +63,11 @@ export default class TopView extends JetView {
             icon: "mdi mdi-package"
         },
         {
+            id: "deployedSolutions",
+            value: "Deployed Solutions",
+            icon: "mdi mdi-animation-play"
+        },
+        {
             id: "solutions",
             value: "Solutions",
             icon: "mdi mdi-animation-play",
@@ -85,7 +90,7 @@ export default class TopView extends JetView {
                 id: "webgateway",
                 value: 'Web Gateway',
                 icon: "mdi mdi-network"
-            } 
+            }
             ]
         },
         {
@@ -212,11 +217,11 @@ export default class TopView extends JetView {
             urls: {
                 myjobs: "myjobs.jobs",
                 workers: "myjobs.workers",
-                ubuntu: "solutions.chatflow?author=tfgrid_solutions&package=ubuntu&chat=ubuntu_deploy",
-                network: "solutions.chatflow?author=tfgrid_solutions&package=network&chat=network_deploy",
-                flist: "solutions.chatflow?author=tfgrid_solutions&package=any_flist&chat=your_flist",
-                minio: "solutions.chatflow?author=tfgrid_solutions&package=minio&chat=minio_deploy",
-                k8s_cluster: "solutions.chatflow?author=tfgrid_solutions&package=kubernetes_cluster&chat=kubernetes_cluster_deploy",
+                ubuntu: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=ubuntu_deploy",
+                network: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=network_deploy",
+                flist: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=your_flist",
+                minio: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=minio_deploy",
+                k8s_cluster: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=kubernetes_cluster_deploy",
                 threebot: "solutions.chatflow?author=tfgrid&package=threebot_provisioning&chat=threebot_reservation",
             }
         });
