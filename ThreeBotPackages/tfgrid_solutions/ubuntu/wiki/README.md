@@ -18,7 +18,7 @@ Your deployed a ubuntu container will have started from container flist.
    - **Expiration time**: a network expiration time (minutes=m ,hour=h, day=d, week=w, month=M)
    - **IP Address**: choose the ip address for your ubuntu machine.
 * **User setup** 
-    - register user threebot on explorer ```kosmos "j.tools.threebot.init_my_threebot(name=3bot_NAME,email=EMAIL)"``` Note: name of 3bot is (your 3bot name).3bot , email is your 3bot email
+    - register user threebot on explorer ```kosmos "j.me.encryptor.tools.init_my_threebot(name=3bot_NAME,email=EMAIL)"``` Note: name of 3bot is (your 3bot name).3bot , email is your 3bot email
     - Install [wireguard](https://www.wireguard.com/install/)
 
 

@@ -27,7 +27,7 @@ class Package(j.baseclasses.threebot_package):
             # },
         ]
         for repo in repos:
-            package = j.tools.threebot_packages.get(
+            package = j.me.encryptor.tools_packages.get(
                 name=f"threefold.{repo['name']}", giturl=repo["giturl"], branch=repo["branch"]
             )
             package.start()

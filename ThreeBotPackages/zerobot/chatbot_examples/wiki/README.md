@@ -1,10 +1,10 @@
 # Installation
 
-`j.tools.threebot_packages.get("threefold.chatbot_examples").install()`
+`j.me.encryptor.tools_packages.get("threefold.chatbot_examples").install()`
 
 ## Starting
 
-`j.tools.threebot_packages.get("threefold.chatbot_examples").start()`
+`j.me.encryptor.tools_packages.get("threefold.chatbot_examples").start()`
 
 
 ## Accessing examples

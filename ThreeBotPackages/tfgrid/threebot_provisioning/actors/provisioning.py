@@ -15,7 +15,7 @@ class provisioning(j.baseclasses.threebot_actor):
         ssh_key = (S)
         ```
         """
-        deployer = j.tools.threebot_deploy.get()
+        deployer = j.me.encryptor.tools_deploy.get()
         machine = deployer.machines.get_available()
         machine.threebot_deploy()
 
@@ -29,6 +29,6 @@ class provisioning(j.baseclasses.threebot_actor):
         description = (S)
         ```
         """
-        container = j.tools.threebot_deploy.get_by_double_name(doublename)
+        container = j.me.encryptor.tools_deploy.get_by_double_name(doublename)
         client = container.threebot_client
         client.actors.registration.register(doublename, email, description)

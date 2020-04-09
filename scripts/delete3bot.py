@@ -17,7 +17,7 @@ def destroy(doublename):
     gedismodel = j.data.bcdb.system.model_get(url="jumpscale.gedis.client")
     for cl in gedismodel.find(name=mainname):
         cl.delete()
-    j.tools.threebot_deploy.delete(doublename)
+    j.me.encryptor.tools_deploy.delete(doublename)
     redisclient = j.clients.redis.get(MASTERIP, port=6378)
     first, last = doublename.split(".")
     if redisclient.hexists(first, f"{last}.{THREEBOT_DOMAIN}."):

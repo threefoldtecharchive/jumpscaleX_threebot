@@ -5,7 +5,7 @@ class system(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         assert self.package.gedis_server
         self._gedis_server = self.package.gedis_server
-        j.data.schema.get_from_text(j.tools.threebot_packages._model.schema.text)
+        j.data.schema.get_from_text(j.me.encryptor.tools_packages._model.schema.text)
 
     def ping(self, user_session=None):
         return "PONG"

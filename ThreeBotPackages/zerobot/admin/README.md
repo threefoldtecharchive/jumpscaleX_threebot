@@ -43,16 +43,16 @@ You can view the dashboard by navigating to `http://<host>/admin`.
 The dashboard is protected by 3Bot connect, you need to register your current 3Bot, from 3Bot server shell (for now, you need to suffix your name with `.3bot`):
 
 ```
-j.tools.threebot.init_my_threebot()
+j.me.encryptor.tools.init_my_threebot()
 ```
 
 Now, you can download [3Bot connect app](https://3bot.org/3bot.html) and use it to login with the 3Bot name you registered.
 
-Also, other people can access the dashboard, but they need to be added to admins from `Settings`, Also, admins can be dded to `j.tools.threebot.me.default.admins` via `kosmos` shell:
+Also, other people can access the dashboard, but they need to be added to admins from `Settings`, Also, admins can be dded to `j.me.encryptor.tools.me.default.admins` via `kosmos` shell:
 
 ```python3
-j.tools.threebot.me.default.admins.append("ahmed.3bot")
-j.tools.threebot.me.default.save()
+j.me.encryptor.tools.me.default.admins.append("ahmed.3bot")
+j.me.encryptor.tools.me.default.save()
 ```
 
 

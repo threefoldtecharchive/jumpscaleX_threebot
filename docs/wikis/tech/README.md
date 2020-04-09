@@ -163,7 +163,7 @@ Inside the wiki:
 To reload a wiki of a specific package, you just need to get an instance from this package (make sure it was added before).
 
 ```
-JSX> p = j.tools.threebot_packages.get("mybot.test")
+JSX> p = j.me.encryptor.tools_packages.get("mybot.test")
 LOAD CONFIG BCDB
 JSX> p.wiki_load(reset=True)
 ** START DATA PROCESSOR FOR :myjobs
