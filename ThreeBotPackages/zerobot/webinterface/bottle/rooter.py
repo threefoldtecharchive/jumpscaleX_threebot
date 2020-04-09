@@ -28,12 +28,12 @@ PACKAGE_BASE_URL = "/<threebot_name>/<package_name>"
 def get_package(threebot_name, package_name):
     name = f"{threebot_name}.{package_name}".strip()
 
-    if not j.me.encryptor.tools_packages.exists(name):
+    if not j.tools.threebot_packages.exists(name):
         # try with lower case name
         name = name.lower()
 
     try:
-        return j.me.encryptor.tools_packages.get(name=name)
+        return j.tools.threebot_packages.get(name=name)
     except j.exceptions.Base:
         # loading will fail if package directory is not found
         # cannot have a package object without an actual package

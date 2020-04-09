@@ -27,7 +27,7 @@ class explorer_proxy(j.baseclasses.threebot_actor):
 
         assert isinstance(seed_encrypted, bytes)
         toencode = "%s:%s" % (seed_encrypted, j.core.myenv.config["THREEBOT_ID"])
-        signature = j.me.sign(toencode.encode())
+        signature = j.tools.threebot.sign_data(toencode.encode())
         out.server_id = j.core.myenv.config["THREEBOT_ID"]
         return self._return_format(out)
 

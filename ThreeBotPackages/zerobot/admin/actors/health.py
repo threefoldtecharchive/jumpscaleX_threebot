@@ -23,8 +23,8 @@ class health(j.baseclasses.threebot_actor):
 
     def _is_installed(self, package_name):
         status = 0
-        if j.me.encryptor.tools_packages.exists(package_name):
-            status = j.me.encryptor.tools_packages.get(package_name).status.value
+        if j.tools.threebot_packages.exists(package_name):
+            status = j.tools.threebot_packages.get(package_name).status.value
         return status == STATUS_INSTALLED
 
     @j.baseclasses.actor_method

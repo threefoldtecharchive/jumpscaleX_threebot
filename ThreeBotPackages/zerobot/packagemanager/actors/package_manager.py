@@ -6,7 +6,7 @@ class package_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         assert self.package.gedis_server
         self._gedis_server = self.package.gedis_server
-        j.data.schema.get_from_text(j.me.encryptor.tools_packages._model.schema.text)
+        j.data.schema.get_from_text(j.tools.threebot_packages._model.schema.text)
 
     def _to_schema(self, schema_out, package):
         """a helper method to return a package as schema out
@@ -84,15 +84,15 @@ class package_manager(j.baseclasses.threebot_actor):
         name = getfullname(p)
         package = None
         if git_url:
-            package = j.me.encryptor.tools_packages.get(name=name, giturl=git_url)
+            package = j.tools.threebot_packages.get(name=name, giturl=git_url)
         elif path:
-            package = j.me.encryptor.tools_packages.get(name=name, path=path)
+            package = j.tools.threebot_packages.get(name=name, path=path)
         else:
             raise j.exceptions.Input("need to have git_url or path to package")
 
         j.threebot.servers.core._package_add(package)
 
-        assert j.me.encryptor.tools_packages.exists(name=package.name)
+        assert j.tools.threebot_packages.exists(name=package.name)
 
         if install or reload:
             package.install(install_kwargs=install_kwargs)
@@ -125,10 +125,10 @@ class package_manager(j.baseclasses.threebot_actor):
 
         """
         user_session.admin_check()
-        if not j.me.encryptor.tools_packages.exists(name):
+        if not j.tools.threebot_packages.exists(name):
             return
 
-        package = j.me.encryptor.tools_packages.get(name)
+        package = j.tools.threebot_packages.get(name)
         package.uninstall()
         package.delete()
 
@@ -148,10 +148,10 @@ class package_manager(j.baseclasses.threebot_actor):
         stop a package, which means will call package.stop()
         """
         user_session.admin_check()
-        if not j.me.encryptor.tools_packages.exists(name):
+        if not j.tools.threebot_packages.exists(name):
             raise j.exceptions.NotFound("package not found", data={"name": name})
 
-        package = j.me.encryptor.tools_packages.get(name)
+        package = j.tools.threebot_packages.get(name)
         package.stop()
 
         return self._to_schema(schema_out, package)
@@ -168,10 +168,10 @@ class package_manager(j.baseclasses.threebot_actor):
         ```
         """
         user_session.admin_check()
-        if not j.me.encryptor.tools_packages.exists(name):
+        if not j.tools.threebot_packages.exists(name):
             raise j.exceptions.NotFound("package not found", data={"name": name})
 
-        package = j.me.encryptor.tools_packages.get(name)
+        package = j.tools.threebot_packages.get(name)
         package.start()
 
         return self._to_schema(schema_out, package)
@@ -188,10 +188,10 @@ class package_manager(j.baseclasses.threebot_actor):
         ```
         """
         user_session.admin_check()
-        if not j.me.encryptor.tools_packages.exists(name):
+        if not j.tools.threebot_packages.exists(name):
             raise j.exceptions.NotFound("package not found", data={"name": name})
 
-        package = j.me.encryptor.tools_packages.get(name)
+        package = j.tools.threebot_packages.get(name)
         package.disable()
 
         return self._to_schema(schema_out, package)
@@ -208,10 +208,10 @@ class package_manager(j.baseclasses.threebot_actor):
         ```
         """
         user_session.admin_check()
-        if not j.me.encryptor.tools_packages.exists(name):
+        if not j.tools.threebot_packages.exists(name):
             raise j.exceptions.NotFound("package not found", data={"name": name})
 
-        package = j.me.encryptor.tools_packages.get(name)
+        package = j.tools.threebot_packages.get(name)
         package.enable()
         package.start()
 
@@ -231,7 +231,7 @@ class package_manager(j.baseclasses.threebot_actor):
         ```
         """
         packages = []
-        for package in j.me.encryptor.tools_packages.find():
+        for package in j.tools.threebot_packages.find():
             if frontend or has_frontend_args:
                 mdp = j.sal.fs.joinPaths(package.path, "package.toml")
                 if j.sal.fs.exists(mdp):
@@ -276,8 +276,8 @@ class package_manager(j.baseclasses.threebot_actor):
         packages = {}
 
         for name in names:
-            if j.me.encryptor.tools_packages.exists(name):
-                packages[name] = j.me.encryptor.tools_packages.get(name).status.value
+            if j.tools.threebot_packages.exists(name):
+                packages[name] = j.tools.threebot_packages.get(name).status.value
             else:
                 packages[name] = 0  # status: init
 
@@ -318,10 +318,10 @@ class package_manager(j.baseclasses.threebot_actor):
 
         r = schema_out.new()
         if package_name:
-            package = j.me.encryptor.tools_packages.get(name=package_name)
+            package = j.tools.threebot_packages.get(name=package_name)
             r = do(r, package)
         else:
-            for package in j.me.encryptor.tools_packages.find():
+            for package in j.tools.threebot_packages.find():
                 r = do(r, package)
         return r
 
@@ -358,10 +358,10 @@ class package_manager(j.baseclasses.threebot_actor):
 
         r = schema_out.new()
         if package_name:
-            package = j.me.encryptor.tools_packages.get(name=package_name)
+            package = j.tools.threebot_packages.get(name=package_name)
             r = do(r, package)
         else:
-            for package in j.me.encryptor.tools_packages.find():
+            for package in j.tools.threebot_packages.find():
                 r = do(r, package)
         return r
 
@@ -385,10 +385,10 @@ class package_manager(j.baseclasses.threebot_actor):
             package.reload(reset=reset)
 
         if package_name:
-            package = j.me.encryptor.tools_packages.get(name=package_name)
+            package = j.tools.threebot_packages.get(name=package_name)
             do(package)
         else:
-            for package in j.me.encryptor.tools_packages.find():
+            for package in j.tools.threebot_packages.find():
                 do(package)
 
         return self._to_schema(schema_out, package)

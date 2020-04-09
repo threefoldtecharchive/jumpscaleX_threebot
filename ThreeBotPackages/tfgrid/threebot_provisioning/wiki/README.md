@@ -14,7 +14,7 @@ Your deployed 3bot container will have started from jsx flist.
    - **IP Address**: choose the ip address for your 3bot machine.
    - **Backup password**: in case you want your 3bot to be automatically backed up (in s3) a password should be provided. You will later use it to restore your 3bot.
 * **User setup** 
-    - register user threebot on explorer ```kosmos "j.me.encryptor.tools.init_my_threebot(name=3bot_NAME,email=EMAIL)"``` Note: name of 3bot is (your 3bot name).3bot , email is your 3bot email
+    - register user threebot on explorer ```kosmos "j.tools.threebot.init_my_threebot(name=3bot_NAME,email=EMAIL)"``` Note: name of 3bot is (your 3bot name).3bot , email is your 3bot email
     - Install [wireguard](https://www.wireguard.com/install/)
 
 

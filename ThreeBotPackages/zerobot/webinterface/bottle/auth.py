@@ -6,7 +6,7 @@ LOGIN_URL = "/auth/login"
 
 client = j.clients.oauth_proxy.get("main")
 oauth_app = j.tools.oauth_proxy.get(app, client, LOGIN_URL)
-bot_app = j.me.encryptor.toolslogin_proxy.get(app, LOGIN_URL)
+bot_app = j.tools.threebotlogin_proxy.get(app, LOGIN_URL)
 PROVIDERS = list(client.providers_list())
 
 

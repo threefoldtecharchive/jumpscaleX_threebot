@@ -65,7 +65,7 @@ class ThreeFoldRegistry(j.baseclasses.threebot_factory):
         authorized_reader = j.myidentities.get("second_id", tid=tid_2, email="test@test.com", tname="second")
         unauthorized_reader = j.myidentities.get("third_id", tid=tid_3, email="test@test.com", tname="third")
 
-        # we should create 2 examples, one where we encrypt for multiple threebot identities (j.me.encryptor.tools...)
+        # we should create 2 examples, one where we encrypt for multiple threebot identities (j.tools.threebot...)
         # non-encrypted example
         scm1 = j.data.schema.get_from_url(url="tfgrid.registry.entry.data.1")
         dataobj = self.bcdb.model_get(url=scm1.url).new()

@@ -203,13 +203,13 @@ Some points to take care of:
 - To disable threebot login totally in the conatiner for debugging purposes use:
 
 ```python
-j.me.encryptor.tools.threebotconnect_disable()
+j.tools.threebot.threebotconnect_disable()
 ```
 
 - To Enable use:
 
 ```python
-j.me.encryptor.tools.threebotconnect_enable()
+j.tools.threebot.threebotconnect_enable()
 ```
 
 

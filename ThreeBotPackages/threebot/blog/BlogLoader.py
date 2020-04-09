@@ -29,7 +29,7 @@ class BlogLoader(j.baseclasses.object):
         self.blog_name = blog_name
         self.repo_url = repo_url
         self.post_model = post_model
-        self.package = j.me.encryptor.tools_packages.get(
+        self.package = j.tools.threebot_packages.get(
             path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog/"
         )
 
