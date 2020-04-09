@@ -23,9 +23,9 @@ class Deployer:
 
     def _deploy_volume(self, reservation, node, expiration):
         volume = self._zos.volume.create(reservation, node.node_id)
-        reservation_id = self._zos.reservation_register(reservation, expiration)
-        self._wait_for_result(reservation_id, "VOLUME")
-        return f"{reservation_id}-{volume.workload_id}"
+        reservation = self._zos.reservation_register(reservation, expiration)
+        self._wait_for_result(reservation.id, "VOLUME")
+        return f"{reservation.id}-{volume.workload_id}"
 
     def _get_free_ip_address(self, node_id, subnet):
         used = [ip.decode().split(":")[-1] for ip in self._redis.keys("play:used:ip:*")]
@@ -77,9 +77,9 @@ class Deployer:
         wireguard = self._zos.network.add_access(network, node.node_id, str(next(subnetworks)), ipv4=True)
 
         expiration = j.data.time.epoch + (3600 * 24 * 365)
-        reservation_id = self._zos.reservation_register(reservation, expiration)
+        reservation = self._zos.reservation_register(reservation, expiration)
 
-        self._wait_for_result(reservation_id, "NETWORK")
+        self._wait_for_result(reservation.id, "NETWORK")
         self._wireguard_connect(wireguard)
 
     def deploy_container(self):
@@ -108,8 +108,8 @@ class Deployer:
 
         self._zos.volume.attach_existing(container, volume_id, "/sandbox/var")
 
-        reservation_id = j.sal.zosv2.reservation_register(reservation, expiration)
-        self._wait_for_result(reservation_id, "CONTAINER")
+        reservation = j.sal.zosv2.reservation_register(reservation, expiration)
+        self._wait_for_result(reservation.id, "CONTAINER")
         j.sal.nettools.tcpPortConnectionTest(ip_address, port=22, timeout=30)
 
         domain = "tf-simulator-%s.%s" % (uuid.uuid4().hex[:5], DOMAIN)
