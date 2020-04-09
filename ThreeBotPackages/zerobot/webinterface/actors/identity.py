@@ -23,7 +23,7 @@ class identity(j.baseclasses.threebot_actor):
         admins = (LS)
         ```
         """
-        identity = j.myidentities.get(name=name, needexist=True)
+        identity = j.me
         if identity.tid == 0:
             raise j.exceptions.RuntimeError(f"Threebot me {name} has not been initialized yet")
 
