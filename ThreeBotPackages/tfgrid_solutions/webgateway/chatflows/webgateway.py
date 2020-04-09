@@ -39,10 +39,7 @@ def chat(bot):
                 else:
                     continue
 
-                containers[item.name] = {
-                    "model": solution_model,
-                    "ip_address": result.data_json["ipv6"],
-                }
+                containers[item.name] = {"model": solution_model, "ip_address": result.data_json["ipv6"]}
 
     if not containers:
         bot.md_show("You don't have any ipv6 containers")
@@ -51,10 +48,8 @@ def chat(bot):
     selected = bot.drop_down_choice("Select container", list(containers.keys()))
     container = containers[selected]
 
-    subdomain = bot.string_ask(
-        f"Subdomain, the url will be (subdomain).{nl_threebot_name}.{base_domain}"
-    )
-    if container["model"] == "tfgrid.solutions.minio.instance.1":
+    subdomain = bot.string_ask(f"Subdomain, the url will be (subdomain).{nl_threebot_name}.{base_domain}")
+    if container["model"] == "tfgrid.solutions.minio.1":
         port = 9000
     else:
         port = bot.int_ask("Port")
@@ -62,11 +57,7 @@ def chat(bot):
     ip_address = container["ip_address"]
     signature = j.me.encryptor.sign_hex(threebot_name)
     explorer.gateway.subdomain_register(
-        threebot_name=threebot_name,
-        subdomain=subdomain,
-        ip_address=ip_address,
-        port=port,
-        signature=signature,
+        threebot_name=threebot_name, subdomain=subdomain, ip_address=ip_address, port=port, signature=signature
     )
 
     message = """

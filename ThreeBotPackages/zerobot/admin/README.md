@@ -12,25 +12,25 @@ Shows system versions, network, processes status, memory consumptions and some h
 ### Logs
 Allows seeing logs per application
 
-![logs](./images/logs.png)
+![logs](images/logs.png)
 
 
 ### Alerts
 Advanced alerts system
 
-![alerts](./images/alerts.png)
+![alerts](images/alerts.png)
 
 ### Package management system
 Easy way to install/stop packages available on the filesystem or from a trusted git repository
 
-![packagemanager](./images/packagemanager.png)
+![packagemanager](images/packagemanager.png)
 
 
 ### Online code editor
 
 If you want to edit code from the dashboard directly you can do so using CodeServer package
 
-![codeserver](./images/codeserverterminal.png)
+![codeserver](images/codeserverterminal.png)
 
 ## Installation
 
@@ -92,5 +92,3 @@ export default class CodeserverView extends ExternalView {
 - Just extend `ExternalView` and pass the remote view url `CODE_URL` and required packages `REQUIRED_PACKGGES` to the super
 - update `main.js` sidebarData with your view 
 
-## Defining a new Services
-TBD
