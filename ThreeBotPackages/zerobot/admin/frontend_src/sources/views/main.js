@@ -110,7 +110,7 @@ export default class TopView extends JetView {
         },
         {
             id: "jupyter",
-            value: "Jupyter",
+            value: "TF Simulator",
             icon: "mdi mdi-play"
         },
         {
