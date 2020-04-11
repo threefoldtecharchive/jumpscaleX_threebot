@@ -3,7 +3,7 @@ authors = ["3bot"]
 language = "en"
 multilingual = false
 src = "."
-title = "tfgrid_solutions.tfgrid_solutions"
+title = "tfgrid_solutions.simulator_playground"
 
 [output.html.fold]
 enable = true
@@ -13,4 +13,4 @@ level = 0
 default-theme = "light"
 
 [build]
-build-dir = "/sandbox/var/mdbooks/tfgrid_solutions.tfgrid_solutions"
+build-dir = "/sandbox/var/mdbooks/tfgrid_solutions.simulator_playground"

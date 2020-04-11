@@ -1,5 +1,0 @@
-[source]
-name = "webgateway"
-description = "Chatflow to expose deployed container to public domains"
-threebot = "tfgrid_solutions"
-version = "1.0.0"
