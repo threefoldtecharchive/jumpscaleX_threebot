@@ -1,5 +1,5 @@
 # Locations
-As you already figured out we use `openresty` for running applications and proxying requests based on their locations:
+As you already figured out we use `openresty` for running applications, serving content and proxying requests based on the URL pattern:
 
 Inside a package, you can define one of the following location types:
 
@@ -209,9 +209,9 @@ j.me.encryptor.tools.threebotconnect_disable()
 - To Enable use:
 
 ```python
-j.me.encryptor.tools.threebotconnect_enable()
+JSX> j.me.encryptor.tools.threebotconnect_enable()
 ```
+
 
 Then start 3bot server.
 
-To re-enable pass True instead.
