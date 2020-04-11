@@ -3,7 +3,7 @@ authors = ["3bot"]
 language = "en"
 multilingual = false
 src = "."
-title = "zerobot.alerta"
+title = "zerobot.admin"
 
 [output.html.fold]
 enable = true
@@ -13,4 +13,4 @@ level = 0
 default-theme = "light"
 
 [build]
-build-dir = "/sandbox/var/mdbooks/zerobot.alerta"
+build-dir = "/sandbox/var/mdbooks/zerobot.admin"

@@ -20,6 +20,7 @@ Advanced alerts system
 
 ![alerts](images/alerts.png)
 
+check [alerts.md](./alerts.md) for info about its actors
 ### Package management system
 Easy way to install/stop packages available on the filesystem or from a trusted git repository
 
