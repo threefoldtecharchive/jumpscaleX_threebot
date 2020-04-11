@@ -15,15 +15,15 @@ class Package(j.baseclasses.threebot_package):
         Open notebook through /threefold/sdkexamples/notebook/
         :return:
         """
-        j.tools.tfgrid_simulator.simulation_get()
+        # j.tools.tfgrid_simulator.simulation_get()
 
-        j.tools.tfgrid_simulator.start(
+        j.servers.notebook.start(
             voila=False,
             background=True,
             base_url="/threefold/sdkexamples/notebook/",
             port=7809,
             pname="sdkexamples",
-            path_source="{DIR_CODE}/github/threefoldtech/jumpscaleX_libs_extra/JumpscaleLibsExtra/tools/threefold_simulation/sdk_examples",
+            path=j.sal.fs.joinPaths(self.package_root, "notebooks"),
         )
 
         time.sleep(5)
@@ -47,6 +47,6 @@ class Package(j.baseclasses.threebot_package):
         self.openresty.reload()
 
     def stop(self):
-        j.tools.tfgrid_simulator.stop(
+        j.servers.notebook.stop(
             voila=False, background=True, base_url="/threefold/sdkexamples/notebook/", pname="sdkexamples"
         )
