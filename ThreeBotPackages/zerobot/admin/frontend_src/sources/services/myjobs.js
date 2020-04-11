@@ -1,6 +1,6 @@
 import { Service } from "../common/api";
 
-const BASE_URL = "/zerobot/myjobs_ui/actors/myjobs";
+const BASE_URL = "/zerobot/admin/actors/myjobs";
 
 class MyjobsService extends Service {
     constructor() {

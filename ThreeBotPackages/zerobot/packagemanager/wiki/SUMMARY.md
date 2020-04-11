@@ -1,1 +1,0 @@
-- [packagemanager](README.md)
