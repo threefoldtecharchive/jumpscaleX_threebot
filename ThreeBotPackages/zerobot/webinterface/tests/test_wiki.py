@@ -94,9 +94,7 @@ def test005_check_package_manager_actor_is_loaded():
     #. Check that package manager is one of gedis client's actors.
     """
     info("Get gedis client for package manager.")
-    gedis_client = j.clients.gedis.get(
-        name="test_wiki", host="127.0.0.1", port=8901, package_name="zerobot.packagemanager"
-    )
+    gedis_client = j.clients.gedis.get(name="test_wiki", host="127.0.0.1", port=8901, package_name="zerobot.admin")
 
     info("Check that package manager is one of gedis client's actors.")
     actors = gedis_client.actors
@@ -125,12 +123,11 @@ def test007_wiki_is_loaded():
 
     info("Load test wikis using markdowndocs.")
 
-    gedis_client = j.clients.gedis.get(
-        name="test_wiki", host="127.0.0.1", port=8901, package_name="zerobot.packagemanager"
-    )
+    gedis_client = j.clients.gedis.get(name="test_wiki", host="127.0.0.1", port=8901, package_name="zerobot.admin")
     gedis_client.actors.package_manager.package_add(
         path=j.core.tools.text_replace(
-            "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/wiki_examples")
+            "{DIR_BASE}/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/wiki_examples"
+        )
     )
     sleep(20)
 
@@ -163,7 +160,8 @@ def test008_wiki_reload():
     info("Load the info_grid wiki")
 
     os_command(
-        "jsx wiki-load -n info_grid -u https://github.com/threefoldfoundation/info_grid/tree/development/docs -f")
+        "jsx wiki-load -n info_grid -u https://github.com/threefoldfoundation/info_grid/tree/development/docs -f"
+    )
 
     info("Touch a file in the docsite dir")
     open("/sandbox/var/docsites/info_grid/test.md", "w+")
@@ -176,5 +174,3 @@ def test008_wiki_reload():
 
     info("Make sure the other files in docsite dir still exists")
     assert os.path.isdir("/sandbox/var/docsites/info_grid/updates/")
-
-

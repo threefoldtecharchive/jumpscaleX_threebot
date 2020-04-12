@@ -22,7 +22,7 @@ see: `/sandbox/code/github/threefoldtech/jumpscaleX_libs/JumpscaleLibs/servers/s
 ```python
 cl = j.servers.threebot.local_start_3bot()
 j.threebot.packages.threefold.simplemail.start()
-gedis = j.clients.gedis.get("pm", port=8901, package_name="zerobot.packagemanager")
+gedis = j.clients.gedis.get("pm", port=8901, package_name="zerobot.admin")
 gedis.actors.package_manager.package_add(path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/simplemail")
 gedis.reload()
 ```

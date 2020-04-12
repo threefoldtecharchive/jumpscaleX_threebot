@@ -2,7 +2,7 @@
 
 ## how to start
 ```
-cl = j.clients.gedis.get("packagemanager", package_name="zerobot.packagemanager")
+cl = j.clients.gedis.get("packagemanager", package_name="zerobot.admin")
 cl.actors.package_manager.package_add(path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/websites/")
 ```
 
