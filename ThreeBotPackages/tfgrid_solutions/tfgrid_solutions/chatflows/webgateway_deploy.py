@@ -11,7 +11,7 @@ def chat(bot):
     explorer = j.clients.explorer.default
     bcdb = j.data.bcdb.get("tfgrid_solutions")
     base_domain = j.core.myenv.config.get("THREEBOT_DOMAIN")
-    threebot_name = j.me.name
+    threebot_name = j.me.tname
     nl_threebot_name = threebot_name.replace(".3bot", "")
 
     solutions = {}
