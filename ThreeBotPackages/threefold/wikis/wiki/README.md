@@ -19,7 +19,7 @@ j.servers.threebot.start()
 
     - with gedis packagemanager
         ```python
-        gedis = j.clients.gedis.get("pm", port=8901, package_name="zerobot.packagemanager")
+        gedis = j.clients.gedis.get("pm", port=8901, package_name="zerobot.admin")
         gedis.actors.package_manager.package_add(path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/wikis")
         ```
 

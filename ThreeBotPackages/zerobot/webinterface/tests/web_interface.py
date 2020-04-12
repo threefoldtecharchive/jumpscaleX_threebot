@@ -19,9 +19,7 @@ class web_interface(j.baseclasses.object):
         url = f"{scheme}://{base_url}"
 
         j.servers.threebot.start(background=True)
-        gedis_client = j.clients.gedis.get(
-            name="default", host="127.0.0.1", port=8901, package_name="zerobot.packagemanager"
-        )
+        gedis_client = j.clients.gedis.get(name="default", host="127.0.0.1", port=8901, package_name="zerobot.admin")
 
         gedis_client.actors.package_manager.package_add(
             path=j.core.tools.text_replace(

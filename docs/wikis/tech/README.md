@@ -120,7 +120,7 @@ After filling `wiki` directory with content, you can add the package now via thr
 
 ```
 3BOTDEVEL:3bot:~: kosmos -p
-JSX> cl = j.clients.gedis.get("pm", port=8901, package_name="zerobot.packagemanager")
+JSX> cl = j.clients.gedis.get("pm", port=8901, package_name="zerobot.admin")
 LOAD CONFIG BCDB
 JSX> cl.actors.package_manager.package_add(path="/root/test")
 b'OK'
