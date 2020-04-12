@@ -194,8 +194,9 @@ Some points to take care of:
 
 - In case you need your locations authenticated by 3bot connect in each location you can add
 
-    ```python
-    website_location.is_auth = True
+    ```python 
+    website_location.is_auth = True   # package will be acceccible only by loggied in users
+    website_location.is_admin = True  # package will be acceccible only by admins
     ```
 
     to locations configuration in `package.py`
