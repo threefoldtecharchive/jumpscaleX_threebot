@@ -1,4 +1,6 @@
 from Jumpscale import j
+import math
+import nacl
 
 
 def chat(bot):
@@ -11,6 +13,7 @@ def chat(bot):
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.minio.1")
 
     identity = j.sal.reservation_chatflow.validate_user(user_info)
+    identity_pubkey = identity.pubkey
 
     bot.md_show("# This wizard will help you deploy a minio cluster")
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
@@ -58,8 +61,17 @@ def chat(bot):
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
+    nodequery = {}
+    if user_form_data["Disk type"] == "SSD":
+        nodequery["sru"] = 10
+    if user_form_data["Disk type"] == "HDD":
+        nodequery["hru"] = 10
+
+    nodequery["mru"] = math.ceil(memory.value / 1024)
+    nodequery["cru"] = cpu.value
+
     nodes_selected = j.sal.reservation_chatflow.nodes_get(
-        number_of_nodes=user_form_data["ZDB number"] + 1, farm_name="freefarm"
+        number_of_nodes=user_form_data["ZDB number"] + 1, farm_name="freefarm", **nodequery
     )
     selected_node = nodes_selected[0]
 
@@ -101,6 +113,10 @@ def chat(bot):
 
     entry_point = "/bin/entrypoint"
 
+    secret_env = {}
+    minio_secret_encrypted = j.sal.zosv2.container.encrypt_secret(selected_node.node_id, user_form_data["Secret"])
+    secret_env.update({"SECRET_KEY": minio_secret_encrypted})
+
     # create container
     cont = j.sal.zosv2.container.create(
         reservation=reservation,
@@ -117,8 +133,8 @@ def chat(bot):
             "DATA": str(data_number.value),
             "PARITY": str(parity.value),
             "ACCESS_KEY": user_form_data["Access key"],
-            "SECRET_KEY": user_form_data["Secret"],
         },
+        secret_env=secret_env,
     )
 
     j.sal.zosv2.volume.attach_existing(container=cont, volume_id=f"{zdb_rid}-{volume.workload_id}", mount_point="/data")
