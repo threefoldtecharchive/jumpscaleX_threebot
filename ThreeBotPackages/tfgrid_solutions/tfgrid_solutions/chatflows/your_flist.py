@@ -1,4 +1,5 @@
 from Jumpscale import j
+import math
 import requests
 
 
@@ -9,7 +10,6 @@ def chat(bot):
     user_info = bot.user_info()
     env = dict()
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.flist.1")
-    explorer = j.clients.explorer.default
 
     identity = j.sal.reservation_chatflow.validate_user(user_info)
     bot.md_show("This wizard will help you deploy a container using any flist provided")
@@ -71,7 +71,10 @@ def chat(bot):
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
-    node = j.sal.reservation_chatflow.nodes_get(1)[0]
+    hru = math.ceil(memory.value / 1024)
+    cru = cpu.value
+    sru = 1  # needed space for a container is 250MiB
+    node = j.sal.reservation_chatflow.nodes_get(1, hru=hru, cru=cru, sru=sru)[0]
     network.add_node(node)
     ip_address = network.ask_ip_from_node(node, "Please choose your IP Address for this solution")
     user_form_data["IP Address"] = ip_address

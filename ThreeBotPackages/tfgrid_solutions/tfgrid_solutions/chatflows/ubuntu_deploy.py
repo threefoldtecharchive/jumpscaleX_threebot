@@ -1,4 +1,5 @@
 from Jumpscale import j
+import math
 
 
 def chat(bot):
@@ -6,12 +7,8 @@ def chat(bot):
     """
     user_form_data = {}
     user_info = bot.user_info()
-    name = user_info["username"]
-    email = user_info["email"]
-    ips = ["IPv6", "IPv4"]
     HUB_URL = "https://hub.grid.tf/tf-bootable"
     IMAGES = ["ubuntu:16.04", "ubuntu:18.04"]
-    explorer = j.clients.explorer.default
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.ubuntu.1")
 
     identity = j.sal.reservation_chatflow.validate_user(user_info)
@@ -56,7 +53,10 @@ def chat(bot):
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
-    node_selected = j.sal.reservation_chatflow.nodes_get(1)[0]
+    hru = math.ceil(memory.value / 1024)
+    cru = cpu.value
+    sru = 1  # needed space for a container is 250MiB
+    node_selected = j.sal.reservation_chatflow.nodes_get(1, hru=hru, cru=cru, sru=sru)[0]
     network.add_node(node_selected)
     ip_address = network.ask_ip_from_node(node_selected, "Please choose IP Address for your solution")
     user_form_data["IP Address"] = ip_address
