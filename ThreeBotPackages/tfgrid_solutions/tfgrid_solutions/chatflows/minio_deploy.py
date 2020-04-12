@@ -1,4 +1,5 @@
 from Jumpscale import j
+import math
 
 
 def chat(bot):
@@ -58,8 +59,17 @@ def chat(bot):
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
+    nodequery = {}
+    if user_form_data["Disk type"] == "SSD":
+        nodequery["sru"] = 10
+    if user_form_data["Disk type"] == "HDD":
+        nodequery["hru"] = 10
+
+    nodequery["mru"] = math.ceil(memory.value / 1024)
+    nodequery["cru"] = cpu.value
+
     nodes_selected = j.sal.reservation_chatflow.nodes_get(
-        number_of_nodes=user_form_data["ZDB number"] + 1, farm_name="freefarm"
+        number_of_nodes=user_form_data["ZDB number"] + 1, farm_name="freefarm", **nodequery
     )
     selected_node = nodes_selected[0]
 

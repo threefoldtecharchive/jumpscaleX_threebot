@@ -1,4 +1,5 @@
 from Jumpscale import j
+from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 
 
 def chat(bot):
@@ -13,12 +14,37 @@ def chat(bot):
     bot.md_show("# This wizard will help you deploy a kubernetes cluster")
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
-    user_form_data["Workers number"] = bot.int_ask(
-        "Please specify the number of worker nodes", default=1
-    )  # minimum should be 1
-    cluster_size = user_form_data["Workers number"] + 1  # number of workers + the master node
+
+    while True:
+        form = bot.new_form()
+        sizes = ["1 vCPU 2 GiB ram 50GiB disk space", "2 vCPUs 4 GiB ram 100GiB disk space"]
+        cluster_size_string = form.drop_down_choice("Choose the size of your nodes", sizes)
+        masternodes = form.int_ask(
+            "Please specify the number of master nodes", default=1
+        )  # minimum should be 1
+        workernodes = form.int_ask(
+            "Please specify the number of worker nodes", default=1
+        )  # minimum should be 1
+
+        form.ask()
+        nodes_count = masternodes.value + workernodes.value  # number of workers + the masters
+        cluster_size = sizes.index(cluster_size_string.value) + 1  # sizes are index 1
+        # Select nodes
+        if cluster_size == 1:
+            nodequery = {"sru": 50, "mru": 2, "cru": 1}
+        else:
+            nodequery = {"sru": 100, "mru": 4, "cru": 2}
+        try:
+            nodes_selected = j.sal.reservation_chatflow.nodes_get(nodes_count, **nodequery)
+            break
+        except StopChatFlow as e:
+            bot.md_show(e.msg)
+
+    user_form_data["Master number"] = masternodes.value
+    user_form_data["Workers number"] = workernodes.value
+    user_form_data["Cluster size"] = cluster_size_string.value
     user_form_data["SSH keys"] = bot.upload_file(
-        """"Please add your public ssh key, this will allow you to access the deployed container using ssh.
+        """Please add your public ssh key, this will allow you to access the deployed container using ssh.
             Just upload the ssh keys file with each key on a seperate line"""
     )
     ssh_keys_list = user_form_data["SSH keys"].split("\n")
@@ -32,15 +58,13 @@ def chat(bot):
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
-    # Select nodes
-    nodes_selected = j.sal.reservation_chatflow.nodes_get(cluster_size)
     ipaddresses = list()
     for idx, node_selected in enumerate(nodes_selected):
         network.add_node(node_selected)
-        if idx == 0:
-            msg = "Please choose IP Address for master node of your kubernets cluster"
+        if idx < masternodes.value:
+            msg = f"Please choose IP Address for master node {idx + 1} of your kubernets cluster"
         else:
-            msg = f"Please choose IP Address for worker node {idx}  master node of your kubernets cluster"
+            msg = f"Please choose IP Address for worker node {idx - masternodes.value + 1} of your kubernets cluster"
         ip_address = network.ask_ip_from_node(node_selected, msg)
         ipaddresses.append(ip_address)
 
@@ -53,18 +77,19 @@ def chat(bot):
 
     # Create master and workers
     # Master is in the first node from the selected nodes
-    master = j.sal.zosv2.kubernetes.add_master(
-        reservation=reservation,
-        node_id=nodes_selected[0].node_id,
-        network_name=network.name,
-        cluster_secret=user_form_data["Cluster secret"],
-        ip_address=ipaddresses[0],
-        size=cluster_size,
-        ssh_keys=ssh_keys_list,
-    )
+    for idx in range(masternodes.value):
+        master = j.sal.zosv2.kubernetes.add_master(
+            reservation=reservation,
+            node_id=nodes_selected[idx].node_id,
+            network_name=network.name,
+            cluster_secret=user_form_data["Cluster secret"],
+            ip_address=ipaddresses[idx],
+            size=cluster_size,
+            ssh_keys=ssh_keys_list,
+        )
 
     # Workers are in the rest of the nodes
-    for i in range(1, len(nodes_selected)):
+    for i in range(masternodes.value, nodes_count):
         j.sal.zosv2.kubernetes.add_worker(
             reservation=reservation,
             node_id=nodes_selected[i].node_id,
