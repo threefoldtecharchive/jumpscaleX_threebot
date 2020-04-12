@@ -1,5 +1,11 @@
 [source]
-name = "wikis"
-description = "threefold wikis for foundation, grid and tokens"
+name = "wiki"
+description = "threefold wiki"
 threebot = "threefold"
 version = "1.0.0"
+
+[[bcdbs]]
+name = "wiki"
+namespace = "wiki"
+type = "zdb"
+instance = "default"
