@@ -7,31 +7,31 @@ This package provides an admin dashboard interface with some actors for your 3Bo
 ### Home
 
 Shows system versions, network, processes status, memory consumptions and some health checks
-![images/dashboard.png](images/dashboard.png)
+![images/dashboard.png](../images/dashboard.png)
 
 ### Logs
 Allows seeing logs per application
 
-![logs](images/logs.png)
+![logs](../images/logs.png)
 
 
 ### Alerts
 Advanced alerts system
 
-![alerts](images/alerts.png)
+![alerts](../images/alerts.png)
 
 check [alerts.md](./alerts.md) for info about its actors
 ### Package management system
 Easy way to install/stop packages available on the filesystem or from a trusted git repository
 
-![packagemanager](images/packagemanager.png)
+![packagemanager](../images/packagemanager.png)
 
 
 ### Online code editor
 
 If you want to edit code from the dashboard directly you can do so using CodeServer package
 
-![codeserver](images/codeserverterminal.png)
+![codeserver](../images/codeserverterminal.png)
 
 ## Installation
 
@@ -60,7 +60,7 @@ j.tools.threebot.me.default.save()
 
 ## Frontend
 
-The frontend is written in webix, and located at `frontend_src`, the build is at `frontend`, for more go to [frontend_src/README.md](frontend_src/README.md).
+The frontend is written in webix, and located at `frontend_src`, the build is at `frontend`, for more go to [frontend_src/README.md](../frontend_src/README.md).
 
 
 ### To rebuild frontend
@@ -89,7 +89,8 @@ export default class CodeserverView extends ExternalView {
 
 ```
 - Make sure to pass the url of the remote view -in our example its `CODE_URL`-
-- If it requires packages to be installed first you define them in `REQUIRED_PACKAGES` 
+- If it requires packages to be installed first you define them in `REQUIRED_PACKAGES`
 - Just extend `ExternalView` and pass the remote view url `CODE_URL` and required packages `REQUIRED_PACKGGES` to the super
-- update `main.js` sidebarData with your view 
+- update `main.js` sidebarData with your view
 
+for more go to [frontend_src/README.md](../frontend_src/README.md).
