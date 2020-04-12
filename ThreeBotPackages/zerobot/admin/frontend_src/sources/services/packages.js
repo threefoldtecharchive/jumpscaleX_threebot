@@ -1,6 +1,6 @@
 import { Service } from "../common/api";
 
-const BASE_URL = "/zerobot/packagemanager/actors/package_manager";
+const BASE_URL = "/zerobot/admin/actors/package_manager";
 
 
 class PackagesService extends Service {
