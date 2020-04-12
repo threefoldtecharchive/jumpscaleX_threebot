@@ -62,7 +62,7 @@ class health(j.baseclasses.threebot_actor):
 
         # wikis are running
         try:
-            wikis = j.sal.nettools.checkUrlReachable("http://127.0.0.1/3git/wikis/zerobot.packagemanager/readme.md")
+            wikis = j.sal.nettools.checkUrlReachable("http://127.0.0.1/mdbook/zerobot.base/#base-package")
             if wikis:
                 data["wikis"] = "OK"
             else:
