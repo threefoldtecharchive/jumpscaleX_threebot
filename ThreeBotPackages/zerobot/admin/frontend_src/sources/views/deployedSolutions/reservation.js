@@ -173,92 +173,202 @@ export default class ReservationView extends JetView {
                         }
                     }
                 },
-                // {
-                //     id: "volumes",
-                //     header: "Volumes",
-                //     view: "datatable",
-                //     resizeColumn: true,
-                //     select: true,
-                //     multiselect: true,
-                //     css: "webix_header_border webix_data_border",
-                //     scroll: true,
-                //     autoConfig: true,
-                //     columns: [
-                //         {
-                //             id: "index",
-                //             header: "#",
-                //             sort: "int",
-                //             autowidth: true,
-                //             width: 60
-                //         }, {
-                //             id: "node_id",
-                //             header: "Node id",
-                //             sort: "string",
-                //             autowidth: true,
-                //             width: 180
-                //         }, {
-                //             id: "size",
-                //             header: "Size",
-                //             sort: "string",
-                //             autowidth: true,
-                //             width: 180
-                //         }, {
-                //             id: "type",
-                //             header: "Type",
-                //             sort: "string",
-                //             autowidth: true,
-                //             width: 180
-                //         }, {
-                //             id: "farmer_tid",
-                //             header: "Farmer_tid",
-                //             sort: "string",
-                //             autowidth: true,
-                //             width: 180
-                //         },
-
-                //     ],
-                //     scheme: {
-                //         $init: function (obj) {
-                //             obj.node_id = obj.node_id;
-                //             obj.size = obj.size;
-                //             obj.type = obj.type;
-                //             obj.farmer_tid = obj.farmer_tid;
-                //             obj.index = this.count();
-                //         }
-                //     }, on: {
-                //         onAfterLoad: function () {
-                //             if (!this.count())
-                //                 this.showOverlay("No volumes in reservation");
-                //             else
-                //                 this.hideOverlay();
-                //         }
-                //     }
-                // },
                 {
+                    id: "volumes",
                     header: "Volumes",
-                    body: {
-                        id: "volumes",
-                        view: "template",
-                        template: "",
-                        scroll: "auto",
+                    view: "datatable",
+                    resizeColumn: true,
+                    select: true,
+                    multiselect: true,
+                    css: "webix_header_border webix_data_border",
+                    scroll: true,
+                    autoConfig: true,
+                    columns: [
+                        {
+                            id: "index",
+                            header: "#",
+                            sort: "int",
+                            autowidth: true,
+                            width: 60
+                        }, {
+                            id: "node_id",
+                            header: "Node id",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        }, {
+                            id: "size",
+                            header: "Size",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        }, {
+                            id: "type",
+                            header: "Type",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        }, {
+                            id: "farmer_tid",
+                            header: "Farmer_tid",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        },
+
+                    ],
+                    scheme: {
+                        $init: function (obj) {
+                            obj.node_id = obj.node_id;
+                            obj.size = obj.size;
+                            obj.type = obj.type;
+                            obj.farmer_tid = obj.farmer_tid;
+                            obj.index = this.count();
+                        }
+                    }, on: {
+                        onAfterLoad: function () {
+                            if (!this.count())
+                                this.showOverlay("No volumes in reservation");
+                            else
+                                this.hideOverlay();
+                        }
                     }
-                },
-                {
+                }, {
+                    id: "zdbs",
                     header: "Zdbs",
-                    body: {
-                        id: "zdbs",
-                        view: "template",
-                        template: "",
-                        scroll: "auto",
+                    view: "datatable",
+                    resizeColumn: true,
+                    select: true,
+                    multiselect: true,
+                    css: "webix_header_border webix_data_border",
+                    scroll: true,
+                    autoConfig: true,
+                    columns: [
+                        {
+                            id: "index",
+                            header: "#",
+                            sort: "int",
+                            autowidth: true,
+                            width: 60
+                        }, {
+                            id: "node_id",
+                            header: "Node id",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        }, {
+                            id: "size",
+                            header: "Size",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        }, {
+                            id: "disk_type",
+                            header: "Disk type",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        }, {
+                            id: "mode",
+                            header: "Mode",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        }, {
+                            id: "public",
+                            header: "public",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        }, {
+                            id: "farmer_tid",
+                            header: "Farmer_tid",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        },
+
+                    ],
+                    scheme: {
+                        $init: function (obj) {
+                            obj.index = this.count();
+                        }
+                    }, on: {
+                        onAfterLoad: function () {
+                            if (!this.count())
+                                this.showOverlay("No zdbs in reservation");
+                            else
+                                this.hideOverlay();
+                        }
                     }
-                },
-                {
+                }, {
+                    id: "kubernetes",
                     header: "Kubernetes",
-                    body: {
-                        id: "kubernetes",
-                        view: "template",
-                        template: "",
-                        scroll: "auto",
+                    view: "datatable",
+                    resizeColumn: true,
+                    select: true,
+                    multiselect: true,
+                    css: "webix_header_border webix_data_border",
+                    scroll: true,
+                    autoConfig: true,
+                    columns: [
+                        {
+                            id: "index",
+                            header: "#",
+                            sort: "int",
+                            autowidth: true,
+                            width: 60
+                        }, {
+                            id: "node_id",
+                            header: "Node id",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        }, {
+                            id: "size",
+                            header: "Size",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        }, {
+                            id: "network_id",
+                            header: "Network id",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        }, {
+                            id: "ipaddress",
+                            header: "Ip address",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        }, {
+                            id: "master_ips_str",
+                            header: "Master ips",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        }, {
+                            id: "farmer_tid",
+                            header: "Farmer_tid",
+                            sort: "string",
+                            autowidth: true,
+                            width: 180
+                        },
+
+                    ],
+                    scheme: {
+                        $init: function (obj) {
+                            obj.master_ips_str = obj.master_ips.toString()
+                            obj.index = this.count();
+                        }
+                    }, on: {
+                        onAfterLoad: function () {
+                            if (!this.count())
+                                this.showOverlay("No kubernetes in reservation");
+                            else
+                                this.hideOverlay();
+                        }
                     }
                 },
 
@@ -319,49 +429,31 @@ export default class ReservationView extends JetView {
 
         // Add networks tab content
         this.networks = $$("networks");
+        this.networks.clearAll()
         this.networks.parse(values.networks);
 
         // Add cotainer tab content
         this.containers = $$("containers");
+        this.containers.clearAll()
         this.containers.parse(values.containers);
 
 
         // Add volumes tab content
         this.volumes = $$("volumes");
-        // this.volumes.parse(values.volumes);
-        if (values.volumes.length !== 0) {
-            this.volumes.setHTML(`<p>
-<pre class="prettyprint">
-${JSON.stringify(values.volumes, undefined, 4)}
-</pre>
-)}</p>`);
-        } else {
-            this.volumes.setHTML(`<p>No volumes in reservation</p>`);
-        }
+        this.volumes.clearAll()
+        this.volumes.parse(values.volumes);
 
         // Add zdb tab content
         this.zdbs = $$("zdbs");
-        if (values.zdbs.length !== 0) {
-            this.zdbs.setHTML(`<p>
-<pre class="prettyprint">
-${JSON.stringify(values.zdbs, undefined, 4)}
-</pre>
-)}</p>`);
-        } else {
-            this.zdbs.setHTML(`<p>No zdbs in reservation</p>`);
-        }
+        this.zdbs.clearAll()
+        this.zdbs.parse(values.zdbs);
+
 
         // Add kubernetes tab content
         this.kubernetes = $$("kubernetes");
-        if (values.kubernetes.length !== 0) {
-            this.kubernetes.setHTML(`<p>
-<pre class="prettyprint">
-${JSON.stringify(values.kubernetes, undefined, 4)}
-</pre>
-)}</p > `);
-        } else {
-            this.kubernetes.setHTML(`<p>No kubernetes in reservation</p>`);
-        }
+        this.kubernetes.clearAll()
+        this.kubernetes.parse(values.kubernetes);
+
 
         this.getRoot().show();
     }
