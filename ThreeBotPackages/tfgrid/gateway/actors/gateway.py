@@ -261,14 +261,15 @@ class gateway(j.baseclasses.threebot_actor):
     ## TCP Router redis backend
 
     @j.baseclasses.actor_method
-    def tcpservice_ip_register(self, domain, privateip="", schema_out=None, user_session=None):
+    def tcpservice_ip_register(self, domain, privateip="", port=80, schema_out=None, user_session=None):
         """
         ```in
          domain = (S)
          privateip = (S)
+         port = (I)
         ```
         """
-        return self._gateway.tcpservice_register(domain, privateip)
+        return self._gateway.tcpservice_register(domain, privateip, service_http_port=port)
 
     @j.baseclasses.actor_method
     def tcpservice_dump(self, domain):

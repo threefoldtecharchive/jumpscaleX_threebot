@@ -48,23 +48,33 @@ def chat(bot):
     selected = bot.drop_down_choice("Select container", list(containers.keys()))
     container = containers[selected]
 
-    subdomain = bot.string_ask(f"Subdomain, the url will be (subdomain).{nl_threebot_name}.{base_domain}")
-    if container["model"] == "tfgrid.solutions.minio.1":
-        port = 9000
-    else:
-        port = bot.int_ask("Port")
+    def get_port():
+        if container["model"] == "tfgrid.solutions.minio.1":
+            return 9000
+        return bot.int_ask("Port")
 
+    choices = [f"Use subdomain of {base_domain}", "Use my own domain"]
+    response = bot.single_choice("Which domain would you like to use?", choices)
+    domain = subdomain = ""
     ip_address = container["ip_address"]
-    signature = j.me.encryptor.sign_hex(threebot_name)
-    explorer.gateway.subdomain_register(
-        threebot_name=threebot_name, subdomain=subdomain, ip_address=ip_address, port=port, signature=signature
-    )
+    if choices.index(response) == 1:
+        domain = bot.string_ask(
+            f"Enter the domain you would like to use. You need to create a `cname` record to `{base_domain}` for this to work"
+        )
+        port = get_port()
+        explorer.gateway.tcpservice_ip_register(domain, ip_address, port)
+    else:
+        subdomain = bot.string_ask(f"Subdomain, the url will be (subdomain).{nl_threebot_name}.{base_domain}")
+        port = get_port()
+        signature = j.me.encryptor.sign_hex(threebot_name)
+        explorer.gateway.subdomain_register(
+            threebot_name=threebot_name, subdomain=subdomain, ip_address=ip_address, port=port, signature=signature
+        )
+        domain = f"{subdomain}.{nl_threebot_name}.{base_domain}"
 
-    message = """
+    message = f"""
     ### Visit your container via this link
-    [http://{0}](http://{0})
-    """.format(
-        f"{subdomain}.{nl_threebot_name}.{base_domain}"
-    )
+    [http://{domain}](http://{domain})
+    """
 
-    bot.md_show(j.tools.jinja2.template_render(text=j.core.text.strip(message)))
+    bot.md_show(j.core.text.strip(message))
