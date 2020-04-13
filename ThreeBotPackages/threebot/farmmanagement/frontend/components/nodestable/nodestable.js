@@ -41,36 +41,40 @@ module.exports = new Promise(async (resolve, reject) => {
                 "nodes"
             ]),
             // Parse nodelist to table format here
+            // Parse nodelist to table format here
             parsedNodesList: function () {
                 const nodeList = this.nodes ? this.nodes : this.registeredNodes
-                const parsedNodes = nodeList.filter(node => !this.farmselected || (this.farmselected.id === node.farm_id)).map(node => {
-                    const uptime = moment.duration(node.uptime, "seconds").format();
-
-                    const farmer = _.find(this.registeredFarms, farmer => {
-                        return farmer.id === node.farm_id;
-                    });
+                const parsedNodes = nodeList.filter(node => this.showNode(node)).map(node => {
+                    const farm = find(this.registeredFarms, farmer => {
+                        return farmer.id === node.farm_id
+                    })
 
                     // initialize farmer name with farmer_id from node in case farmer is not found
-                    let farmerName = node.farm_id;
-                    if (farmer) {
-                        farmerName = farmer.name;
+                    let farmer = {
+                        id: node.farm_id,
+                        name: ''
+                    }
+                    if (farm) {
+                        farmer.name = farm.name
                     }
 
                     return {
-                        uptime,
+                        uptime: moment.duration(node.uptime, 'seconds').format(),
                         version: node.os_version,
                         id: node.node_id,
-                        farmer: farmerName,
-                        name: "node " + node.node_id,
+                        farmer: farmer,
+                        name: 'node ' + node.node_id,
                         totalResources: node.total_resources,
                         reservedResources: node.reserved_resources,
                         usedResources: node.used_resources,
+                        workloads: node.workloads,
                         updated: new Date(node.updated * 1000),
                         status: this.getStatus(node),
-                        location: node.location
-                    };
-                });
-                return parsedNodes;
+                        location: node.location,
+                        freeToUse: node.free_to_use
+                    }
+                })
+                return parsedNodes
             },
         },
         mounted() {
@@ -93,6 +97,16 @@ module.exports = new Promise(async (resolve, reject) => {
                 else if (16 < minutes && minutes < 20)
                     return { color: "orange", status: "likely down" };
                 else return { color: "red", status: "down" };
+            },
+            showNode(node) {
+                if (this.farmselected && this.farmselected.id !== node.farm_id) {
+                    return false
+                }
+                if (!this.showOffline && this.getStatus(node)['status'] === 'down') {
+                    return false
+                }
+
+                return true
             },
             truncateString(str) {
                 str = str.toString();
