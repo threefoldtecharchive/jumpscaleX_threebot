@@ -7,9 +7,6 @@ from Jumpscale import j
 
 app = Bottle()
 
-# NOT NICE, we don't use config manager here
-SECRET = j.core.tools.text_replace("{DIR_BASE}/var/github_webhook_secret")
-
 
 @app.route("/webhooks/github", method="post")
 def webhook_github():
@@ -21,16 +18,16 @@ def webhook_github():
     if content_type != "application/x-www-form-urlencoded":
         abort(406, f"wrong content type header: {content_type}")
 
-    signature = request.headers.get("X-Hub-Signature")
-    if not signature:
-        abort(400, "No signature header found")
+    SECRET = j.core.myenv.config.get("GITHUB_WEBHOOK_SECRET", "")
+    if SECRET:
+        signature = request.headers.get("X-Hub-Signature")
+        if not signature:
+            abort(400, "No signature header found")
+        hexdigest = hmac.new(SECRET.encode(), request.body.read(), sha1).hexdigest()
+        hashed_body = f"sha1={hexdigest}"
 
-    webhook_secret = j.sal.fs.readFile(SECRET, binary=True).rstrip()
-    hexdigest = hmac.new(webhook_secret.encode(), request.body.read(), sha1).hexdigest()
-    hashed_body = f"sha1={hexdigest}"
-
-    if not hmac.compare_digest(signature, hashed_body):
-        abort(401, "Invalid secret")
+        if not hmac.compare_digest(signature, hashed_body):
+            abort(401, "Invalid secret")
 
     payload = j.data.serializers.json.loads(request.params.payload)
     j.clients.git.pullGitRepo(payload["repository"]["ssh_url"])

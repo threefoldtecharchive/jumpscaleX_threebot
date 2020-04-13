@@ -294,9 +294,9 @@ class package_manager(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        packages = (LO) !zerobot.packagemanager.packagedef.1
+        packages = (LO) !zerobot.admin.packagedef.1
 
-        @url = zerobot.packagemanager.packagedef.1
+        @url = zerobot.admin.packagedef.1
         package_name = ""
         actor_names = [] (LS)
         ```
@@ -336,9 +336,9 @@ class package_manager(j.baseclasses.threebot_actor):
         ```
 
         ```out
-        packages = (LO) !zerobot.packagemanager.packagedefmodel.1
+        packages = (LO) !zerobot.admin.packagedefmodel.1
 
-        @url = zerobot.packagemanager.packagedefmodel.1
+        @url = zerobot.admin.packagedefmodel.1
         package_name = ""
         bcdb_name = ""
         urls = [] (LS)

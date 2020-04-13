@@ -23,6 +23,16 @@ class AdminService extends Service {
             "name": name
         });
     }
+
+    get_explorer() {
+        return this.getCall('get_explorer');
+    }
+
+    set_explorer(type) {
+        return this.postCall('set_explorer', {
+            explorer_type: type
+        })
+    }
 }
 
 export const admin = new AdminService();
