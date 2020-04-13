@@ -24,4 +24,5 @@ JSX> j.tools.packages.github_webhooks.register_handler("threefoldtech/jumpscaleX
 ```
 - You can add multiple handlers for the same repo using the ```register_handler``` method
 
-3- In your github webhook settings set the url to ```https://<ip>/webhooks/github```
+3- In your github webhook settings set the url to ```https://<ip>/webhooks/github``` or ```http://<ip>/webhooks/github```
+- in case you are using https you need to disable ssl validation on github webhook settings.
