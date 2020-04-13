@@ -7,8 +7,6 @@ from Jumpscale import j
 
 app = Bottle()
 
-SECRET = j.core.myenv.config.get("GITHUB_WEBHOOK_SECRET", "")
-
 
 @app.route("/webhooks/github", method="post")
 def webhook_github():
@@ -24,8 +22,8 @@ def webhook_github():
     if not signature:
         abort(400, "No signature header found")
 
-    webhook_secret = j.sal.fs.readFile(SECRET, binary=True).rstrip()
-    hexdigest = hmac.new(webhook_secret, request.body.read(), sha1).hexdigest()
+    SECRET = j.core.myenv.config.get("GITHUB_WEBHOOK_SECRET", "")
+    hexdigest = hmac.new(SECRET.encode(), request.body.read(), sha1).hexdigest()
     hashed_body = f"sha1={hexdigest}"
 
     if not hmac.compare_digest(signature, hashed_body):
