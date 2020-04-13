@@ -94,6 +94,11 @@ export default class TopView extends JetView {
             ]
         },
         {
+            id: "capacity",
+            value: "Capacity",
+            icon: "mdi mdi-server"
+        },
+        {
             id: "farmmanagement",
             value: "Farm Management",
             icon: "mdi mdi-server"
