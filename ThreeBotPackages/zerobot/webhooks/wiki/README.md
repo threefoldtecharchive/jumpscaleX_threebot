@@ -22,3 +22,5 @@ Sometimes, you don't need only to pull the repository on push events, but also d
 ```bash
 JSX> j.tools.packages.github_webhooks.register_handler("threefoldtech/jumpscaleX_core", f)
 ```
+
+3- In your github webhook settings set the url to ```https://<ip>/webhooks/github```
