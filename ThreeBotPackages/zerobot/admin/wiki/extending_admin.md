@@ -46,7 +46,7 @@ Main view is defined at [main.js](sources/views/main.js) it contains the sidebar
 
 * Add a directory for your view with under `/sources/views`
 *
-    ![codeserver](./images/codeserver.png)
+    ![codeserver](./images/codeserverterminal.png)
 
 * Then in index.js define your view. example
 
