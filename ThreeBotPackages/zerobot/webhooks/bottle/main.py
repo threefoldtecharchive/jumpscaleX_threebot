@@ -18,16 +18,16 @@ def webhook_github():
     if content_type != "application/x-www-form-urlencoded":
         abort(406, f"wrong content type header: {content_type}")
 
-    signature = request.headers.get("X-Hub-Signature")
-    if not signature:
-        abort(400, "No signature header found")
-
     SECRET = j.core.myenv.config.get("GITHUB_WEBHOOK_SECRET", "")
-    hexdigest = hmac.new(SECRET.encode(), request.body.read(), sha1).hexdigest()
-    hashed_body = f"sha1={hexdigest}"
+    if SECRET:
+        signature = request.headers.get("X-Hub-Signature")
+        if not signature:
+            abort(400, "No signature header found")
+        hexdigest = hmac.new(SECRET.encode(), request.body.read(), sha1).hexdigest()
+        hashed_body = f"sha1={hexdigest}"
 
-    if not hmac.compare_digest(signature, hashed_body):
-        abort(401, "Invalid secret")
+        if not hmac.compare_digest(signature, hashed_body):
+            abort(401, "Invalid secret")
 
     payload = j.data.serializers.json.loads(request.params.payload)
     j.clients.git.pullGitRepo(payload["repository"]["ssh_url"])
