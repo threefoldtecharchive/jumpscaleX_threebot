@@ -19,12 +19,8 @@ def chat(bot):
         form = bot.new_form()
         sizes = ["1 vCPU 2 GiB ram 50GiB disk space", "2 vCPUs 4 GiB ram 100GiB disk space"]
         cluster_size_string = form.drop_down_choice("Choose the size of your nodes", sizes)
-        masternodes = form.int_ask(
-            "Please specify the number of master nodes", default=1
-        )  # minimum should be 1
-        workernodes = form.int_ask(
-            "Please specify the number of worker nodes", default=1
-        )  # minimum should be 1
+        masternodes = form.int_ask("Please specify the number of master nodes", default=1)  # minimum should be 1
+        workernodes = form.int_ask("Please specify the number of worker nodes", default=1)  # minimum should be 1
 
         form.ask()
         nodes_count = masternodes.value + workernodes.value  # number of workers + the masters
@@ -107,7 +103,7 @@ def chat(bot):
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
 
     j.sal.reservation_chatflow.reservation_save(
-        resv_id, user_form_data["Solution name"], "tfgrid.solutions.kubernetes.1"
+        resv_id, user_form_data["Solution name"], "tfgrid.solutions.kubernetes.1", user_form_data
     )
 
     res = f"# Kubernetes cluster has been deployed successfully: your reservation id is: {resv_id}"

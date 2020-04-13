@@ -26,6 +26,7 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
         name = ""
         reservation = (S)
         type = ""
+        form_info = (S)
         ```
         """
         solutions = []

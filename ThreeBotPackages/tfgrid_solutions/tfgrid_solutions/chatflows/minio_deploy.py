@@ -26,7 +26,8 @@ def chat(bot):
     while True:
         form = bot.new_form()
         accesskey = form.string_ask(
-            "Please add the key to be used for minio when logging in. Make sure not to loose it", default=accesskey_string
+            "Please add the key to be used for minio when logging in. Make sure not to loose it",
+            default=accesskey_string,
         )
         secret = form.string_ask(
             "Please add the secret to be used for minio when logging in to match the previous key. Make sure not to loose it",
@@ -155,7 +156,9 @@ def chat(bot):
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
-    j.sal.reservation_chatflow.reservation_save(resv_id, user_form_data["Solution name"], "tfgrid.solutions.minio.1")
+    j.sal.reservation_chatflow.reservation_save(
+        resv_id, user_form_data["Solution name"], "tfgrid.solutions.minio.1", user_form_data
+    )
     res = f"""\
         # Minio cluster has been deployed successfully. Your reservation id is: {resv_id}
         Open your browser at [http://{ip_address}:9000](http://{ip_address}:9000). It may take a few minutes.
