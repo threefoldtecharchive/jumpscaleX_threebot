@@ -33,20 +33,31 @@ class Package(j.baseclasses.threebot_package):
     def start(self):
         for name, domain in WIKIS.items():
             url = get_repo_url(name)
-            for port in (443, 80):
+            path = j.clients.git.getContentPathFromURLorPath(url)
+            build_mdbook(path)
+
+            for port in (80, 443):
                 website = self.openresty.websites.get(f"{name}_wiki_{port}")
                 website.port = port
                 website.ssl = port == 443
                 website.domain = domain
                 locations = website.locations.get(name=f"{name}_wiki_locations_{port}")
 
-                static_location = locations.get_location_static("book_location")
+                static_location = locations.get_location_static(f"{name}_book_location_{port}")
                 static_location.path_url = "/"
-                static_location.path_location = j.sal.fs.joinPaths(
-                    j.clients.git.getContentPathFromURLorPath(url), "book"
-                )
+                static_location.path_location = j.sal.fs.joinPaths(path, "book")
                 locations.configure()
                 website.configure()
+
+                default_website = self.openresty.get_from_port(port)
+                default_locations = default_website.locations.get(f"default_{name}_wiki_locations_{port}")
+
+                default_static_location = default_locations.get_location_static(f"{name}_book_location_{port}")
+                default_static_location.path_url = f"/threefold/{name}"
+                default_static_location.path_location = j.sal.fs.joinPaths(path, "book")
+
+                default_locations.configure()
+                default_website.configure()
 
             # add a handler for github webhooks for every wiki
             # https://github.com/threefoldtech/jumpscaleX_threebot/tree/unstable/ThreeBotPackages/zerobot/webhooks/wiki
