@@ -1,5 +1,7 @@
 from Jumpscale import j
 
+explorers = {"main": "explorer.grid.tf", "testnet": "explorer.testnet.grid.tf"}
+
 
 class admin(j.baseclasses.threebot_actor):
     @j.baseclasses.actor_method
@@ -25,3 +27,36 @@ class admin(j.baseclasses.threebot_actor):
             me.admins.remove(name)
             me.save()
         return True
+
+    def explorer_to_json(self, type_):
+        return j.data.serializers.json.dumps({"type": type_, "url": explorers[type_]})
+
+    @j.baseclasses.actor_method
+    def get_explorer(self, schema_out=None, user_session=None):
+        """
+        get current explorer (testnet/main)
+        """
+        if not "EXPLORER_ADDR" in j.core.myenv.config:
+            j.core.myenv.config["EXPLORER_ADDR"] = explorers["testnet"]
+            j.core.myenv.config.save()
+            return self.explorer_to_json("testnet")
+
+        current_address = j.core.myenv.config["EXPLORER_ADDR"].strip().lower().strip("/")
+        if current_address == explorers["testnet"]:
+            explorer_type = "testnet"
+        elif current_address == explorers["main"]:
+            explorer_type = "main"
+        else:
+            raise j.exceptions.Value("current explorer address is not recognized")
+        return self.explorer_to_json(explorer_type)
+
+    @j.baseclasses.actor_method
+    def set_explorer(self, explorer_type, schema_out=None, user_session=None):
+        """
+        set current explorer (testnet/main)
+        """
+        if explorer_type in explorers:
+            j.core.myenv.config["EXPLORER_ADDR"] = explorers[explorer_type]
+            j.core.myenv.config_save()
+            return self.explorer_to_json(explorer_type)
+        raise j.exceptions.Value(f"{explorer_type} is not a valid explorer type, must be 'testnet' or 'main'")
