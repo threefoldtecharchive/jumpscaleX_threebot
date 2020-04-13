@@ -127,6 +127,7 @@ export default class DeployedSolutionsView extends JetView {
             let solutions = data.json().solutions
             for (let i = 0; i < solutions.length; i++) {
                 solutions[i].reservation = JSON.parse(solutions[i].reservation)
+                solutions[i].form_info = JSON.parse(solutions[i].form_info)
 
             }
             this.solutionsTable.parse(solutions);

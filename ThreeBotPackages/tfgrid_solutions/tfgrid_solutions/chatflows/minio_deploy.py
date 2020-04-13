@@ -13,26 +13,39 @@ def chat(bot):
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.minio.1")
 
     identity = j.sal.reservation_chatflow.validate_user(user_info)
-    identity_pubkey = identity.pubkey
 
     bot.md_show("# This wizard will help you deploy a minio cluster")
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
 
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
 
-    user_form_data["Password"] = bot.string_ask(
-        "Please add a password to be used for all zdb storage", default="password"
-    )
     user_form_data["Disk type"] = bot.drop_down_choice("Please choose a the type of disk for zdb", ["SSD", "HDD"])
-    form = bot.new_form()
-    accesskey = form.string_ask(
-        "Please add the key to be used for minio when logging in. Make sure not to loose it", default=name.split(".")[0]
-    )
-    secret = form.string_ask(
-        "Please add the secret to be used for minio when logging in to match the previous key. Make sure not to loose it",
-        default="secret12345",
-    )
-    form.ask()
+
+    accesskey_string = f"{name.split('.')[0]}"
+    secret_string = "secret12345"
+    while True:
+        form = bot.new_form()
+        accesskey = form.string_ask(
+            "Please add the key to be used for minio when logging in. Make sure not to loose it",
+            default=accesskey_string,
+        )
+        secret = form.string_ask(
+            "Please add the secret to be used for minio when logging in to match the previous key. Make sure not to loose it",
+            default=secret_string,
+        )
+        form.ask()
+        accesskey_string = accesskey.value
+        secret_string = secret.value
+        ok = True
+        if len(accesskey_string) < 3:
+            ok = False
+            bot.md_show("Access key should be atleast 3 characters")
+        if len(secret_string) < 8:
+            ok = False
+            bot.md_show("Secret should be atleast 8 characters")
+        if ok:
+            break
+
     user_form_data["Access key"] = accesskey.value
     user_form_data["Secret"] = secret.value
 
@@ -82,6 +95,7 @@ def chat(bot):
     bot.md_show_confirm(user_form_data)
 
     network.update(identity.id)
+    password = j.data.idgenerator.generateGUID()
 
     for i in range(1, len(nodes_selected)):
         j.sal.zosv2.zdb.create(
@@ -89,7 +103,7 @@ def chat(bot):
             node_id=nodes_selected[i].node_id,
             size=10,
             mode="seq",
-            password=user_form_data["Password"],
+            password=password,
             disk_type=user_form_data["Disk type"],
             public=False,
         )
@@ -108,7 +122,7 @@ def chat(bot):
     for result in reservation_result:
         if result.category == "ZDB":
             data = result.data_json
-            cfg = f"{data['Namespace']}:{user_form_data['Password']}@[{data['IP']}]:{data['Port']}"
+            cfg = f"{data['Namespace']}:{password}@[{data['IP']}]:{data['Port']}"
             namespace_config.append(cfg)
 
     entry_point = "/bin/entrypoint"
@@ -142,7 +156,9 @@ def chat(bot):
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
-    j.sal.reservation_chatflow.reservation_save(resv_id, user_form_data["Solution name"], "tfgrid.solutions.minio.1")
+    j.sal.reservation_chatflow.reservation_save(
+        resv_id, user_form_data["Solution name"], "tfgrid.solutions.minio.1", user_form_data
+    )
     res = f"""\
         # Minio cluster has been deployed successfully. Your reservation id is: {resv_id}
         Open your browser at [http://{ip_address}:9000](http://{ip_address}:9000). It may take a few minutes.

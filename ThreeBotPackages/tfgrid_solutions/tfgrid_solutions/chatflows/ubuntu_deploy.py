@@ -86,7 +86,9 @@ def chat(bot):
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
-    j.sal.reservation_chatflow.reservation_save(resv_id, user_form_data["Solution name"], "tfgrid.solutions.ubuntu.1")
+    j.sal.reservation_chatflow.reservation_save(
+        resv_id, user_form_data["Solution name"], "tfgrid.solutions.ubuntu.1", user_form_data
+    )
 
     res = f"""\
         # Ubuntu has been deployed successfully: your reservation id is: {resv_id}
