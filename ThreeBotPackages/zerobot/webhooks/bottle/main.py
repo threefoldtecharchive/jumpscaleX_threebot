@@ -19,6 +19,9 @@ def webhook_github():
         abort(406, f"wrong content type header: {content_type}")
 
     SECRET = j.core.myenv.config.get("GITHUB_WEBHOOK_SECRET", "")
+    if not isinstance(SECRET, str):
+        SECRET = str(SECRET)
+
     if SECRET:
         signature = request.headers.get("X-Hub-Signature")
         if not signature:
