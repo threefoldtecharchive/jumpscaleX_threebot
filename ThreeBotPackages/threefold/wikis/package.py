@@ -3,7 +3,10 @@ import re
 from Jumpscale import j
 
 
-WIKIS = {"info_threefold": ["wiki.threefold.io"], "info_tfgridsdk": ["wiki.grid.tf"]}
+WIKIS = {
+    "info_threefold": ["wiki.threefold.io", "info.threefold.io"],
+    "info_tfgridsdk": ["wiki.cloud.threefold.io", "sdk.threefold.io"],
+}
 
 BRANCH = "development"
 HOST = "github.com"
@@ -36,8 +39,10 @@ class Package(j.baseclasses.threebot_package):
             path = j.clients.git.getContentPathFromURLorPath(url)
             build_mdbook(path)
 
-            for domain in domains:
-                for port in (80, 443):
+            for port in (80, 443):
+                default_website = self.openresty.get_from_port(port)
+
+                for domain in domains:
                     domain_without_dots = domain.replace(".", "_")
                     website_name = f"{name}_{domain_without_dots}_{port}"
                     website = self.openresty.websites.get(website_name)
@@ -51,7 +56,6 @@ class Package(j.baseclasses.threebot_package):
                     static_location.path_url = "/"
                     static_location.path_location = j.sal.fs.joinPaths(path, "book")
 
-                    default_website = self.openresty.get_from_port(port)
                     include_location = locations.get_location_custom(f"{website_name}_include")
                     include_location.config = (
                         f"include {default_website.path_cfg_dir}/{default_website.name}_locations/*.conf;"
@@ -60,14 +64,13 @@ class Package(j.baseclasses.threebot_package):
                     locations.configure()
                     website.configure()
 
-                    default_locations = default_website.locations.get(f"{website_name}_locations_default")
+                default_locations = default_website.locations.get(f"{name}_wiki_{port}_locations_default")
+                default_static_location = default_locations.get_location_static(f"{name}_wiki_{port}_default")
+                default_static_location.path_url = f"/threefold/{name}"
+                default_static_location.path_location = j.sal.fs.joinPaths(path, "book")
 
-                    default_static_location = default_locations.get_location_static(f"{static_location.name}_default")
-                    default_static_location.path_url = f"/threefold/{name}"
-                    default_static_location.path_location = j.sal.fs.joinPaths(path, "book")
-
-                    default_locations.configure()
-                    default_website.configure()
+                default_locations.configure()
+                default_website.configure()
 
             # add a handler for github webhooks for every wiki
             # https://github.com/threefoldtech/jumpscaleX_threebot/tree/unstable/ThreeBotPackages/zerobot/webhooks/wiki
