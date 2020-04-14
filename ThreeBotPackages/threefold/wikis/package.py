@@ -46,10 +46,16 @@ class Package(j.baseclasses.threebot_package):
                 static_location = locations.get_location_static(f"{name}_book_location_{port}")
                 static_location.path_url = "/"
                 static_location.path_location = j.sal.fs.joinPaths(path, "book")
+
+                default_website = self.openresty.get_from_port(port)
+                include_location = locations.get_location_custom(f"{name}_wiki_includes_{port}")
+                include_location.config = (
+                    f"include {default_website.path_cfg_dir}/{default_website.name}_locations/*.conf;"
+                )
+
                 locations.configure()
                 website.configure()
 
-                default_website = self.openresty.get_from_port(port)
                 default_locations = default_website.locations.get(f"default_{name}_wiki_locations_{port}")
 
                 default_static_location = default_locations.get_location_static(f"{name}_book_location_{port}")

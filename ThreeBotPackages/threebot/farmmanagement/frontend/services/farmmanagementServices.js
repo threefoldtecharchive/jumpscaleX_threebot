@@ -44,6 +44,7 @@ export default {
     })
   },
   setNodeFree(node_id, free) {
+    console.log(node_id, free)
     return axios.post('/threebot/farmmanagement/actors/farm_management/mark_node_free', {
       args: {
         node_id: node_id,

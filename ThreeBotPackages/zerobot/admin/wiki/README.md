@@ -49,15 +49,14 @@ j.tools.threebot.init_my_threebot()
 
 Now, you can download [3Bot connect app](https://3bot.org/3bot.html) and use it to login with the 3Bot name you registered.
 
-Also, other people can access the dashboard, but they need to be added to admins from `Settings`, Also, admins can be dded to `j.tools.threebot.me.default.admins` via `kosmos` shell:
+Also, other people can access the dashboard, but they need to be added to admins from `Settings`, Also, admins can be dded to `j.myidentities.default.admins` via `kosmos` shell:
 
 ```python3
-j.tools.threebot.me.default.admins.append("ahmed.3bot")
-j.tools.threebot.me.default.save()
+j.myidentities.default.admins.append("ahmed.3bot")
+j.myidentities.default.save()
 ```
 
 
 ## Extending Admin Dashboard
 
 Please check [extending admin dashboard](./extending_admin.md)
-
