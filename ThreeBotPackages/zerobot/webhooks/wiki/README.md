@@ -1,15 +1,25 @@
 ## Github Webhooks
 
-This package is used to define webhook handlers for github push events.
+This package exposes an endpoints for github webhooks, by default, it pulls the repository once it receives a push event from github.
 
-By default, the packages pulls the repos after each push and executes user specified handlers (functions) on each push.
+Also, if needed, any component can register a handler (functions) for specific reposiotry events, and this handler will be called on every push event.
 
-### Setting up a secret
+### Setup
+This package is loaded by default with your 3bot (with webinterface package).
+
 To define a webhook on github, please check https://developer.github.com/webhooks/creating.
 
-If you specified a secret in github webhook you can add it to ```jumpscale_config.toml``` as ```GITHUB_WEBHOOK_SECRET```
+On github settings for your repository you need to set:
+* Payload URL: Use`/webhooks/github`, example: `http://example.com/webhooks/github`
+* Secret: use any secret
 
-### How to define a handler for certian repository in your code (optional):
+On your 3bot:
+* Add the same secret in github settings to ```jumpscale_config.toml``` as ```GITHUB_WEBHOOK_SECRET```
+
+
+If you're creating a packge that's serving from a domain, please make sure to include default website configuration in your package as [described here](https://github.com/threefoldtech/jumpscaleX_threebot/blob/development/docs/locations.md#serving-from-domains).
+
+### Defining a handler for a specific repository (optional):
 Sometimes, you don't need only to pull the repository on push events, but also doing any other action, you can do so by registering your handler, which will get called in case of any push events.
 
 1- Define a handler function. It can be as simple as: 
@@ -24,5 +34,4 @@ JSX> j.tools.packages.github_webhooks.register_handler("threefoldtech/jumpscaleX
 ```
 - You can add multiple handlers for the same repo using the ```register_handler``` method
 
-3- In your github webhook settings set the url to ```https://<ip>/webhooks/github``` or ```http://<ip>/webhooks/github```
-- in case you are using https you need to disable ssl validation on github webhook settings.
+

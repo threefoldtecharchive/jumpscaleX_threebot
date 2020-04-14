@@ -112,12 +112,22 @@
             <v-text-field v-model="farmToEdit.email" label="Email"></v-text-field>
 
             <v-container>
-              <v-row v-for="wallet in farmToEdit.wallet_addresses" :key="wallet.id">
+              <v-row v-for="(wallet, i) in farmToEdit.wallet_addresses" :key="wallet.id">
                 <v-col cols="12" sm="4">
                   <v-text-field v-model="wallet.address" label="Wallet address"></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="4">
                   <v-text-field v-model="wallet.asset" label="Asset Code"></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-btn @click="removeWallet(i)" fab dark small color="warning">
+                    <v-icon small>fa-minus</v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-btn @click="addWallet()" dark small color="success">Add a wallet address</v-btn>
                 </v-col>
               </v-row>
             </v-container>
@@ -127,6 +137,9 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
+        <v-alert :type="editFarmAlert.type" v-if=editFarmAlert border="right" colored-border elevation="2">
+          {{editFarmAlert.message}}
+        </v-alert>
         <v-btn text class="mr-3" @click="cancelEditFarm">Cancel</v-btn>
         <v-btn text color="secondary" class="mr-3" @click="saveFarm">Save</v-btn>
       </v-card-actions>
