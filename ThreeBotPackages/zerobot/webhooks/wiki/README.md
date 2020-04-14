@@ -11,6 +11,7 @@ To define a webhook on github, please check https://developer.github.com/webhook
 
 On github settings for your repository you need to set:
 * Payload URL: Use`/webhooks/github`, example: `http://example.com/webhooks/github`
+* set `Content-Type` to `application/x-www-form-urlencoded`
 * Secret: use any secret
 
 On your 3bot:
