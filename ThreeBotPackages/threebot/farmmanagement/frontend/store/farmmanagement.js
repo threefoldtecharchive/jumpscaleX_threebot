@@ -6,6 +6,7 @@ export default {
 
   state: {
     user: {},
+    tfgridUrl: null,
     registeredNodes: [],
     nodes: undefined,
     registeredFarms: [],
@@ -22,19 +23,27 @@ export default {
     }
   },
   actions: {
+    getTfgridUrl: async context => {
+      var response = await tfService.getExplorer();
+      var url = response.data.url
+      if (!url.startsWith('http')) {
+        url = `https://${url}/explorer`;
+      }  
+      context.commit("setTfgridUrl", url);
+    },
     getName: async context => {
       var response = await tfService.getName();
       return response.data.username;
     },
     getUser: async context => {
       var name = await context.dispatch("getName");
-      var response = await tfService.getUser(name);
+      var response = await tfService.getUser(context.getters.tfgridUrl, name);
       if (name.length > 0) {
         context.commit("setUser", response.data[0]);
       }
     },
     getRegisteredNodes(context) {
-      tfService.getNodes().then(response => {
+      tfService.getNodes(context.getters.tfgridUrl).then(response => {
         context.commit("setRegisteredNodes", response.data);
         context.commit("setTotalSpecs", response.data);
       });
@@ -49,7 +58,7 @@ export default {
       });
     },
     getFarms: context => {
-      tfService.getFarms(context.getters.user.id).then(response => {
+      tfService.getFarms(context.getters.tfgridUrl, context.getters.user.id).then(response => {
         context.commit("setFarms", response.data);
       });
     },
@@ -75,6 +84,9 @@ export default {
     },
     setUser: (state, user) => {
       state.user = user;
+    },
+    setTfgridUrl: (state, tfgridUrl) => {
+      state.tfgridUrl = tfgridUrl;
     },
     setAmountOfFarms(state, value) {
       state.nodeSpecs.amountregisteredFarms = value.length;
@@ -107,6 +119,7 @@ export default {
 
   getters: {
     user: state => state.user,
+    tfgridUrl: state => state.tfgridUrl,
     registeredNodes: state => state.registeredNodes,
     nodes: state => state.nodes,
     registeredFarms: state => state.registeredFarms,

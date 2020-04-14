@@ -2,27 +2,32 @@ import axios from "/weblibs/axios/axios.min.js";
 import config from "../config/farmmanagement.config.local.js";
 
 export default {
+  getExplorer() {
+    return axios.get("/zerobot/admin/actors/admin/get_explorer", {
+      args: {}
+    });
+  },
   getName() {
     return axios.get("/auth/authenticated", {
       args: {}
     });
   },
-  getUser(name) {
-    return axios.get(`${config.tfgridUrl}/users`, {
+  getUser(tfgridUrl, name) {
+    return axios.get(`${tfgridUrl}/users`, {
       params: {
         name: name
       }
     });
   },
-  getFarms(user_id) {
-    return axios.get(`${config.tfgridUrl}/farms`, {
+  getFarms(tfgridUrl, user_id) {
+    return axios.get(`${tfgridUrl}/farms`, {
       params: {
         owner: user_id
       }
     });
   },
-  registerFarm(farm) {
-    return axios.post(`${config.tfgridUrl}/farms/register`,
+  registerFarm(tfgridUrl, farm) {
+    return axios.post(`${tfgridUrl}/farms/register`,
       {
         farm: farm
       }
@@ -36,8 +41,8 @@ export default {
       }
     })
   },
-  getNodes(farm_id = undefined) {
-    return axios.get(`${config.tfgridUrl}/nodes`, {
+  getNodes(tfgridUrl, farm_id = undefined) {
+    return axios.get(`${tfgridUrl}/nodes`, {
       params: {
         farm_id: farm_id
       }
