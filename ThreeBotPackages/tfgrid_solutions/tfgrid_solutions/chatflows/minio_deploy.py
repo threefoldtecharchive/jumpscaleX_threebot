@@ -74,24 +74,28 @@ def chat(bot):
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
-    nodequery = {}
+    zdb_nodequery = {}
     if user_form_data["Disk type"] == "SSD":
-        nodequery["sru"] = 10
+        zdb_nodequery["sru"] = 10
     if user_form_data["Disk type"] == "HDD":
-        nodequery["hru"] = 10
-
-    nodequery["mru"] = math.ceil(memory.value / 1024)
-    nodequery["cru"] = cpu.value
+        zdb_nodequery["hru"] = 10
 
     nodes_selected = j.sal.reservation_chatflow.nodes_get(
-        number_of_nodes=user_form_data["ZDB number"] + 1, farm_name="freefarm", **nodequery
+        number_of_nodes=user_form_data["ZDB number"], farm_name="freefarm", **zdb_nodequery
     )
-    selected_node = nodes_selected[0]
+
+    nodequery = {}
+    nodequery["mru"] = math.ceil(memory.value / 1024)
+    nodequery["cru"] = cpu.value
+    cont_node = j.sal.reservation_chatflow.nodes_get(number_of_nodes=1, farm_name="freefarm", **nodequery)[0]
 
     for node_selected in nodes_selected:
         network.add_node(node_selected)
 
-    ip_address = network.ask_ip_from_node(selected_node, "Please choose IP Address for your solution")
+    if cont_node not in nodes_selected:
+        network.add_node(cont_node)
+
+    ip_address = network.ask_ip_from_node(cont_node, "Please choose IP Address for your solution")
     bot.md_show_confirm(user_form_data)
 
     network.update(identity.id)
@@ -107,7 +111,7 @@ def chat(bot):
             disk_type=user_form_data["Disk type"],
             public=False,
         )
-    volume = j.sal.zosv2.volume.create(reservation, selected_node.node_id, size=10, type=user_form_data["Disk type"])
+    volume = j.sal.zosv2.volume.create(reservation, cont_node.node_id, size=10, type=user_form_data["Disk type"])
 
     # register the reservation for zdb db
     zdb_rid = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
@@ -128,13 +132,13 @@ def chat(bot):
     entry_point = "/bin/entrypoint"
 
     secret_env = {}
-    minio_secret_encrypted = j.sal.zosv2.container.encrypt_secret(selected_node.node_id, user_form_data["Secret"])
+    minio_secret_encrypted = j.sal.zosv2.container.encrypt_secret(cont_node.node_id, user_form_data["Secret"])
     secret_env.update({"SECRET_KEY": minio_secret_encrypted})
 
     # create container
     cont = j.sal.zosv2.container.create(
         reservation=reservation,
-        node_id=selected_node.node_id,
+        node_id=cont_node.node_id,
         network_name=network.name,
         ip_address=ip_address,
         flist=flist_url,

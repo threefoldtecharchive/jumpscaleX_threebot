@@ -23,7 +23,6 @@ def chat(bot):
         workernodes = form.int_ask("Please specify the number of worker nodes", default=1)  # minimum should be 1
 
         form.ask()
-        nodes_count = masternodes.value + workernodes.value  # number of workers + the masters
         cluster_size = sizes.index(cluster_size_string.value) + 1  # sizes are index 1
         # Select nodes
         if cluster_size == 1:
@@ -31,7 +30,8 @@ def chat(bot):
         else:
             nodequery = {"sru": 100, "mru": 4, "cru": 2}
         try:
-            nodes_selected = j.sal.reservation_chatflow.nodes_get(nodes_count, **nodequery)
+            master_nodes_selected = j.sal.reservation_chatflow.nodes_get(masternodes.value, **nodequery)
+            worker_nodes_selected = j.sal.reservation_chatflow.nodes_get(workernodes.value, **nodequery)
             break
         except StopChatFlow as e:
             bot.md_show(e.msg)
@@ -55,12 +55,16 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
 
     ipaddresses = list()
-    for idx, node_selected in enumerate(nodes_selected):
+    for idx, node_selected in enumerate(master_nodes_selected):
         network.add_node(node_selected)
-        if idx < masternodes.value:
-            msg = f"Please choose IP Address for master node {idx + 1} of your kubernets cluster"
-        else:
-            msg = f"Please choose IP Address for worker node {idx - masternodes.value + 1} of your kubernets cluster"
+        msg = f"Please choose IP Address for master node {idx + 1} of your kubernets cluster"
+        ip_address = network.ask_ip_from_node(node_selected, msg)
+        ipaddresses.append(ip_address)
+
+    for idx, node_selected in enumerate(worker_nodes_selected):
+        if node_selected not in master_nodes_selected:
+            network.add_node(node_selected)
+        msg = f"Please choose IP Address for worker node {idx + 1} of your kubernets cluster"
         ip_address = network.ask_ip_from_node(node_selected, msg)
         ipaddresses.append(ip_address)
 
@@ -73,10 +77,10 @@ def chat(bot):
 
     # Create master and workers
     # Master is in the first node from the selected nodes
-    for idx in range(masternodes.value):
+    for idx, master_node in enumerate(master_nodes_selected):
         master = j.sal.zosv2.kubernetes.add_master(
             reservation=reservation,
-            node_id=nodes_selected[idx].node_id,
+            node_id=master_node.node_id,
             network_name=network.name,
             cluster_secret=user_form_data["Cluster secret"],
             ip_address=ipaddresses[idx],
@@ -85,13 +89,13 @@ def chat(bot):
         )
 
     # Workers are in the rest of the nodes
-    for i in range(masternodes.value, nodes_count):
+    for i, worker_node in enumerate(worker_nodes_selected):
         j.sal.zosv2.kubernetes.add_worker(
             reservation=reservation,
-            node_id=nodes_selected[i].node_id,
+            node_id=worker_node.node_id,
             network_name=network.name,
             cluster_secret=user_form_data["Cluster secret"],
-            ip_address=ipaddresses[i],
+            ip_address=ipaddresses[i + masternodes.value],
             size=cluster_size,
             master_ip=master.ipaddress,
             ssh_keys=ssh_keys_list,
