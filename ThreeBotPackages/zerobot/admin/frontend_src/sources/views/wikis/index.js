@@ -50,7 +50,6 @@ export default class WikisView extends JetView {
 
     init(view) {
         packages.list().then(data => {
-            console.log(">>>>>>", data.json())
             view.parse(data.json())
         });
     }
