@@ -30,7 +30,7 @@ export default class TopView extends JetView {
         },
         {
             id: "wikis",
-            value: "Wikis",
+            value: "Packages Docs",
             icon: "mdi mdi-newspaper"
         },
         {
