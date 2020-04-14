@@ -1,5 +1,5 @@
 import { JetView } from "webix-jet";
-import { packages } from "../../services/packages";
+import { packages } from "../../services/wiki";
 
 export default class WikisView extends JetView {
     config() {
@@ -50,7 +50,8 @@ export default class WikisView extends JetView {
 
     init(view) {
         packages.list().then(data => {
-            view.parse(data.json().packages)
+            console.log(">>>>>>", data.json())
+            view.parse(data.json())
         });
     }
 }
