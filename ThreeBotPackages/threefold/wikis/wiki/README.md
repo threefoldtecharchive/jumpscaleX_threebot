@@ -2,7 +2,7 @@
 
 This package serves both [info_threefold](https://github.com/threefoldfoundation/info_threefold) and [info_tfgridsdk](https://github.com/threefoldfoundation/info_tfgridsdk) wikis, it build them using `mdbook` and serves the output located at `book` directory.
 
-It set the domain and create nginx locations at `/` for both.
+It set the domain and create nginx locations at `/` for both, for development purposes, you can access them at `https://<host>/threefold/info_threefold` and `https://<host>/threefold/info_tfgridsdk`.
 
 Also, it registers a web-hook handler to re-build in case of github push events, make sure you already had a correct [github web-hooks setup](https://github.com/threefoldtech/jumpscaleX_threebot/tree/unstable/ThreeBotPackages/zerobot/webhooks/wiki).
 

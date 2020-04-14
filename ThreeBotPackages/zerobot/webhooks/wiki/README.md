@@ -22,3 +22,7 @@ Sometimes, you don't need only to pull the repository on push events, but also d
 ```bash
 JSX> j.tools.packages.github_webhooks.register_handler("threefoldtech/jumpscaleX_core", f)
 ```
+- You can add multiple handlers for the same repo using the ```register_handler``` method
+
+3- In your github webhook settings set the url to ```https://<ip>/webhooks/github``` or ```http://<ip>/webhooks/github```
+- in case you are using https you need to disable ssl validation on github webhook settings.

@@ -110,7 +110,9 @@ def chat(bot):
     resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
 
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
-    j.sal.reservation_chatflow.reservation_save(resv_id, user_form_data["Solution name"], "tfgrid.solutions.flist.1")
+    j.sal.reservation_chatflow.reservation_save(
+        resv_id, user_form_data["Solution name"], "tfgrid.solutions.flist.1", user_form_data
+    )
 
     if interactive:
         res = f"""\

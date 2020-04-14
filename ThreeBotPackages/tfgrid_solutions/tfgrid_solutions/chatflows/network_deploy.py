@@ -49,7 +49,7 @@ def chat(bot):
         else:
             network_created = len(reservation_results) == 1
 
-    j.sal.reservation_chatflow.reservation_save(resv_id, network_name, "tfgrid.solutions.network.1")
+    j.sal.reservation_chatflow.reservation_save(resv_id, network_name, "tfgrid.solutions.network.1", user_form_data)
 
     # inform user howto connect
     res = """

@@ -58,6 +58,21 @@ export default class TopView extends JetView {
             }]
         },
         {
+            id: "tfwikis_main",
+            value: "TF Wikis",
+            icon: "mdi mdi-animation-play",
+            data: [{
+                id: "tfgridsdk",
+                icon: "mdi mdi-book-open",
+                value: "TFGridSDK"
+            }, {
+                id: "threefold",
+                icon: "mdi mdi-worker",
+                value: "Threefold"
+            }]
+        },
+
+        {
             id: "packages",
             value: "Packages",
             icon: "mdi mdi-package"
@@ -92,6 +107,11 @@ export default class TopView extends JetView {
                 icon: "mdi mdi-network"
             }
             ]
+        },
+        {
+            id: "capacity",
+            value: "Capacity",
+            icon: "mdi mdi-server"
         },
         {
             id: "farmmanagement",
@@ -217,6 +237,8 @@ export default class TopView extends JetView {
             urls: {
                 myjobs: "myjobs.jobs",
                 workers: "myjobs.workers",
+                tfgridsdk: "tfwikis.tfgridsdk",
+                threefold: "tfwikis.threefold",
                 ubuntu: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=ubuntu_deploy",
                 network: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=network_deploy",
                 flist: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=your_flist",

@@ -36,7 +36,7 @@ class Package(j.baseclasses.threebot_package):
             chat_wiki_proxy_location.port_dest = 9999
 
             package_info_location = locations.get_location_proxy("package_author_info")
-            package_info_location.path_url = "~* ^/(.*)/info"
+            package_info_location.path_url = "~* ^/(.*)/info$"
             package_info_location.ipaddr_dest = "127.0.0.1"
             package_info_location.port_dest = 9999
 

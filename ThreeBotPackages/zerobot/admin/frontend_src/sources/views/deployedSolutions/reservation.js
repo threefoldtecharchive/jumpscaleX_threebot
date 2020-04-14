@@ -41,8 +41,28 @@ export default class ReservationView extends JetView {
             id: "tabview",
             cells: [
                 {
+
                     header: "Overview",
-                    body: info,
+                    rows: [
+                        info,
+                        {
+                            view: "list",
+                            label: "Form inputs",
+                            name: "Form inputs",
+                            data: [{ "title": "Form inputs" }],
+                            template: "<b> #title# <b>",
+                            autoheight: true,
+                            readonly: true
+                        },
+                        {
+                            id: "formInfo",
+                            view: "list",
+                            template: "<b>#key# </b>  :   #value#",
+                            scroll: "auto",
+                        }
+                    ]
+
+
                 },
                 {
                     id: "networks",
@@ -424,8 +444,22 @@ export default class ReservationView extends JetView {
         values.zdbs = reservation.data_reservation.zdbs
         values.networks = reservation.data_reservation.networks
         values.kubernetes = reservation.data_reservation.kubernetes
+        values.form_info = item.form_info
 
         this.form.setValues(values);
+        this.form_info = $$("formInfo");
+
+        let form_list = [];
+        let form_keys = Object.keys(values.form_info)
+        let form_values = Object.values(values.form_info)
+        for (let index = 0; index < form_keys.length; index++) {
+            let form_dict = new Object();
+            form_dict['key'] = form_keys[index];
+            form_dict['value'] = form_values[index];
+            form_list.push(form_dict)
+
+        }
+        this.form_info.parse(form_list);
 
         // Add networks tab content
         this.networks = $$("networks");
