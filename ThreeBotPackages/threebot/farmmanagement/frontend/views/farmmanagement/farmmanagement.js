@@ -257,7 +257,7 @@ module.exports = new Promise(async (resolve, reject) => {
             };
         },
         computed: {
-            ...vuex.mapGetters("farmmanagement", ["farms", "nodes", "user"]),
+            ...vuex.mapGetters("farmmanagement", ["farms", "nodes", "user", "tfgridUrl"]),
             parsedLocation() {
                 return {
                     lat: this.newFarm.location.latitude,
@@ -266,6 +266,7 @@ module.exports = new Promise(async (resolve, reject) => {
             }
         },
         async mounted() {
+            await this.getTfgridUrl();
             await this.getUser();
             this.getFarms(this.user.id);
             this.initialiseRefresh()
@@ -277,7 +278,8 @@ module.exports = new Promise(async (resolve, reject) => {
                 "registerFarm",
                 "getFarms",
                 "updateFarm",
-                "getRegisteredNodes"
+                "getRegisteredNodes",
+                "getTfgridUrl"
             ]),
             initialiseRefresh() {
                 const that = this;
