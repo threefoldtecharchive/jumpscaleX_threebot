@@ -32,7 +32,7 @@ module.exports = new Promise(async (resolve, reject) => {
                     { text: "Version", value: "version" },
                     { text: "Status", value: "status", align: "center" }
                 ]
-            };
+            }
         },
         computed: {
             ...vuex.mapGetters("farmmanagement", [
@@ -40,7 +40,6 @@ module.exports = new Promise(async (resolve, reject) => {
                 "registeredFarms",
                 "nodes"
             ]),
-            // Parse nodelist to table format here
             // Parse nodelist to table format here
             parsedNodesList: function () {
                 const nodeList = this.nodes ? this.nodes : this.registeredNodes
@@ -71,7 +70,7 @@ module.exports = new Promise(async (resolve, reject) => {
                         updated: new Date(node.updated * 1000),
                         status: this.getStatus(node),
                         location: node.location,
-                        freeToUse: node.free_to_use
+                        free_to_use: node.free_to_use
                     }
                 })
                 return parsedNodes

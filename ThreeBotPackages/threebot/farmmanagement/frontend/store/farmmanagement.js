@@ -39,10 +39,8 @@ export default {
         context.commit("setTotalSpecs", response.data);
       });
     },
-    setNodeFree(context, node_id, free) {
-      tfService.setNodeFree(node_id, free).then(response => {
-        console.log("node set free");
-      });
+    setNodeFree(context, {node_id, free}) {
+      return tfService.setNodeFree(node_id, free)
     },
     getRegisteredFarms(context, farm_id) {
       tfService.registeredfarms(farm_id).then(response => {
@@ -56,10 +54,7 @@ export default {
       });
     },
     updateFarm(context, farm) {
-      tfService.updateFarm(farm.id, farm).then(response => {
-        console.log("farm updated");
-        console.log(response);
-      });
+      return tfService.updateFarm(farm.id, farm);
     },
     resetNodes: context => {
       context.commit("setNodes", undefined);
@@ -116,7 +111,8 @@ export default {
     nodes: state => state.nodes,
     registeredFarms: state => state.registeredFarms,
     farms: state => state.farms,
-    nodeSpecs: state => state.nodeSpecs
+    nodeSpecs: state => state.nodeSpecs,
+    freeSwitchAlert: state => state.freeSwitchAlert
   }
 };
 

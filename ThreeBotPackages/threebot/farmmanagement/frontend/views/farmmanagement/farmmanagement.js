@@ -20,6 +20,7 @@ module.exports = new Promise(async (resolve, reject) => {
                 'searchnodes': "",
                 farmSelected: {},
                 farmToEdit: {},
+                editFarmAlert: undefined,
                 showResult: false,
                 itemsPerPage: 4,
                 expanded: [],
@@ -330,9 +331,37 @@ module.exports = new Promise(async (resolve, reject) => {
                 console.log(this.newFarm);
             },
             saveFarm() {
-                // TODO: handle error and show error message
-                this.updateFarm(this.farmToEdit);
-                this.settingsDialog = false;
+                this.updateFarm(this.farmToEdit)
+                    .then(response => {
+                        if (response.status == 200) {
+                            this.editFarmAlert = {
+                                message: "farm configuration updated",
+                                type: "success",
+                            }
+                        } else {
+                            this.editFarmAlert = {
+                                message: response.data['error'],
+                                type: "error",
+                            }
+                        }
+                    }).catch(err => {
+                        this.editFarmAlert = {
+                            message: "server error",
+                            type: "error",
+                        }
+                    })
+
+                setTimeout(() => {
+                    this.editFarmAlert = undefined
+                    this.settingsDialog = false
+                }, 2000)
+
+            },
+            addWallet() {
+                this.farmToEdit.wallet_addresses.push({ 'asset': 'TFT', address: '' })
+            },
+            removeWallet(i) {
+                this.farmToEdit.wallet_addresses.pop(i)
             },
             cancelEditFarm() {
                 this.settingsDialog = false;
