@@ -448,6 +448,7 @@ export default class ReservationView extends JetView {
 
         this.form.setValues(values);
         this.form_info = $$("formInfo");
+        this.form_info.clearAll();
 
         let form_list = [];
         let form_keys = Object.keys(values.form_info)
