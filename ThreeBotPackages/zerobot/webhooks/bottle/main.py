@@ -33,7 +33,7 @@ def webhook_github():
             abort(401, "Invalid secret")
 
     payload = j.data.serializers.json.loads(request.params.payload)
-    j.clients.git.pullGitRepo(payload["repository"]["ssh_url"])
+    j.clients.git.pullGitRepo(payload["repository"]["ssh_url"], ignorelocalchanges=True)
     j.tools.packages.github_webhooks.notify_handlers(payload["repository"]["full_name"], payload)
 
 
