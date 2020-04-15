@@ -244,5 +244,18 @@
   padding-right: 5px;
   display: inline-block;
 }
+.btn_view {
+  background-color: #057781;
+  /* Green */
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 7px 14px;
+}
 
 /*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiIuL2FwcC5jc3MiLCJzb3VyY2VSb290IjoiIn0=*/

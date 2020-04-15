@@ -1,6 +1,7 @@
 import { JetView } from "webix-jet";
 import { packages } from "../../services/wiki";
 
+
 export default class WikisView extends JetView {
     config() {
         const view = {
@@ -34,7 +35,7 @@ export default class WikisView extends JetView {
             onClick:{
                 btn_view:function(ev, id){
                     var item = this.getItem(id);
-                    window.open(`/wiki/${item.name}`)
+                    window.location.href = `/admin/#!/main/wikis.view?name=${item.name}`
                 }
               },
             autoConfig: true,
