@@ -16,14 +16,7 @@ class Package(j.baseclasses.threebot_package):
         Open voila directly through /threefold/simulator/show/
         :return:
         """
-        j.tools.tfgrid_simulator.simulation_get()
-
-        j.tools.tfgrid_simulator.start(
-            voila=False, background=True, base_url="/threefold/simulator/notebook/", port=8888, pname="notebook"
-        )
-        j.tools.tfgrid_simulator.start(
-            voila=True, background=True, base_url="/threefold/simulator/show/", port=8866, pname="simulator"
-        )
+        j.tools.tfgrid_simulator.start(background=True, base_url="/threefold/simulator/notebook/")
 
         # find token (sleep for 5 seconds until server starts)
         time.sleep(5)
@@ -41,23 +34,10 @@ class Package(j.baseclasses.threebot_package):
             jupyter_proxy_location.path_dest = "/threefold/simulator/notebook/"
             jupyter_proxy_location.scheme = "http"
             jupyter_proxy_location.is_admin = True
-            # voila
-            voila_proxy_location = locations.get_location_proxy("voila")
-            voila_proxy_location.path_url = "/threefold/simulator/show/"
-            voila_proxy_location.ipaddr_dest = "127.0.0.1"
-            voila_proxy_location.port_dest = 8866
-            voila_proxy_location.path_dest = "/threefold/simulator/show/"
-            voila_proxy_location.scheme = "http"
-            voila_proxy_location.is_admin = True
 
             website.configure()
 
         self.openresty.reload()
 
     def stop(self):
-        j.tools.tfgrid_simulator.stop(
-            voila=False, background=True, base_url="/threefold/simulator/notebook/", pname="notebook"
-        )
-        j.tools.tfgrid_simulator.stop(
-            voila=True, background=True, base_url="/threefold/simulator/show/", pname="simulator"
-        )
+        j.tools.tfgrid_simulator.stop()
