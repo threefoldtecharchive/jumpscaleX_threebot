@@ -647,7 +647,7 @@ and the `main.js` we add the info to the `sidebarData`
 
 ### Routing
 
-Any views defined at views directly can be accessed directly by `url`, for example, to access packages view only, go to:
+Any view defined at `views` directory can be accessed by `url`, for example, to access packages view only, go to:
 
 * `https://<ip>/admin/#!/packages`.
 
