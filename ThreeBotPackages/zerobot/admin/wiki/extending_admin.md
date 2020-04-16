@@ -36,6 +36,11 @@ Make sure to push production builds after you finish updating frontend source.
 
 ## Walktrough creating new component
 
+- [MainView](#mainview)
+- [Add entry to sidebar](#add-entry-to-sidebar)
+- [Routing and query parameters](#routing)
+- [Webix-jet book](#webix-jet-book)
+
 ### MainView
 
 Main view is defined at [main.js](sources/views/main.js) it contains the sidebar stuff and gathers the whole app in it.
@@ -89,7 +94,7 @@ Main view is defined at [main.js](sources/views/main.js) it contains the sidebar
 
 - a service represents a backend webservice `Actor` that has specific functionality that we want to abstract over to use from other parts in our UI.
 
-##### Create your service 
+##### Create your service
 
 Services are created in `frontend_src/sources/services`
 
@@ -427,7 +432,7 @@ and the dash application itself is registerd in `main.js` in sidebarData
 
 ```
 
-#### Subviews 
+#### Subviews
 
 the last example we are going to talk about is defining subviews (An extension to the dashboard with multiple views)
 
@@ -639,3 +644,54 @@ and the `main.js` we add the info to the `sidebarData`
             }]
         },
 ```
+
+### Routing
+
+Any views defined at views directly can be accessed directly by `url`, for example, to access packages view only, go to:
+
+* `https://<ip>/admin/#!/packages`.
+
+
+For routing modes, we use hash router, but modes can be changed, see [Routers](https://webix.gitbook.io/webix-jet/part-ii-webix-jet-in-details/routers).
+
+
+#### Handling url change and query parameters
+
+As an example, we want to view a wiki inside an `iframe`, given the wiki name as a query parameter, in this case, we just need to add a view that implements `urlChange`.
+
+Also, we already have external view to view certain urls in an iframe, so, we can add `view.js` inside `views/wikis` with the following code:
+
+```javascript
+import { ExternalView } from "../external";
+
+export default class WikiExternalView extends ExternalView {
+    constructor(app, name) {
+        super(app, name);
+
+    }
+
+    urlChange(view, url) {
+        const params = url[0].params;
+        if (Object.keys(params).length !== 1) {
+            return;
+        }
+
+        this.targetUrl = `/wiki/${params.name}`;
+
+        this.init(view);
+    }
+}
+```
+
+In `urlChange`, we just set current `targetUrl` of `ExternalView` to wiki url, and re-init the view with `this.init(view)`.
+
+You can go to this component by the following url, and give it any wiki name as a query parameter.
+
+* https://<ip>/admin/#!/wiki.view?name="zerobot.webinterface"
+
+Note the dot-notation here, if you need to access a sub-directory component, you use dots, not slashes.
+
+
+### Webix-jet book
+
+For more information about `webix-jet` framework, you can browse its book [here](https://webix.gitbook.io/webix-jet/part-ii-webix-jet-in-details).
