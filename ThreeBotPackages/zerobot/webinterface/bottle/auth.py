@@ -94,10 +94,14 @@ def get_user_info():
     session = get_session()
     tname = session.get("username", "")
     temail = session.get("email", "")
-    signed_attempt = session.get("signedAttempt", "")
+    session.get("signedAttempt", "")
     response.content_type = "application/json"
     return j.data.serializers.json.dumps(
-        {"username": tname, "email": temail, "devmode": not j.core.myenv.config.get("THREEBOT_CONNECT", False)}
+        {
+            "username": tname.lower(),
+            "email": temail.lower(),
+            "devmode": not j.core.myenv.config.get("THREEBOT_CONNECT", False),
+        }
     )
 
 
