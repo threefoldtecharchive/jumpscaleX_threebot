@@ -166,3 +166,15 @@ class health(j.baseclasses.threebot_actor):
         res["percent"] = disk_obj.percent
 
         return res
+    
+    @j.baseclasses.actor_method
+    def kill_processes(self, args, schema_out=None, user_session=None):
+        
+        pids = [int(s) for s in args[1:-1].split(',')]
+        print(pids)
+        for id in pids:
+            print(id)
+            try:
+                j.sal.process.kill(pid=id)
+            except:
+                raise ValueError("Could not kill process")

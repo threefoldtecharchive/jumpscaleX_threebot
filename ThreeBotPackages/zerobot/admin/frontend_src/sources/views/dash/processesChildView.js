@@ -2,6 +2,9 @@ import {
     JetView
 } from "webix-jet";
 
+import ProcessDetailsView from "./processesDetails";
+import { health } from "../../services/health";
+
 export default class ProcessesChildView extends JetView {
 
     config() {
@@ -85,7 +88,57 @@ export default class ProcessesChildView extends JetView {
         this.getRoot().show();
     }
 
+    killProcess(objects) {
+        var self = this;
+
+        let items = [],
+            ids = [],
+            indexes = [];
+
+        for (let obj of objects) {
+            ids.push(obj.id);
+            let item = self.table.getItem(obj.id);
+            items.push(item)
+            indexes.push(item.index);
+        }
+
+        webix.confirm({
+            title: "Kill processes",
+            ok: "Yes",
+            cancel: "No",
+            text: `Kill processes with ids ${indexes.join(", ")}`
+        }).then(() => {
+
+            const pids = items.map((item) => item.pid);
+            console.log(pids)
+            health.kill_processes(pids).then(() => {
+                self.table.remove(ids)
+            }).catch(error => {
+                console.log(error)
+            })
+        });
+    }
+
     init() {
-        this.table = $$("process_table");
+        var self = this;
+
+        self.table = $$("process_table");
+        self.processDetailsView = self.ui(ProcessDetailsView);
+
+        webix.ui({
+            view: "contextmenu",
+            id: "process_cm",
+            data: ["Kill"]
+        }).attachTo(self.table);
+
+        self.table.attachEvent("onItemDblClick", function () {
+            self.processDetailsView.showProcessDetails(self.table.getSelectedItem())
+        });
+
+        $$("process_cm").attachEvent("onMenuItemClick", function (id) {
+            if (id == "Kill") {
+                self.killProcess(self.table.getSelectedId(true));
+            }
+        });
     }
 }
