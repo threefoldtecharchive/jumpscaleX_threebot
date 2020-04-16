@@ -106,15 +106,16 @@ export default class ProcessesChildView extends JetView {
             title: "Kill processes",
             ok: "Yes",
             cancel: "No",
-            text: `Kill processes with ids ${indexes.join(", ")}`
+            text: `Kill processes with row ids ${indexes.join(", ")}`
         }).then(() => {
 
             const pids = items.map((item) => item.pid);
-            console.log(pids)
-            health.kill_processes(pids).then(() => {
+
+            health.kill_processes_by_pid(pids).then(() => {
                 self.table.remove(ids)
+                webix.message({ type: "success", text: "Processes killed successfully" });
             }).catch(error => {
-                console.log(error)
+                webix.message({ type: "error", text: "Could not kill process" });
             })
         });
     }

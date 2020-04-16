@@ -168,13 +168,21 @@ class health(j.baseclasses.threebot_actor):
         return res
     
     @j.baseclasses.actor_method
-    def kill_processes(self, args, schema_out=None, user_session=None):
+    def kill_processes_by_pid(self, args, schema_out=None, user_session=None):
         
         pids = [int(s) for s in args[1:-1].split(',')]
-        print(pids)
         for id in pids:
-            print(id)
             try:
                 j.sal.process.kill(pid=id)
+            except:
+                raise ValueError("Could not kill process")
+
+    @j.baseclasses.actor_method
+    def kill_processes_by_port(self, args, schema_out=None, user_session=None):
+        
+        ports = [int(s) for s in args[1:-1].split(',')]
+        for port in ports:
+            try:
+                j.sal.process.killProcessByPort(port=port)
             except:
                 raise ValueError("Could not kill process")
