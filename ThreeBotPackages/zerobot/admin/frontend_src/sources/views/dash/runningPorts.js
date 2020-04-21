@@ -79,7 +79,7 @@ export default class runningPortsView extends JetView {
 
             const ports = items.map((item) => item.port_number);
             
-            health.kill_processes_by_port(ports).then(() => {
+            health.killProcessesByPort(ports).then(() => {
                 self.portsTable.remove(ids)
                 webix.message({ type: "success", text: "Processes killed successfully" });
             }).catch(error => {

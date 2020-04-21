@@ -21,6 +21,13 @@ export default class ProcessDetailsView extends JetView {
                 },
                 {
                     view: "text",
+                    label: "Cmd line",
+                    name: "cmdline",
+                    readonly: true
+                }
+                ,
+                {
+                    view: "text",
                     label: "Username",
                     name: "username",
                     readonly: true

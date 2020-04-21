@@ -1,12 +1,9 @@
-import {
-    JetView
-} from "webix-jet";
+import { JetView } from "webix-jet";
 
-import ProcessDetailsView from "./processDetails";
 import { health } from "../../services/health";
+import ProcessDetailsView from "./processDetails";
 
-export default class ProcessesChildView extends JetView {
-
+export default class processesListView extends JetView {
     config() {
         const view = {
             view: "datatable",
@@ -26,7 +23,7 @@ export default class ProcessesChildView extends JetView {
                 {
                     id: "name",
                     header: [
-                        "Proccess",
+                        "Process",
                         {
                             content: "textFilter"
                         },
@@ -60,32 +57,15 @@ export default class ProcessesChildView extends JetView {
         }
 
         return {
-            view: "window",
-            head: "Running Processes, Memory usage in MB",
-            modal: true,
-            width: 550,
-            height: 600,
-            position: "center",
-            body: {
-                rows: [
-                    view,
-                    {
-                        view: "button",
-                        value: "OK",
-                        css: "webix_primary",
-                        click: function () {
-                            this.getTopParentView().hide();
-                        }
-                    }
-                ]
-            }
-
+            type: "space",
+            rows: [
+                {
+                    template: "<div style='width:auto;text-align:center'><h3>Processes<h3/></div>",
+                    height: 50
+                },
+                view
+            ]
         }
-    }
-
-    showFor(data) {
-        this.table.parse(data)
-        this.getRoot().show();
     }
 
     killProcess(objects) {
@@ -97,7 +77,7 @@ export default class ProcessesChildView extends JetView {
 
         for (let obj of objects) {
             ids.push(obj.id);
-            let item = self.table.getItem(obj.id);
+            let item = self.processTable.getItem(obj.id);
             items.push(item)
             indexes.push(item.index);
         }
@@ -111,8 +91,8 @@ export default class ProcessesChildView extends JetView {
 
             const pids = items.map((item) => item.pid);
 
-            health.kill_processes_by_pid(pids).then(() => {
-                self.table.remove(ids)
+            health.killProcessesByPid(pids).then(() => {
+                self.processTable.remove(ids)
                 webix.message({ type: "success", text: "Processes killed successfully" });
             }).catch(error => {
                 webix.message({ type: "error", text: "Could not kill process" });
@@ -121,21 +101,23 @@ export default class ProcessesChildView extends JetView {
     }
 
     init() {
-        var self = this;
-
-        self.table = $$("process_table");
+        const self = this;
         self.processDetailsView = self.ui(ProcessDetailsView);
+
+        self.processTable = this.$$("process_table");
+        health.getRunningProcesses().then(data => {
+            self.processTable.parse(data.json().processes_list);
+        });
 
         webix.ui({
             view: "contextmenu",
             id: "process_cm",
             data: ["Kill"]
-        }).attachTo(self.table);
+        }).attachTo(self.processTable);
 
-        self.table.attachEvent("onItemDblClick", function () {
-            let pid = self.table.getSelectedItem()["pid"]
-            health.get_process_details(pid).then((data) =>{
-                console.log(data.json())
+        self.processTable.attachEvent("onItemDblClick", function () {
+            let pid = self.processTable.getSelectedItem()["pid"]
+            health.getProcessDetails(pid).then((data) =>{
                 self.processDetailsView.showProcessDetails(data.json())
             }).catch(err => {
                 webix.message({ type: "error", text: "Could not get process details" });
@@ -144,8 +126,9 @@ export default class ProcessesChildView extends JetView {
 
         $$("process_cm").attachEvent("onMenuItemClick", function (id) {
             if (id == "Kill") {
-                self.killProcess(self.table.getSelectedId(true));
+                self.killProcess(self.processTable.getSelectedId(true));
             }
         });
     }
+
 }
