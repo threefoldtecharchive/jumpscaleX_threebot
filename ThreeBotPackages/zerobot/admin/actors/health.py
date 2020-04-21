@@ -144,7 +144,9 @@ class health(j.baseclasses.threebot_actor):
         all_data["parent_name"] = parent['name']
         all_data["fds"] = proc.num_fds()
         all_data["threads"] = proc.num_threads()
-
+        _,output,_ = j.sal.process.execute(f'cat /proc/{pid}/cmdline')
+        all_data["cmdline"] = output
+        
         import datetime
         all_data["create_time"] = datetime.datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S")
         all_data["status"] = proc.status()
