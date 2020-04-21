@@ -2,7 +2,7 @@ import {
     JetView
 } from "webix-jet";
 
-import ProcessDetailsView from "./processesDetails";
+import ProcessDetailsView from "./processDetails";
 import { health } from "../../services/health";
 
 export default class ProcessesChildView extends JetView {
@@ -133,7 +133,13 @@ export default class ProcessesChildView extends JetView {
         }).attachTo(self.table);
 
         self.table.attachEvent("onItemDblClick", function () {
-            self.processDetailsView.showProcessDetails(self.table.getSelectedItem())
+            let pid = self.table.getSelectedItem()["pid"]
+            health.get_process_details(pid).then((data) =>{
+                console.log(data.json())
+                self.processDetailsView.showProcessDetails(data.json())
+            }).catch(err => {
+                webix.message({ type: "error", text: "Could not get process details" });
+            })
         });
 
         $$("process_cm").attachEvent("onMenuItemClick", function (id) {

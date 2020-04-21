@@ -42,6 +42,10 @@ class HealthService extends Service {
     kill_processes_by_port(ports) {
         return this.getCall('kill_processes_by_port', ports)
     }
+
+    get_process_details(pid) {
+        return this.getCall('get_process_details', pid)
+    }
 }
 
 export const health = new HealthService();
