@@ -2,27 +2,41 @@ from Jumpscale import j
 
 from .rooter import app, abort, env, redirect, response, request
 
+LOGIN_URL = "/auth/login"
+
 client = j.clients.oauth_proxy.get("main")
-oauth_app = j.tools.oauth_proxy.get(app, client, "/auth/login")
-bot_app = j.tools.threebotlogin_proxy.get(app)
+oauth_app = j.tools.oauth_proxy.get(app, client, LOGIN_URL)
+bot_app = j.tools.threebotlogin_proxy.get(app, LOGIN_URL)
 PROVIDERS = list(client.providers_list())
 
 
-@app.route("/auth/login")
+def get_session():
+    return request.environ.get("beaker.session")
+
+
+@app.route(LOGIN_URL)
 def login():
     provider = request.query.get("provider")
-    next_url = request.query.get("next_url")
+    next_url = request.query.get("next_url") or bot_app.session.get("next_url")
+    host = request.get_header("host")
 
     if provider:
         if provider == "3bot":
             if next_url:
                 bot_app.session["next_url"] = next_url
-            return bot_app.login(request.headers["HOST"], "/auth/3bot_callback")
+            return bot_app.login(host, "/auth/3bot_callback")
 
-        redirect_url = f"https://{request.headers['HOST']}/auth/oauth_callback"
+        redirect_url = f"https://{host}/auth/oauth_callback"
         return oauth_app.login(provider, redirect_url=redirect_url)
 
     return env.get_template("auth/login.html").render(providers=PROVIDERS, next_url=next_url)
+
+
+@app.route("/auth/accessdenied")
+def access_denied():
+    email = get_session().get("email")
+    next_url = request.query.get("next_url")
+    return env.get_template("auth/access_denied.html").render(email=email, next_url=next_url)
 
 
 @app.route("/auth/3bot_callback")
@@ -45,40 +59,60 @@ def logout():
     except AttributeError:
         pass
 
-    redirect(request.query.get("next_url", "/"))
+    next_url = request.query.get("next_url", "/")
+    redirect(f"{LOGIN_URL}?next_url={next_url}")
 
 
 def is_admin(tname):
-    threebot_me = j.tools.threebot.me.default
+    threebot_me = j.me
     return threebot_me.tname == tname or tname in threebot_me.admins
 
 
-@app.route("/auth/authenticated")
-def is_authenticated():
-    session = request.environ.get("beaker.session", {})
-    if session.get("authorized"):
-        tname = session["username"]
-        if is_admin(tname):
-            temail = session["email"]
-            response.content_type = "application/json"
-            return j.data.serializers.json.dumps({"username": tname, "email": temail})
-    return abort(403)
+def authenticated(handler):
+    def decorator(*args, **kwargs):
+        if j.core.myenv.config.get("THREEBOT_CONNECT", False):
+            if not get_session().get("authorized", False):
+                return abort(401)
+        return handler(*args, **kwargs)
+
+    return decorator
 
 
 def admin_only(handler):
-    """a decorator to only allow admin access to specific routes
-
-    :param handler: handler function
-    :type handler: function
-    :return: function or abort with 405 (forbidden)
-    :rtype: function
-    """
-
-    def inner(*args, **kwargs):
-        username = request.environ.get("beaker.session", {}).get("username")
-        if not username or not is_admin(username):
-            return abort(403)
+    def decorator(*args, **kwargs):
+        if j.core.myenv.config.get("THREEBOT_CONNECT", False):
+            username = get_session().get("username")
+            if not is_admin(username):
+                return abort(403)
 
         return handler(*args, **kwargs)
 
-    return inner
+    return decorator
+
+
+def get_user_info():
+    session = get_session()
+    tname = session.get("username", "")
+    temail = session.get("email", "")
+    session.get("signedAttempt", "")
+    response.content_type = "application/json"
+    return j.data.serializers.json.dumps(
+        {
+            "username": tname.lower(),
+            "email": temail.lower(),
+            "devmode": not j.core.myenv.config.get("THREEBOT_CONNECT", False),
+        }
+    )
+
+
+@app.route("/auth/authenticated")
+@authenticated
+def is_authenticated():
+    return get_user_info()
+
+
+@app.route("/auth/authorized")
+@authenticated
+@admin_only
+def is_authorized():
+    return get_user_info()

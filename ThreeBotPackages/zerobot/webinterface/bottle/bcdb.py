@@ -11,6 +11,59 @@ MODEL_URL = f"{PACKAGE_BASE_URL}/model/<model_url>"
 RECORD_URL = f"{MODEL_URL}/<record_id>"
 
 
+class BaseError(j.exceptions.Base):
+    """a generic base error for bcdb rest, with status code"""
+
+    def __init__(self, status, *args, **kwargs):
+        super().__init__(*args, *kwargs)
+        self.status = status
+
+
+class ModelNotFound(BaseError):
+    pass
+
+
+class InvalidRecordId(BaseError):
+    pass
+
+
+class RecordNotFound(BaseError):
+    pass
+
+
+class NoDataGiven(BaseError):
+    pass
+
+
+class InvalidData(BaseError):
+    pass
+
+
+class FieldIsNotIndexed(BaseError):
+    pass
+
+
+def format_error(error):
+    """"formats an error as json
+
+    :param error: error object
+    :type error: j.exceptions.Base or BaseError
+    :return: json formatted error with status, type and message fields
+    :rtype: str
+    """
+    if isinstance(error, BaseError):
+        status = error.status
+    else:
+        status = 400
+
+    error_type = j.core.text.convert_to_snake_case(error.__class__.__name__)
+    data = {"status": status, "type": error_type, "message": error.message}
+
+    response.status = status
+    response.content_type = "application/json"
+    return j.data.serializers.json.dumps(data)
+
+
 def get_model(package, model_url):
     """a helper method to get a model from a package
 
@@ -25,7 +78,7 @@ def get_model(package, model_url):
     try:
         model = package.bcdb.model_get(url=model_url)
     except j.exceptions.Input:
-        raise j.exceptions.NotFound(f"model of {model_url} cannot be found")
+        raise ModelNotFound(404, f"model of {model_url} cannot be found")
 
     return model
 
@@ -36,8 +89,10 @@ def model_route(handler):
     it can decorate handlers which takes threebot_name and package_name
     then, pass the model only.
 
-    if the model or the package cannot be found, it will
-    abort with 404 and the correct body message
+    if package cannot be found, it will abort with 404.
+
+    in case of any BaseError raised, it will return a json
+    body with the correct status and message
 
     :param handler: handler function
     :type handler: function
@@ -53,10 +108,9 @@ def model_route(handler):
 
         try:
             kwargs["model"] = get_model(package, model_url)
-        except j.exceptions.NotFound as ex:
-            return abort(404, ex.message)
-
-        return handler(*args, **kwargs)
+            return handler(*args, **kwargs)
+        except j.exceptions.Base as error:
+            return format_error(error)
 
     return inner
 
@@ -79,12 +133,12 @@ def record_route(handler):
         try:
             record_id = int(record_id)
         except ValueError:
-            return abort(400, "invalid record id")
+            raise InvalidRecordId(400, "invalid record id")
 
         try:
             record = model.get(record_id)
         except j.exceptions.NotFound as ex:
-            return abort(404, ex.message)
+            raise RecordNotFound(404, ex.message)
 
         kwargs["record"] = record
 
@@ -110,7 +164,7 @@ def find(model):
     try:
         records = model.find(**request.query)
     except OperationalError as ex:
-        return abort(400, f"some fields are not indexed, {ex}")
+        raise FieldIsNotIndexed(400, f"some fields are not indexed, {ex}")
 
     response.headers["Content-Type"] = "application/json"
     return j.data.serializers.json.dumps([record._ddict for record in records])
@@ -131,13 +185,13 @@ def create(model):
     """
     data = request.json
     if not data:
-        return abort(400, "no data was given")
+        raise NoDataGiven(400, "no data was given")
 
     record = model.new(data=data)
     record.save()
 
     if not record.id:
-        return abort(400, "could not create the record, please check your data")
+        raise InvalidData(400, "could not create the record, please check your data")
 
     response.status = 201
     return j.data.serializers.json.dumps({"id": record.id})
@@ -173,7 +227,7 @@ def update(record):
     """
     data = request.json
     if not data:
-        return abort(400, "no data was given")
+        raise NoDataGiven(400, "no data was given")
 
     record._data_update(data)
     record.save()

@@ -22,7 +22,7 @@ def get_metadata(docsite):
 
 @app.get("/wiki")
 def list_all_wikis():
-    return env.get_template("wiki/home.html").render(wiki_names=[w.name for w in j.tools.threegit.find()])
+    return env.get_template("wiki/home.html").render(wiki_names=j.tools.threegit.list_names())
 
 
 @app.get(f"{PACKAGE_BASE_URL}/wiki")

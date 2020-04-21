@@ -1303,11 +1303,66 @@ button,
 .webix_ss_sort_asc,
 .webix_ss_sort_desc {
   position: absolute;
-  right: 3px;
+  top: 50%;
+  right: 2px;
+  width: 20px;
+  height: 24px;
+  line-height: 24px;
+  margin-top: -12px;
+  float: none;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+.webix_ss_sort_asc.webix_ss_sort_single,
+.webix_ss_sort_desc.webix_ss_sort_single {
+  width: 20px;
+  text-align: center;
+}
+.webix_ss_sort_num {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 13px;
+  line-height: 13px;
+  font-family: 'PT Sans', Tahoma;
+  font-size: 11px;
+  text-align: right;
+  color: #3498db;
+}
+.webix_ss_sort_single .webix_ss_sort_num {
+  display: none;
+}
+.webix_hcell .webix_excel_filter {
+  position: absolute;
+  top: 50%;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  margin-top: -10px;
+  vertical-align: middle;
+  text-align: center;
+  cursor: pointer;
+  color: #A4B4BF;
+  font-size: 14px;
+}
+.webix_hcell .webix_excel_filter:hover {
+  color: #3498db;
+}
+.webix_excel_filter + .webix_ss_sort_asc,
+.webix_excel_filter + .webix_ss_sort_desc {
+  right: 24px;
+}
+.webix_hcell.webix_ss_excel_filter {
+  position: relative;
+}
+.webix_hcell.webix_ss_filter_active .webix_excel_filter {
+  color: #3498db;
+}
+.webix_hcell.webix_ss_filter_active .webix_excel_filter:hover {
+  color: #2383c4;
 }
 .webix_hcell.webix_ss_filter {
   padding: 3px 5px 3px 5px;
@@ -3120,21 +3175,20 @@ div.webix_modal_cover {
   color: #fff;
   margin-right: 4px;
 }
-.webix_img_btn_top .webix_icon {
+.webix_img_btn_top .webix_icon,
+.webix_img_btn_top .webix_image {
   font-size: 20px;
   position: absolute;
   top: 8px;
+  display: inline-block;
   left: 50%;
-  margin-left: -10px;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
 }
 .webix_img_btn .webix_image {
   display: inline-block;
   margin-right: 4px;
   vertical-align: middle;
-}
-.webix_img_btn_top .webix_image {
-  background-repeat: no-repeat;
-  background-position: center 4px;
 }
 .webix_img_btn_text {
   position: absolute;
@@ -5458,6 +5512,9 @@ body.webix_print {
   margin-right: 4px;
   color: #606060;
 }
+.webix_icon {
+  text-align: center;
+}
 .webix_badge {
   background-color: #ff8839;
   color: #fff;
@@ -5807,11 +5864,6 @@ body.webix_print {
 .webix_ss_sort_desc {
   font-size: 14px;
   font-family: "Webix Awesome Icons";
-  top: 50%;
-  line-height: 1px;
-  bottom: auto;
-  float: none;
-  width: 12px;
 }
 .webix_ss_sort_asc:before {
   content: '\F004';
@@ -6215,7 +6267,9 @@ div.webix_inp_static,
   padding-bottom: 2px;
 }
 .webix_el_tabbar .webixtype_iconTop .webix_img_btn_top .webix_icon,
-.webix_el_tabbar .webixtype_image .webix_img_btn_top .webix_icon {
+.webix_el_tabbar .webixtype_image .webix_img_btn_top .webix_icon,
+.webix_el_tabbar .webixtype_iconTop .webix_img_btn_top .webix_image,
+.webix_el_tabbar .webixtype_image .webix_img_btn_top .webix_image {
   margin-top: 2px;
 }
 .webix_el_tabbar .webixtype_iconTop .webix_img_btn_text,
@@ -6693,6 +6747,9 @@ a:active .webix_custom_radio {
 }
 .wxi-user:before {
   content: "\F044";
+}
+.wxi-filter:before {
+  content: "\F045";
 }
 /*predefined styles for text lables inside a item*/
 .webix_strong {

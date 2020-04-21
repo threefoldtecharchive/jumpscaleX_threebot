@@ -1,6 +1,6 @@
 import { Service } from "../common/api";
 
-const BASE_URL = "/zerobot/alerta/actors/alerta";
+const BASE_URL = "/zerobot/admin/actors/alerta";
 
 class AlertsService extends Service {
     constructor() {

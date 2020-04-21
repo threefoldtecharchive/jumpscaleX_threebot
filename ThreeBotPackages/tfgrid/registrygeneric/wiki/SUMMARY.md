@@ -1,0 +1,1 @@
+- [registrygeneric](README.md)

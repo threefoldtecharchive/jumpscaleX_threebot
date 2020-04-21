@@ -1,6 +1,8 @@
 import tfService from "./service.js";
 import lodash from "/weblibs/lodash/lodash.min.js";
 
+const namespaced = true;
+
 const state = {
   user: {},
   registeredNodes: [],
@@ -30,23 +32,23 @@ const actions = {
   },
   getRegisteredNodes(context) {
     tfService.registered3bots().then(response => {
-      context.commit("setRegisteredNodes", response.data.nodes);
-      context.commit("setTotalSpecs", response.data.nodes);
+      context.commit("setRegisteredNodes", response.data);
+      context.commit("setTotalSpecs", response.data);
     });
   },
-  getRegisteredFarms(context) {
-    tfService.registeredfarms().then(response => {
-      context.commit("setAmountOfFarms", response.data.farms);
-      context.commit("setRegisteredFarms", response.data.farms);
+  getRegisteredFarms(context, farm_id) {
+    tfService.registeredfarms(farm_id).then(response => {
+      context.commit("setAmountOfFarms", response.data);
+      context.commit("setRegisteredFarms", response.data);
     });
   },
   getFarms: context => {
     tfService.getFarms(context.getters.user.id).then(response => {
-      context.commit("setFarms", response.data.farms);
+      context.commit("setFarms", response.data);
     });
   },
   resetNodes: context => {
-    context.commit("setNodes", undefined)
+    context.commit("setNodes", undefined);
   }
 };
 const mutations = {
@@ -70,7 +72,7 @@ const mutations = {
   },
   setTotalSpecs(state, value) {
     state.nodeSpecs.amountregisteredNodes = value.length;
-    state.nodeSpecs.onlinenodes = value.length;
+    state.nodeSpecs.onlinenodes = countOnlineNodes(value);
     state.nodeSpecs.countries = lodash.uniqBy(
       value,
       node => node.location.country
@@ -91,4 +93,13 @@ const getters = {
   nodeSpecs: state => state.nodeSpecs
 };
 
-export { state, actions, mutations, getters };
+function countOnlineNodes(data) {
+  let onlinecounter = 0;
+  data.forEach(node => {
+    const timestamp = new Date().getTime() / 1000;
+    const minutes = (timestamp - node.updated) / 60;
+    if (minutes < 20) onlinecounter++;
+  });
+  return onlinecounter;
+}
+export { namespaced, state, actions, mutations, getters };

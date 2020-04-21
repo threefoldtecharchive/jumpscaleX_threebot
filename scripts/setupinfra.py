@@ -123,7 +123,7 @@ MASTERIP = "192.168.99.254"
 MASTERPUBLIC = j.sal.nettools.getReachableIpAddress("8.8.8.8", 53)
 SSH_KEY_NAME = j.core.myenv.config.get("SSH_KEY_NAME")
 DROPLET_PREFIX = j.core.myenv.config.get("DROPLET_PREFIX", "router")
-DROPLET_POSTFIX = j.core.myenv.config.get("DROPLET_POSTFIX", "Staging")
+DROPLET_POSTFIX = j.core.myenv.config.get("DROPLET_POSTFIX", "testnet")
 
 if not j.sal.fs.exists(redisserverpath) or not (
     j.sal.fs.exists(tcprouterclientpath) and j.sal.fs.exists(tcprouterserverpath)
@@ -135,7 +135,7 @@ if not j.sal.fs.exists(corednspath):
     j.builders.network.coredns.install(reset=True)
 
 # we want 3 routers
-project_name = "3bot Infra Staging"
+project_name = "3bot Infra Testnet"
 do = j.clients.digitalocean.get()
 size = "s-1vcpu-1gb"
 regions = do.digitalocean_region_names
@@ -147,8 +147,8 @@ if len(regions) < 3:
 clients = []
 
 print("Install wg on manager")
-wg = j.tools.wireguard.get("manager_staging", autosave=False)
-wg.interface_name = "wgman_staging"
+wg = j.tools.wireguard.get("manager_testnet", autosave=False)
+wg.interface_name = "wgman_testnet"
 wg.port = 7778
 wg.network_public = MASTERPUBLIC
 wg.network_private = f"{MASTERIP}/24"
@@ -159,7 +159,7 @@ wg.configure()
 
 def configure_wg(ssh_name, privateip, executor):
     wgr = j.tools.wireguard.get(ssh_name, autosave=False)
-    wgr.interface_name = "wgman_staging"
+    wgr.interface_name = "wgman_testnet"
     wgr.sshclient_name = ssh_name
     wgr.network_private = f"{privateip}/24"
     print(f"  Install wg")
@@ -175,7 +175,6 @@ def configure_wg(ssh_name, privateip, executor):
     config = executor.file_read(f"/tmp/{wgr.interface_name}.conf")
     executor.file_write(f"/etc/wireguard/{wgr.interface_name}.conf", config)
     executor.execute(f"systemctl enable wg-quick@{wgr.interface_name}")
-
 
 
 def configure_systemd_unit(executor, name, path):
@@ -263,9 +262,9 @@ print("Wating for DNS ...")
 j.sal.nettools.waitConnectionTest(THREEBOT_DOMAIN, 443, timeout=60)
 
 print("Start local 3bot")
-client = j.servers.threebot.local_start_explorer(background=True)
+client = j.servers.threebot.default.start(background=True)
 
-gedis_packagemanager = j.clients.gedis.get("packagemanager", port=8901, package_name="zerobot.packagemanager")
+gedis_packagemanager = j.clients.gedis.get("packagemanager", port=8901, package_name="zerobot.admin")
 gedis_packagemanager.actors.package_manager.package_add(
     path=j.core.tools.text_replace("{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/dns")
 )
@@ -274,25 +273,3 @@ gedis_packagemanager.actors.package_manager.package_add(
         "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/network"
     )
 )
-gedis_packagemanager.actors.package_manager.package_add(
-    path=j.core.tools.text_replace(
-        "{DIR_CODE}/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tfgrid/threebot_provisioning"
-    )
-)
-client.reload()
-
-gedis_gridnetwork = j.clients.gedis.get("gridnetwork", port=8901, package_name="tfgrid.network")
-networks = gedis_gridnetwork.actors.gridnetwork.network_find()
-for network in networks.res:
-    if network.name == "3botnetwork":
-        break
-else:
-    gedis_gridnetwork.actors.gridnetwork.network_add("3botnetwork", "10.2.0.0/16")
-
-existingendpoints = []
-for endpoint in gedis_gridnetwork.actors.gridnetwork.network_endpoint_find("3botnetwork").res:
-    existingendpoints.append(endpoint.network_public.split("/")[0])
-
-for executor in clients:
-    if executor.sshclient.addr not in existingendpoints:
-        gedis_gridnetwork.actors.gridnetwork.network_endpoint_add("3botnetwork", executor.sshclient.name)

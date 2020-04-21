@@ -1,0 +1,5 @@
+[source]
+name = "simulator_playground"
+description = "chatbot to deploy simulator on a container in the grid"
+threebot = "tfgrid_solutions"
+version = "1.0.0"

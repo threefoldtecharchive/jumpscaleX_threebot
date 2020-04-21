@@ -70,3 +70,12 @@ when https and raw=True: then its a real link which can be downloaded with curl
 
 
 !!!include("https://gitlab.com/threefoldforks/Threefold-Circles-back/raw/master/CODE_OF_CONDUCT.md", raw=True)
+
+
+### Only filenames
+
+!!!include("deep_nested_document")
+
+With a colon too:
+
+!!!include(":deep_nested_document")

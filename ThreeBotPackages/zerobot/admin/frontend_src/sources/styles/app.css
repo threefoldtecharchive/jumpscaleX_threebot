@@ -251,3 +251,16 @@
 	padding-right: 5px;
 	display: inline-block;
 }
+
+.btn_view {
+	background-color: #057781; /* Green */
+	border: none;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	margin: 4px 2px;
+	cursor: pointer;
+	border-radius: 10px;
+	padding: 7px 14px;
+}

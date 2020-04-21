@@ -3,7 +3,7 @@
 **Install**
 
 ```
-j.threebot.packages.zerobot.packagemanager.actors.package_manager.package_add(path=
+j.threebot.packages.zerobot.admin.actors.package_manager.package_add(path=
    1 '/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threefold/
 ...  simulator')
 ```

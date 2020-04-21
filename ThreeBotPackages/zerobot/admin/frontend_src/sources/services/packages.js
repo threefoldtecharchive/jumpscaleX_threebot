@@ -1,6 +1,6 @@
 import { Service } from "../common/api";
 
-const BASE_URL = "/zerobot/packagemanager/actors/package_manager";
+const BASE_URL = "/zerobot/admin/actors/package_manager";
 
 
 class PackagesService extends Service {
@@ -8,7 +8,15 @@ class PackagesService extends Service {
         super(BASE_URL);
     }
 
-    list() {
+    getStatus(names) {
+        // post call to send args as json
+        return this.postCall("packages_get_status", {
+            names: names
+        });
+    }
+
+    list(opts) {
+        opts = opts || {};
         return this.getCall("packages_list");
     }
 

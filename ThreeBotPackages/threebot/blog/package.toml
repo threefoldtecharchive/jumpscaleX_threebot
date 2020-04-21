@@ -5,6 +5,7 @@ threebot = "threebot"
 version = "1.0.0"
 
 [[bcdbs]]
-namespace = "threebot"
+name = "threebot_blog"
+namespace = "threebot_blog"
 type = "zdb"
 instance = "default"

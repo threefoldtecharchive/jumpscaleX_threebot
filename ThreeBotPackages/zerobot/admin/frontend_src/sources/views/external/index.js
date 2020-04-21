@@ -58,9 +58,9 @@ export class ExternalView extends JetView {
     }
 
     installRequiredPackages() {
-        let promises = Object.keys(this.requiredPackages).map((name) => {
+        let promises = Object.values(this.packagesToInstall).map((path) => {
             // add by git url
-            return packages.add(null, this.requiredPackages[name]);
+            return packages.add(null, path);
         });
 
         this.installButton.disable();
@@ -72,39 +72,58 @@ export class ExternalView extends JetView {
         });
     }
 
+    showIframe() {
+        this.externalIframe.show();
+        this.externalIframe.showProgress({ type: "icon" });
+        this.externalIframe.load(this.targetUrl);
+    }
+
     init(view) {
+        this.externalIframe = this.$$("iframe-external");
+        this.externalIframe.disable();
+        webix.extend(this.externalIframe, webix.ProgressBar);
+
+        this.packageNames = Object.keys(this.requiredPackages); // only names
+
+        if (!this.packageNames.length) {
+            this.showIframe();
+            return;
+        }
+
         this.requiredPackagesDiv = this.$$("required_packages_div");
-        view.installPackageContainer = this.$$("install-packages");
+        this.installPackageContainer = this.$$("install-packages");
         this.installButton = this.$$("install_btn");
 
-        view.externalIframe = this.$$("iframe-external");
-        webix.extend(view.externalIframe, webix.ProgressBar);
-        view.externalIframe.disable();
-        view.externalIframe.showProgress({ type: "icon" });
-        view.externalIframe.load(this.targetUrl);
-
-
         // check which packages to install
-        packages.list().then(data => {
-            const allPackages = data.json().packages;
-            for (const p of allPackages) {
-                const requiredPackage = this.requiredPackages[p.name];
-                if (requiredPackage && p.status == STATUS_INSTALLED) {
-                    delete this.requiredPackages[p.name];
+        this.packagesToInstall = {};
+        // try to get info about required packages
+        // if any is already registered and installed, then just ignore it
+        packages.getStatus(this.packageNames).then(data => {
+            const packageStates = data.json();
+
+            // now go over required packages
+            for (let name of this.packageNames) {
+                // check if a required package is registered and installed
+                if (packageStates[name] == STATUS_INSTALLED) {
+                    continue;
                 }
+
+                this.packagesToInstall[name] = this.requiredPackages[name];
             }
 
-            if (Object.keys(this.requiredPackages).length) {
-                view.installPackageContainer.show();
-                view.externalIframe.hide();
+            // check packages to be installed again if still need to install any of them
+            const packageNamesToInstall = Object.keys(this.packagesToInstall);
+            if (packageNamesToInstall.length) {
+                this.installPackageContainer.show();
+                this.externalIframe.hide();
 
-                const names = Object.keys(this.requiredPackages).join(", ");
+                const names = packageNamesToInstall.join(", ");
                 this.requiredPackagesDiv.setHTML(
                     `<div style='width:auto;text-align:center'><h3>You need to install the following required packages: ${names}<h3/></div>`
                 );
             } else {
-                view.installPackageContainer.hide();
-                view.externalIframe.show();
+                this.installPackageContainer.hide();
+                this.showIframe()
             }
         });
     }

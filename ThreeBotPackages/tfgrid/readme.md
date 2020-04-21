@@ -6,3 +6,4 @@ will start & load the right packages
 
 see a test script on factory in each directory
 
+TODO: *1 doesnt see right

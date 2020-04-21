@@ -1,6 +1,6 @@
 import { ExternalView } from "../external";
 
-const URL = "/simulator/threefold/notebook/";
+const URL = "/threefold/simulator/notebook/";
 const REQUIRED_PACKAGES = {
     "threefold.simulator": "https://github.com/threefoldtech/jumpscaleX_threebot/tree/development/ThreeBotPackages/threefold/simulator"
 }

@@ -1,4 +1,4 @@
-from bottle import Bottle, abort, post, request, response, run, redirect
+from bottle import Bottle, abort, post, request, response, run, redirect, static_file
 
 
 try:
@@ -12,7 +12,6 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from Jumpscale import j
 from Jumpscale.servers.gedis_http.GedisHTTPFactory import enable_cors
-
 
 app = Bottle()
 

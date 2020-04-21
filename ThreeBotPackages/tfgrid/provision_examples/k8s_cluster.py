@@ -45,7 +45,7 @@ def encrypt_password(password, public_key):
 def deploy_k8s_cluster():
     j.clients.threebot.explorer_addr_set("explorer.testnet.grid.tf")
     explorer = j.clients.threebot.explorer
-    me = j.tools.threebot.me.default
+    me = j.myidentities.me
 
     nodes = explorer.actors_all.nodes.list().nodes
 
@@ -189,7 +189,7 @@ def deploy_k8s_cluster():
     ]
 
     reservation.json = reservation.data_reservation._json
-    reservation.customer_signature = me.nacl.sign_hex(reservation.json.encode())
+    reservation.customer_signature = me.encryptor.sign_hex(reservation.json.encode())
 
     print(reservation)
 

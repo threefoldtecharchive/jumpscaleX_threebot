@@ -1,14 +1,8 @@
 # Code-server
-Code-server provides VisualStudio Code to be running on the server and accessible through the browser to enable hosting a development platform on the machine.
 
-## Installation
-TBD
+Provides a [Visual Studio Code](https://code.visualstudio.com) like experience in the browser allowing you to edit your code and documents from your very own 3bot and reducing the overhead of setup dev environment. 
 
-## Starting
-- To start code server on port 8080:
-    1. install the package
-    ```python
-    package_manager = j.clients.gedis.get("packagemanager", host=HOST,port=8901, package_name="zerobot.packagemanager")
+You will get a very modern IDE with lots of extensions and a terminal access too.
+![codeserver](./images/codeserver.png)
 
-    package_manager.actors.package_manager.package_add(path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/codeserver")
-    ```
+

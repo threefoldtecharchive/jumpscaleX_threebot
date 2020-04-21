@@ -31,12 +31,12 @@ class Package(j.baseclasses.threebot_package):
             bottle_proxy_location.scheme = "http"
 
             chat_wiki_proxy_location = locations.get_location_proxy("chat_wiki_actors")
-            chat_wiki_proxy_location.path_url = "~* ^/(.*)/(.*)/(chat|wiki|actors|info|model)"
+            chat_wiki_proxy_location.path_url = "~* ^/((?!mdbook).)*/(.*)/(chat|wiki|actors|info|model)"
             chat_wiki_proxy_location.ipaddr_dest = "127.0.0.1"
             chat_wiki_proxy_location.port_dest = 9999
 
             package_info_location = locations.get_location_proxy("package_author_info")
-            package_info_location.path_url = "~* ^/(.*)/info"
+            package_info_location.path_url = "~* ^/(.*)/info$"
             package_info_location.ipaddr_dest = "127.0.0.1"
             package_info_location.port_dest = 9999
 
@@ -54,6 +54,10 @@ class Package(j.baseclasses.threebot_package):
             wiki_static_location.path_url = "/staticwiki"
             wiki_static_location.path_location = f"{self._dirpath}/static"
 
+            md_book_location = locations.get_location_static("mdbook")
+            md_book_location.path_url = "/mdbook"
+            md_book_location.path_location = j.tools.mdbook.output_path
+
             locations.configure()
             website.configure()
 
@@ -62,6 +66,9 @@ class Package(j.baseclasses.threebot_package):
         # add the main webapplication
 
         self.setup_locations()
+
+        # init proxy instance to use in bottle
+        j.clients.oauth_proxy.get("main")
 
         from threebot_packages.zerobot.webinterface.bottle import app_with_session
 

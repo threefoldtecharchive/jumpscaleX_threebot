@@ -1,4 +1,6 @@
-import { JetView } from "webix-jet";
+import {
+    JetView
+} from "webix-jet";
 
 export default class ProcessesChildView extends JetView {
 
@@ -12,8 +14,7 @@ export default class ProcessesChildView extends JetView {
             css: "webix_header_border webix_data_border",
             scroll: true,
             autoConfig: true,
-            columns: [
-                {
+            columns: [{
                     id: "index",
                     header: "#",
                     sort: "int",
@@ -40,7 +41,7 @@ export default class ProcessesChildView extends JetView {
                     sort: "string"
                 },
                 {
-                    id: "vms",
+                    id: "rss",
                     header: "Memory Usage",
                     sort: "int",
                     format: function (value) {

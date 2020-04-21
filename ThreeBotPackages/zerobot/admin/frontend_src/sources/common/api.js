@@ -1,4 +1,4 @@
-const ajax = webix.ajax().headers({ "Content-type": "application/json" });
+const ajax = webix.ajax().headers({ "Content-Type": "application/json" });
 
 export class Service {
     constructor(baseUrl) {

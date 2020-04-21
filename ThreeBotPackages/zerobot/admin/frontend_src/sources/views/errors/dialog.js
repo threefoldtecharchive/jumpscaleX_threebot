@@ -15,8 +15,8 @@ export class ErrorView extends JetView {
             view: "window",
             head: "Error",
             modal: true,
-            width: 500,
-            height: 600,
+            width: 1100,
+            height: 700,
             position: "center",
             body: {
                 rows: [

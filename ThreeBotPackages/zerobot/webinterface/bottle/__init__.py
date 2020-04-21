@@ -1,3 +1,3 @@
-from . import auth, bcdb, chat, gedis, info, wiki
+from . import auth, bcdb, chat, gedis, info, mdbook
 
 from .rooter import app_with_session

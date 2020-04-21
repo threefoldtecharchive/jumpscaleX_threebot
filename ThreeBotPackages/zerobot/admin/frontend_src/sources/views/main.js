@@ -1,4 +1,6 @@
 import { JetView, plugins } from "webix-jet";
+import { auth } from "../services/auth";
+
 
 export default class TopView extends JetView {
     config() {
@@ -21,88 +23,142 @@ export default class TopView extends JetView {
             ]
         };
 
+        const sidebarData = [{
+            id: "dash",
+            value: "Dashboard",
+            icon: "mdi mdi-view-dashboard"
+        },
+        {
+            id: "wikis",
+            value: "Packages Docs",
+            icon: "mdi mdi-newspaper"
+        },
+        {
+            id: "alerts",
+            value: "Alerts",
+            icon: "mdi mdi-bell-alert"
+        },
+        {
+            id: "logs",
+            value: "Logs",
+            icon: "mdi mdi-history"
+        },
+        {
+            id: "myjobs_main",
+            value: "My jobs",
+            icon: "mdi mdi-animation-play",
+            data: [{
+                id: "myjobs",
+                icon: "mdi mdi-book-open",
+                value: "Jobs"
+            }, {
+                id: "workers",
+                icon: "mdi mdi-worker",
+                value: "Workers"
+            }]
+        },
+        {
+            id: "tfwikis_main",
+            value: "TF Wikis",
+            icon: "mdi mdi-animation-play",
+            data: [{
+                id: "tfgridsdk",
+                icon: "mdi mdi-book-open",
+                value: "TFGridSDK"
+            }, {
+                id: "threefold",
+                icon: "mdi mdi-worker",
+                value: "Threefold"
+            }]
+        },
+
+        {
+            id: "packages",
+            value: "Packages",
+            icon: "mdi mdi-package"
+        },
+        {
+            id: "deployedSolutions",
+            value: "Deployed Solutions",
+            icon: "mdi mdi-animation-play"
+        },
+        {
+            id: "solutions",
+            value: "Solutions",
+            icon: "mdi mdi-animation-play",
+            data: [{
+                id: "network",
+                value: '<span><img class="solutions-icon" src="static/img/network.png"/>Network</span>'
+            }, {
+                id: "ubuntu",
+                value: '<span><img class="solutions-icon" src="static/img/ubuntu.png"/>Ubuntu</span>'
+            }, {
+                id: "flist",
+                value: '<span><img class="solutions-icon" src="static/img/flist.png"/>Generic flist</span>'
+            }, {
+                id: "minio",
+                value: '<span><img class="solutions-icon" src="static/img/minio.png"/>Minio / S3</span>'
+            }, {
+                id: "k8s_cluster",
+                value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes cluster</span>'
+            }, {
+                id: "webgateway",
+                value: 'Web Gateway',
+                icon: "mdi mdi-network"
+            }
+            ]
+        },
+        {
+            id: "capacity",
+            value: "Capacity",
+            icon: "mdi mdi-server"
+        },
+        {
+            id: "farmmanagement",
+            value: "Farm Management",
+            icon: "mdi mdi-server"
+        },
+        {
+            id: "sdkexamples",
+            value: "SDK Examples",
+            icon: "mdi mdi-file"
+        },
+        {
+            id: "codeserver",
+            value: "Codeserver",
+            icon: "mdi mdi-code-tags"
+        },
+        {
+            id: "jupyter",
+            value: "TF Simulator",
+            icon: "mdi mdi-play"
+        },
+        {
+            id: "settings",
+            value: "Settings",
+            icon: "mdi mdi-settings"
+        },
+        ]
+
+        const response = webix.ajax().sync().get("/zerobot/admin/actors/package_manager/packages_list", { has_frontend_args: true, status: "installed" });
+        let packages;
+
+        try {
+            packages = JSON.parse(response.responseText).packages;
+        } catch (error) {
+            packages = [];
+        }
+
+        for (const p of packages) {
+            sidebarData.push(p.frontend_args);
+        }
+
         const sidebar = {
             localId: "menu",
             view: "sidebar",
             css: "webix_dark",
             width: 200,
-            data: [{
-                id: "dash",
-                value: "Dashboard",
-                icon: "mdi mdi-view-dashboard"
-            },
-            {
-                id: "wikis",
-                value: "Wikis",
-                icon: "mdi mdi-newspaper"
-            },
-            {
-                id: "alerts",
-                value: "Alerts",
-                icon: "mdi mdi-bell-alert"
-            },
-            {
-                id: "logs",
-                value: "Logs",
-                icon: "mdi mdi-history"
-            },
-            {
-                id: "myjobs_main",
-                value: "My jobs",
-                icon: "mdi mdi-animation-play",
-                data: [{
-                    id: "myjobs",
-                    icon: "mdi mdi-book-open",
-                    value: "Jobs"
-                }, {
-                    id: "workers",
-                    icon: "mdi mdi-worker",
-                    value: "Workers"
-                }]
-            },
-            {
-                id: "packages",
-                value: "Packages",
-                icon: "mdi mdi-package"
-            },
-            {
-                id: "solutions",
-                value: "Solutions",
-                icon: "mdi mdi-animation-play",
-                data: [{
-                    id: "ubuntu",
-                    value: '<span><img class="solutions-icon" src="static/img/ubuntu.png"/>Ubuntu</span>'
-                }, {
-                    id: "flist",
-                    value: '<span><img class="solutions-icon" src="static/img/flist.png"/>Generic flist</span>'
-                }, {
-                    id: "minio",
-                    value: '<span><img class="solutions-icon" src="static/img/minio.png"/>Minio / S3</span>'
-                }, {
-                    id: "k8s_cluster",
-                    value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes cluster</span>'
-                } //, {
-                    //     id: "threebot",
-                    //     value: '<span><img class="solutions-icon" src="static/img/3bot.ico"/>Threebot</span>'
-                    // }
-                ]
-            },
-            {
-                id: "codeserver",
-                value: "Codeserver",
-                icon: "mdi mdi-code-tags"
-            },
-            {
-                id: "jupyter",
-                value: "Jupyter",
-                icon: "mdi mdi-play"
-            },
-            {
-                id: "settings",
-                value: "Settings",
-                icon: "mdi mdi-settings"
-            },
-            ]
+            data: sidebarData,
         };
 
         const toolbar = {
@@ -181,10 +237,14 @@ export default class TopView extends JetView {
             urls: {
                 myjobs: "myjobs.jobs",
                 workers: "myjobs.workers",
-                ubuntu: "solutions.chatflow?author=tfgrid_solutions&package=ubuntu&chat=ubuntu_deploy",
-                flist: "solutions.chatflow?author=tfgrid_solutions&package=any_flist&chat=your_flist",
-                minio: "solutions.chatflow?author=tfgrid_solutions&package=minio&chat=minio_deploy",
-                k8s_cluster: "solutions.chatflow?author=tfgrid_solutions&package=kubernetes_cluster&chat=kubernetes_cluster_deploy",
+                tfgridsdk: "tfwikis.tfgridsdk",
+                threefold: "tfwikis.threefold",
+                ubuntu: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=ubuntu_deploy",
+                network: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=network_deploy",
+                flist: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=your_flist",
+                minio: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=minio_deploy",
+                webgateway: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=webgateway_deploy",
+                k8s_cluster: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=kubernetes_cluster_deploy",
                 threebot: "solutions.chatflow?author=tfgrid&package=threebot_provisioning&chat=threebot_reservation",
             }
         });
@@ -206,20 +266,28 @@ export default class TopView extends JetView {
         this.userMenu = $$("user_menu");
         this.userMenu.attachEvent("onItemClick", function (id, e, node) {
             if (id == "logout") {
-                window.location.href = "/auth/logout?next_url=/admin";
+                auth.logout();
             }
         });
 
         this.usernameLabel = $$("username_label");
 
-        webix.ajax().get("/auth/authenticated", function (data) {
-            const info = JSON.parse(data);
-            self.usernameLabel.config.label = info.username;
-            self.usernameLabel.config.width = webix.html.getTextSize(info.username) + 10;
+        auth.getCurrentUser().then(data => {
+            const info = data.json()
+            let username = info.username;
+
+            if (info.devmode) {
+                username += " [development]"
+            }
+
+            self.usernameLabel.config.label = username;
+            self.usernameLabel.config.width = webix.html.getTextSize(username) + 10;
             self.usernameLabel.refresh();
 
             self.userMenu.add({ id: 'email', value: info.email })
             self.userMenu.add({ id: 'logout', value: "Logout" })
+        }).catch(() => {
+            auth.logout();
         });
     }
 

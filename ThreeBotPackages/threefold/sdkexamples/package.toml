@@ -1,0 +1,10 @@
+[source]
+name = "sdkexamples"
+description = "TBD"
+threebot = "threefold"
+version = "1.0.0"
+
+[[bcdbs]]
+namespace = "threefold"
+type = "zdb"
+instance = "default"

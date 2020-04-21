@@ -6,7 +6,7 @@ module.exports = new Promise(async (resolve, reject) => {
       minigraph: "url:/capacity/components/minigraph/index.vue",
       capacitymap: "url:/capacity/components/capacitymap/index.vue",
       scrollablecard: "url:/capacity/components/scrollablecard/index.vue",
-      nodestable: "url:/weblibs/shared/components/nodestable/index.vue"
+      nodestable: "url:/capacity/components/nodestable/index.vue"
     },
     props: [],
     data() {
@@ -18,12 +18,14 @@ module.exports = new Promise(async (resolve, reject) => {
         dialogImage: null,
         block: null,
         showBadge: true,
-        menu: false
+        menu: false,
+        selectedNode: ''
       };
     },
     computed: {
-      ...vuex.mapGetters([
+      ...vuex.mapGetters("capacity", [
         "nodeSpecs",
+        "registeredNodes"
       ]),
     },
     mounted() {
@@ -31,7 +33,10 @@ module.exports = new Promise(async (resolve, reject) => {
       this.getRegisteredFarms();
     },
     methods: {
-      ...vuex.mapActions(["getRegisteredNodes", "getRegisteredFarms"])
+      ...vuex.mapActions("capacity", ["getRegisteredNodes", "getRegisteredFarms"]),
+      changeSelectedNode (data) {
+        this.selectedNode = data
+      }
     }
   });
 });

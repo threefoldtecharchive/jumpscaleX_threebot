@@ -1,5 +1,5 @@
 import axios from "/weblibs/axios/axios.min.js";
-import config from "/threebot/capacity/config/capacity.config.local.js";
+import config from "/threebot/farmmanagement/config/farmmanagement.config.local.js";
 
 export default {
   getName() {
@@ -8,28 +8,28 @@ export default {
     });
   },
   getUser(name) {
-    return axios.post(`${window.config.phonebookActor}/get`, {
-      args: {
+    return axios.get(`${config.tfgridUrl}/users`, {
+      params: {
         name: name
-      }
+      } 
     });
   },
   getFarms (user_id) {
-    return axios.post(`${config.tfApiUrl}/farms/owned_by`, {
-      args: {
-        "threebot_id": user_id
+    return axios.get(`${config.tfgridUrl}/farms`, {
+      params: {
+        threebot_id: user_id 
       }
-    })
+    });
   },
   registerFarm (farm) {
-    return axios.post(`${config.tfApiUrl}/farms/register`, {
-      args: {
-        farm
+    return axios.post(`${config.tfgridUrl}/farms/register`, 
+      {
+       farm: farm
       }
-    })
+    );
   },
   updateFarm (farm_id, farm) {
-    return axios.post(`${config.tfApiUrl}/farms/update`, {
+    return axios.post(`${config.tfgridUrl}/farms/update`, {
       args: {
         farm_id,
         farm
@@ -37,17 +37,17 @@ export default {
     })
   },
   registered3bots(farm_id = undefined) {
-    return axios.post(`${config.tfApiUrl}/nodes/list`, {
-      args: {
+    return axios.get(`${config.tfgridUrl}/nodes`, {
+      params: {
         farm_id: farm_id
       }
     })
   },
   registeredfarms() {
-    return axios.post(`${config.tfApiUrl}/farms/list`);
+    return axios.get(`${config.tfgridUrl}/farms`);
   },
   news() {
-    return axios.post(`${config.tfApiUrl}/news/list`);
+    return axios.get(`${config.tfgridUrl}/news`);
   },
   getExplorerConstants() {
     return axios.get(`${config.tfExplorerUrl}`);

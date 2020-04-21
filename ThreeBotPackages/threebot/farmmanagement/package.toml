@@ -4,8 +4,3 @@ description = "TBD"
 threebot = "threebot"
 version = "1.0.0"
 frontend = true
-
-[[bcdbs]]
-namespace = "threebot"
-type = "zdb"
-instance = "default"

@@ -12,7 +12,7 @@
 3- Add The blog package using package manager:
 
 ```python
-gedis = j.clients.gedis.get("packagemanager", port=8901, package_name="zerobot.packagemanager")
+gedis = j.clients.gedis.get("packagemanager", port=8901, package_name="zerobot.admin")
 gedis.actors.package_manager.package_add("/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/blog")
 gedis.reload()
 ```

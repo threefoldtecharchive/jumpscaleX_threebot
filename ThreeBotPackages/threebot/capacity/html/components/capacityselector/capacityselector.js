@@ -37,7 +37,7 @@ module.exports = new Promise(async (resolve, reject) => {
       };
     },
     computed: {
-      ...vuex.mapGetters(["registeredNodes"])
+      ...vuex.mapGetters("capacity", ["registeredNodes"])
     },
     methods: {
       handleInput(value) {
@@ -50,7 +50,7 @@ module.exports = new Promise(async (resolve, reject) => {
 
         this.setNodes(filteredNodes);
       },
-      ...vuex.mapMutations([
+      ...vuex.mapMutations("capacity", [
         "setNodes"
       ])
     }

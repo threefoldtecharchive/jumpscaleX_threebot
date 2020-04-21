@@ -6,10 +6,7 @@ Threebot is a pluggable application server based on [openresty](https://openrest
 - [Chat](./ThreeBotPackages/zerobot/webinterface/wiki/chatbot/README.md)
 - [Multisite blog](./ThreeBotPackages/threebot/blog/wiki/README.md)
 - [Alerta](./ThreeBotPackages/zerobot/alerta/wiki/README.md)
-- [MyJobs Dashboard](./ThreeBotPackages/zerobot/myjobs_ui/wiki/README.md)
-- [Pastebin](./ThreeBotPackages/demo/pastebin/wiki/README.md)
 - [Package Manager](./ThreeBotPackages/zerobot/packagemanager/wiki/README.md)
-- [Webhooks](./ThreeBotPackages/zerobot/webhooks/wiki/README.md)
 - [BCDBFS](https://github.com/threefoldtech/jumpscaleX_core/blob/development/docs/BCDB/README.md)
 - [API Server](./ThreeBotPackages/zerobot/webinterface/wiki/README.md)
 
@@ -60,7 +57,7 @@ Some core functionality are being added as a package:
 
 #### Webinterface package
 
-[Webinterface](https://github.com/threefoldtech/jumpscaleX_threebot/blob/c58b3db99095a8a9635c75ac7f82647947a9d110/ThreeBotPackages/threebot/webinterface) package is always registered when starting your threebot. It is responsible for
+[Webinterface](ThreeBotPackages/zerobot/webinterface) package is always registered when starting your threebot. It is responsible for
 
 - exposing http endpoints for actors, wikis and gdrive.
 - exposing websocket endpoints for actors
@@ -68,19 +65,15 @@ Some core functionality are being added as a package:
 
 #### Complete examples
 
+- Package manager
+
+  - [frontend](ThreeBotPackages/zerobot/packagemanager/frontend_src/README.md)
+  - [backend](ThreeBotPackages/zerobot/packagemanager/wiki/README.md)
+
 - Myjobs
 
   - [backend](ThreeBotPackages/zerobot/myjobs/wiki/README.md)
-  - [frontend](ThreeBotPackages/zerobot/myjobs/frontend_src/README.md)
 
 - Alerta
-    - [backend](ThreeBotPackages/zerobot/alerta/wiki/README.md)
-    - [frontend](ThreeBotPackages/zerobot/alerta/frontend_src/README.md)
 
-- Pastebin
-  - [backend](ThreeBotPackages/demo/pastebin/wiki/README.md)
-  - [frontend](ThreeBotPackages/demo/pastebin/pastebin/README.md)
-
-- VueJS
-  - [backend](ThreeBotPackages/examples/vuejs/wiki/README.md)
-  - [frontend](ThreeBotPackages/examples/vuejs/newproject/README.md)
+  - [backend](ThreeBotPackages/zerobot/alerta/wiki/README.md)
