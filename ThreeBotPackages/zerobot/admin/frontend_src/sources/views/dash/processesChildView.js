@@ -2,6 +2,9 @@ import {
     JetView
 } from "webix-jet";
 
+import ProcessDetailsView from "./processDetails";
+import { health } from "../../services/health";
+
 export default class ProcessesChildView extends JetView {
 
     config() {
@@ -85,7 +88,64 @@ export default class ProcessesChildView extends JetView {
         this.getRoot().show();
     }
 
+    killProcess(objects) {
+        var self = this;
+
+        let items = [],
+            ids = [],
+            indexes = [];
+
+        for (let obj of objects) {
+            ids.push(obj.id);
+            let item = self.table.getItem(obj.id);
+            items.push(item)
+            indexes.push(item.index);
+        }
+
+        webix.confirm({
+            title: "Kill processes",
+            ok: "Yes",
+            cancel: "No",
+            text: `Kill processes with row ids ${indexes.join(", ")}`
+        }).then(() => {
+
+            const pids = items.map((item) => item.pid);
+
+            health.kill_processes_by_pid(pids).then(() => {
+                self.table.remove(ids)
+                webix.message({ type: "success", text: "Processes killed successfully" });
+            }).catch(error => {
+                webix.message({ type: "error", text: "Could not kill process" });
+            })
+        });
+    }
+
     init() {
-        this.table = $$("process_table");
+        var self = this;
+
+        self.table = $$("process_table");
+        self.processDetailsView = self.ui(ProcessDetailsView);
+
+        webix.ui({
+            view: "contextmenu",
+            id: "process_cm",
+            data: ["Kill"]
+        }).attachTo(self.table);
+
+        self.table.attachEvent("onItemDblClick", function () {
+            let pid = self.table.getSelectedItem()["pid"]
+            health.get_process_details(pid).then((data) =>{
+                console.log(data.json())
+                self.processDetailsView.showProcessDetails(data.json())
+            }).catch(err => {
+                webix.message({ type: "error", text: "Could not get process details" });
+            })
+        });
+
+        $$("process_cm").attachEvent("onMenuItemClick", function (id) {
+            if (id == "Kill") {
+                self.killProcess(self.table.getSelectedId(true));
+            }
+        });
     }
 }

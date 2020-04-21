@@ -126,6 +126,32 @@ class health(j.baseclasses.threebot_actor):
         return j.data.serializers.json.dumps(all_data)
 
     @j.baseclasses.actor_method
+    def get_process_details(self, args, schema_out=None, user_session=None):
+        """
+        Get process details py PID
+        """
+        pid = int(args)
+        all_data = {}
+        proc = psutil.Process(pid)
+        
+        all_data = proc.as_dict(attrs=["pid", "name", "username"])
+        all_data["rss"] = proc.memory_info().rss / (1024 * 1024)
+        cpu_usage = proc.cpu_times()
+        all_data["cpu_user"] = cpu_usage.user
+        all_data["cpu_system"] = cpu_usage.system
+        parent = proc.parent().as_dict(attrs=["pid","name"])
+        all_data["parent_pid"] = parent['pid']
+        all_data["parent_name"] = parent['name']
+        all_data["fds"] = proc.num_fds()
+        all_data["threads"] = proc.num_threads()
+
+        import datetime
+        all_data["create_time"] = datetime.datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S")
+        all_data["status"] = proc.status()
+       
+        return j.data.serializers.json.dumps(all_data)
+       
+    @j.baseclasses.actor_method
     def get_identity(self, schema_out=None, user_session=None):
         """
         :return: string threebotname
@@ -166,3 +192,23 @@ class health(j.baseclasses.threebot_actor):
         res["percent"] = disk_obj.percent
 
         return res
+    
+    @j.baseclasses.actor_method
+    def kill_processes_by_pid(self, args, schema_out=None, user_session=None):
+        
+        pids = [int(s) for s in args[1:-1].split(',')]
+        for id in pids:
+            try:
+                j.sal.process.kill(pid=id)
+            except:
+                raise ValueError("Could not kill process")
+
+    @j.baseclasses.actor_method
+    def kill_processes_by_port(self, args, schema_out=None, user_session=None):
+        
+        ports = [int(s) for s in args[1:-1].split(',')]
+        for port in ports:
+            try:
+                j.sal.process.killProcessByPort(port=port)
+            except:
+                raise ValueError("Could not kill process")
