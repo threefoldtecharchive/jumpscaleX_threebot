@@ -113,7 +113,7 @@ class Deployer:
         j.sal.nettools.tcpPortConnectionTest(ip_address, port=22, timeout=30)
 
         domain = "tf-simulator-%s.%s" % (uuid.uuid4().hex[:5], DOMAIN)
-        self._gateway.tcpservice_register(domain, ip_address, service_http_port=80, expire=LIFETIME)
+        self._gateway.tcpservice_register(domain, ip_address, service_http_port=8888, expire=LIFETIME)
         return domain
 
 
