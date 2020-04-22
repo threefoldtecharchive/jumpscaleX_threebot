@@ -29,8 +29,9 @@ class health(j.baseclasses.threebot_actor):
 
     @j.baseclasses.actor_method
     def network_info(self, schema_out=None, user_session=None):
-        container_ip = j.sal.nettools.getIpAddress()
-        return container_ip
+        info = j.sal.nettools.networkinfo_get()
+        info = [elem for elem in info if elem.get('name') != 'lo']
+        return j.data.serializers.json.dumps(info)
 
     @j.baseclasses.actor_method
     def health(self, schema_out=None, user_session=None):
