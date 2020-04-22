@@ -32,14 +32,15 @@ def create_wallet(bot):
 def manage_wallet(bot, walletname):
     wallet = j.clients.stellar.get(name=walletname)
     balances = wallet.get_balance()
-    msg = f"""\
-    # Wallet info {wallet.name}
+    msg = """\
 
-    Address: `{wallet.address}`
-
-    {balances}
-    """
-    bot.md_show(j.core.text.strip(msg))
+**Address:** `{{wallet.address}}`  
+**Balances:**
+{% for balance in balances.balances -%}
+- {{balance.balance}} {{balance.asset_code}}
+{% endfor %}
+"""
+    bot.qrcode_show(data=wallet.address, title=f"Wallet info {wallet.name}", msg=j.tools.jinja2.template_render(text=msg, wallet=wallet, balances=balances), scale=5)
 
 
 def chat(bot):
