@@ -16,6 +16,11 @@ def chat(bot):
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
     if not network:
         return
+    user_form_data["Currency"] = bot.single_choice(
+        "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"]
+    )
+    if not user_form_data["Currency"]:
+        user_form_data["Currency"] = "TFT"
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
     user_form_data["Version"] = bot.single_choice("Please choose ubuntu version", IMAGES)
 
@@ -50,7 +55,7 @@ def chat(bot):
             var_dict[splitted_item[0]] = splitted_item[1]
 
     var_dict.update({"pub_key": user_form_data["Public key"]})
-    query = {"mru": math.ceil(memory.value / 1024), "cru": cpu.value, "sru": 1}
+    query = {"mru": math.ceil(memory.value / 1024), "cru": cpu.value, "sru": 1, "currency": user_form_data["Currency"]}
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
     nodeid = bot.string_ask(
@@ -92,7 +97,7 @@ def chat(bot):
     )
 
     reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id
+        reservation, expiration, customer_tid=identity.id, currency=user_form_data["Currency"]
     )
     resv_id = reservation_create.reservation_id
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
