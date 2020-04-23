@@ -6,7 +6,7 @@ class package_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         assert self.package.gedis_server
         self._gedis_server = self.package.gedis_server
-        self._requiredpackages = ["zerobot.base", "zerobot.webinterface", "zerobot.admin", "zerobot.alerta"]
+        self._requiredpackages = ["zerobot.base", "zerobot.webinterface", "zerobot.admin"]
         j.data.schema.get_from_text(j.tools.threebot_packages._model.schema.text)
 
     def _to_schema(self, schema_out, package):
