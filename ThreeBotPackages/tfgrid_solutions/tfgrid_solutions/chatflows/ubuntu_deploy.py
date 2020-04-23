@@ -50,13 +50,21 @@ def chat(bot):
             var_dict[splitted_item[0]] = splitted_item[1]
 
     var_dict.update({"pub_key": user_form_data["Public key"]})
+    query = {"mru": math.ceil(memory.value / 1024), "cru": cpu.value, "sru": 1}
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
+    nodeid = bot.string_ask(
+        "Please enter the nodeid you would like to deploy on if left empty a node will be chosen for you"
+    )
+    while nodeid:
+        try:
+            node_selected = j.sal.reservation_chatflow.validate_node(nodeid, query)
+            break
+        except (j.exceptions.Value, j.exceptions.NotFound) as e:
+            nodeid = bot.string_ask(str(e))
 
-    hru = math.ceil(memory.value / 1024)
-    cru = cpu.value
-    sru = 1  # needed space for a container is 250MiB
-    node_selected = j.sal.reservation_chatflow.nodes_get(1, hru=hru, cru=cru, sru=sru)[0]
+    if not nodeid:
+        node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
     network.add_node(node_selected)
     ip_address = network.ask_ip_from_node(node_selected, "Please choose IP Address for your solution")
     user_form_data["IP Address"] = ip_address
