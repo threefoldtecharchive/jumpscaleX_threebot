@@ -61,8 +61,10 @@ class package_manager(j.baseclasses.threebot_actor):
         assert j.threebot.servers.core
 
         if git_url:
+            git_url = git_url.strip()
             p = git_url
         else:
+            path = path.strip()
             p = path
 
         p = j.core.tools.text_replace(p)
