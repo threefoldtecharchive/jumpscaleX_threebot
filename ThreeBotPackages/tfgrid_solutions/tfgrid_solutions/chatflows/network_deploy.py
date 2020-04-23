@@ -11,6 +11,11 @@ def chat(bot):
 
     identity = j.sal.reservation_chatflow.validate_user(user_info)
     network_name = bot.string_ask("Please enter a network name")
+    user_form_data["Currency"] = bot.single_choice(
+        "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"]
+    )
+    if not user_form_data["Currency"]:
+        user_form_data["Currency"] = "TFT"
     expirationdelta = int(bot.time_delta_ask("Please enter network expiration time.", default="1d"))
     user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
     expiration = j.data.time.epoch + expirationdelta
@@ -26,8 +31,19 @@ def chat(bot):
     # Check if reservation failed
     while True:
         config = j.sal.reservation_chatflow.network_create(
-            network_name, reservation, ip_range, identity.id, ipversion, expiration=expiration
+            network_name,
+            reservation,
+            ip_range,
+            identity.id,
+            ipversion,
+            expiration=expiration,
+            currency=user_form_data["Currency"],
         )
+        wallet = j.sal.reservation_chatflow.payments_show(bot, config["reservation_create"])
+        if wallet:
+            j.sal.zosv2.billing.payout_farmers(wallet, config["reservation_create"])
+
+        j.sal.reservation_chatflow.payment_wait(bot, config["rid"])
         try:
             j.sal.reservation_chatflow.reservation_wait(bot, config["rid"])
             break
