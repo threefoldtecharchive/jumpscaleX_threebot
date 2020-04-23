@@ -206,6 +206,7 @@ export default class PackagesView extends JetView {
         const self = this;
 
         self.errorView = this.ui(ErrorView);
+        self._requiredpackages = ["zerobot.base", "zerobot.webinterface", "zerobot.admin"]
 
         const menu = webix.ui({
             view: "contextmenu",
@@ -275,6 +276,10 @@ export default class PackagesView extends JetView {
             const pos = self.packageTable.locate(e);
             if (pos) {
                 const item = self.packageTable.getItem(pos.row);
+                if( self._requiredpackages.includes(item.name) ){
+                    webix.message({ type: "error", text: `${item.name} is required package` });
+                    return
+                }
                 const actions = [...PACKAGE_STATES[item.status].actions, 'delete'];
 
                 menu.clearAll();
