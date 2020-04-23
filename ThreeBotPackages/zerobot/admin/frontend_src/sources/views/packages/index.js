@@ -206,7 +206,7 @@ export default class PackagesView extends JetView {
         const self = this;
 
         self.errorView = this.ui(ErrorView);
-        self._requiredpackages = ["zerobot.base", "zerobot.webinterface", "zerobot.admin"]
+        self._requiredpackages = ["zerobot.base", "zerobot.webinterface", "zerobot.admin", "zerobot.alerta"]
 
         const menu = webix.ui({
             view: "contextmenu",
