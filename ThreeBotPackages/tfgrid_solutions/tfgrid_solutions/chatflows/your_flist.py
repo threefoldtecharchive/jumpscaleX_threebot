@@ -107,8 +107,15 @@ def chat(bot):
         memory=user_form_data["Memory"],
     )
 
-    resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
+    reservation_create = j.sal.reservation_chatflow.reservation_register(
+        reservation, expiration, customer_tid=identity.id
+    )
+    resv_id = reservation_create.reservation_id
+    wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
+    if wallet:
+        j.sal.zosv2.billing.payout_farmers(wallet, reservation_create)
 
+    j.sal.reservation_chatflow.payment_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_save(
         resv_id, user_form_data["Solution name"], "tfgrid.solutions.flist.1", user_form_data

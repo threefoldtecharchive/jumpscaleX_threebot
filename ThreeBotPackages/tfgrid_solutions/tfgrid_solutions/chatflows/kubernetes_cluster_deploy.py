@@ -103,7 +103,15 @@ def chat(bot):
 
     # register the reservation
 
-    resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
+    reservation_create = j.sal.reservation_chatflow.reservation_register(
+        reservation, expiration, customer_tid=identity.id
+    )
+    resv_id = reservation_create.reservation_id
+    wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
+    if wallet:
+        j.sal.zosv2.billing.payout_farmers(wallet, reservation_create)
+
+    j.sal.reservation_chatflow.payment_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
 
     j.sal.reservation_chatflow.reservation_save(
