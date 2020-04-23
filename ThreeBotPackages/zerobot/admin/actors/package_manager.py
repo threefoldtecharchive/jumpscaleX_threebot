@@ -6,6 +6,7 @@ class package_manager(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
         assert self.package.gedis_server
         self._gedis_server = self.package.gedis_server
+        self._requiredpackages = ["zerobot.base", "zerobot.webinterface", "zerobot.admin", "zerobot.alerta"]
         j.data.schema.get_from_text(j.tools.threebot_packages._model.schema.text)
 
     def _to_schema(self, schema_out, package):
@@ -128,6 +129,10 @@ class package_manager(j.baseclasses.threebot_actor):
         if not j.tools.threebot_packages.exists(name):
             return
 
+        #check if package is in requiredpackages
+        if name in self._requiredpackages:
+            raise j.exceptions.Input("could not delete :%s, it's required package" % name)
+        
         package = j.tools.threebot_packages.get(name)
         package.uninstall()
         package.delete()
@@ -151,6 +156,10 @@ class package_manager(j.baseclasses.threebot_actor):
         if not j.tools.threebot_packages.exists(name):
             raise j.exceptions.NotFound("package not found", data={"name": name})
 
+        #check if package is in requiredpackages
+        if name in self._requiredpackages:
+            raise j.exceptions.Input("could not stop :%s, it's required package" % name)
+        
         package = j.tools.threebot_packages.get(name)
         package.stop()
 
@@ -191,6 +200,10 @@ class package_manager(j.baseclasses.threebot_actor):
         if not j.tools.threebot_packages.exists(name):
             raise j.exceptions.NotFound("package not found", data={"name": name})
 
+        #check if package is in requiredpackages
+        if name in self._requiredpackages:
+            raise j.exceptions.Input("could not disable :%s, it's required package" % name)
+        
         package = j.tools.threebot_packages.get(name)
         package.disable()
 
