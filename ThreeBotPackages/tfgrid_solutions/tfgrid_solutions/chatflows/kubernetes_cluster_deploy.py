@@ -78,7 +78,7 @@ def chat(bot):
     bot.md_show_confirm(user_form_data)
     # update network
 
-    network.update(identity.id)
+    network.update(identity.id, currency=user_form_data["Currency"])
 
     # Create master and workers
     # Master is in the first node from the selected nodes

@@ -105,7 +105,7 @@ def chat(bot):
     ip_address = network.ask_ip_from_node(cont_node, "Please choose IP Address for your solution")
     bot.md_show_confirm(user_form_data)
 
-    network.update(identity.id)
+    network.update(identity.id, currency=user_form_data["Currency"])
     password = j.data.idgenerator.generateGUID()
 
     for i in range(1, len(nodes_selected)):

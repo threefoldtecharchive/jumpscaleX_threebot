@@ -94,7 +94,7 @@ def chat(bot):
     bot.md_show_confirm(user_form_data)
 
     # update network
-    network.update(identity.id)
+    network.update(identity.id, currency=user_form_data["Currency"])
 
     # create container
     j.sal.zosv2.container.create(
