@@ -10,7 +10,7 @@ DOMAIN = "play.grid.tf"
 NETWORK_NAME = "pub.play.grid.tf"
 NETWORK = netaddr.IPNetwork("10.40.0.0/16")
 FLIST = "https://hub.grid.tf/ahmedelsayed.3bot/threefoldtech-simulator-latest.flist"
-LIFETIME = 60 * 60
+LIFETIME = 5 * 60 * 60
 
 
 class Deployer:
@@ -130,7 +130,7 @@ def chat(bot):
         message = """
         ### Visit your container using this link: 
         #### [http://{url}](http://{url}) 
-        > Note: Your container will be destroyed after 1 hour
+        > Note: Your container will be destroyed after 5 hours
         """.format(
             url=url
         )
