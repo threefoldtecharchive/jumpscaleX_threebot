@@ -120,14 +120,14 @@
                   <v-text-field v-model="wallet.asset" label="Asset Code"></v-text-field>
                 </v-col>
                 <v-col>
-                  <v-btn @click="removeWallet(i)" fab dark small color="warning">
+                  <v-btn @click="removeWallet(farmToEdit, i)" fab dark small color="warning">
                     <v-icon small>fa-minus</v-icon>
                   </v-btn>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col>
-                  <v-btn @click="addWallet()" dark small color="success">Add a wallet address</v-btn>
+                  <v-btn @click="addWallet(farmToEdit)" dark small color="success">Add a wallet address</v-btn>
                 </v-col>
               </v-row>
             </v-container>
@@ -160,19 +160,39 @@
         <v-text-field v-model="newFarm.iyo_organization" label="Organization ID"></v-text-field>
         <v-text-field v-model="newFarm.email" required label="Email addrress" :error-messages="mailError"
           @input="mailError = []"></v-text-field>
-        <v-text-field v-model="newFarm.wallet_addresses" label="TFT Wallet address"></v-text-field>
-        <!-- <v-checkbox
-          label="Check me if you don't want to provide a Wallet Address now. Without wallet, you won't be paid.">
-        </v-checkbox> -->
+        <v-select v-model="newFarm.location.country" menu-props="auto" :items="countries" label="Country"></v-select>
+        <v-container>
+          <v-row v-for="(wallet, i) in newFarm.wallet_addresses" :key="wallet.id">
+            <v-col cols="12" sm="4">
+              <v-text-field v-model="wallet.address" label="Wallet address"></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="4">
+              <v-text-field v-model="wallet.asset" label="Asset Code"></v-text-field>
+            </v-col>
+            <v-col>
+              <v-btn @click="removeWallet(newFarm, i)" fab dark small color="warning">
+                <v-icon small>fa-minus</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-btn @click="addWallet(newFarm)" dark small color="success">Add a wallet address</v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
 
         <!-- <google-map v-model="newFarm.location" :center="{lat:38.884629, lng:1.389934}" map-type-id="satellite" :zoom="2"
           style="width: 100%; height: 300px" @click="setPlace">
           <GmapMarker :position="parsedLocation" />
         </google-map> -->
-        <v-select v-model="newFarm.location.country" menu-props="auto" :items="countries" label="Country"></v-select>
+
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
+        <v-alert :type="newFarmAlert.type" v-if=newFarmAlert border="right" colored-border elevation="2">
+          {{newFarmAlert.message}}
+        </v-alert>
         <v-btn text class="mr-3" @click="addFarmDialog = false">Cancel</v-btn>
         <v-btn text color="secondary" class="mr-3" @click="addFarm">Save</v-btn>
       </v-card-actions>

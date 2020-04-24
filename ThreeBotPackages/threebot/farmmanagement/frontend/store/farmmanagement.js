@@ -62,6 +62,9 @@ export default {
         context.commit("setFarms", response.data);
       });
     },
+    registerFarm: (context, farm) => {
+      return tfService.registerFarm(context.getters.tfgridUrl, farm)
+    },
     updateFarm(context, farm) {
       return tfService.updateFarm(farm.id, farm);
     },
