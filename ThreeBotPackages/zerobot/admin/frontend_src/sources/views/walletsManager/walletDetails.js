@@ -38,6 +38,7 @@ export default class WalletDetailsView extends JetView {
                         value: "OK",
                         css: "webix_primary",
                         click: function () {
+                            $$("secret_btn").enable()
                             this.getTopParentView().hide();
                         }
                     }

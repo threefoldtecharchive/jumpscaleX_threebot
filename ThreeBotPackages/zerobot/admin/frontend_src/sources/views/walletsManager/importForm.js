@@ -33,6 +33,7 @@ export default class WalletImportView extends JetView {
                         click: function () {
                             var secret = $$('import_form').getValues().secret
                             console.log(secret);
+                            $$('import_form').clear();
                             this.getTopParentView().hide();
                         }
                     }

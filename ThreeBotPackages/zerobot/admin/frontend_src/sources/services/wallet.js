@@ -18,10 +18,6 @@ class WalletService extends Service {
     getWallets() {
         return this.getCall("get_wallets");
     }
-
-    getWalletBySecret(secret) {
-        return this.getCall("get_wallet", secret);
-    }
 }
 
 export const wallet = new WalletService();

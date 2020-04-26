@@ -47,33 +47,6 @@ class wallet(j.baseclasses.threebot_actor):
         return j.data.serializers.json.dumps(ret)
 
     @j.baseclasses.actor_method
-    def get_wallet(self, args, schema_out=None, user_session=None):
-        """ Get wallet by private key"""
-
-        prv_key = str(args)
-        wallets = j.clients.stellar.find()
-        ret = {}
-        for wallet in wallets:
-            if wallet.secret == prv_key:
-                balances = wallet.get_balance()
-                data = []
-                for item in balances.balances:
-                    data.append({
-                        'balance': item.balance,
-                        'asset_code': item.asset_code,
-                        'asset_issuer': item.asset_issuer,
-                    })
-                    
-                ret = {
-                    'address': wallet.address,
-                    'secret': wallet.secret,
-                    'balances': data
-                }
-                return j.data.serializers.json.dumps(ret)
-        
-        return j.data.serializers.json.dumps("No wallet with this secret")
-
-    @j.baseclasses.actor_method
     def get_wallets(self, schema_out=None, user_session=None):
 
         wallets = j.clients.stellar.find()
