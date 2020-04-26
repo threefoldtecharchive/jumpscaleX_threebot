@@ -40,7 +40,7 @@ export default {
   getNodes(tfgridUrl, farm_id = undefined) {
     return axios.get(`${tfgridUrl}/nodes`, {
       params: {
-        farm_id: farm_id
+        farm: farm_id
       }
     })
   },
