@@ -4,19 +4,13 @@ export default class WalletDetailsView extends JetView {
     config() {
         const info = {
             id: "wallet_info",
-            responsive: true,
             view: "list",
             responsive: true,
             type: {
                 height: 'auto',
             },
             template: `
-                <p>
-                </font><font size="3"><b>Name: </b>#name#</font><br>
-                </font><font size="3"><b>Address: </b>#address#</font><br>
-                </font><font size="3"><b>Balances:</b></font><br>
-                </font><font size="3">#balances#</font>
-                </p>
+                <p></font><font size="3"><b>#key#: </b>#value#</font><br></p>
             `
         }
 
@@ -32,6 +26,15 @@ export default class WalletDetailsView extends JetView {
                     info,
                     {
                         view: "button",
+                        id: "secret_btn",
+                        value: "Show Secret",
+                        css: "webix_primary",
+                        click: function () {
+                            this.$scope.showSecret();
+                        }
+                    },
+                    {
+                        view: "button",
                         value: "OK",
                         css: "webix_primary",
                         click: function () {
@@ -43,26 +46,45 @@ export default class WalletDetailsView extends JetView {
         }
     }
 
+    init() {
+        const self = this;
+        self.info = this.$$("wallet_info");
+        self.secret_btn = this.$$("secret_btn");
+        self.secret = "";
+    }
+
+    showSecret() {
+        var self = this;
+
+        self.info.add({
+            key: 'Secret',
+            value: self.secret
+        });
+        self.secret_btn.disable()
+    }
+    
     showInfo(data){
         var self = this
 
         var balances = "";
         for (var i in data.balances) {
-            balances += `${data.balances[i].balance} <b>${data.balances[i].asset_code}</b> ${data.balances[i].asset_issuer}<br>`
+            balances += `<br>${data.balances[i].balance} <b>${data.balances[i].asset_code}</b> ${data.balances[i].asset_issuer}`
         }
         self.info.clearAll()
         self.info.add({
-            name: data.name,
-            address: data.address,
-            balances: balances
-        })
+            key: 'Name',
+            value: data.name
+        });
+        self.info.add({
+            key: 'Address',
+            value: data.address
+        });
+        self.info.add({
+            key: 'Balances',
+            value: balances
+        });
+        self.secret = data.secret;
 
         this.getRoot().show();
-    }
-
-    init() {
-        const self = this;
-
-        self.info = this.$$("wallet_info");
     }
 }

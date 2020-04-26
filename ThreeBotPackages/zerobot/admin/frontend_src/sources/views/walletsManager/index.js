@@ -2,6 +2,7 @@ import { JetView } from "webix-jet";
 
 import WalletFormView from "./walletForm";
 import WalletDetailsView from "./walletDetails";
+import WalletImportView from  "./importForm"
 import { wallet } from "../../services/wallet";
 
 export default class WalletManagerView extends JetView {
@@ -41,8 +42,8 @@ export default class WalletManagerView extends JetView {
                     obj.index = this.count();
                 }
             }
-        }
-        
+        };
+
         const view = {
             cols: [
                 {
@@ -54,9 +55,19 @@ export default class WalletManagerView extends JetView {
                     id:"btn_create", 
                     value:"Create Wallet", 
                     css:"webix_secondary", 
-                    inputWidth:120,
+                    autowidth:true,
                     click: function (){
                         this.$scope.WalletFormView.showForm()
+                    }
+                },
+                {
+                    view:"button", 
+                    id:"btn_import", 
+                    value:"Import Wallet", 
+                    css:"webix_secondary", 
+                    autowidth:true,
+                    click: function (){
+                        this.$scope.WalletImportView.showForm()
                     }
                 }
             ]
@@ -76,6 +87,7 @@ export default class WalletManagerView extends JetView {
         self.wallets_table = $$("wallets_table");
         self.WalletDetailsView = self.ui(WalletDetailsView)
         self.WalletFormView = self.ui(WalletFormView);
+        self.WalletImportView = self.ui(WalletImportView);
 
         self.wallets_table.attachEvent("onItemDblClick", function () {
             let item = self.wallets_table.getSelectedItem()
@@ -85,6 +97,7 @@ export default class WalletManagerView extends JetView {
                 var info = {
                     'name': item.name,
                     'address': res.address,
+                    'secret': res.secret,
                     'balances': res.balances
                 }
                 self.WalletDetailsView.showInfo(info)

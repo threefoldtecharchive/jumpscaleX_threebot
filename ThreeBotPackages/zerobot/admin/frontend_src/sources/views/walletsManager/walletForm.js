@@ -41,12 +41,12 @@ export default class WalletFormView extends JetView {
         }
     }
 
-    showForm() {
-        this.getRoot().show();
-    }
-
     init() {
         this.form = $$("form");
+    }
+
+    showForm() {
+        this.getRoot().show();
     }
 
     createWallet(name){
