@@ -88,8 +88,14 @@ export default class WalletManagerView extends JetView {
         self.WalletDetailsView = self.ui(WalletDetailsView)
         self.WalletFormView = self.ui(WalletFormView);
         self.WalletImportView = self.ui(WalletImportView);
-
+        
         self.wallets_table.attachEvent("onItemDblClick", function () {
+            webix.extend(self.wallets_table, webix.ProgressBar);
+            self.wallets_table.showProgress({
+                type:"icon",
+                hide: false
+            });
+            
             let item = self.wallets_table.getSelectedItem()
             wallet.manageWallet(item.name).then(data => {
                 console.log(data.json())
@@ -100,6 +106,7 @@ export default class WalletManagerView extends JetView {
                     'secret': res.secret,
                     'balances': res.balances
                 }
+                self.wallets_table.showProgress({hide: true});
                 self.WalletDetailsView.showInfo(info)
             });
         });
