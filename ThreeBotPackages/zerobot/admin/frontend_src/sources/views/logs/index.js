@@ -76,11 +76,11 @@ export default class LogsView extends JetView {
         var self = this;
         self.appLogs = $$("applogs_table");
 
-        // webix.ui({
-        //     view: "contextmenu",
-        //     id: "logs_cm",
-        //     data: ["Kill"]
-        // }).attachTo(self.appLogs);
+        webix.ui({
+            view: "contextmenu",
+            id: "logs_cm",
+            data: ["Kill"]
+        }).attachTo(self.appLogs);
 
         webix.extend(self.appLogs, webix.ProgressBar);
         self.appLogs.showProgress({ hide: false });
@@ -91,11 +91,11 @@ export default class LogsView extends JetView {
             self.appLogs.showProgress({ hide: true });
         });
 
-        // $$("logs_cm").attachEvent("onMenuItemClick", function (id) {
-        //     if (id == "Kill") {
-        //         self.deleteSelected(self.appLogs.getSelectedId(true));
-        //     }
-        // });
+        $$("logs_cm").attachEvent("onMenuItemClick", function (id) {
+            if (id == "Kill") {
+                self.deleteSelected(self.appLogs.getSelectedId(true));
+            }
+        });
     }
 
     delete(){
@@ -117,6 +117,31 @@ export default class LogsView extends JetView {
         }else{
             webix.message({ type: "error", text: "Please select app for delete" });
         }
+    }
+
+    deleteSelected(objects) {
+        var self = this;
+        self.appLogs = $$("applogs_table");
+
+        let ids = []
+
+        for (let obj of objects) {
+            ids.push(obj.id);
+        }
+
+        webix.confirm({
+            title: "Delete selected logs",
+            ok: "Yes",
+            cancel: "No",
+            text: `delete logs with ids ${ids.join(", ")}`
+        }).then(() => {
+            logs.deleteSelected(ids).then( data => {
+                self.app.refresh()
+                webix.message({ type: "success", text: "Logs deleted" });
+            }).catch(error => {
+                webix.message({ type: "error", text: "Could not delete logs" });
+            })
+        });
     }
 
     delete_all(){

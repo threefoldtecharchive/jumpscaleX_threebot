@@ -27,6 +27,10 @@ class LogsService extends Service {
     deleteAll(){
         return this.postCall("delete")
     }
+
+    deleteSelected(ids){
+        return this.getCall("delete_selected",ids)
+    }
 }
 
 export const logs = new LogsService();
