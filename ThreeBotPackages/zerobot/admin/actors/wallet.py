@@ -64,5 +64,7 @@ class wallet(j.baseclasses.threebot_actor):
         
         res = json.loads(args)
         
-        wallet = j.clients.stellar.new(name=res['name'], secret=res['secret'])
+        wallet = j.clients.stellar.new(name=res['name'],
+                                        secret=res['secret'],
+                                        network='TEST') # for now we only support 'TEST'
         return j.data.serializers.json.dumps(wallet.address)
