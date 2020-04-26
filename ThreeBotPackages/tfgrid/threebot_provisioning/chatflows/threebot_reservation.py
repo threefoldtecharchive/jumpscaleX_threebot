@@ -32,9 +32,9 @@ def chat(bot):
         hash_restore = nacl.hash.blake2b(password.encode(), key=identity_pubkey.encode()).decode()
 
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
-    currency = bot.single_choice("Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"])
-    if not currency:
-        currency = "TFT"
+    if not network:
+        return
+    currency = network.currency
 
     # ask user about corex user:password and ssh-key to give him full access to his container
     pub_key = None

@@ -16,11 +16,9 @@ def chat(bot):
 
     bot.md_show("# This wizard will help you deploy a minio cluster")
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
-    user_form_data["Currency"] = bot.single_choice(
-        "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"]
-    )
-    if not user_form_data["Currency"]:
-        user_form_data["Currency"] = "TFT"
+    if not network:
+        return
+    currency = network.currency
 
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
 
@@ -80,7 +78,7 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
 
     zdb_nodequery = {}
-    zdb_nodequery["currency"] = user_form_data["Currency"]
+    zdb_nodequery["currency"] = currency
     if user_form_data["Disk type"] == "SSD":
         zdb_nodequery["sru"] = 10
     if user_form_data["Disk type"] == "HDD":
@@ -91,7 +89,7 @@ def chat(bot):
     )
 
     nodequery = {}
-    nodequery["currency"] = user_form_data["Currency"]
+    nodequery["currency"] = currency
     nodequery["mru"] = math.ceil(memory.value / 1024)
     nodequery["cru"] = cpu.value
     cont_node = j.sal.reservation_chatflow.nodes_get(number_of_nodes=1, farm_name="freefarm", **nodequery)[0]
@@ -105,7 +103,7 @@ def chat(bot):
     ip_address = network.ask_ip_from_node(cont_node, "Please choose IP Address for your solution")
     bot.md_show_confirm(user_form_data)
 
-    network.update(identity.id, currency=user_form_data["Currency"])
+    network.update(identity.id, currency=currency)
     password = j.data.idgenerator.generateGUID()
 
     for node in nodes_selected:
@@ -122,7 +120,7 @@ def chat(bot):
 
     # register the reservation for zdb db
     zdb_reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=user_form_data["Currency"]
+        reservation, expiration, customer_tid=identity.id, currency=currency
     )
     zdb_rid = zdb_reservation_create.reservation_id
     wallet = j.sal.reservation_chatflow.payments_show(bot, zdb_reservation_create)
@@ -161,14 +159,14 @@ def chat(bot):
         cpu=user_form_data["CPU"],
         public_ipv6=True,
         memory=user_form_data["Memory"],
-        env={"DATA": str(data_number.value), "PARITY": str(parity.value), "ACCESS_KEY": user_form_data["Access key"],},
+        env={"DATA": str(data_number.value), "PARITY": str(parity.value), "ACCESS_KEY": user_form_data["Access key"]},
         secret_env=secret_env,
     )
 
     j.sal.zosv2.volume.attach_existing(container=cont, volume_id=f"{zdb_rid}-{volume.workload_id}", mount_point="/data")
 
     reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=user_form_data["Currency"]
+        reservation, expiration, customer_tid=identity.id, currency=currency
     )
     resv_id = reservation_create.reservation_id
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)

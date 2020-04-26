@@ -16,11 +16,7 @@ def chat(bot):
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
     if not network:
         return
-    user_form_data["Currency"] = bot.single_choice(
-        "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"]
-    )
-    if not user_form_data["Currency"]:
-        user_form_data["Currency"] = "TFT"
+    currency = network.currency
 
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
     while True:
@@ -79,7 +75,7 @@ def chat(bot):
     hru = math.ceil(memory.value / 1024)
     cru = cpu.value
     sru = 1  # needed space for a container is 250MiB
-    node = j.sal.reservation_chatflow.nodes_get(1, hru=hru, cru=cru, sru=sru, currency=user_form_data["Currency"])[0]
+    node = j.sal.reservation_chatflow.nodes_get(1, hru=hru, cru=cru, sru=sru, currency=currency)[0]
     network.add_node(node)
     ip_address = network.ask_ip_from_node(node, "Please choose your IP Address for this solution")
     user_form_data["IP Address"] = ip_address
@@ -94,7 +90,7 @@ def chat(bot):
     bot.md_show_confirm(user_form_data)
 
     # update network
-    network.update(identity.id, currency=user_form_data["Currency"])
+    network.update(identity.id, currency=currency)
 
     # create container
     j.sal.zosv2.container.create(
@@ -113,7 +109,7 @@ def chat(bot):
     )
 
     reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=user_form_data["Currency"]
+        reservation, expiration, customer_tid=identity.id, currency=currency
     )
     resv_id = reservation_create.reservation_id
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)

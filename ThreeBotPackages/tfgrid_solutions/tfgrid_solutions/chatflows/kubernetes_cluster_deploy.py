@@ -13,11 +13,9 @@ def chat(bot):
 
     bot.md_show("# This wizard will help you deploy a kubernetes cluster")
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
-    user_form_data["Currency"] = bot.single_choice(
-        "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"]
-    )
-    if not user_form_data["Currency"]:
-        user_form_data["Currency"] = "TFT"
+    if not network:
+        return
+    currency = network.currency
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
 
     while True:
@@ -31,9 +29,9 @@ def chat(bot):
         cluster_size = sizes.index(cluster_size_string.value) + 1  # sizes are index 1
         # Select nodes
         if cluster_size == 1:
-            nodequery = {"sru": 50, "mru": 2, "cru": 1, "currency": user_form_data["Currency"]}
+            nodequery = {"sru": 50, "mru": 2, "cru": 1, "currency": currency}
         else:
-            nodequery = {"sru": 100, "mru": 4, "cru": 2, "currency": user_form_data["Currency"]}
+            nodequery = {"sru": 100, "mru": 4, "cru": 2, "currency": currency}
         try:
             master_nodes_selected = j.sal.reservation_chatflow.nodes_get(masternodes.value, **nodequery)
             worker_nodes_selected = j.sal.reservation_chatflow.nodes_get(workernodes.value, **nodequery)
@@ -78,7 +76,7 @@ def chat(bot):
     bot.md_show_confirm(user_form_data)
     # update network
 
-    network.update(identity.id, currency=user_form_data["Currency"])
+    network.update(identity.id, currency=currency)
 
     # Create master and workers
     # Master is in the first node from the selected nodes
@@ -109,7 +107,7 @@ def chat(bot):
     # register the reservation
 
     reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=user_form_data["Currency"]
+        reservation, expiration, customer_tid=identity.id, currency=currency
     )
     resv_id = reservation_create.reservation_id
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
