@@ -108,10 +108,10 @@ def chat(bot):
     network.update(identity.id, currency=user_form_data["Currency"])
     password = j.data.idgenerator.generateGUID()
 
-    for i in range(1, len(nodes_selected)):
+    for node in nodes_selected:
         j.sal.zosv2.zdb.create(
             reservation=reservation,
-            node_id=nodes_selected[i].node_id,
+            node_id=node.node_id,
             size=10,
             mode="seq",
             password=password,
