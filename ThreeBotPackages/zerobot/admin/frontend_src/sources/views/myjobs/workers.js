@@ -98,7 +98,7 @@ export default class JobsView extends JetView {
                 'halt':item['halt'].toString(),
                 'error':item['error']['message'],
                 'pid':item['pid'],
-                'current_job':item['current_job'],
+                'current_job':item['current_job'] == 2147483647 ? 'N/A' : item['current_job'],
                 'name':item['name'],
                 'state':item['state'],
                 'last_update':dateFormatter(item['last_update']),
