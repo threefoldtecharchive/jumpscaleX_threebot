@@ -1,4 +1,5 @@
 from Jumpscale import j
+import json
 
 class wallet(j.baseclasses.threebot_actor):
 
@@ -57,3 +58,11 @@ class wallet(j.baseclasses.threebot_actor):
                 'address': wallet.address
             })
         return j.data.serializers.json.dumps(ret)
+
+    @j.baseclasses.actor_method
+    def import_wallet(self, args, schema_out=None, user_session=None):
+        
+        res = json.loads(args)
+        
+        wallet = j.clients.stellar.new(name=res['name'], secret=res['secret'])
+        return j.data.serializers.json.dumps(wallet.address)
