@@ -146,9 +146,9 @@ def chat(bot):
 
     entry_point = "/bin/entrypoint"
 
-    secret_env = {}
     minio_secret_encrypted = j.sal.zosv2.container.encrypt_secret(cont_node.node_id, user_form_data["Secret"])
-    secret_env.update({"SECRET_KEY": minio_secret_encrypted})
+    shards_encrypted = j.sal.zosv2.container.encrypt_secret(cont_node.node_id, ",".join(namespace_config))
+    secret_env = {"SHARDS": shards_encrypted, "SECRET_KEY": minio_secret_encrypted}
 
     # create container
     cont = j.sal.zosv2.container.create(
@@ -161,12 +161,7 @@ def chat(bot):
         cpu=user_form_data["CPU"],
         public_ipv6=True,
         memory=user_form_data["Memory"],
-        env={
-            "SHARDS": ",".join(namespace_config),
-            "DATA": str(data_number.value),
-            "PARITY": str(parity.value),
-            "ACCESS_KEY": user_form_data["Access key"],
-        },
+        env={"DATA": str(data_number.value), "PARITY": str(parity.value), "ACCESS_KEY": user_form_data["Access key"],},
         secret_env=secret_env,
     )
 
