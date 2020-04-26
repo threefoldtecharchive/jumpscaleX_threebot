@@ -279,7 +279,7 @@ module.exports = new Promise(async (resolve, reject) => {
                 "registerFarm",
                 "getFarms",
                 "updateFarm",
-                "getRegisteredNodes",
+                "getNodes",
                 "getTfgridUrl"
             ]),
             initialiseRefresh() {
@@ -297,8 +297,8 @@ module.exports = new Promise(async (resolve, reject) => {
                 this.initialiseRefresh();
             },
             viewNodes(item) {
+                this.getNodes(item.id);
                 this.farmSelected = item;
-                this.getRegisteredNodes(this.farmSelected.id);
                 console.log(item)
                 console.log(this.farmSelected)
             },
