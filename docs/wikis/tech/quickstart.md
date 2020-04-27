@@ -3,7 +3,7 @@
 ## Prerequisite
 
 - JumpscaleX with threebotserver running
-  - To Install JumpscaleX follow [here](https://github.com/threefoldtech/jumpscaleX_core/tree/development/docs/Installation)
+  - To Install JumpscaleX follow [here](https://github.com/threefoldtech/jumpscaleX_core/tree/development/docs/3sdk)
   - More information about threebotserver [here](https://github.com/threefoldtech/jumpscaleX_threebot/tree/development/docs)
 
 - Configure Gdrive client with GDrive credentials files (used in slides, markdown, pdf macros)
