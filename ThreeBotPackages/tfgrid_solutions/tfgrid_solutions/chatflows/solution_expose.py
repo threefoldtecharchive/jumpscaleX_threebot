@@ -7,6 +7,11 @@ kinds = {
     "flist": "tfgrid.solutions.flist.1",
 }
 
+domain_types = {
+    "delegate": "tfgrid.workloads.reservation.gateway.delegate.1",
+    "sub": "tfgrid.workloads.reservation.gateway.subdomain.1",
+}
+
 def chat(bot):
     """
     """
@@ -23,29 +28,22 @@ def chat(bot):
 
     sols = {sol["name"]: sol for sol in solutions}
     solution_name = bot.single_choice(
-        "Please the solution to expose", list(sols.keys())
+        "Please choose the solution to expose", list(sols.keys())
     )
     solution = sols[solution_name]
     user_form_data["solution_name"] = solution_name
-
     domain = bot.string_ask("Please specify the domain name you wish to bind to")
 
     expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
     expiration = j.data.time.epoch + expirationdelta
     user_form_data["expiration"] = expiration
-
-    currency = bot.single_choice(
-        "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"]
-    )
-    if not currency:
-        currency = "TFT"
-    user_form_data["currency"] = currency
+    reservation_data = j.data.serializers.json.loads(solution["reservation"])["data_reservation"]
 
     # create a container with tcprouter flist
+    currency = reservation_data["currencies"][0]
     query = {"mru": 1, "cru": 1, "sru": 1, "currency": currency}
 
     node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
-    reservation_data = j.data.serializers.json.loads(solution["reservation"])["data_reservation"]
     network_name = reservation_data["containers"][0]["network_connection"][0]["network_id"]
 
     network = j.sal.reservation_chatflow.network_get(bot, identity.id, network_name)
@@ -66,16 +64,22 @@ def chat(bot):
 
     secret_env = {}
     if proxy_type == "port":
-        port = bot.int_ask("Which port you want to expose")
+        httpport = bot.int_ask("Which http port you want to expose")
+        user_form_data["httpport"] = httpport
+        tlsport = bot.int_ask("Which tls port you want to expose")
+        user_form_data["tlsport"] = tlsport
+        port = bot.int_ask("Which port you want to the client to use")
         user_form_data["port"] = port
         entrypoint = f"/bin/trc -local {ip_address}:{port} -remote {gateway.dns_nameserver[0]}"
     elif proxy_type == "container":
         # Update entry point to match the types
         secret = bot.string_ask("Please specify a secret for the connection")
         user_form_data["secret"] = secret
-        secret_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, user_form_data["Secret"])
+        port = bot.int_ask("Which port you want to the client to use")
+        user_form_data["port"] = port
+        secret_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, user_form_data["secret"])
         secret_env = {"SECRET": secret_encrypted}
-        entrypoint = f"/bin/trc -remote {gateway.dns_nameserver[0]}"
+        entrypoint = f"/bin/trc -local {ip_address}:{port} -remote {gateway.dns_nameserver[0]}"
 
     reservation = j.sal.zosv2.reservation_create()
     j.sal.zosv2.container.create(
@@ -101,16 +105,16 @@ def chat(bot):
         resv_id, f"tcprouter:{resv_id}", "tfgrid.solutions.flist.1", user_form_data
     )
 
+    # create proxy
+    if proxy_type == "port":
+        j.sal.zosv2.gateway.tcp_proxy(
+            reservation, gateway_id, domain, ip_address, user_form_data["httpport"], user_form_data["tlsport"]
+        )
+    elif proxy_type == "container":
+        j.sal.zosv2.gateway.tcp_proxy_reverse(reservation, gateway_id, domain, user_form_data["secret"])
+
+
     j.sal.reservation_chatflow.payment_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
-    # create the proxy
-
-    proxy_reservation = j.sal.zosv2.reservation_create()
-
-    if proxy_type == "port":
-        res = j.sal.zosv2.gateway.tcp_proxy(proxy_reservation, gateway_id, domain, ip_address, user_form_data["port"])
-    elif proxy_type == "container":
-        res = j.sal.zosv2.gateway.tcp_proxy_reverse(proxy_reservation, gateway_id, domain, user_form_data["secret"])
-
     res_md = f"""Use this Gateway to conect to your exposed solutions {gateway.dns_nameserver}"""
     bot.md_show(res_md)
