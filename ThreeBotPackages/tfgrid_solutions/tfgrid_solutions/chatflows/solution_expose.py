@@ -12,28 +12,22 @@ domain_types = {
     "sub": "tfgrid.workloads.reservation.gateway.subdomain.1",
 }
 
-ports = {
-    "minio": 9000,
-    "kubernetes": 8443, # TODO: Check this port
-}
+ports = {"minio": 9000, "kubernetes": 8443}  # TODO: Check this port
+
 
 def chat(bot):
     user_form_data = {}
     user_info = bot.user_info()
     reservation = j.sal.zosv2.reservation_create()
     identity = j.sal.reservation_chatflow.validate_user(user_info)
-    kind = bot.single_choice(
-        "Please choose the solution type", list(kinds.keys())
-    )
+    kind = bot.single_choice("Please choose the solution type", list(kinds.keys()))
     user_form_data["kind"] = kind
 
     url = kinds[kind]
     solutions = j.sal.reservation_chatflow.solutions_get(url)
 
     sols = {sol["name"]: sol for sol in solutions}
-    solution_name = bot.single_choice(
-        "Please choose the solution to expose", list(sols.keys())
-    )
+    solution_name = bot.single_choice("Please choose the solution to expose", list(sols.keys()))
     solution = sols[solution_name]
     user_form_data["solution_name"] = solution_name
 
@@ -58,27 +52,21 @@ def chat(bot):
 
     gateways = {g.node_id: g for g in j.sal.zosv2._explorer.gateway.list()}
 
-    domain_type = bot.single_choice(
-        "Which type of domain you whish to bind to", ["sub", "delegate"]
-    )
+    domain_type = bot.single_choice("Which type of domain you whish to bind to", ["sub", "delegate"])
     if domain_type == "sub":
         base_domain = f"{j.me.tname.replace('3bot', '')}{j.core.myenv.config.get('THREEBOT_DOMAIN')}"
         domain = bot.string_ask(
             f"Please specify the sub domain name you wish to bind to will be (subdomain).{base_domain}"
         )
         domain = domain + "." + base_domain
-        gateway_id = bot.single_choice(
-            "Please choose a gateway", list(gateways.keys())
-        )
+        gateway_id = bot.single_choice("Please choose a gateway", list(gateways.keys()))
         gateway = gateways[gateway_id]
     elif domain_type == "delegate":
         url = "tfgrid.domains.delegate.1"
         model = j.clients.bcdbmodel.get(url=url, name="tfgrid_solutions")
         domains = model.find()
         domains_dict = {d.domain: d for d in domains}
-        domain = bot.single_choice(
-            "Please choose the domain you wish to bind", list(domains_dict.keys())
-        )
+        domain = bot.single_choice("Please choose the domain you wish to bind", list(domains_dict.keys()))
         domain_obj = domains_dict[domain]
         gateway = domain_obj.gateway
         gateway_id = gateway.node_id
@@ -108,9 +96,9 @@ def chat(bot):
     )
     resv_id = reservation_create.reservation_id
     user_form_data["rid"] = resv_id
-    wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
-    if wallet:
-        j.sal.zosv2.billing.payout_farmers(wallet, reservation_create)
+    payment = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
+    if payment["wallet"]:
+        j.sal.zosv2.billing.payout_farmers(payment["wallet"], reservation_create)
 
     j.sal.reservation_chatflow.reservation_save(
         resv_id, f"tcprouter:{resv_id}", "tfgrid.solutions.flist.1", user_form_data
@@ -118,7 +106,6 @@ def chat(bot):
 
     # create proxy
     j.sal.zosv2.gateway.tcp_proxy_reverse(reservation, gateway_id, domain, user_form_data["secret"])
-
 
     j.sal.reservation_chatflow.payment_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)

@@ -124,10 +124,11 @@ def chat(bot):
         reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
     zdb_rid = zdb_reservation_create.reservation_id
-    wallet = j.sal.reservation_chatflow.payments_show(bot, zdb_reservation_create)
-
-    if wallet:
-        j.sal.zosv2.billing.payout_farmers(wallet, zdb_reservation_create)
+    payment = j.sal.reservation_chatflow.payments_show(bot, zdb_reservation_create)
+    if payment["free"]:
+        pass
+    elif payment["wallet"]:
+        j.sal.zosv2.billing.payout_farmers(payment["wallet"], zdb_reservation_create)
         j.sal.reservation_chatflow.payment_wait(bot, zdb_rid, threebot_app=False)
     else:
         j.sal.reservation_chatflow.payment_wait(
