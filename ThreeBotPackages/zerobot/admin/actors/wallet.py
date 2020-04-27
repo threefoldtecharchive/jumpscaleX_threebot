@@ -1,8 +1,8 @@
 from Jumpscale import j
 import json
 
-class wallet(j.baseclasses.threebot_actor):
 
+class wallet(j.baseclasses.threebot_actor):
     @j.baseclasses.actor_method
     def create_wallet(self, args, schema_out=None, user_session=None):
 
@@ -16,11 +16,7 @@ class wallet(j.baseclasses.threebot_actor):
             raise ValueError("Name already exists")
         wallet = j.clients.stellar.new(name=name, network=wallettype)
 
-        if wallettype == "TEST":
-            wallet.activate_through_friendbot()
-        else:
-            pass
-
+        wallet.activate_through_threefold_service()
         wallet.add_known_trustline("TFT")
         wallet.add_known_trustline("FreeTFT")
 
@@ -34,17 +30,11 @@ class wallet(j.baseclasses.threebot_actor):
         balances = wallet.get_balance()
         data = []
         for item in balances.balances:
-            data.append({
-                'balance': item.balance,
-                'asset_code': item.asset_code,
-                'asset_issuer': item.asset_issuer,
-            })
-            
-        ret = {
-            'address': wallet.address,
-            'secret': wallet.secret,
-            'balances': data
-        }
+            data.append(
+                {"balance": item.balance, "asset_code": item.asset_code, "asset_issuer": item.asset_issuer,}
+            )
+
+        ret = {"address": wallet.address, "secret": wallet.secret, "balances": data}
         return j.data.serializers.json.dumps(ret)
 
     @j.baseclasses.actor_method
@@ -53,18 +43,18 @@ class wallet(j.baseclasses.threebot_actor):
         wallets = j.clients.stellar.find()
         ret = []
         for wallet in wallets:
-            ret.append({
-                'name': wallet.name,
-                'address': wallet.address
-            })
+            ret.append({"name": wallet.name, "address": wallet.address})
         return j.data.serializers.json.dumps(ret)
 
     @j.baseclasses.actor_method
-    def import_wallet(self, args, schema_out=None, user_session=None):
-        
-        res = json.loads(args)
-        
-        wallet = j.clients.stellar.new(name=res['name'],
-                                        secret=res['secret'],
-                                        network='TEST') # for now we only support 'TEST'
+    def import_wallet(self, name, secret, network, schema_out=None, user_session=None):
+        """
+        ```in
+        name = (S)
+        secret = (S)
+        network = (S)
+        ```
+        """
+        network = network or "TEST"
+        wallet = j.clients.stellar.new(name=name, secret=secret, network=network)
         return j.data.serializers.json.dumps(wallet.address)

@@ -11,16 +11,26 @@ export default class WalletImportView extends JetView {
             elements: [
                 {
                     view: "text",
+                    label: "Name",
+                    name: "name",
+                    placeholder: "Wallet name"
+                },
+                {
+                    view: "text",
                     label: "Secret",
                     name: "secret",
                     placeholder: "Wallet secret"
                 },
                 {
-                    view: "text",
-                    label: "Name",
-                    name: "name",
-                    placeholder: "Wallet name"
-                }
+                view:"select", 
+                label:"Network Type", 
+                value: "network",
+                name: "network",
+                options:[
+                    { "id":"STD", "value":"STD" },
+                    { "id":"TEST", "value":"TEST" }
+                ]
+            }
             ]
         };
 
@@ -41,9 +51,11 @@ export default class WalletImportView extends JetView {
                         click: function () {
                             var name = $$('import_form').getValues().name
                             var secret = $$('import_form').getValues().secret
+                            var network = $$('import_form').getValues().network
                             console.log(name);
                             console.log(secret);
-                            this.$scope.importWallet(name, secret);
+                            console.log(network);
+                            this.$scope.importWallet(name, secret, network);
                         }
                     }
                 ]
@@ -59,14 +71,14 @@ export default class WalletImportView extends JetView {
         this.getRoot().show();
     }
 
-    importWallet(name, secret) {
+    importWallet(name, secret, network) {
         
         webix.extend(this.form, webix.ProgressBar);
         this.form.showProgress({
             type:"icon",
             hide: false
         });
-        wallet.importWallet(name, secret).then(data => {
+        wallet.importWallet(name, secret, network).then(data => {
             webix.message({ type: "success", text: "Wallet imported successfully" });
             this.form.showProgress({hide: true});
             this.form.clear(); 
