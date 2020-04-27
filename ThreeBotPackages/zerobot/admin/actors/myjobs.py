@@ -53,8 +53,6 @@ class myjobs(j.baseclasses.threebot_actor):
                 job_dict["kwargs"] = str(job_dict["kwargs"])
                 job_dict["result"] = str(job_dict["result"])
                 job_dict["error"] = self.with_formatted_traceback(job_dict["error"])
-                if job_dict["error"]["processid"]:
-                    job_dict['logs'] = self.client.find(processid=job_dict["error"]["processid"])
             except Exception as e:
                 print(e)
             try:

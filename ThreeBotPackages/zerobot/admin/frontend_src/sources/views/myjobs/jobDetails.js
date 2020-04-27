@@ -123,48 +123,6 @@ export default class JobDetailsView extends JetView {
                             }
                         ]
                     }
-                },
-                {
-                    id: "logs",
-                    view: "datatable",
-                    resizeColumn: true,
-                    select: true,
-                    multiselect: true,
-                    css: "webix_header_border webix_data_border",
-                    scroll: true,
-                    autoConfig: true,
-                    columns: [
-                        {
-                            id: "index",
-                            header: "#",
-                            sort: "int",
-                            autowidth: true,
-                            width: 60
-                        },
-                        {
-                            id: "context",
-                            header: "Context",
-                            sort: "string",
-                            width: 180
-                        },
-                        {
-                            id: "processid",
-                            header: "Process id",
-                            sort: "string",
-                            width: 180
-                        },
-                        {
-                            id: "message",
-                            header: "Message",
-                            sort: "int",
-                            width: 180
-                        }
-                    ],
-                    scheme: {
-                        $init: function (obj) {
-                            obj.index = this.count();
-                        }
-                    },
                 }
             ]
         };
@@ -224,21 +182,13 @@ export default class JobDetailsView extends JetView {
         }
         this.form.parse(jobData)
         this.getRoot().show();
-
-        this.logs.clearAll()
-        this.logs.parse(item['logs']);
     }
 
     init() {
         this.form = $$("form");
-        this.message = $$("message");
-        this.logs = $$("logs");
+        this.message = $$("message");   
 
         this.tracebacks = $$("tracebacks");
         this.tbTabs = $$("tb_tabs");
-
-        this.logs.attachEvent("onItemDblClick", function () {
-            this.$scope.show(`/main/logs?appname=workers_1`)
-        });
     }
 }

@@ -68,7 +68,22 @@ export default class JobsView extends JetView {
             {
                 id: "error",
                 header: "Error",
+            },
+            {
+                id: "logs",
+                header: "Logs",
+                sort: "string",
+                width: 200,
+                template:function(obj){ 
+                    return "<div class='webix_el_button'><button class='btn_view'> Logs </button></div>";
+                },
             }],
+            onClick:{
+                btn_view:function(ev, id){
+                    var item = this.getItem(id);
+                    this.$scope.show(`/main/logs?appname=${item.name}`)
+                }
+            },
             autoConfig: true,
             scheme: {
                 $init: function (obj) {
@@ -85,7 +100,12 @@ export default class JobsView extends JetView {
         self.workerDetailsView = self.ui(WorkerDetailsView);
 
         myjobs.listWorkers().then(data => {
-            view.parse(data);
+            let workers = data.json()
+            // map worker name from w1 to weorkers_1 for redirection to logs
+            for (let i in workers){
+                workers[i]['name'] = workers[i]['name'].replace('w','workers_')
+            }
+            view.parse(workers);
         });
 
         self.workerTable = this.$$("workers_table");
