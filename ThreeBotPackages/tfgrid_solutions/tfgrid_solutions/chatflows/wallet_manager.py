@@ -40,7 +40,12 @@ def manage_wallet(bot, walletname):
 - {{balance.balance}} {{balance.asset_code}}
 {% endfor %}
 """
-    bot.qrcode_show(data=wallet.address, title=f"Wallet info {wallet.name}", msg=j.tools.jinja2.template_render(text=msg, wallet=wallet, balances=balances), scale=5)
+    bot.qrcode_show(
+        data=wallet.address,
+        title=f"Wallet info {wallet.name}",
+        msg=j.tools.jinja2.template_render(text=msg, wallet=wallet, balances=balances),
+        scale=5,
+    )
 
 
 def chat(bot):

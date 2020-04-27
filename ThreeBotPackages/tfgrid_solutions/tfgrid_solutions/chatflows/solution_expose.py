@@ -20,6 +20,7 @@ ports = {
 def chat(bot):
     user_form_data = {}
     user_info = bot.user_info()
+    reservation = j.sal.zosv2.reservation_create()
     identity = j.sal.reservation_chatflow.validate_user(user_info)
     kind = bot.single_choice(
         "Please choose the solution type", list(kinds.keys())
@@ -35,7 +36,6 @@ def chat(bot):
     )
     solution = sols[solution_name]
     user_form_data["solution_name"] = solution_name
-    domain = bot.string_ask("Please specify the domain name you wish to bind to")
 
     expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
     expiration = j.data.time.epoch + expirationdelta
@@ -57,11 +57,31 @@ def chat(bot):
     user_form_data["ip"] = ip_address
 
     gateways = {g.node_id: g for g in j.sal.zosv2._explorer.gateway.list()}
-    gateway_id = bot.single_choice(
-        "Please choose a gateway", list(gateways.keys())
-    )
-    gateway = gateways[gateway_id]
 
+    domain_type = bot.single_choice(
+        "Which type of domain you whish to bind to", ["sub", "delegate"]
+    )
+    if domain_type == "sub":
+        base_domain = f"{j.me.tname.replace('3bot', '')}{j.core.myenv.config.get('THREEBOT_DOMAIN')}"
+        domain = bot.string_ask(
+            f"Please specify the sub domain name you wish to bind to will be (subdomain).{base_domain}"
+        )
+        domain = domain + "." + base_domain
+        gateway_id = bot.single_choice(
+            "Please choose a gateway", list(gateways.keys())
+        )
+        gateway = gateways[gateway_id]
+    elif domain_type == "delegate":
+        url = "tfgrid.domains.delegate.1"
+        model = j.clients.bcdbmodel.get(url=url, name="tfgrid_solutions")
+        domains = model.find()
+        domains_dict = {d.domain: d for d in domains}
+        domain = bot.single_choice(
+            "Please choose the domain you wish to bind", list(domains_dict.keys())
+        )
+        domain_obj = domains_dict[domain]
+        gateway = domain_obj.gateway
+        gateway_id = gateway.node_id
 
     secret_env = {}
     port = ports.get(kind)
@@ -74,7 +94,6 @@ def chat(bot):
     secret_env["SECRET"] = secret_encrypted
     entrypoint = f"/bin/trc -local {container_address}:{port} -remote {gateway.dns_nameserver[0]}"
 
-    reservation = j.sal.zosv2.reservation_create()
     j.sal.zosv2.container.create(
         reservation=reservation,
         node_id=node_selected.node_id,
@@ -84,7 +103,6 @@ def chat(bot):
         entrypoint=entrypoint,
         secret_env=secret_env,
     )
-
     reservation_create = j.sal.reservation_chatflow.reservation_register(
         reservation, expiration, customer_tid=identity.id, currency=currency
     )
@@ -104,5 +122,5 @@ def chat(bot):
 
     j.sal.reservation_chatflow.payment_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
-    res_md = f"Use this Gateway to conect to your exposed solutions {gateway.dns_nameserver}:{user_form_data['port']}"
+    res_md = f"Use this Gateway to conect to your exposed solutions {gateway.dns_nameserver}:{gateway.tcp_router_port}"
     bot.md_show(res_md)

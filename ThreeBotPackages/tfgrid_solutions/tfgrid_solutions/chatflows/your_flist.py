@@ -8,9 +8,9 @@ def chat(bot):
     """
     user_form_data = {}
     user_info = bot.user_info()
+    user_form_data["chatflow"] = "flist"
     env = dict()
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.flist.1")
-
     identity = j.sal.reservation_chatflow.validate_user(user_info)
     bot.md_show("This wizard will help you deploy a container using any flist provided")
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
@@ -107,7 +107,15 @@ def chat(bot):
         cpu=user_form_data["CPU"],
         memory=user_form_data["Memory"],
     )
+    metadata = dict()
+    metadata["chatflow"] = user_form_data["chatflow"]
+    metadata["Solution name"] = user_form_data["Solution name"]
+    metadata["Solution expiration"] = user_form_data["Solution expiration"]
 
+    res = j.sal.reservation_chatflow.solution_model_get(
+        user_form_data["Solution name"], "tfgrid.solutions.flist.1", metadata
+    )
+    reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res)
     reservation_create = j.sal.reservation_chatflow.reservation_register(
         reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
@@ -115,8 +123,12 @@ def chat(bot):
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
     if wallet:
         j.sal.zosv2.billing.payout_farmers(wallet, reservation_create)
+        j.sal.reservation_chatflow.payment_wait(bot, resv_id, threebot_app=False)
+    else:
+        j.sal.reservation_chatflow.payment_wait(
+            bot, resv_id, threebot_app=True, reservation_create_resp=reservation_create
+        )
 
-    j.sal.reservation_chatflow.payment_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_save(
         resv_id, user_form_data["Solution name"], "tfgrid.solutions.flist.1", user_form_data
