@@ -7,9 +7,7 @@ export default {
   state: {
     user: {},
     tfgridUrl: null,
-    registeredNodes: [],
-    nodes: undefined,
-    registeredFarms: [],
+    nodes: [],
     farms: [],
     nodeSpecs: {
       amountregisteredNodes: 0,
@@ -42,40 +40,28 @@ export default {
         context.commit("setUser", response.data[0]);
       }
     },
-    getRegisteredNodes(context) {
-      tfService.getNodes(context.getters.tfgridUrl).then(response => {
-        context.commit("setRegisteredNodes", response.data);
+    getNodes(context, farm_id) {
+      tfService.getNodes(context.getters.tfgridUrl, farm_id).then(response => {
+        context.commit("setNodes", response.data);
         context.commit("setTotalSpecs", response.data);
       });
     },
     setNodeFree(context, {node_id, free}) {
       return tfService.setNodeFree(node_id, free)
     },
-    getRegisteredFarms(context, farm_id) {
-      tfService.registeredfarms(farm_id).then(response => {
-        context.commit("setAmountOfFarms", response.data);
-        context.commit("setRegisteredFarms", response.data);
-      });
-    },
     getFarms: context => {
       tfService.getFarms(context.getters.tfgridUrl, context.getters.user.id).then(response => {
         context.commit("setFarms", response.data);
       });
     },
+    registerFarm: (context, farm) => {
+      return tfService.registerFarm(context.getters.tfgridUrl, farm)
+    },
     updateFarm(context, farm) {
       return tfService.updateFarm(farm.id, farm);
     },
-    resetNodes: context => {
-      context.commit("setNodes", undefined);
-    }
   },
   mutations: {
-    setRegisteredNodes(state, value) {
-      state.registeredNodes = value;
-    },
-    setRegisteredFarms(state, value) {
-      state.registeredFarms = value;
-    },
     setFarms(state, value) {
       state.farms = value;
     },
@@ -120,9 +106,7 @@ export default {
   getters: {
     user: state => state.user,
     tfgridUrl: state => state.tfgridUrl,
-    registeredNodes: state => state.registeredNodes,
     nodes: state => state.nodes,
-    registeredFarms: state => state.registeredFarms,
     farms: state => state.farms,
     nodeSpecs: state => state.nodeSpecs,
     freeSwitchAlert: state => state.freeSwitchAlert

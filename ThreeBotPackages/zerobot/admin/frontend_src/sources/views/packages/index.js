@@ -208,6 +208,7 @@ export default class PackagesView extends JetView {
 
         self.errorView = this.ui(ErrorView);
         self.packageDetailsView = self.ui(PackageDetailsView);
+        self._requiredpackages = ["zerobot.base", "zerobot.webinterface", "zerobot.admin"]
 
         const menu = webix.ui({
             view: "contextmenu",
@@ -277,6 +278,10 @@ export default class PackagesView extends JetView {
             const pos = self.packageTable.locate(e);
             if (pos) {
                 const item = self.packageTable.getItem(pos.row);
+                if (self._requiredpackages.includes(item.name)) {
+                    webix.message({ type: "error", text: `${item.name} is required package` });
+                    return
+                }
                 const actions = [...PACKAGE_STATES[item.status].actions, 'delete'];
 
                 menu.clearAll();
@@ -293,18 +298,18 @@ export default class PackagesView extends JetView {
             let item = self.packageTable.getItem(id)
             console.log(item)
             let packageData = {
-                'source_name':item['source_name'],
-                'id':item['id'],
-                'status':PACKAGE_STATES[item['status']] ? 
-                         PACKAGE_STATES[item['status']].name :
-                         UNKNOWN_STATUS,
-                'author':item['source']['threebot'],
-                'description':item['source']['description'],
-                'version':item['source']['version'],
-                'install_kwargs':JSON.stringify(item['install_kwargs']),
-                'frontend_args':JSON.stringify(item['frontend_args']),
-                'path':item['path'],
-                'giturl':item['giturl']
+                'source_name': item['source_name'],
+                'id': item['id'],
+                'status': PACKAGE_STATES[item['status']] ?
+                    PACKAGE_STATES[item['status']].name :
+                    UNKNOWN_STATUS,
+                'author': item['source']['threebot'],
+                'description': item['source']['description'],
+                'version': item['source']['version'],
+                'install_kwargs': JSON.stringify(item['install_kwargs']),
+                'frontend_args': JSON.stringify(item['frontend_args']),
+                'path': item['path'],
+                'giturl': item['giturl']
             }
             self.packageDetailsView.showPackageDetails(packageData);
         });

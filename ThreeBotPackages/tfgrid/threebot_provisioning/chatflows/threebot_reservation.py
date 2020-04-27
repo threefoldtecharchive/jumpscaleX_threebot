@@ -32,6 +32,9 @@ def chat(bot):
         hash_restore = nacl.hash.blake2b(password.encode(), key=identity_pubkey.encode()).decode()
 
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
+    if not network:
+        return
+    currency = network.currency
 
     # ask user about corex user:password and ssh-key to give him full access to his container
     pub_key = None
@@ -50,7 +53,7 @@ def chat(bot):
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
-    node_selected = j.sal.reservation_chatflow.nodes_get(1, cru=4, sru=8)[0]
+    node_selected = j.sal.reservation_chatflow.nodes_get(1, cru=4, sru=8, currency=currency)[0]
     if not node_selected:
         res = "# We are sorry we don't have empty Node to deploy your 3bot"
         res = j.tools.jinja2.template_render(text=res, **locals())
@@ -101,7 +104,15 @@ def chat(bot):
     network.update(identity.id)
     # Add volume and create container schema
     vol = j.sal.zosv2.volume.create(reservation, node_selected.node_id, size=8)
-    rid = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
+    reservation_create = j.sal.reservation_chatflow.reservation_register(
+        reservation, expiration, customer_tid=identity.id, currency=currency
+    )
+    rid = reservation_create.reservation_id
+    wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
+    if wallet:
+        j.sal.zosv2.billing.payout_farmers(wallet, reservation_create)
+
+    j.sal.reservation_chatflow.payment_wait(bot, rid)
     j.sal.reservation_chatflow.reservation_wait(bot, rid)
 
     # create container
@@ -123,8 +134,15 @@ def chat(bot):
     volume_id = f"{rid}-{vol.workload_id}"
     j.sal.zosv2.volume.attach_existing(cont, volume_id, "/sandbox/var")
 
-    resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
+    reservation_create = j.sal.reservation_chatflow.reservation_register(
+        reservation, expiration, customer_tid=identity.id, currency=currency
+    )
+    resv_id = reservation_create.reservation_id
+    wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
+    if wallet:
+        j.sal.zosv2.billing.payout_farmers(wallet, reservation_create)
 
+    j.sal.reservation_chatflow.payment_wait(bot, rid)
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
     res = f"""
         # reservation sent. ID: {resv_id}

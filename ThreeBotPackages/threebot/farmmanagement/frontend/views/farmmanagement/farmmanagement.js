@@ -40,18 +40,19 @@ module.exports = new Promise(async (resolve, reject) => {
                         latitude: 0,
                         longitude: 0
                     },
-                    // Todo
-                    resource_prices: [
-                        {
-                            currency: "USD",
-                            cru: 0,
-                            mru: 0,
-                            hru: 0,
-                            sru: 0,
-                            nru: 0
-                        }
-                    ]
+                    wallet_addresses:[],
+                    // resource_prices: [
+                    //     {
+                    //         currency: "USD",
+                    //         cru: 0,
+                    //         mru: 0,
+                    //         hru: 0,
+                    //         sru: 0,
+                    //         nru: 0
+                    //     }
+                    // ]
                 },
+                newFarmAlert: undefined,
                 searchAddressInput: "",
                 namerules: [v => !!v || "Name is required"],
                 nameError: [],
@@ -278,7 +279,7 @@ module.exports = new Promise(async (resolve, reject) => {
                 "registerFarm",
                 "getFarms",
                 "updateFarm",
-                "getRegisteredNodes",
+                "getNodes",
                 "getTfgridUrl"
             ]),
             initialiseRefresh() {
@@ -296,8 +297,8 @@ module.exports = new Promise(async (resolve, reject) => {
                 this.initialiseRefresh();
             },
             viewNodes(item) {
+                this.getNodes(item.id);
                 this.farmSelected = item;
-                this.getRegisteredNodes(this.farmSelected.id);
                 console.log(item)
                 console.log(this.farmSelected)
             },
@@ -324,8 +325,36 @@ module.exports = new Promise(async (resolve, reject) => {
                     return;
                 }
 
-                this.addFarmDialog = false;
-                this.registerFarm(this.newFarm);
+                
+                this.registerFarm(this.newFarm).then(response => {
+                    if (response.status == 201) {
+                        this.newFarmAlert = {
+                            message: "farm created",
+                            type: "success",
+                        }
+                    } else {
+                        this.newFarmAlert = {
+                            message: response.data['error'],
+                            type: "error",
+                        }
+                    }
+                    setTimeout(() => {
+                        this.editFarmAlert = undefined
+                        this.addFarmDialog = false;
+                    }, 2000)
+                }).catch(err => {
+                    var msg = "server error"
+                    if (err.response) {
+                        // The request was made and the server responded with a status code
+                        // that falls out of the range of 2xx
+                        msg = err.response.data['error'] ? err.response.data['error'] : "server error"
+                    }
+                    this.newFarmAlert = {
+                        message: msg,
+                        type: "error",
+                    }
+                })
+
             },
             setPlace(event) {
                 this.newFarm.location.latitude = event.latLng.lat();
@@ -359,11 +388,11 @@ module.exports = new Promise(async (resolve, reject) => {
                 }, 2000)
 
             },
-            addWallet() {
-                this.farmToEdit.wallet_addresses.push({ 'asset': 'TFT', address: '' })
+            addWallet(farm) {
+                farm.wallet_addresses.push({ 'asset': 'TFT', address: '' })
             },
-            removeWallet(i) {
-                this.farmToEdit.wallet_addresses.pop(i)
+            removeWallet(farm, i) {
+                farm.wallet_addresses.pop(i)
             },
             cancelEditFarm() {
                 this.settingsDialog = false;

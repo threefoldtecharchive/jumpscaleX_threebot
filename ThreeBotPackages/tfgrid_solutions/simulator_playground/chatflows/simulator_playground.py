@@ -10,7 +10,7 @@ DOMAIN = "play.grid.tf"
 NETWORK_NAME = "pub.play.grid.tf"
 NETWORK = netaddr.IPNetwork("10.40.0.0/16")
 FLIST = "https://hub.grid.tf/ahmedelsayed.3bot/threefoldtech-simulator-latest.flist"
-LIFETIME = 60 * 60
+LIFETIME = 5 * 60 * 60
 
 
 class Deployer:
@@ -113,7 +113,7 @@ class Deployer:
         j.sal.nettools.tcpPortConnectionTest(ip_address, port=22, timeout=30)
 
         domain = "tf-simulator-%s.%s" % (uuid.uuid4().hex[:5], DOMAIN)
-        self._gateway.tcpservice_register(domain, ip_address, service_http_port=80, expire=LIFETIME)
+        self._gateway.tcpservice_register(domain, ip_address, service_http_port=8888, expire=LIFETIME)
         return domain
 
 
@@ -130,7 +130,7 @@ def chat(bot):
         message = """
         ### Visit your container using this link: 
         #### [http://{url}](http://{url}) 
-        > Note: Your container will be destroyed after 1 hour
+        > Note: Your container will be destroyed after 5 hours
         """.format(
             url=url
         )
