@@ -122,3 +122,33 @@ class logs(j.baseclasses.threebot_actor):
         res["pos"] = id_from + count
         res["count"] = self.count(appname=appname, all=include_fslogs)
         return j.data.serializers.json.dumps(res)
+
+
+    @j.baseclasses.actor_method
+    def delete(
+        self,
+        appname=None,
+        schema_out=None,
+        user_session=None,
+    ):
+        """
+        ```in
+        appname = ""(S)
+        ```
+        """
+        logs = self.client.delete_all(appname=appname)
+
+        return j.data.serializers.json.dumps(logs)
+
+    @j.baseclasses.actor_method
+    def delete_selected(
+        self,
+        ids,
+        schema_out=None,
+        user_session=None,
+    ):
+        status = self.client.delete_by_ids(ids=ids)
+        if status:
+            return j.data.serializers.json.dumps("success")
+        else:
+            raise ValueError("Can not delete")

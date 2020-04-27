@@ -43,22 +43,28 @@ export default class ReservationView extends JetView {
                 {
 
                     header: "Overview",
+                    autowidth:true,
+                    scroll:'xy',
                     rows: [
                         info,
                         {
-                            view: "list",
-                            label: "Form inputs",
-                            name: "Form inputs",
-                            data: [{ "title": "Form inputs" }],
-                            template: "<b> #title# <b>",
-                            autoheight: true,
-                            readonly: true
-                        },
-                        {
-                            id: "formInfo",
-                            view: "list",
-                            template: "<b>#key# </b>  :   #value#",
-                            scroll: "auto",
+                            id:"formInfo",
+                            view:"datatable",
+                            resizeColumn: true,
+                            scroll: "xy",
+
+                            columns: [{
+                                id: "key",
+                                header: "Key",
+                                width:130
+                            },
+                            {
+                                id: "value",
+                                header: "Value",
+                                scroll: "x",
+                                // ssh is too long
+                                width:'4000'
+                            }]
                         }
                     ]
 
