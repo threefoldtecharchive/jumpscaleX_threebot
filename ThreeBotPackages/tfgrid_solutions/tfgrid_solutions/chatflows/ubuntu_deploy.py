@@ -33,25 +33,12 @@ def chat(bot):
                 Just upload the file with the key"""
         ).split("\n")[0]
 
-    user_form_data["Env variables"] = bot.string_ask(
-        """To set environment variables on your deployed container, enter comma-separated variable=value
-        For example: var1=value1, var2=value2.
-        Leave empty if not needed"""
-    )
-
     expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
     user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
     expiration = j.data.time.epoch + expirationdelta
 
-    var_list = user_form_data["Env variables"].split(",")
-    var_dict = {}
-    for item in var_list:
-        splitted_item = item.split("=")
-        if len(splitted_item) == 2:
-            var_dict[splitted_item[0]] = splitted_item[1]
-
-    var_dict.update({"pub_key": user_form_data["Public key"]})
-    query = {"mru": math.ceil(memory.value / 1024), "cru": cpu.value, "sru": 1, "currency": currency}
+    var_dict = {"pub_key": user_form_data["Public key"]}
+    query = {"mru": math.ceil(memory.value / 1024), "cru": cpu.value, "sru": 1}
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
     nodeid = bot.string_ask(
@@ -59,18 +46,20 @@ def chat(bot):
     )
     while nodeid:
         try:
-            node_selected = j.sal.reservation_chatflow.validate_node(nodeid, query)
+            node_selected = j.sal.reservation_chatflow.validate_node(nodeid, query, currency)
             break
         except (j.exceptions.Value, j.exceptions.NotFound) as e:
-            nodeid = bot.string_ask(str(e))
+            message = "<br> Please enter a different nodeid to deploy on or leave it empty"
+            nodeid = bot.string_ask(str(e) + message)
 
+    query["currency"] = currency
     if not nodeid:
         node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
     network.add_node(node_selected)
     ip_address = network.ask_ip_from_node(node_selected, "Please choose IP Address for your solution")
     user_form_data["IP Address"] = ip_address
     bot.md_show_confirm(user_form_data)
-    network.update(identity.id, currency=currency)
+    network.update(identity.id, currency=currency, bot=bot)
 
     container_flist = f"{HUB_URL}/{user_form_data['Version']}-r1.flist"
     storage_url = "zdb://hub.grid.tf:9900"
@@ -93,7 +82,7 @@ def chat(bot):
     )
 
     reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=currency
+        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
     resv_id = reservation_create.reservation_id
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)

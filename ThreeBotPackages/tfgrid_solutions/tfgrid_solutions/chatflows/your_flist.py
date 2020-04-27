@@ -90,7 +90,7 @@ def chat(bot):
     bot.md_show_confirm(user_form_data)
 
     # update network
-    network.update(identity.id, currency=currency)
+    network.update(identity.id, currency=currency, bot=bot)
 
     # create container
     j.sal.zosv2.container.create(
@@ -109,7 +109,7 @@ def chat(bot):
     )
 
     reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=currency
+        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
     resv_id = reservation_create.reservation_id
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)

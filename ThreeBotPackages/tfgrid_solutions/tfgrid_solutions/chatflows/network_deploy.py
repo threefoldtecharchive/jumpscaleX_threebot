@@ -38,6 +38,7 @@ def chat(bot):
             ipversion,
             expiration=expiration,
             currency=user_form_data["Currency"],
+            bot=bot,
         )
         wallet = j.sal.reservation_chatflow.payments_show(bot, config["reservation_create"])
         if wallet:
@@ -61,17 +62,17 @@ def chat(bot):
     # inform user howto connect
     res = """
             # Use the following template to configure your wireguard connection. This will give you access to your network.
-            ## Make sure you have <a href="https://www.wireguard.com/install/">wireguard</a> installed
+            ## Make sure you have <a target="_blank" href="https://www.wireguard.com/install/">wireguard</a> installed
             Click next
             to download your configuration
             """
     bot.md_show(j.core.text.strip(res))
 
-    filename = "{}_{}.conf".format(identity.name.split(".3bot")[0], config["rid"])
+    filename = "wg-{}.conf".format(config["rid"])
     bot.download_file(config["wg"], filename)
 
     res = """
-            # In order to have the network active and accessible from your local machine. To do this, execute this command:
+            # In order to have the network active and accessible from your local/container machine. To do this, execute this command:
             ## ```wg-quick up /etc/wireguard/{}```
             Click next
             """.format(
