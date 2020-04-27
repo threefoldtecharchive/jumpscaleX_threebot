@@ -2,6 +2,7 @@ import { JetView } from "webix-jet";
 
 import { ErrorView } from "../errors/dialog";
 import { packages } from "../../services/packages";
+import PackageDetailsView from "./packageDetails"
 
 const UNKNOWN_STATUS = 'Unknown';
 
@@ -206,6 +207,7 @@ export default class PackagesView extends JetView {
         const self = this;
 
         self.errorView = this.ui(ErrorView);
+        self.packageDetailsView = self.ui(PackageDetailsView);
 
         const menu = webix.ui({
             view: "contextmenu",
@@ -285,5 +287,26 @@ export default class PackagesView extends JetView {
         })
 
         self.loadPackages();
+
+        self.packageTable.attachEvent("onItemDblClick", function () {
+            let id = self.packageTable.getSelectedId()
+            let item = self.packageTable.getItem(id)
+            console.log(item)
+            let packageData = {
+                'source_name':item['source_name'],
+                'id':item['id'],
+                'status':PACKAGE_STATES[item['status']] ? 
+                         PACKAGE_STATES[item['status']].name :
+                         UNKNOWN_STATUS,
+                'author':item['source']['threebot'],
+                'description':item['source']['description'],
+                'version':item['source']['version'],
+                'install_kwargs':JSON.stringify(item['install_kwargs']),
+                'frontend_args':JSON.stringify(item['frontend_args']),
+                'path':item['path'],
+                'giturl':item['giturl']
+            }
+            self.packageDetailsView.showPackageDetails(packageData);
+        });
     }
 }
