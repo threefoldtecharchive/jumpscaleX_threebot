@@ -35,16 +35,16 @@ class HealthService extends Service {
         return this.getCall("get_running_ports");
     }
 
-    killProcessesByPid(ids) {
-        return this.getCall('kill_processes_by_pid', ids)
+    killProcessesByPid(pids) {
+        return this.postCall('kill_processes_by_pid', {pids})
     }
 
     killProcessesByPort(ports) {
-        return this.getCall('kill_processes_by_port', ports)
+        return this.postCall('kill_processes_by_port', {ports})
     }
 
     getProcessDetails(pid) {
-        return this.getCall('get_process_details', pid)
+        return this.postCall('get_process_details', {pid})
     }
 }
 

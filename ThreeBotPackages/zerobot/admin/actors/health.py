@@ -127,11 +127,10 @@ class health(j.baseclasses.threebot_actor):
         return j.data.serializers.json.dumps(all_data)
 
     @j.baseclasses.actor_method
-    def get_process_details(self, args, schema_out=None, user_session=None):
+    def get_process_details(self, pid, schema_out=None, user_session=None):
         """
         Get process details py PID
         """
-        pid = int(args)
         all_data = {}
         proc = psutil.Process(pid)
         
@@ -197,9 +196,7 @@ class health(j.baseclasses.threebot_actor):
         return res
     
     @j.baseclasses.actor_method
-    def kill_processes_by_pid(self, args, schema_out=None, user_session=None):
-        
-        pids = [int(s) for s in args[1:-1].split(',')]
+    def kill_processes_by_pid(self, pids, schema_out=None, user_session=None):
         for id in pids:
             try:
                 j.sal.process.kill(pid=id)
@@ -207,9 +204,7 @@ class health(j.baseclasses.threebot_actor):
                 raise ValueError("Could not kill process")
 
     @j.baseclasses.actor_method
-    def kill_processes_by_port(self, args, schema_out=None, user_session=None):
-        
-        ports = [int(s) for s in args[1:-1].split(',')]
+    def kill_processes_by_port(self, ports, schema_out=None, user_session=None):
         for port in ports:
             try:
                 j.sal.process.killProcessByPort(port=port)

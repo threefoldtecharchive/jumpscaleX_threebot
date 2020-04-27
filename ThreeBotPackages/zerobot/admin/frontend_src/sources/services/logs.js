@@ -29,7 +29,7 @@ class LogsService extends Service {
     }
 
     deleteSelected(ids){
-        return this.getCall("delete_selected",ids)
+        return this.postCall("delete_selected",{ids})
     }
 }
 

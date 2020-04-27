@@ -143,12 +143,10 @@ class logs(j.baseclasses.threebot_actor):
     @j.baseclasses.actor_method
     def delete_selected(
         self,
-        args,
+        ids,
         schema_out=None,
         user_session=None,
     ):
-        args = args.replace('"','')
-        ids = [int(s) for s in args[1:-1].split(',')]
         status = self.client.delete_by_ids(ids=ids)
         if status:
             return j.data.serializers.json.dumps("success")
