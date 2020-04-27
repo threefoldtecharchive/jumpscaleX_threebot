@@ -103,7 +103,7 @@ def chat(bot):
     ip_address = network.ask_ip_from_node(cont_node, "Please choose IP Address for your solution")
     bot.md_show_confirm(user_form_data)
 
-    network.update(identity.id, currency=currency)
+    network.update(identity.id, currency=currency, bot=bot)
     password = j.data.idgenerator.generateGUID()
 
     for node in nodes_selected:
@@ -120,7 +120,7 @@ def chat(bot):
 
     # register the reservation for zdb db
     zdb_reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=currency
+        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
     zdb_rid = zdb_reservation_create.reservation_id
     wallet = j.sal.reservation_chatflow.payments_show(bot, zdb_reservation_create)
@@ -166,7 +166,7 @@ def chat(bot):
     j.sal.zosv2.volume.attach_existing(container=cont, volume_id=f"{zdb_rid}-{volume.workload_id}", mount_point="/data")
 
     reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=currency
+        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
     resv_id = reservation_create.reservation_id
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)

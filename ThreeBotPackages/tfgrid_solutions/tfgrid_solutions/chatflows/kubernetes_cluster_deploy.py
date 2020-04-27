@@ -76,7 +76,7 @@ def chat(bot):
     bot.md_show_confirm(user_form_data)
     # update network
 
-    network.update(identity.id, currency=currency)
+    network.update(identity.id, currency=currency, bot=bot)
 
     # Create master and workers
     # Master is in the first node from the selected nodes
@@ -107,7 +107,7 @@ def chat(bot):
     # register the reservation
 
     reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=currency
+        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
     resv_id = reservation_create.reservation_id
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)

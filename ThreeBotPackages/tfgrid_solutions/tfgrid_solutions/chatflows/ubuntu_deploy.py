@@ -70,7 +70,7 @@ def chat(bot):
     ip_address = network.ask_ip_from_node(node_selected, "Please choose IP Address for your solution")
     user_form_data["IP Address"] = ip_address
     bot.md_show_confirm(user_form_data)
-    network.update(identity.id, currency=currency)
+    network.update(identity.id, currency=currency, bot=bot)
 
     container_flist = f"{HUB_URL}/{user_form_data['Version']}-r1.flist"
     storage_url = "zdb://hub.grid.tf:9900"
@@ -93,7 +93,7 @@ def chat(bot):
     )
 
     reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=currency
+        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
     resv_id = reservation_create.reservation_id
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)

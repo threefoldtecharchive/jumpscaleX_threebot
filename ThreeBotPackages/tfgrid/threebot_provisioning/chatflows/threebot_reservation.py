@@ -101,11 +101,11 @@ def chat(bot):
     entry_point = "/usr/bin/zinit init -d"
     storage_url = "zdb://hub.grid.tf:9900"
 
-    network.update(identity.id)
+    network.update(identity.id, bot=bot)
     # Add volume and create container schema
     vol = j.sal.zosv2.volume.create(reservation, node_selected.node_id, size=8)
     reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=currency
+        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
     rid = reservation_create.reservation_id
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
@@ -135,7 +135,7 @@ def chat(bot):
     j.sal.zosv2.volume.attach_existing(cont, volume_id, "/sandbox/var")
 
     reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=currency
+        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
     resv_id = reservation_create.reservation_id
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
