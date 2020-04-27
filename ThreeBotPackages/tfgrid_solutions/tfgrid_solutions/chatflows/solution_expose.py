@@ -57,10 +57,6 @@ def chat(bot):
     user_form_data["ip"] = ip_address
 
     gateways = {g.node_id: g for g in j.sal.zosv2._explorer.gateway.list()}
-    gateway_id = bot.single_choice(
-        "Please choose a gateway", list(gateways.keys())
-    )
-    gateway = gateways[gateway_id]
 
     domain_type = bot.single_choice(
         "Which type of domain you whish to bind to", ["sub", "delegate"]
@@ -71,8 +67,21 @@ def chat(bot):
             f"Please specify the sub domain name you wish to bind to will be (subdomain).{base_domain}"
         )
         domain = domain + "." + base_domain
+        gateway_id = bot.single_choice(
+            "Please choose a gateway", list(gateways.keys())
+        )
+        gateway = gateways[gateway_id]
     elif domain_type == "delegate":
-        domain = bot.string_ask("Please specify the domain name you wish to bind to")
+        url = "tfgrid.domains.delegate.1"
+        model = j.clients.bcdbmodel.get(url=url, name="tfgrid_solutions")
+        domains = model.find()
+        domains_dict = {d.domain: d for d in domains}
+        domain = bot.single_choice(
+            "Please choose the domain you wish to bind", list(domains_dict.keys())
+        )
+        domain_obj = domains_dict[domain]
+        gateway = domain_obj.gateway
+        gateway_id = gateway.node_id
 
     secret_env = {}
     port = ports.get(kind)
