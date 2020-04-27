@@ -17,13 +17,36 @@ export default class LogsView extends JetView {
                         view: "combo",
                         id: "apps_combo",
                         placeholder: "Choose your application",
+                        align:"right",
                         on: {
                             onChange: function (appName) {
+                                this.$scope.show(`/main/logs`)
                                 this.$scope.showFor(appName)
-
                             }
                         }
-                    }
+                    },
+                    {
+                        view:"button", 
+                        id:"btn_delete", 
+                        value:"Delete", 
+                        css:"webix_danger", 
+                        inputWidth:120,
+                        click: function (){
+                            this.$scope.delete()
+                        }
+                    },
+                    {
+                        view:"button", 
+                        id:"btn_delete_all", 
+                        value:"Delete All", 
+                        css:"webix_danger", 
+                        align:'right',
+                        inputWidth:100,
+                        click: function (){
+                            this.$scope.delete_all()
+                        }
+                    },
+                    { width:20 }
                 ],
             },
                 AppLogsView
@@ -53,6 +76,12 @@ export default class LogsView extends JetView {
         var self = this;
         self.appLogs = $$("applogs_table");
 
+        webix.ui({
+            view: "contextmenu",
+            id: "logs_cm",
+            data: ["Delete"]
+        }).attachTo(self.appLogs);
+
         webix.extend(self.appLogs, webix.ProgressBar);
         self.appLogs.showProgress({ hide: false });
 
@@ -60,6 +89,74 @@ export default class LogsView extends JetView {
             self.appLogs.clearAll()
             self.appLogs.parse(data.json()[0])
             self.appLogs.showProgress({ hide: true });
+        });
+
+        $$("logs_cm").attachEvent("onMenuItemClick", function (id) {
+            if (id == "Delete") {
+                self.deleteSelected(self.appLogs.getSelectedId(true));
+            }
+        });
+    }
+
+    delete(){
+        let appname = $$("apps_combo").getValue();
+        if(appname){
+            webix.confirm({
+                title: "Delete logs",
+                ok: "Delete",
+                cancel: "No",
+                text: `Delete ${appname} logs?`
+            }).then(() => {
+                logs.delete(appname).then(() => {
+                    this.refresh();
+                    webix.message({ type: "success", text: `${appname} logs deleted successfully` });
+                }).catch(error => {
+                    webix.message({ type: "error", text: "Could not delete logs" });
+                })
+            });
+        }else{
+            webix.message({ type: "error", text: "Please select app for delete" });
+        }
+    }
+
+    deleteSelected(objects) {
+        var self = this;
+        self.appLogs = $$("applogs_table");
+
+        let ids = []
+
+        for (let obj of objects) {
+            ids.push(obj.id);
+        }
+
+        webix.confirm({
+            title: "Delete selected logs",
+            ok: "Yes",
+            cancel: "No",
+            text: `delete logs with ids ${ids.join(", ")}`
+        }).then(() => {
+            logs.deleteSelected(ids).then( data => {
+                self.app.refresh()
+                webix.message({ type: "success", text: "Logs deleted" });
+            }).catch(error => {
+                webix.message({ type: "error", text: "Could not delete logs" });
+            })
+        });
+    }
+
+    delete_all(){
+        webix.confirm({
+            title: "Delete all logs",
+            ok: "Delete",
+            cancel: "No",
+            text: `Delete all logs?`
+        }).then(() => {
+            logs.deleteAll().then(() => {
+                this.refresh();
+                webix.message({ type: "success", text: `All logs deleted successfully` });
+            }).catch(error => {
+                webix.message({ type: "error", text: "Could not delete logs" });
+            })
         });
     }
 }

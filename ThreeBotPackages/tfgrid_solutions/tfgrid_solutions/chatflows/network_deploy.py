@@ -43,9 +43,11 @@ def chat(bot):
             currency=user_form_data["Currency"],
             bot=bot,
         )
-        wallet = j.sal.reservation_chatflow.payments_show(bot, config["reservation_create"])
-        if wallet:
-            j.sal.zosv2.billing.payout_farmers(wallet, config["reservation_create"])
+        payment = j.sal.reservation_chatflow.payments_show(bot, config["reservation_create"])
+        if payment["free"]:
+            pass
+        elif payment["wallet"]:
+            j.sal.zosv2.billing.payout_farmers(payment["wallet"], config["reservation_create"])
             j.sal.reservation_chatflow.payment_wait(bot, config["rid"], threebot_app=False)
         else:
             j.sal.reservation_chatflow.payment_wait(

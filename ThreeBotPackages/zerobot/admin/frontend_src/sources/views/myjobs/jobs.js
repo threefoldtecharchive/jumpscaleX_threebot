@@ -2,6 +2,7 @@ import { JetView } from "webix-jet";
 
 import { dateFormatter } from "../../common/formatters";
 import { myjobs } from "../../services/myjobs";
+import JobDetailsView from "./jobDetails";
 
 export default class JobsView extends JetView {
     config() {
@@ -75,8 +76,17 @@ export default class JobsView extends JetView {
     }
 
     init(view) {
+        const self = this
+        self.jobDetailsView = self.ui(JobDetailsView);
+        self.jobTable = this.$$("jobs_table");
+        
         myjobs.listJobs().then(data => {
             view.parse(data);
+        });
+        self.jobTable.attachEvent("onItemDblClick", function () {
+            let id = self.jobTable.getSelectedId()
+            let item = self.jobTable.getItem(id)
+            self.jobDetailsView.showJobDetails(item);
         });
     }
 }

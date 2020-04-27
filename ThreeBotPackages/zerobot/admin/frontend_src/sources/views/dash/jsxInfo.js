@@ -9,7 +9,7 @@ export default class JSXInfoView extends JetView {
             view: "list",
             responsive: true,
             type: {
-                height: 60,
+                height: 'auto',
             },
             template: `
                 <p><font size="3"><b>#key#: </b></font> <font size="3">#value#</font></p>
@@ -41,20 +41,14 @@ export default class JSXInfoView extends JetView {
 
         health.getNetworkInfo().then(data => {
             data = data.json();
-            self.info.add({
-                key: "IP",
-                value: data.ip,
-            });
-            if (data.ip6.length) {
-                self.info.add({
-                    key: "IPv6",
-                    value: data.ip6
-                })
-            } else {
-                self.info.add({
-                    key: "IPv6",
-                    value: "Not set"
-                })
+            for (var i in data) {
+                var ip = data[i].ip;
+                var ip6 = data[i].ip6.length ? data[i].ip6 : "Not set";
+
+                self.info.add({ 
+                    key: data[i].name,
+                    value: `<br><b>IP: </b>${ip}<br><b>IPv6: </b>${ip6}`
+                })    
             }
         });
 
