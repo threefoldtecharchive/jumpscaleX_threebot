@@ -54,15 +54,14 @@ def chat(bot):
 
     domain_type = bot.single_choice("Which type of domain you whish to bind to", ["sub", "delegate"])
     if domain_type == "sub":
-        # TODO add a reservation for sub domain
         base_domain = f"{j.me.tname.replace('3bot', '')}{j.core.myenv.config.get('THREEBOT_DOMAIN')}"
         domain = bot.string_ask(
-            f"Please specify the sub domain name you wish to bind to will be (subdomain).{base_domain}"
             f"Please specify the sub domain name you wish to bind to will be (subdomain).{base_domain}"
         )
         domain = domain + "." + base_domain
         gateway_id = bot.single_choice("Please choose a gateway", list(gateways.keys()))
         gateway = gateways[gateway_id]
+        j.sal.zosv2.gateway.sub_domain(reservation, gateway_id, domain, [ip_address])
     elif domain_type == "delegate":
         url = "tfgrid.domains.delegate.1"
         model = j.clients.bcdbmodel.get(url=url, name="tfgrid_solutions")
