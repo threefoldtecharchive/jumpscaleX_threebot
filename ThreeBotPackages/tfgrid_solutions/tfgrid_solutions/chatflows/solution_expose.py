@@ -122,5 +122,5 @@ def chat(bot):
 
     j.sal.reservation_chatflow.payment_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
-    res_md = f"Use this Gateway to conect to your exposed solutions {gateway.dns_nameserver}:{user_form_data['port']}"
+    res_md = f"Use this Gateway to conect to your exposed solutions {gateway.dns_nameserver}:{gateway.tcp_router_port}"
     bot.md_show(res_md)
