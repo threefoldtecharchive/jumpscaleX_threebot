@@ -47,7 +47,6 @@ def chat(bot):
     node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
     reservation_data = j.data.serializers.json.loads(solution["reservation"])["data_reservation"]
     network_name = reservation_data["containers"][0]["network_connection"][0]["network_id"]
-    container_address = reservation_data["containers"][0]["network_connection"][0]["ipaddress"]
 
     network = j.sal.reservation_chatflow.network_get(bot, identity.id, network_name)
     network.add_node(node_selected)
