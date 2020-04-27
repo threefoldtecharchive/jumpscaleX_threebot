@@ -5,9 +5,7 @@ const namespaced = true;
 
 const state = {
   user: {},
-  registeredNodes: [],
   nodes: undefined,
-  registeredFarms: [],
   farms: [],
   nodeSpecs: {
     amountregisteredNodes: 0,
@@ -86,9 +84,7 @@ const mutations = {
 
 const getters = {
   user: state => state.user,
-  registeredNodes: state => state.registeredNodes,
   nodes: state => state.nodes,
-  registeredFarms: state => state.registeredFarms,
   farms: state => state.farms,
   nodeSpecs: state => state.nodeSpecs
 };

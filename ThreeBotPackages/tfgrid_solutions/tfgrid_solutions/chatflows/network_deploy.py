@@ -38,6 +38,7 @@ def chat(bot):
             ipversion,
             expiration=expiration,
             currency=user_form_data["Currency"],
+            bot=bot,
         )
         wallet = j.sal.reservation_chatflow.payments_show(bot, config["reservation_create"])
         if wallet:
