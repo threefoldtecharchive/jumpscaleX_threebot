@@ -62,8 +62,10 @@ def chat(bot):
         "Which type of domain you whish to bind to", ["sub", "delegate"]
     )
     if domain_type == "sub":
+        # TODO add a reservation for sub domain
         base_domain = f"{j.me.tname.replace('3bot', '')}{j.core.myenv.config.get('THREEBOT_DOMAIN')}"
         domain = bot.string_ask(
+            f"Please specify the sub domain name you wish to bind to will be (subdomain).{base_domain}"
             f"Please specify the sub domain name you wish to bind to will be (subdomain).{base_domain}"
         )
         domain = domain + "." + base_domain
@@ -91,8 +93,8 @@ def chat(bot):
     secret = bot.string_ask("Please specify a secret for the connection")
     user_form_data["secret"] = secret
     secret_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, user_form_data["secret"])
-    secret_env["SECRET"] = secret_encrypted
-    entrypoint = f"/bin/trc -local {container_address}:{port} -remote {gateway.dns_nameserver[0]}"
+    secret_env["TRC_SECRET"] = secret_encrypted
+    entrypoint = f"/bin/trc -local {container_address}:{port} -remote {gateway.dns_nameserver[0]}:{gateway.tcp_router_port}"
 
     j.sal.zosv2.container.create(
         reservation=reservation,
@@ -103,8 +105,11 @@ def chat(bot):
         entrypoint=entrypoint,
         secret_env=secret_env,
     )
+    # create proxy
+    j.sal.zosv2.gateway.tcp_proxy_reverse(reservation, gateway_id, domain, user_form_data["secret"])
+
     reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=currency
+        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
     resv_id = reservation_create.reservation_id
     user_form_data["rid"] = resv_id
@@ -115,10 +120,6 @@ def chat(bot):
     j.sal.reservation_chatflow.reservation_save(
         resv_id, f"tcprouter:{resv_id}", "tfgrid.solutions.flist.1", user_form_data
     )
-
-    # create proxy
-    j.sal.zosv2.gateway.tcp_proxy_reverse(reservation, gateway_id, domain, user_form_data["secret"])
-
 
     j.sal.reservation_chatflow.payment_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
