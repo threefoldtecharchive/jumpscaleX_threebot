@@ -29,8 +29,9 @@ class health(j.baseclasses.threebot_actor):
 
     @j.baseclasses.actor_method
     def network_info(self, schema_out=None, user_session=None):
-        container_ip = j.sal.nettools.getIpAddress()
-        return container_ip
+        info = j.sal.nettools.networkinfo_get()
+        info = [elem for elem in info if elem.get('name') != 'lo']
+        return j.data.serializers.json.dumps(info)
 
     @j.baseclasses.actor_method
     def health(self, schema_out=None, user_session=None):
@@ -126,6 +127,33 @@ class health(j.baseclasses.threebot_actor):
         return j.data.serializers.json.dumps(all_data)
 
     @j.baseclasses.actor_method
+    def get_process_details(self, pid, schema_out=None, user_session=None):
+        """
+        Get process details py PID
+        """
+        all_data = {}
+        proc = psutil.Process(pid)
+        
+        all_data = proc.as_dict(attrs=["pid", "name", "username"])
+        all_data["rss"] = proc.memory_info().rss / (1024 * 1024)
+        cpu_usage = proc.cpu_times()
+        all_data["cpu_user"] = cpu_usage.user
+        all_data["cpu_system"] = cpu_usage.system
+        parent = proc.parent().as_dict(attrs=["pid","name"])
+        all_data["parent_pid"] = parent['pid']
+        all_data["parent_name"] = parent['name']
+        all_data["fds"] = proc.num_fds()
+        all_data["threads"] = proc.num_threads()
+        _,output,_ = j.sal.process.execute(f'cat /proc/{pid}/cmdline')
+        all_data["cmdline"] = output
+        
+        import datetime
+        all_data["create_time"] = datetime.datetime.fromtimestamp(proc.create_time()).strftime("%Y-%m-%d %H:%M:%S")
+        all_data["status"] = proc.status()
+       
+        return j.data.serializers.json.dumps(all_data)
+       
+    @j.baseclasses.actor_method
     def get_identity(self, schema_out=None, user_session=None):
         """
         :return: string threebotname
@@ -166,3 +194,19 @@ class health(j.baseclasses.threebot_actor):
         res["percent"] = disk_obj.percent
 
         return res
+    
+    @j.baseclasses.actor_method
+    def kill_processes_by_pid(self, pids, schema_out=None, user_session=None):
+        for id in pids:
+            try:
+                j.sal.process.kill(pid=id)
+            except:
+                raise ValueError("Could not kill process")
+
+    @j.baseclasses.actor_method
+    def kill_processes_by_port(self, ports, schema_out=None, user_session=None):
+        for port in ports:
+            try:
+                j.sal.process.killProcessByPort(port=port)
+            except:
+                raise ValueError("Could not kill process")

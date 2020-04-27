@@ -2,7 +2,6 @@ import {
     JetView
 } from "webix-jet";
 
-import ProcessesChildView from "./processesChildView";
 import {
     health
 } from "../../services/health";
@@ -38,7 +37,6 @@ export default class ProcessesView extends JetView {
             view: "chart",
             responsive: true,
             type: "pie",
-            width: 500,
             height: 400,
             color: "#color#",
             value: "#rss#",
@@ -53,18 +51,7 @@ export default class ProcessesView extends JetView {
                     template: "<div style='width:auto;text-align:center'><h3>Running processes memory usage (RSS) (MB)<h3/></div>",
                     height: 50
                 },
-                processesInfo,
-                {
-                    view: "button",
-                    id: "show_all",
-                    value: "Show All",
-                    align: "center",
-                    css: "webix_primary",
-                    inputWidth: 100,
-                    click: function () {
-                        this.$scope.childview.showFor(this.$scope.processesList)
-                    }
-                }
+                processesInfo
 
             ]
         }
@@ -77,8 +64,6 @@ export default class ProcessesView extends JetView {
         this.processesList = []
 
         this.runProcessInfo = this.$$("process");
-
-        self.childview = self.ui(ProcessesChildView);
 
         health.getRunningProcesses().then(data => {
             var chartsData = []

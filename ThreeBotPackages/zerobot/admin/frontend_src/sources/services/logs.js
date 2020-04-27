@@ -17,6 +17,20 @@ class LogsService extends Service {
             id_from: logId
         });
     }
+
+    delete(appname){
+        return this.postCall("delete",{
+            appname: appname
+        })
+    }
+
+    deleteAll(){
+        return this.postCall("delete")
+    }
+
+    deleteSelected(ids){
+        return this.postCall("delete_selected",{ids})
+    }
 }
 
 export const logs = new LogsService();

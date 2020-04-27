@@ -17,7 +17,7 @@ Threebot is a pluggable application server based on [openresty](https://openrest
 - [Core and example packages](#core-and-example-packages)
 
 ## Installation
-Threebot is part of [JumpscaleX](https://github.com/threefoldtech/jumpscaleX_core). Make sure to follow the [installation instructions](https://github.com/threefoldtech/jumpscaleX_core/blob/development/docs/Installation/README.md)
+Threebot is part of [JumpscaleX](https://github.com/threefoldtech/jumpscaleX_core). Make sure to follow the [installation instructions](https://github.com/threefoldtech/jumpscaleX_core/blob/development/docs/3sdk/README.md)
 
 ## Starting the server
 Using  `j.servers.threebot.start()`.

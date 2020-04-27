@@ -9,6 +9,7 @@ def chat(bot):
     user_form_data = {}
     user_info = bot.user_info()
     name = user_info["username"]
+    user_form_data["chatflow"] = "minio"
     flist_url = "https://hub.grid.tf/tf-official-apps/minio-2020-01-25T02-50-51Z.flist"
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.minio.1")
 
@@ -16,6 +17,9 @@ def chat(bot):
 
     bot.md_show("# This wizard will help you deploy a minio cluster")
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
+    if not network:
+        return
+    currency = network.currency
 
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
 
@@ -75,6 +79,7 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
 
     zdb_nodequery = {}
+    zdb_nodequery["currency"] = currency
     if user_form_data["Disk type"] == "SSD":
         zdb_nodequery["sru"] = 10
     if user_form_data["Disk type"] == "HDD":
@@ -85,6 +90,7 @@ def chat(bot):
     )
 
     nodequery = {}
+    nodequery["currency"] = currency
     nodequery["mru"] = math.ceil(memory.value / 1024)
     nodequery["cru"] = cpu.value
     cont_node = j.sal.reservation_chatflow.nodes_get(number_of_nodes=1, farm_name="freefarm", **nodequery)[0]
@@ -98,13 +104,13 @@ def chat(bot):
     ip_address = network.ask_ip_from_node(cont_node, "Please choose IP Address for your solution")
     bot.md_show_confirm(user_form_data)
 
-    network.update(identity.id)
+    network.update(identity.id, currency=currency, bot=bot)
     password = j.data.idgenerator.generateGUID()
 
-    for i in range(1, len(nodes_selected)):
+    for node in nodes_selected:
         j.sal.zosv2.zdb.create(
             reservation=reservation,
-            node_id=nodes_selected[i].node_id,
+            node_id=node.node_id,
             size=10,
             mode="seq",
             password=password,
@@ -114,12 +120,25 @@ def chat(bot):
     volume = j.sal.zosv2.volume.create(reservation, cont_node.node_id, size=10, type=user_form_data["Disk type"])
 
     # register the reservation for zdb db
-    zdb_rid = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
-    res = (
-        f"# Database has been deployed with reservation id: {zdb_rid}. Click next to continue with deployment of minio"
+    zdb_reservation_create = j.sal.reservation_chatflow.reservation_register(
+        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
+    zdb_rid = zdb_reservation_create.reservation_id
+    payment = j.sal.reservation_chatflow.payments_show(bot, zdb_reservation_create)
+    if payment["free"]:
+        pass
+    elif payment["wallet"]:
+        j.sal.zosv2.billing.payout_farmers(payment["wallet"], zdb_reservation_create)
+        j.sal.reservation_chatflow.payment_wait(bot, zdb_rid, threebot_app=False)
+    else:
+        j.sal.reservation_chatflow.payment_wait(
+            bot, zdb_rid, threebot_app=True, reservation_create_resp=zdb_reservation_create
+        )
+
+    res = f"# Database has been deployed with reservation id: {zdb_rid}. Click next to continue with deployment of the minio container"
 
     reservation_result = j.sal.reservation_chatflow.reservation_wait(bot, zdb_rid)
+    bot.md_show(res)
 
     # read the IP address of the 0-db namespaces after they are deployed to be used in the creation of the minio container
     namespace_config = []
@@ -131,9 +150,9 @@ def chat(bot):
 
     entry_point = "/bin/entrypoint"
 
-    secret_env = {}
     minio_secret_encrypted = j.sal.zosv2.container.encrypt_secret(cont_node.node_id, user_form_data["Secret"])
-    secret_env.update({"SECRET_KEY": minio_secret_encrypted})
+    shards_encrypted = j.sal.zosv2.container.encrypt_secret(cont_node.node_id, ",".join(namespace_config))
+    secret_env = {"SHARDS": shards_encrypted, "SECRET_KEY": minio_secret_encrypted}
 
     # create container
     cont = j.sal.zosv2.container.create(
@@ -146,18 +165,30 @@ def chat(bot):
         cpu=user_form_data["CPU"],
         public_ipv6=True,
         memory=user_form_data["Memory"],
-        env={
-            "SHARDS": ",".join(namespace_config),
-            "DATA": str(data_number.value),
-            "PARITY": str(parity.value),
-            "ACCESS_KEY": user_form_data["Access key"],
-        },
+        env={"DATA": str(data_number.value), "PARITY": str(parity.value), "ACCESS_KEY": user_form_data["Access key"]},
         secret_env=secret_env,
     )
 
     j.sal.zosv2.volume.attach_existing(container=cont, volume_id=f"{zdb_rid}-{volume.workload_id}", mount_point="/data")
 
-    resv_id = j.sal.reservation_chatflow.reservation_register(reservation, expiration, customer_tid=identity.id)
+    res = j.sal.reservation_chatflow.solution_model_get(
+        user_form_data["Solution name"], "tfgrid.solutions.minio.1", user_form_data
+    )
+    reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res)
+    reservation_create = j.sal.reservation_chatflow.reservation_register(
+        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
+    )
+    resv_id = reservation_create.reservation_id
+    payment = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
+    if payment["free"]:
+        pass
+    elif payment["wallet"]:
+        j.sal.zosv2.billing.payout_farmers(payment["wallet"], reservation_create)
+        j.sal.reservation_chatflow.payment_wait(bot, resv_id, threebot_app=False)
+    else:
+        j.sal.reservation_chatflow.payment_wait(
+            bot, resv_id, threebot_app=True, reservation_create_resp=reservation_create
+        )
 
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_save(

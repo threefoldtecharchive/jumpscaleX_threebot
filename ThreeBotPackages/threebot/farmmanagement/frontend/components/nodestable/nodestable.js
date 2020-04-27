@@ -36,32 +36,19 @@ module.exports = new Promise(async (resolve, reject) => {
         },
         computed: {
             ...vuex.mapGetters("farmmanagement", [
-                "registeredNodes",
-                "registeredFarms",
+                "farms",
                 "nodes"
             ]),
             // Parse nodelist to table format here
             parsedNodesList: function () {
-                const nodeList = this.nodes ? this.nodes : this.registeredNodes
-                const parsedNodes = nodeList.filter(node => this.showNode(node)).map(node => {
-                    const farm = find(this.registeredFarms, farmer => {
-                        return farmer.id === node.farm_id
-                    })
+                const nodeList = this.nodes
 
-                    // initialize farmer name with farmer_id from node in case farmer is not found
-                    let farmer = {
-                        id: node.farm_id,
-                        name: ''
-                    }
-                    if (farm) {
-                        farmer.name = farm.name
-                    }
-
+                const parsedNodes = nodeList.map(node => {
                     return {
                         uptime: moment.duration(node.uptime, 'seconds').format(),
                         version: node.os_version,
                         id: node.node_id,
-                        farmer: farmer,
+                        farmer: this.farmselected,
                         name: 'node ' + node.node_id,
                         totalResources: node.total_resources,
                         reservedResources: node.reserved_resources,
@@ -76,15 +63,7 @@ module.exports = new Promise(async (resolve, reject) => {
                 return parsedNodes
             },
         },
-        mounted() {
-            this.resetNodes()
-            this.getRegisteredNodes()
-        },
         methods: {
-            ...vuex.mapActions("farmmanagement", [
-                "getRegisteredNodes",
-                "resetNodes"
-            ]),
             getStatus(node) {
                 const { updated } = node;
                 const startTime = moment();
@@ -96,16 +75,6 @@ module.exports = new Promise(async (resolve, reject) => {
                 else if (16 < minutes && minutes < 20)
                     return { color: "orange", status: "likely down" };
                 else return { color: "red", status: "down" };
-            },
-            showNode(node) {
-                if (this.farmselected && this.farmselected.id !== node.farm_id) {
-                    return false
-                }
-                if (!this.showOffline && this.getStatus(node)['status'] === 'down') {
-                    return false
-                }
-
-                return true
             },
             truncateString(str) {
                 str = str.toString();

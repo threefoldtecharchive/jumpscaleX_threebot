@@ -22,7 +22,9 @@ export default class TopView extends JetView {
 					cols: [{
 						$subview: "dash.processes"
 					},
-					{ $subview: "dash.runningPorts" }]
+					{ $subview: "dash.processesList" },
+					{ $subview: "dash.runningPorts" }
+				]
 				},
 			]
 		};
