@@ -33,24 +33,11 @@ def chat(bot):
                 Just upload the file with the key"""
         ).split("\n")[0]
 
-    user_form_data["Env variables"] = bot.string_ask(
-        """To set environment variables on your deployed container, enter comma-separated variable=value
-        For example: var1=value1, var2=value2.
-        Leave empty if not needed"""
-    )
-
     expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
     user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
     expiration = j.data.time.epoch + expirationdelta
 
-    var_list = user_form_data["Env variables"].split(",")
-    var_dict = {}
-    for item in var_list:
-        splitted_item = item.split("=")
-        if len(splitted_item) == 2:
-            var_dict[splitted_item[0]] = splitted_item[1]
-
-    var_dict.update({"pub_key": user_form_data["Public key"]})
+    var_dict = {"pub_key": user_form_data["Public key"]}
     query = {"mru": math.ceil(memory.value / 1024), "cru": cpu.value, "sru": 1}
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
