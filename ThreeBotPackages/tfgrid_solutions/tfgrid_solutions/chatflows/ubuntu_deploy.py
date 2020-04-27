@@ -10,7 +10,9 @@ def chat(bot):
     HUB_URL = "https://hub.grid.tf/tf-bootable"
     IMAGES = ["ubuntu:16.04", "ubuntu:18.04"]
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.ubuntu.1")
+    user_form_data["chatflow"] = "ubuntu"
 
+    not_needed_in_metadata = ["CPU", "Memory", "Public key", "Env variables", "IP Address"]
     identity = j.sal.reservation_chatflow.validate_user(user_info)
     bot.md_show("This wizard wil help you deploy an ubuntu container")
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
@@ -92,6 +94,14 @@ def chat(bot):
         memory=user_form_data["Memory"],
     )
 
+    metadata = user_form_data.copy()
+    for key in not_needed_in_metadata:
+        metadata.pop(key)
+
+    res = j.sal.reservation_chatflow.solution_model_get(
+        user_form_data["Solution name"], "tfgrid.solutions.ubuntu.1", metadata
+    )
+    reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res, identity.pubkey)
     reservation_create = j.sal.reservation_chatflow.reservation_register(
         reservation, expiration, customer_tid=identity.id, currency=currency
     )

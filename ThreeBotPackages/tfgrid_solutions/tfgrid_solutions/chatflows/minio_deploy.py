@@ -9,6 +9,7 @@ def chat(bot):
     user_form_data = {}
     user_info = bot.user_info()
     name = user_info["username"]
+    user_form_data["chatflow"] = "minio"
     flist_url = "https://hub.grid.tf/tf-official-apps/minio-2020-01-25T02-50-51Z.flist"
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.minio.1")
 
@@ -165,6 +166,10 @@ def chat(bot):
 
     j.sal.zosv2.volume.attach_existing(container=cont, volume_id=f"{zdb_rid}-{volume.workload_id}", mount_point="/data")
 
+    res = j.sal.reservation_chatflow.solution_model_get(
+        user_form_data["Solution name"], "tfgrid.solutions.minio.1", user_form_data
+    )
+    reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res, identity.pubkey)
     reservation_create = j.sal.reservation_chatflow.reservation_register(
         reservation, expiration, customer_tid=identity.id, currency=currency
     )
