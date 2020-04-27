@@ -51,7 +51,7 @@ def chat(bot):
             var_dict[splitted_item[0]] = splitted_item[1]
 
     var_dict.update({"pub_key": user_form_data["Public key"]})
-    query = {"mru": math.ceil(memory.value / 1024), "cru": cpu.value, "sru": 1, "currency": currency}
+    query = {"mru": math.ceil(memory.value / 1024), "cru": cpu.value, "sru": 1}
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
     nodeid = bot.string_ask(
@@ -59,11 +59,13 @@ def chat(bot):
     )
     while nodeid:
         try:
-            node_selected = j.sal.reservation_chatflow.validate_node(nodeid, query)
+            node_selected = j.sal.reservation_chatflow.validate_node(nodeid, query, currency)
             break
         except (j.exceptions.Value, j.exceptions.NotFound) as e:
-            nodeid = bot.string_ask(str(e))
+            message = "<br> Please enter a different nodeid to deploy on or leave it empty"
+            nodeid = bot.string_ask(str(e) + message)
 
+    query["currency"] = currency
     if not nodeid:
         node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
     network.add_node(node_selected)
