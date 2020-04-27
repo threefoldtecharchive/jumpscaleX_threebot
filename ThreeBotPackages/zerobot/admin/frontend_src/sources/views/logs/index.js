@@ -79,7 +79,7 @@ export default class LogsView extends JetView {
         webix.ui({
             view: "contextmenu",
             id: "logs_cm",
-            data: ["Kill"]
+            data: ["Delete"]
         }).attachTo(self.appLogs);
 
         webix.extend(self.appLogs, webix.ProgressBar);
@@ -92,7 +92,7 @@ export default class LogsView extends JetView {
         });
 
         $$("logs_cm").attachEvent("onMenuItemClick", function (id) {
-            if (id == "Kill") {
+            if (id == "Delete") {
                 self.deleteSelected(self.appLogs.getSelectedId(true));
             }
         });

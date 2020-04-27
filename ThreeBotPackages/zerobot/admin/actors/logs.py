@@ -153,4 +153,4 @@ class logs(j.baseclasses.threebot_actor):
         if status:
             return j.data.serializers.json.dumps("success")
         else:
-            return j.data.serializers.json.dumps("failed")
+            raise ValueError("Can not delete")

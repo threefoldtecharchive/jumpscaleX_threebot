@@ -10,6 +10,20 @@ class myjobs(j.baseclasses.threebot_actor):
         self.job_model = j.servers.myjobs.jobs._model
         self.action_model = j.servers.myjobs.model_action
         self.worker_model = j.servers.myjobs.workers._model
+        self.client = j.clients.logger.get("logs_actor")
+
+    def with_formatted_traceback(self, job):
+        """return a dict with formatted traceback for any given job
+
+        :param job: job object
+        :return: dict with job info
+        :rtype: dict
+        """
+        if not job['traceback']:
+            return job
+
+        job["formatted"] = j.core.tools.traceback_format(job['traceback'])
+        return job
 
     @j.baseclasses.actor_method
     def list_workers(self, schema_out=None, user_session=None):
@@ -35,10 +49,12 @@ class myjobs(j.baseclasses.threebot_actor):
             job_dict = job_obj._ddict
             try:
                 job_dict["state"] = JOB_STATES[job_dict["state"]]
-                job_dict["args"] = str(job_dict["args"])
+                job_dict["args"] = str(job_dict.get("args", ""))
                 job_dict["kwargs"] = str(job_dict["kwargs"])
                 job_dict["result"] = str(job_dict["result"])
-                job_dict["error"] = str(job_dict["error"])
+                job_dict["error"] = self.with_formatted_traceback(job_dict["error"])
+                if job_dict["error"]["processid"]:
+                    job_dict['logs'] = self.client.find(processid=job_dict["error"]["processid"])
             except Exception as e:
                 print(e)
             try:

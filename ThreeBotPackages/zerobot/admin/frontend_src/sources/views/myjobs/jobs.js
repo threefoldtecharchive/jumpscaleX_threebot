@@ -86,23 +86,7 @@ export default class JobsView extends JetView {
         self.jobTable.attachEvent("onItemDblClick", function () {
             let id = self.jobTable.getSelectedId()
             let item = self.jobTable.getItem(id)
-            let jobData = {
-                'action_id':item['action_id'],
-                'debug':item['debug'].toString(),
-                'die':item['die'].toString(),
-                'error':item['error']['message'],
-                'error_cat':item['error_cat'],
-                'category':item['category'] ? item['category']:'No Category',
-                'result':JSON.stringify(item['result']),
-                'name':item['name'],
-                'state':item['state'],
-                'kwargs':JSON.stringify(item['kwargs']),
-                'time_stop':dateFormatter(item['time_stop']),
-                'time_start':dateFormatter(item['time_start']),
-                'timeout':item['timeout'],
-                'dependencies':item['dependencies']
-            }
-            self.jobDetailsView.showJobDetails(jobData);
+            self.jobDetailsView.showJobDetails(item);
         });
     }
 }
