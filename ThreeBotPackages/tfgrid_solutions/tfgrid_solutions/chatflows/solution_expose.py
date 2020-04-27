@@ -94,7 +94,6 @@ def chat(bot):
         entrypoint=entrypoint,
         secret_env=secret_env,
     )
-    j.debug()
     reservation_create = j.sal.reservation_chatflow.reservation_register(
         reservation, expiration, customer_tid=identity.id, currency=currency
     )
