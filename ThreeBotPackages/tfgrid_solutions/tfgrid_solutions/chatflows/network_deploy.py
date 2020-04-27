@@ -30,7 +30,7 @@ def chat(bot):
     ip_range = j.sal.reservation_chatflow.ip_range_get(bot)
     res = j.sal.reservation_chatflow.solution_model_get(network_name, "tfgrid.solutions.network.1", user_form_data)
 
-    reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res, identity.pubkey)
+    reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res)
     # Check if reservation failed
     while True:
         config = j.sal.reservation_chatflow.network_create(

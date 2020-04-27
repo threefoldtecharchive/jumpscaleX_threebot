@@ -169,7 +169,7 @@ def chat(bot):
     res = j.sal.reservation_chatflow.solution_model_get(
         user_form_data["Solution name"], "tfgrid.solutions.minio.1", user_form_data
     )
-    reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res, identity.pubkey)
+    reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res)
     reservation_create = j.sal.reservation_chatflow.reservation_register(
         reservation, expiration, customer_tid=identity.id, currency=currency
     )
