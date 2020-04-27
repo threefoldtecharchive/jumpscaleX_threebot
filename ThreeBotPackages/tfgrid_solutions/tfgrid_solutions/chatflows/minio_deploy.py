@@ -126,7 +126,11 @@ def chat(bot):
     wallet = j.sal.reservation_chatflow.payments_show(bot, zdb_reservation_create)
     if wallet:
         j.sal.zosv2.billing.payout_farmers(wallet, zdb_reservation_create)
-    j.sal.reservation_chatflow.payment_wait(bot, zdb_rid)
+        j.sal.reservation_chatflow.payment_wait(bot, zdb_rid, threebot_app=False)
+    else:
+        j.sal.reservation_chatflow.payment_wait(
+            bot, zdb_rid, threebot_app=True, reservation_create_resp=zdb_reservation_create
+        )
 
     res = (
         f"# Database has been deployed with reservation id: {zdb_rid}. Click next to continue with deployment of minio"
@@ -172,8 +176,11 @@ def chat(bot):
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
     if wallet:
         j.sal.zosv2.billing.payout_farmers(wallet, reservation_create)
-
-    j.sal.reservation_chatflow.payment_wait(bot, resv_id)
+        j.sal.reservation_chatflow.payment_wait(bot, resv_id, threebot_app=False)
+    else:
+        j.sal.reservation_chatflow.payment_wait(
+            bot, resv_id, threebot_app=True, reservation_create_resp=reservation_create
+        )
 
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_save(

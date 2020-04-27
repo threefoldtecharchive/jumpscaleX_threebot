@@ -111,8 +111,10 @@ def chat(bot):
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
     if wallet:
         j.sal.zosv2.billing.payout_farmers(wallet, reservation_create)
+        j.sal.reservation_chatflow.payment_wait(bot, rid, threebot_app=False)
+    else:
+        j.sal.reservation_chatflow.payment_wait(bot, rid, threebot_app=True, reservation_create_resp=reservation_create)
 
-    j.sal.reservation_chatflow.payment_wait(bot, rid)
     j.sal.reservation_chatflow.reservation_wait(bot, rid)
 
     # create container
@@ -141,8 +143,12 @@ def chat(bot):
     wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
     if wallet:
         j.sal.zosv2.billing.payout_farmers(wallet, reservation_create)
+        j.sal.reservation_chatflow.payment_wait(bot, resv_id, threebot_app=False)
+    else:
+        j.sal.reservation_chatflow.payment_wait(
+            bot, resv_id, threebot_app=True, reservation_create_resp=reservation_create
+        )
 
-    j.sal.reservation_chatflow.payment_wait(bot, rid)
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
     res = f"""
         # reservation sent. ID: {resv_id}
