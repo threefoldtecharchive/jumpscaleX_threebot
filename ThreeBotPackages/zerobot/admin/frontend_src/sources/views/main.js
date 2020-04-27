@@ -101,6 +101,12 @@ export default class TopView extends JetView {
             }, {
                 id: "k8s_cluster",
                 value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes cluster</span>'
+            }, {
+                id: "domain_delegation",
+                value: '<span>Domain delagation</span>'
+            }, {
+                id: "solution_expose",
+                value: '<span>Solution expose</span>'
             }
             ]
         },
@@ -246,6 +252,8 @@ export default class TopView extends JetView {
                 minio: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=minio_deploy",
                 k8s_cluster: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=kubernetes_cluster_deploy",
                 threebot: "solutions.chatflow?author=tfgrid&package=threebot_provisioning&chat=threebot_reservation",
+                domain_delegation: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=domain_delegation",
+                solution_expose: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=solution_expose",
             }
         });
 
