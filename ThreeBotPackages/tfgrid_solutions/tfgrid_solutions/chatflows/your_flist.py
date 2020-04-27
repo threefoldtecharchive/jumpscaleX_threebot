@@ -11,15 +11,6 @@ def chat(bot):
     user_form_data["chatflow"] = "flist"
     env = dict()
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.flist.1")
-    not_needed_in_metadata = [
-        "CPU",
-        "Memory",
-        "Env variables",
-        "IP Address",
-        "Flist link",
-        "Interactive",
-        "Entry point",
-    ]
     identity = j.sal.reservation_chatflow.validate_user(user_info)
     bot.md_show("This wizard will help you deploy a container using any flist provided")
     network = j.sal.reservation_chatflow.network_select(bot, identity.id)
@@ -116,9 +107,10 @@ def chat(bot):
         cpu=user_form_data["CPU"],
         memory=user_form_data["Memory"],
     )
-    metadata = user_form_data.copy()
-    for key in not_needed_in_metadata:
-        metadata.pop(key)
+    metadata = dict()
+    metadata["chatflow"] = user_form_data["chatflow"]
+    metadata["Solution name"] = user_form_data["Solution name"]
+    metadata["Solution expiration"] = user_form_data["Solution expiration"]
 
     res = j.sal.reservation_chatflow.solution_model_get(
         user_form_data["Solution name"], "tfgrid.solutions.flist.1", metadata
