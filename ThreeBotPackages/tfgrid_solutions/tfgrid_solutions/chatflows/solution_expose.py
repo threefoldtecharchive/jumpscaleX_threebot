@@ -20,6 +20,7 @@ ports = {
 def chat(bot):
     user_form_data = {}
     user_info = bot.user_info()
+    reservation = j.sal.zosv2.reservation_create()
     identity = j.sal.reservation_chatflow.validate_user(user_info)
     kind = bot.single_choice(
         "Please choose the solution type", list(kinds.keys())
@@ -35,7 +36,6 @@ def chat(bot):
     )
     solution = sols[solution_name]
     user_form_data["solution_name"] = solution_name
-    domain = bot.string_ask("Please specify the domain name you wish to bind to")
 
     expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
     expiration = j.data.time.epoch + expirationdelta
@@ -62,6 +62,17 @@ def chat(bot):
     )
     gateway = gateways[gateway_id]
 
+    domain_type = bot.single_choice(
+        "Which type of domain you whish to bind to", ["sub", "delegate"]
+    )
+    if domain_type == "sub":
+        base_domain = f"{j.me.tname.replace('3bot', '')}{j.core.myenv.config.get('THREEBOT_DOMAIN')}"
+        domain = bot.string_ask(
+            f"Please specify the sub domain name you wish to bind to will be (subdomain).{base_domain}"
+        )
+        domain = domain + "." + base_domain
+    elif domain_type == "delegate":
+        domain = bot.string_ask("Please specify the domain name you wish to bind to")
 
     secret_env = {}
     port = ports.get(kind)
@@ -74,7 +85,6 @@ def chat(bot):
     secret_env["SECRET"] = secret_encrypted
     entrypoint = f"/bin/trc -local {container_address}:{port} -remote {gateway.dns_nameserver[0]}"
 
-    reservation = j.sal.zosv2.reservation_create()
     j.sal.zosv2.container.create(
         reservation=reservation,
         node_id=node_selected.node_id,
@@ -84,7 +94,7 @@ def chat(bot):
         entrypoint=entrypoint,
         secret_env=secret_env,
     )
-
+    j.debug()
     reservation_create = j.sal.reservation_chatflow.reservation_register(
         reservation, expiration, customer_tid=identity.id, currency=currency
     )
