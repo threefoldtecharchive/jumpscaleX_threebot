@@ -1,5 +1,4 @@
 from Jumpscale import j
-import json
 
 
 class wallet(j.baseclasses.threebot_actor):
@@ -16,7 +15,11 @@ class wallet(j.baseclasses.threebot_actor):
             raise ValueError("Name already exists")
         wallet = j.clients.stellar.new(name=name, network=wallettype)
 
-        wallet.activate_through_threefold_service()
+        try:
+            wallet.activate_through_threefold_service()
+        except Exception:
+            wallet.delete()
+            raise
         wallet.add_known_trustline("TFT")
         wallet.add_known_trustline("FreeTFT")
 
