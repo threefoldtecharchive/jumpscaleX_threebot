@@ -1,5 +1,6 @@
 from Jumpscale import j
 
+
 def chat(bot):
     """
     """
@@ -19,18 +20,14 @@ def chat(bot):
         continent = g.location.continent if g.location.continent else "Unkown"
         gw_ask_list.append(f"id: {g.node_id} Continent: {continent} City: {city} Country: {country}")
 
-    gateway = bot.single_choice(
-        "Please choose a gateway", list(gw_ask_list)
-    )
+    gateway = bot.single_choice("Please choose a gateway", list(gw_ask_list))
     user_form_data["gateway"] = gateway
     gateway_id = gateway.split()[1]
     expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
     expiration = j.data.time.epoch + expirationdelta
     user_form_data["expiration"] = expiration
 
-    currency = bot.single_choice(
-        "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"]
-    )
+    currency = bot.single_choice("Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"])
     if not currency:
         currency = "TFT"
     user_form_data["currency"] = currency
@@ -41,20 +38,37 @@ def chat(bot):
 
     reservation = j.sal.zosv2.reservation_create()
     j.sal.zosv2.gateway.delegate_domain(reservation=reservation, node_id=gateway_id, domain=domain)
+
     reservation_create = j.sal.reservation_chatflow.reservation_register(
         reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
     resv_id = reservation_create.reservation_id
-    wallet = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
-    if wallet:
-        j.sal.zosv2.billing.payout_farmers(wallet, reservation_create)
+    payment = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
+    if payment["free"]:
+        pass
+    elif payment["wallet"]:
+        j.sal.zosv2.billing.payout_farmers(payment["wallet"], reservation_create)
+        j.sal.reservation_chatflow.payment_wait(bot, resv_id, threebot_app=False)
+    else:
+        j.sal.reservation_chatflow.payment_wait(
+            bot, resv_id, threebot_app=True, reservation_create_resp=reservation_create
+        )
+
+    j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
 
     j.sal.reservation_chatflow.reservation_save(
         resv_id, f"tcprouter:{resv_id}", "tfgrid.solutions.flist.1", user_form_data
     )
     new_domain.save()
-    res = f"""
-    # r eservation id: {reservation.id}
-    # Please create an NS record in your dns manager for domain: {domain} nameserver: {gateways[gateway_id].dns_nameserver}
+    res = """\
+    # Delegated your domain successfully
+
+    Reservation id: {{reservation.id}}
+
+    Please create an `NS` record in your dns manager for domain: `{{domain}}` pointing to:
+    {% for dns in gateway.dns_nameserver -%}
+    - {{dns}}
+    {% endfor %}
     """
-    bot.md_show(res)
+    res = j.tools.jinja2.template_render(text=res, gateway=gateways[gateway_id], domain=domain, reservation=reservation)
+    bot.md_show(j.core.text.strip(res))
