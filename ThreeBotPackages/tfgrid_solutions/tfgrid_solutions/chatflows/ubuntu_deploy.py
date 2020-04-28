@@ -91,22 +91,10 @@ def chat(bot):
         user_form_data["Solution name"], "tfgrid.solutions.ubuntu.1", metadata
     )
     reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res)
-    reservation_create = j.sal.reservation_chatflow.reservation_register(
+    resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
         reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
-    resv_id = reservation_create.reservation_id
-    payment = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
-    if payment["free"]:
-        pass
-    elif payment["wallet"]:
-        j.sal.zosv2.billing.payout_farmers(payment["wallet"], reservation_create)
-        j.sal.reservation_chatflow.payment_wait(bot, resv_id, threebot_app=False)
-    else:
-        j.sal.reservation_chatflow.payment_wait(
-            bot, resv_id, threebot_app=True, reservation_create_resp=reservation_create
-        )
 
-    j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_save(
         resv_id, user_form_data["Solution name"], "tfgrid.solutions.ubuntu.1", user_form_data
     )

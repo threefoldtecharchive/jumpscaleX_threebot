@@ -45,22 +45,9 @@ def chat(bot):
     reservation = j.sal.zosv2.reservation_create()
     j.sal.zosv2.gateway.delegate_domain(reservation=reservation, node_id=gateway_id, domain=domain)
 
-    reservation_create = j.sal.reservation_chatflow.reservation_register(
+    resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
         reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
-    resv_id = reservation_create.reservation_id
-    payment = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
-    if payment["free"]:
-        pass
-    elif payment["wallet"]:
-        j.sal.zosv2.billing.payout_farmers(payment["wallet"], reservation_create)
-        j.sal.reservation_chatflow.payment_wait(bot, resv_id, threebot_app=False)
-    else:
-        j.sal.reservation_chatflow.payment_wait(
-            bot, resv_id, threebot_app=True, reservation_create_resp=reservation_create
-        )
-
-    j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
 
     j.sal.reservation_chatflow.reservation_save(
         resv_id, f"tcprouter:{resv_id}", "tfgrid.solutions.flist.1", user_form_data
