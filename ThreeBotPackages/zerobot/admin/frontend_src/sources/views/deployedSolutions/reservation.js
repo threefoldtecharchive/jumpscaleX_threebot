@@ -50,6 +50,22 @@ export default class ReservationView extends JetView {
                         {
                             id:"formInfo",
                             view:"datatable",
+                            on: {
+                                onAfterRender: function() {
+                                    var workloads = ["networks", "zdbs", "volumes", "containers", "kubernetes"];
+                                    for (var index = 0; index < workloads.length; index++) {
+                                        var item = workloads[index];
+                                        var selector = ".webix_item_tab[button_id='" + item  + "']";
+                                        var tab = document.querySelector(selector);
+                                        if (tab) {
+                                            var data = $$(item);
+                                            if (data) {
+                                                tab.style.display = data.count() == 0 ? "none": "";
+                                            }
+                                        }
+                                    }
+                                }
+                            },
                             resizeColumn: true,
                             scroll: "xy",
 
