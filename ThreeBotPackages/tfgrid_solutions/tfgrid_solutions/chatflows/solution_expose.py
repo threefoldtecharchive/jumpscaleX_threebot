@@ -36,9 +36,30 @@ def chat(bot):
     user_form_data["expiration"] = expiration
     reservation_data = j.data.serializers.json.loads(solution["reservation"])["data_reservation"]
 
+    gateways = {g.node_id: g for g in j.sal.zosv2._explorer.gateway.list()}
+
+    domain_type = bot.single_choice("Which type of domain you wish to bind to", ["sub", "delegate"])
+    if domain_type == "sub":
+        base_domain = f"{j.me.tname.replace('3bot', '')}{j.core.myenv.config.get('THREEBOT_DOMAIN')}"
+        domain = bot.string_ask(
+            f"Please specify the sub domain name you wish to bind to will be (subdomain).{base_domain}"
+        )
+        domain = domain + "." + base_domain
+        gateway_id = bot.single_choice("Please choose a gateway", list(gateways.keys()))
+        gateway = gateways[gateway_id]
+    elif domain_type == "delegate":
+        url = "tfgrid.domains.delegate.1"
+        model = j.clients.bcdbmodel.get(url=url, name="tfgrid_solutions")
+        domains = model.find()
+        domains_dict = {d.domain: d for d in domains}
+        domain = bot.single_choice("Please choose the domain you wish to bind", list(domains_dict.keys()))
+        domain_obj = domains_dict[domain]
+        gateway = domain_obj.gateway
+        gateway_id = gateway.node_id
+
     # create a container with tcprouter flist
     currency = reservation_data["currencies"][0]
-    query = {"mru": 1, "cru": 1, "sru": 1, "currency": currency}
+    query = {"mru": 1, "cru": 1, "currency": currency, "free_to_use": gateway.free_to_use}
 
     node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
     network_name = reservation_data["containers"][0]["network_connection"][0]["network_id"]
@@ -49,28 +70,8 @@ def chat(bot):
     network.update(identity.id, currency=currency)
     ip_address = network.ask_ip_from_node(node_selected, "Please choose IP Address for your solution")
     user_form_data["ip"] = ip_address
-
-    gateways = {g.node_id: g for g in j.sal.zosv2._explorer.gateway.list()}
-
-    domain_type = bot.single_choice("Which type of domain you whish to bind to", ["sub", "delegate"])
     if domain_type == "sub":
-        base_domain = f"{j.me.tname.replace('3bot', '')}{j.core.myenv.config.get('THREEBOT_DOMAIN')}"
-        domain = bot.string_ask(
-            f"Please specify the sub domain name you wish to bind to will be (subdomain).{base_domain}"
-        )
-        domain = domain + "." + base_domain
-        gateway_id = bot.single_choice("Please choose a gateway", list(gateways.keys()))
-        gateway = gateways[gateway_id]
         j.sal.zosv2.gateway.sub_domain(reservation, gateway_id, domain, [ip_address])
-    elif domain_type == "delegate":
-        url = "tfgrid.domains.delegate.1"
-        model = j.clients.bcdbmodel.get(url=url, name="tfgrid_solutions")
-        domains = model.find()
-        domains_dict = {d.domain: d for d in domains}
-        domain = bot.single_choice("Please choose the domain you wish to bind", list(domains_dict.keys()))
-        domain_obj = domains_dict[domain]
-        gateway = domain_obj.gateway
-        gateway_id = gateway.node_id
 
     secret_env = {}
     port = ports.get(kind)
