@@ -69,7 +69,7 @@ export default class WalletDetailsView extends JetView {
 
         var balances = "";
         for (var i in data.balances) {
-            balances += `<br>${data.balances[i].balance} <b>${data.balances[i].asset_code}</b> ${data.balances[i].asset_issuer}`
+            balances += `<br>${data.balances[i].balance} <b>${data.balances[i].asset_code}</b>`
         }
         self.info.clearAll()
         self.info.add({
