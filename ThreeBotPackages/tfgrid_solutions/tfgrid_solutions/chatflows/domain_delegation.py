@@ -22,11 +22,11 @@ def chat(bot):
             currency = "FreeTFT"
         else:
             currency = "TFT"
-        gtext = f"ID: ({g.node_id}) Continent: ({continent}) City: ({city}) Country: ({country}) Currency: ({currency})"
+        gtext = f"Continent: ({continent}) Country: ({country}) City: ({city}) Currency: ({currency}) ID: ({g.node_id})"
         gw_ask_list.append(gtext)
 
     gateway = bot.single_choice("Please choose a gateway", list(gw_ask_list))
-    gateway_id = gateway.split()[1][1:-1]
+    gateway_id = gateway.split()[-1][1:-1]
     gateway = gateways[gateway_id]
     user_form_data["gateway"] = gateway_id
     expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
