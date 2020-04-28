@@ -19,6 +19,7 @@ def chat(bot):
         return
     currency = network.currency
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
+    farms = j.sal.reservation_chatflow.farms_select(bot)
     user_form_data["Version"] = bot.single_choice("Please choose ubuntu version", IMAGES)
 
     form = bot.new_form()
@@ -55,7 +56,7 @@ def chat(bot):
 
     query["currency"] = currency
     if not nodeid:
-        node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
+        node_selected = j.sal.reservation_chatflow.nodes_get(1, farm_names=farms, **query)[0]
     network.add_node(node_selected)
     ip_address = network.ask_ip_from_node(node_selected, "Please choose IP Address for your solution")
     user_form_data["IP Address"] = ip_address

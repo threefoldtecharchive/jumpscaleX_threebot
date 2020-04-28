@@ -19,6 +19,7 @@ def chat(bot):
     if not network:
         return
     currency = network.currency
+    farms = j.sal.reservation_chatflow.farms_select(bot)
 
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
 
@@ -85,14 +86,14 @@ def chat(bot):
         zdb_nodequery["hru"] = 10
 
     nodes_selected = j.sal.reservation_chatflow.nodes_get(
-        number_of_nodes=user_form_data["ZDB number"], farm_name="freefarm", **zdb_nodequery
+        number_of_nodes=user_form_data["ZDB number"], farm_names=farms, **zdb_nodequery
     )
 
     nodequery = {}
     nodequery["currency"] = currency
     nodequery["mru"] = math.ceil(memory.value / 1024)
     nodequery["cru"] = cpu.value
-    cont_node = j.sal.reservation_chatflow.nodes_get(number_of_nodes=1, farm_name="freefarm", **nodequery)[0]
+    cont_node = j.sal.reservation_chatflow.nodes_get(number_of_nodes=1, farm_names=farms, **nodequery)[0]
 
     for node_selected in nodes_selected:
         network.add_node(node_selected)
