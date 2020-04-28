@@ -82,7 +82,9 @@ def chat(bot):
     user_form_data["secret"] = secret
     secret_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, user_form_data["secret"])
     secret_env["TRC_SECRET"] = secret_encrypted
-    entrypoint = f"/bin/trc -local {container_address}:{port} -remote {gateway.dns_nameserver[0]}:{gateway.tcp_router_port}"
+    entrypoint = (
+        f"/bin/trc -local {container_address}:{port} -remote {gateway.dns_nameserver[0]}:{gateway.tcp_router_port}"
+    )
 
     j.sal.zosv2.container.create(
         reservation=reservation,
@@ -95,14 +97,10 @@ def chat(bot):
     )
     # create proxy
     j.sal.zosv2.gateway.tcp_proxy_reverse(reservation, gateway_id, domain, user_form_data["secret"])
-    reservation_create = j.sal.reservation_chatflow.reservation_register(
+    resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
         reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
-    resv_id = reservation_create.reservation_id
     user_form_data["rid"] = resv_id
-    payment = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
-    if payment["wallet"]:
-        j.sal.zosv2.billing.payout_farmers(payment["wallet"], reservation_create)
 
     j.sal.reservation_chatflow.reservation_save(
         resv_id, f"tcprouter:{resv_id}", "tfgrid.solutions.flist.1", user_form_data
