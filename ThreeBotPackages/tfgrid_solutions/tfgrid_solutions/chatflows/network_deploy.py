@@ -43,9 +43,8 @@ def chat(bot):
             currency=user_form_data["Currency"],
             bot=bot,
         )
-        j.sal.reservation_chatflow.reservation_pay(bot, config["reservation_create"])
         try:
-            j.sal.reservation_chatflow.reservation_wait(bot, config["rid"])
+            j.sal.reservation_chatflow.reservation_register_and_pay(config["reservation_create"], bot)
             break
         except StopChatFlow as e:
             if "wireguard listen port already in use" in e.msg:

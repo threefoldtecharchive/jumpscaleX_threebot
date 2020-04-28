@@ -91,13 +91,10 @@ def chat(bot):
         user_form_data["Solution name"], "tfgrid.solutions.ubuntu.1", metadata
     )
     reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res)
-    reservation_create = j.sal.reservation_chatflow.reservation_register(
+    resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
         reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
-    resv_id = reservation_create.reservation_id
 
-    j.sal.reservation_chatflow.reservation_pay(bot, reservation_create)
-    j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_save(
         resv_id, user_form_data["Solution name"], "tfgrid.solutions.ubuntu.1", user_form_data
     )
