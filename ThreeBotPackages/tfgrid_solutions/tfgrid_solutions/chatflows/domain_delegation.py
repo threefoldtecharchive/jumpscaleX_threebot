@@ -18,19 +18,25 @@ def chat(bot):
         city = g.location.city if g.location.city else "Unknown"
         country = g.location.country if g.location.country else "Unknown"
         continent = g.location.continent if g.location.continent else "Unkown"
-        gw_ask_list.append(f"id: {g.node_id} Continent: {continent} City: {city} Country: {country}")
+        if g.free_to_use:
+            currency = "FreeTFT"
+        else:
+            currency = "TFT"
+        gtext = f"ID: ({g.node_id}) Continent: ({continent}) City: ({city}) Country: ({country}) Currency: ({currency})"
+        gw_ask_list.append(gtext)
 
     gateway = bot.single_choice("Please choose a gateway", list(gw_ask_list))
-    user_form_data["gateway"] = gateway
-    gateway_id = gateway.split()[1]
+    gateway_id = gateway.split()[1][1:-1]
+    gateway = gateways[gateway_id]
+    user_form_data["gateway"] = gateway_id
     expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
     expiration = j.data.time.epoch + expirationdelta
     user_form_data["expiration"] = expiration
 
-    currency = bot.single_choice("Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"])
-    if not currency:
+    if gateway.free_to_use:
+        currency = "FreeTFT"
+    else:
         currency = "TFT"
-    user_form_data["currency"] = currency
 
     new_domain = model.new()
     new_domain.gateway = gateways[gateway_id]
