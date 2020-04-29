@@ -99,8 +99,19 @@ def chat(bot):
     reservation_data = j.data.serializers.json.loads(solution["reservation"])["data_reservation"]
     query = {"mru": 1, "cru": 1, "currency": currency, "free_to_use": domain_gateway.free_to_use}
     node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
-    network_name = reservation_data["containers"][0]["network_connection"][0]["network_id"]
-    container_address = reservation_data["containers"][0]["network_connection"][0]["ipaddress"]
+
+    if len(reservation_data["containers"][0]["network_connection"]) > 1:
+        # select network if container connected to multiple networks
+        network_addresses = {}
+        for con in reservation_data["containers"][0]["network_connection"]:
+            network_addresses[con["network_id"]] = con["ipaddress"]
+        network_name = bot.single_choice(
+            "Please choose on which network you wish to expose your solution", list(network_addresses.keys())
+        )
+        container_address = network_addresses[network_name]
+    else:
+        network_name = reservation_data["containers"][0]["network_connection"][0]["network_id"]
+        container_address = reservation_data["containers"][0]["network_connection"][0]["ipaddress"]
 
     network = j.sal.reservation_chatflow.network_get(bot, identity.id, network_name)
     network.add_node(node_selected)
