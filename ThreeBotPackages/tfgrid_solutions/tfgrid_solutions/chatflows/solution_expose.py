@@ -75,8 +75,7 @@ def chat(bot):
             f"Please specify the sub domain name you wish to bind to will be (subdomain).{domain_name}"
         )
         if "." in domain:
-            # TODO Implement exception message
-            raise Exception("Invalid")
+            raise j.exceptions.Value("Invalid Subdomain")
         domain = domain + "." + domain_name
 
     # use gateway currency
@@ -100,8 +99,7 @@ def chat(bot):
     network.update(identity.id, currency=currency)
     ip_address = network.get_free_ip(node_selected)
     if not ip_address:
-        # TODO Implement exception message
-        raise Exception("No available free ips")
+        raise j.exceptions.Value("No available free ips")
 
 
     secret = f"{identity.id}:{uuid.uuid4().hex}"
