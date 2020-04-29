@@ -1,5 +1,6 @@
 import { JetView } from "webix-jet";
 import { health } from "../../services/health";
+import { identity } from "../../services/identity";
 
 export default class JSXInfoView extends JetView {
     config() {
@@ -15,6 +16,19 @@ export default class JSXInfoView extends JetView {
                 <p><font size="3"><b>#key#: </b></font> <font size="3">#value#</font></p>
             `
         }
+        const botInfo = {
+            id: "botInfo",
+            responsive: true,
+            view: "list",
+            responsive: true,
+            height: 100,
+            type: {
+                height: 50,
+            },
+            template: `
+                <p><font size="3"><b>#key#: </b></font> <font size="3">#value#</font></p>
+            `
+        }
 
         return {
             type: "space",
@@ -22,6 +36,7 @@ export default class JSXInfoView extends JetView {
                 template: "<div style='width:auto;text-align:center'><h3>JSX Info<h3/></div>",
                 height: 50
             },
+                botInfo,
                 info
             ]
         }
@@ -31,11 +46,17 @@ export default class JSXInfoView extends JetView {
         const self = this;
 
         this.info = this.$$("jsxInfo");
-
+        this.botinfo = this.$$("botInfo");
         health.getIdentity().then(data => {
-            self.info.add({
-                key: "3bot",
+            self.botinfo.add({
+                key: "3bot name",
                 value: data.text()
+            })
+        })
+        identity.get_identity().then(data => {
+            self.botinfo.add({
+                key: "3bot id",
+                value: data.json().tid
             })
         })
 
@@ -45,10 +66,10 @@ export default class JSXInfoView extends JetView {
                 var ip = data[i].ip;
                 var ip6 = data[i].ip6.length ? data[i].ip6 : "Not set";
 
-                self.info.add({ 
+                self.info.add({
                     key: data[i].name,
                     value: `<br><b>IP: </b>${ip}<br><b>IPv6: </b>${ip6}`
-                })    
+                })
             }
         });
 

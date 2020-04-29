@@ -1,6 +1,5 @@
 from Jumpscale import j
 import math
-import nacl
 
 
 def chat(bot):
@@ -13,10 +12,10 @@ def chat(bot):
     flist_url = "https://hub.grid.tf/tf-official-apps/minio-2020-01-25T02-50-51Z.flist"
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.minio.1")
 
-    identity = j.sal.reservation_chatflow.validate_user(user_info)
+    j.sal.reservation_chatflow.validate_user(user_info)
 
     bot.md_show("# This wizard will help you deploy a minio cluster")
-    network = j.sal.reservation_chatflow.network_select(bot, identity.id)
+    network = j.sal.reservation_chatflow.network_select(bot, j.me.tid)
     if not network:
         return
     currency = network.currency
@@ -104,7 +103,7 @@ def chat(bot):
     ip_address = network.ask_ip_from_node(cont_node, "Please choose IP Address for your solution")
     bot.md_show_confirm(user_form_data)
 
-    network.update(identity.id, currency=currency, bot=bot)
+    network.update(j.me.tid, currency=currency, bot=bot)
     password = j.data.idgenerator.generateGUID()
 
     for node in nodes_selected:
@@ -121,7 +120,7 @@ def chat(bot):
 
     # register the reservation for zdb db
     zdb_rid = j.sal.reservation_chatflow.reservation_register_and_pay(
-        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
+        reservation, expiration, customer_tid=j.me.tid, currency=currency, bot=bot
     )
     res = f"# Database has been deployed with reservation id: {zdb_rid}. Click next to continue with deployment of the minio container"
 
@@ -164,7 +163,7 @@ def chat(bot):
     )
     reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res)
     resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
-        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
+        reservation, expiration, customer_tid=j.me.tid, currency=currency, bot=bot
     )
     j.sal.reservation_chatflow.reservation_save(
         resv_id, user_form_data["Solution name"], "tfgrid.solutions.minio.1", user_form_data

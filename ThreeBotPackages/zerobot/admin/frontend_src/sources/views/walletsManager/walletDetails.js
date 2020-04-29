@@ -18,8 +18,8 @@ export default class WalletDetailsView extends JetView {
             view: "window",
             head: "Wallet Details",
             modal: true,
-            width: 800,
-            height: 500,
+            width: window.innerWidth * .8,
+            height: window.innerHeight * .8,
             position: "center",
             body: {
                 rows: [

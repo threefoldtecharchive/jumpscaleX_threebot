@@ -9,7 +9,7 @@ def chat(bot):
     user_form_data = {}
     user_info = bot.user_info()
 
-    identity = j.sal.reservation_chatflow.validate_user(user_info)
+    j.sal.reservation_chatflow.validate_user(user_info)
     user_form_data["chatflow"] = "network"
     network_name = bot.string_ask("Please enter a network name")
     user_form_data["Currency"] = bot.single_choice(
@@ -37,7 +37,7 @@ def chat(bot):
             network_name,
             reservation,
             ip_range,
-            identity.id,
+            j.me.tid,
             ipversion,
             expiration=expiration,
             currency=user_form_data["Currency"],

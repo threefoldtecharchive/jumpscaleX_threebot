@@ -131,8 +131,8 @@ export default class JobDetailsView extends JetView {
             view: "window",
             head: "Job Details",
             modal: true,
-            width: 600,
-            height: 700,
+            width: window.innerWidth * .8,
+            height: window.innerHeight * .8,
             position: "center",
             body: {
                 rows: [

@@ -21,8 +21,8 @@ export default class WalletFormView extends JetView {
             view: "window",
             head: "Create new wallet",
             modal: true,
-            width: 600,
-            height: 400,
+            width: window.innerWidth * .8,
+            height: window.innerHeight * .8,
             position: "center",
             body: {
                 rows: [
