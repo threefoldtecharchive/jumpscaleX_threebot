@@ -21,10 +21,6 @@ def chat(bot):
     user_info = bot.user_info()
     j.sal.reservation_chatflow.validate_user(user_info)
     reservation = j.sal.zosv2.reservation_create()
-<<<<<<< HEAD
-=======
-    j.sal.reservation_chatflow.validate_user(user_info)
->>>>>>> development
     kind = bot.single_choice("Please choose the solution type", list(kinds.keys()))
     user_form_data["kind"] = kind
 
@@ -105,7 +101,6 @@ def chat(bot):
     query = {"mru": 1, "cru": 1, "currency": currency, "free_to_use": domain_gateway.free_to_use}
     node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
 
-<<<<<<< HEAD
     if kind == "kubernetes":
         network_name, container_address = j.sal.reservation_chatflow.gateway_get_kube_network_ip(reservation_data)
     else:
@@ -132,15 +127,6 @@ def chat(bot):
     ip_address = network.get_free_ip(node_selected)
     if not ip_address:
         raise j.exceptions.Value("No available free ips")
-=======
-    network = j.sal.reservation_chatflow.network_get(bot, j.me.tid, network_name)
-    network.add_node(node_selected)
-    network.update(j.me.tid, currency=currency)
-    ip_address = network.ask_ip_from_node(node_selected, "Please choose IP Address for your solution")
-    user_form_data["ip"] = ip_address
-    if domain_type == "sub":
-        j.sal.zosv2.gateway.sub_domain(reservation, gateway_id, domain, [ip_address])
->>>>>>> development
 
     secret = f"{j.me.tid}:{uuid.uuid4().hex}"
     user_form_data["secret"] = secret
