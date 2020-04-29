@@ -56,7 +56,7 @@ def chat(bot):
     {% endif %}
     {% endfor %}
     """
-    config = j.tools.jinja2.template_render(text=wgconfigtemplate, cfg=cfg, privatekey=privatekey.encode())
+    config = j.tools.jinja2.template_render(text=wgconfigtemplate, cfg=cfg, privatekey=privatekey.decode())
     config = j.core.text.strip(config)
 
     filename = "wg-{}.conf".format(resv_id)
