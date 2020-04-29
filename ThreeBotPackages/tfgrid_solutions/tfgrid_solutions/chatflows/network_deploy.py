@@ -9,7 +9,7 @@ def chat(bot):
     user_form_data = {}
     user_info = bot.user_info()
 
-    identity = j.sal.reservation_chatflow.validate_user(user_info)
+    j.sal.reservation_chatflow.validate_user(user_info)
     user_form_data["chatflow"] = "network"
     network_name = bot.string_ask("Please enter a network name")
     user_form_data["Currency"] = bot.single_choice(
@@ -37,24 +37,14 @@ def chat(bot):
             network_name,
             reservation,
             ip_range,
-            identity.id,
+            j.me.tid,
             ipversion,
             expiration=expiration,
             currency=user_form_data["Currency"],
             bot=bot,
         )
-        payment = j.sal.reservation_chatflow.payments_show(bot, config["reservation_create"])
-        if payment["free"]:
-            pass
-        elif payment["wallet"]:
-            j.sal.zosv2.billing.payout_farmers(payment["wallet"], config["reservation_create"])
-            j.sal.reservation_chatflow.payment_wait(bot, config["rid"], threebot_app=False)
-        else:
-            j.sal.reservation_chatflow.payment_wait(
-                bot, config["rid"], threebot_app=True, reservation_create_resp=config["reservation_create"]
-            )
         try:
-            j.sal.reservation_chatflow.reservation_wait(bot, config["rid"])
+            j.sal.reservation_chatflow.reservation_register_and_pay(config["reservation_create"], bot)
             break
         except StopChatFlow as e:
             if "wireguard listen port already in use" in e.msg:

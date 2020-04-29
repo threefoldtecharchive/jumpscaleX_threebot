@@ -80,8 +80,8 @@ export default class WorkerDetailsView extends JetView {
             view: "window",
             head: "Worker Details",
             modal: true,
-            width: 600,
-            height: 800,
+            width: window.innerWidth * .8,
+            height: window.innerHeight * .8,
             position: "center",
             body: {
                 rows: [

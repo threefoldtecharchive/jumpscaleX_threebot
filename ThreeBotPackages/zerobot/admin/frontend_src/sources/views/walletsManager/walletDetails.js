@@ -18,8 +18,8 @@ export default class WalletDetailsView extends JetView {
             view: "window",
             head: "Wallet Details",
             modal: true,
-            width: 800,
-            height: 500,
+            width: window.innerWidth * .8,
+            height: window.innerHeight * .8,
             position: "center",
             body: {
                 rows: [
@@ -69,7 +69,7 @@ export default class WalletDetailsView extends JetView {
 
         var balances = "";
         for (var i in data.balances) {
-            balances += `<br>${data.balances[i].balance} <b>${data.balances[i].asset_code}</b> ${data.balances[i].asset_issuer}`
+            balances += `<br>${data.balances[i].balance} <b>${data.balances[i].asset_code}</b>`
         }
         self.info.clearAll()
         self.info.add({

@@ -172,6 +172,51 @@ var singleChoiceGenerate = function (message, options, kwargs, idx) {
     return contents;
 }
 
+var multiListChoice = function (message, options, kwargs, idx) {
+    var options_list = []
+    var default_option = options[0]
+
+    options.forEach(element => {
+        const tempOpt = { label: element, value: element };
+        options_list.push(JSON.stringify(tempOpt));
+    });
+
+    let content = `
+    <div class="select-wrapper">
+        <h4>${message}</h4>
+        <span id="multiListChoice" class="autocomplete-select"></span>
+    </div>
+    <script>
+        var customIcon = document.createElement('img');
+        customIcon.src = '/staticchat/chat/img/remove.svg';
+        var autocomplete = new SelectPure(".autocomplete-select", {
+            options: [${options_list}],
+            value: ["${default_option}"],
+            multiple: true,
+            autocomplete: true,
+            icon: "fa fa-times",
+            onChange: value => {},
+            classNames: {
+              select: "select-pure__select",
+              dropdownShown: "select-pure__select--opened",
+              multiselect: "select-pure__select--multiple",
+              label: "select-pure__label",
+              placeholder: "select-pure__placeholder",
+              dropdown: "select-pure__options",
+              option: "select-pure__option",
+              autocompleteInput: "select-pure__autocomplete",
+              selectedLabel: "select-pure__selected-label",
+              selectedOption: "select-pure__option--selected",
+              placeholderHidden: "select-pure__placeholder--hidden",
+              optionHidden: "select-pure__option--hidden",
+            }
+          });
+    </script>
+
+    `
+    return content
+}
+
 var dropDownChoiceGenerate = function (message, options, kwargs, idx) {
     let choices = "";
     $.each(options, function (i, value) {
@@ -349,6 +394,9 @@ var generateSlide = function (message) {
             case "location_ask":
                 contents += locationContentGenerate(res['msg'], res['options'], res['kwargs'])
                 break;
+            case "multi_list_choice":
+                contents += multiListChoice(res['msg'], res['options'], res['kwargs'], i);
+                break;
         }
     }
     if (res['cat'] === "user_info") {
@@ -389,6 +437,9 @@ var generateSlide = function (message) {
                 $(`input[name='value_${idx}']:checked`).each(function () {
                     mvalues.push($(this).val());
                 });
+                value = JSON.stringify(mvalues);
+            } else if (res['cat'] === "multi_list_choice") {
+                let mvalues = document.getElementById("multiListChoice").innerText.split("\n");
                 value = JSON.stringify(mvalues);
             }
             // Validate the input

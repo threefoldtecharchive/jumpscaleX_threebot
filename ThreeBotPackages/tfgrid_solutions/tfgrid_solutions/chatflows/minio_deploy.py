@@ -1,6 +1,5 @@
 from Jumpscale import j
 import math
-import nacl
 
 
 def chat(bot):
@@ -13,13 +12,14 @@ def chat(bot):
     flist_url = "https://hub.grid.tf/tf-official-apps/minio-2020-01-25T02-50-51Z.flist"
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.minio.1")
 
-    identity = j.sal.reservation_chatflow.validate_user(user_info)
+    j.sal.reservation_chatflow.validate_user(user_info)
 
     bot.md_show("# This wizard will help you deploy a minio cluster")
-    network = j.sal.reservation_chatflow.network_select(bot, identity.id)
+    network = j.sal.reservation_chatflow.network_select(bot, j.me.tid)
     if not network:
         return
     currency = network.currency
+    farms = j.sal.reservation_chatflow.farms_select(bot)
 
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
 
@@ -86,14 +86,14 @@ def chat(bot):
         zdb_nodequery["hru"] = 10
 
     nodes_selected = j.sal.reservation_chatflow.nodes_get(
-        number_of_nodes=user_form_data["ZDB number"], farm_name="freefarm", **zdb_nodequery
+        number_of_nodes=user_form_data["ZDB number"], farm_names=farms, **zdb_nodequery
     )
 
     nodequery = {}
     nodequery["currency"] = currency
     nodequery["mru"] = math.ceil(memory.value / 1024)
     nodequery["cru"] = cpu.value
-    cont_node = j.sal.reservation_chatflow.nodes_get(number_of_nodes=1, farm_name="freefarm", **nodequery)[0]
+    cont_node = j.sal.reservation_chatflow.nodes_get(number_of_nodes=1, farm_names=farms, **nodequery)[0]
 
     for node_selected in nodes_selected:
         network.add_node(node_selected)
@@ -104,7 +104,7 @@ def chat(bot):
     ip_address = network.ask_ip_from_node(cont_node, "Please choose IP Address for your solution")
     bot.md_show_confirm(user_form_data)
 
-    network.update(identity.id, currency=currency, bot=bot)
+    network.update(j.me.tid, currency=currency, bot=bot)
     password = j.data.idgenerator.generateGUID()
 
     for node in nodes_selected:
@@ -120,21 +120,9 @@ def chat(bot):
     volume = j.sal.zosv2.volume.create(reservation, cont_node.node_id, size=10, type=user_form_data["Disk type"])
 
     # register the reservation for zdb db
-    zdb_reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
+    zdb_rid = j.sal.reservation_chatflow.reservation_register_and_pay(
+        reservation, expiration, customer_tid=j.me.tid, currency=currency, bot=bot
     )
-    zdb_rid = zdb_reservation_create.reservation_id
-    payment = j.sal.reservation_chatflow.payments_show(bot, zdb_reservation_create)
-    if payment["free"]:
-        pass
-    elif payment["wallet"]:
-        j.sal.zosv2.billing.payout_farmers(payment["wallet"], zdb_reservation_create)
-        j.sal.reservation_chatflow.payment_wait(bot, zdb_rid, threebot_app=False)
-    else:
-        j.sal.reservation_chatflow.payment_wait(
-            bot, zdb_rid, threebot_app=True, reservation_create_resp=zdb_reservation_create
-        )
-
     res = f"# Database has been deployed with reservation id: {zdb_rid}. Click next to continue with deployment of the minio container"
 
     reservation_result = j.sal.reservation_chatflow.reservation_wait(bot, zdb_rid)
@@ -175,22 +163,9 @@ def chat(bot):
         user_form_data["Solution name"], "tfgrid.solutions.minio.1", user_form_data
     )
     reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res)
-    reservation_create = j.sal.reservation_chatflow.reservation_register(
-        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
+    resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
+        reservation, expiration, customer_tid=j.me.tid, currency=currency, bot=bot
     )
-    resv_id = reservation_create.reservation_id
-    payment = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
-    if payment["free"]:
-        pass
-    elif payment["wallet"]:
-        j.sal.zosv2.billing.payout_farmers(payment["wallet"], reservation_create)
-        j.sal.reservation_chatflow.payment_wait(bot, resv_id, threebot_app=False)
-    else:
-        j.sal.reservation_chatflow.payment_wait(
-            bot, resv_id, threebot_app=True, reservation_create_resp=reservation_create
-        )
-
-    j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_save(
         resv_id, user_form_data["Solution name"], "tfgrid.solutions.minio.1", user_form_data
     )
