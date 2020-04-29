@@ -100,14 +100,19 @@ export default class TopView extends JetView {
                 value: '<span><img class="solutions-icon" src="static/img/minio.png"/>Minio / S3</span>'
             }, {
                 id: "k8s_cluster",
-                value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes cluster</span>'
+                value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes Cluster</span>'
             } , {
                 id: "domain_delegation",
-                value: '<span><img class="solutions-icon" src="static/img/dns.png"/>Domain delagation</span>'
+                value: 'Domain Delagation',
+                icon: 'mdi mdi-dns'
             }, {
                 id: "solution_expose",
                 value: 'Solution expose',
-                icon: 'mdi mdi-network'
+                icon: 'mdi mdi-wan'
+            }, {
+                id: "gateway_4to6",
+                value: '4 to 6 Gateway',
+                icon: 'mdi mdi-ip-network'
             }
             ]
         },
@@ -254,6 +259,7 @@ export default class TopView extends JetView {
                 k8s_cluster: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=kubernetes_cluster_deploy",
                 threebot: "solutions.chatflow?author=tfgrid&package=threebot_provisioning&chat=threebot_reservation",
                 domain_delegation: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=domain_delegation",
+                gateway_4to6: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=four_to_six_gateway",
                 solution_expose: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=solution_expose",
             }
         });
