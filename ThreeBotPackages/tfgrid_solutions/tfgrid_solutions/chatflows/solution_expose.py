@@ -58,10 +58,18 @@ def chat(bot):
     domain_type = temp[0].strip()
     if domain_type == "Crystal":
         domain = bot.string_ask(
-            f''' Warning: you will have to create an A record to point to the gateway you'll choose.
+            f''' Warning: you will have to create an cname record to point to the gateway you'll choose.
             Please specify the domain name you wish to bind to:'''
         )
         domain_gateway = j.sal.reservation_chatflow.gateway_select(bot)
+        res = """\
+    Please create an `CNAME` record in your dns manager for domain: `{{domain}}` pointing to:
+    {% for dns in gateway.dns_nameserver -%}
+    - {{dns}}
+    {% endfor %}
+    """
+        res = j.tools.jinja2.template_render(gateway=domain_gateway, domain=domain)
+        bot.md_show(res)
 
     else:
         domain_name = temp[-1].strip()
