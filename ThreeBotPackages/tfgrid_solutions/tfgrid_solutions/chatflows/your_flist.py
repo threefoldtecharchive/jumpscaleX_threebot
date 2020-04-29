@@ -11,9 +11,9 @@ def chat(bot):
     user_form_data["chatflow"] = "flist"
     env = dict()
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.flist.1")
-    identity = j.sal.reservation_chatflow.validate_user(user_info)
+    j.sal.reservation_chatflow.validate_user(user_info)
     bot.md_show("This wizard will help you deploy a container using any flist provided")
-    network = j.sal.reservation_chatflow.network_select(bot, identity.id)
+    network = j.sal.reservation_chatflow.network_select(bot, j.me.tid)
     if not network:
         return
     currency = network.currency
@@ -90,7 +90,7 @@ def chat(bot):
     bot.md_show_confirm(user_form_data)
 
     # update network
-    network.update(identity.id, currency=currency, bot=bot)
+    network.update(j.me.tid, currency=currency, bot=bot)
 
     # create container
     j.sal.zosv2.container.create(
@@ -117,7 +117,7 @@ def chat(bot):
     )
     reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res)
     resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
-        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
+        reservation, expiration, customer_tid=j.me.tid, currency=currency, bot=bot
     )
     j.sal.reservation_chatflow.reservation_save(
         resv_id, user_form_data["Solution name"], "tfgrid.solutions.flist.1", user_form_data
