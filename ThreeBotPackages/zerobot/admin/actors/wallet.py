@@ -22,6 +22,7 @@ class wallet(j.baseclasses.threebot_actor):
             raise
         wallet.add_known_trustline("TFT")
         wallet.add_known_trustline("FreeTFT")
+        wallet.add_known_trustline("TFTA")
 
         return j.data.serializers.json.dumps(wallet.address)
 
