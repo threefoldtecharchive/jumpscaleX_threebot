@@ -58,12 +58,12 @@ def chat(bot):
     domain_type = temp[0].strip()
     if domain_type == "Crystal":
         domain = bot.string_ask(
-            f''' Warning: you will have to create an cname record to point to the gateway you'll choose.
+            f''' Warning: you will have to create a cname record to point to the gateway you'll choose.
             Please specify the domain name you wish to bind to:'''
         )
         domain_gateway = j.sal.reservation_chatflow.gateway_select(bot)
         res = """\
-    Please create an `CNAME` record in your dns manager for domain: `{{domain}}` pointing to:
+    Please create a `CNAME` record in your dns manager for domain: `{{domain}}` pointing to:
     {% for dns in gateway.dns_nameserver -%}
     - {{dns}}
     {% endfor %}
@@ -80,10 +80,10 @@ def chat(bot):
             domain_obj = user_domains[domain_name]
             domain_gateway = gateways[domain_obj.node_id]
         domain = bot.string_ask(
-            f"Please specify the sub domain name you wish to bind to will be (subdomain).{domain_name}"
+            f"Please specify the sub domain name you wish to bind to. will be (subdomain).{domain_name}"
         )
         if "." in domain:
-            raise j.exceptions.Value("Invalid Subdomain")
+            raise j.exceptions.Value("Invalid Subdomain. you can't nest subdomains.")
         domain = domain + "." + domain_name
 
     # use gateway currency
@@ -91,7 +91,7 @@ def chat(bot):
     if domain_gateway.free_to_use:
         currency = "FreeTFT"
 
-    expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
+    expirationdelta = int(bot.time_delta_ask("Please enter gateway expiration time.", default="1d"))
     expiration = j.data.time.epoch + expirationdelta
     user_form_data["expiration"] = expiration
 
