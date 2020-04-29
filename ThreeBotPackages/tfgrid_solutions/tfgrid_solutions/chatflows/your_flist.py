@@ -17,6 +17,7 @@ def chat(bot):
     if not network:
         return
     currency = network.currency
+    farms = j.sal.reservation_chatflow.farms_select(bot)
 
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
     while True:
@@ -75,7 +76,7 @@ def chat(bot):
     hru = math.ceil(memory.value / 1024)
     cru = cpu.value
     sru = 1  # needed space for a container is 250MiB
-    node = j.sal.reservation_chatflow.nodes_get(1, hru=hru, cru=cru, sru=sru, currency=currency)[0]
+    node = j.sal.reservation_chatflow.nodes_get(1, farm_names=farms, hru=hru, cru=cru, sru=sru, currency=currency)[0]
     network.add_node(node)
     ip_address = network.ask_ip_from_node(node, "Please choose your IP Address for this solution")
     user_form_data["IP Address"] = ip_address

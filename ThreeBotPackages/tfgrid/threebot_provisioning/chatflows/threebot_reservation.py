@@ -35,6 +35,7 @@ def chat(bot):
     if not network:
         return
     currency = network.currency
+    farms = j.sal.reservation_chatflow.farms_select(bot)
 
     # ask user about corex user:password and ssh-key to give him full access to his container
     pub_key = None
@@ -53,7 +54,7 @@ def chat(bot):
 
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
-    node_selected = j.sal.reservation_chatflow.nodes_get(1, cru=4, sru=8, currency=currency)[0]
+    node_selected = j.sal.reservation_chatflow.nodes_get(1, farm_names=farms, cru=4, sru=8, currency=currency)[0]
     if not node_selected:
         res = "# We are sorry we don't have empty Node to deploy your 3bot"
         res = j.tools.jinja2.template_render(text=res, **locals())
