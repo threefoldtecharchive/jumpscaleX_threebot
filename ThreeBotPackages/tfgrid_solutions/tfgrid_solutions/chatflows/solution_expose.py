@@ -56,7 +56,7 @@ def chat(bot):
     )
     if chosen_domain == "Custom Domain":
         domain = bot.string_ask(
-            f''' Please specify the domain name you wish to bind to:'''
+            "Please specify the domain name you wish to bind to:"
         )
         domain_gateway = j.sal.reservation_chatflow.gateway_select(bot)
         res = """\
