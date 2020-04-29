@@ -1,8 +1,8 @@
 export function inputDialog(head, label, buttonLabel, callback) {
     const window = webix.ui({
         view: "window",
-        height: 200,
-        width: 300,
+        width: window.innerWidth * .8,
+        height: window.innerHeight * .8,
         modal: true,
         position: "center",
         head: head || "Input",

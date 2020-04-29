@@ -38,8 +38,8 @@ export default class WalletImportView extends JetView {
             view: "window",
             head: "Import wallet",
             modal: true,
-            width: 600,
-            height: 400,
+            width: window.innerWidth * .8,
+            height: window.innerHeight * .8,
             position: "center",
             body: {
                 rows: [
