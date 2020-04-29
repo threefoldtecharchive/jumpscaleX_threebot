@@ -19,8 +19,8 @@ ports = {"minio": 9000, "kubernetes": 6443}
 def chat(bot):
     user_form_data = {}
     user_info = bot.user_info()
+    j.sal.reservation_chatflow.validate_user(user_info)
     reservation = j.sal.zosv2.reservation_create()
-    identity = j.sal.reservation_chatflow.validate_user(user_info)
     kind = bot.single_choice("Please choose the solution type", list(kinds.keys()))
     user_form_data["kind"] = kind
 
@@ -39,7 +39,7 @@ def chat(bot):
 
     # List all available domains
     gateways = {g.node_id: g for g in j.sal.zosv2._explorer.gateway.list()}
-    user_domains = j.sal.reservation_chatflow.delegate_domains_list(identity.id)
+    user_domains = j.sal.reservation_chatflow.delegate_domains_list(j.me.tid)
     domain_ask_list = []
     for dom in user_domains:
         domain_ask_list.append(f"Delegated Domain: {dom}")
@@ -51,13 +51,12 @@ def chat(bot):
             domain_ask_list.append(f"Managed Domain: {dom}")
     domain_ask_list.append("Custom Domain")
 
-    choosen_domain = bot.single_choice(
+    chosen_domain = bot.single_choice(
         "Please choose the domain you wish to use", domain_ask_list
     )
-    if choosen_domain == "Custom Domain":
+    if chosen_domain == "Custom Domain":
         domain = bot.string_ask(
-            f''' Warning: you will have to create a cname record to point to the gateway you'll choose.
-            Please specify the domain name you wish to bind to:'''
+            f''' Please specify the domain name you wish to bind to:'''
         )
         domain_gateway = j.sal.reservation_chatflow.gateway_select(bot)
         res = """\
@@ -70,20 +69,22 @@ def chat(bot):
         bot.md_show(res)
 
     else:
-        temp = choosen_domain.split()
-        domain_type = temp[0].strip()
-        domain_name = temp[-1].strip()
+        temp = chosen_domain.split()
+        domain_type = temp[0]
+        domain_name = temp[-1]
         if domain_type == "Managed":
-            domain_obj = managed_domains[domain_name]
-            domain_gateway = gateways[domain_obj.node_id]
+            domain_gateway = managed_domains[domain_name]
         elif domain_type == "Delegated":
             domain_obj = user_domains[domain_name]
             domain_gateway = gateways[domain_obj.node_id]
-        domain = bot.string_ask(
-            f"Please specify the sub domain name you wish to bind to. will be (subdomain).{domain_name}"
-        )
-        if "." in domain:
-            raise j.exceptions.Value("Invalid Subdomain. you can't nest subdomains.")
+        while True:
+            domain = bot.string_ask(
+                f"Please specify the sub domain name you wish to bind to. will be (subdomain).{domain_name}"
+            )
+            if "." in domain:
+                bot.md_show("You can't nest domains. please click next to try again")
+            else:
+                break
         domain = domain + "." + domain_name
 
     # use gateway currency
@@ -100,8 +101,10 @@ def chat(bot):
     query = {"mru": 1, "cru": 1, "currency": currency, "free_to_use": domain_gateway.free_to_use}
     node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
 
-    if kind in ["ubuntu", "flist"]:
-        # valid for containers only
+    if kind == "kubernetes":
+        network_name, container_address = j.sal.reservation_chatflow.gateway_get_kube_network_ip(reservation_data)
+    else:
+        # valid for containers only (ubuntu, flist, minio)
         if len(reservation_data["containers"][0]["network_connection"]) > 1:
             # select network if container connected to multiple networks
             network_addresses = {}
@@ -114,19 +117,18 @@ def chat(bot):
         else:
             network_name = reservation_data["containers"][0]["network_connection"][0]["network_id"]
             container_address = reservation_data["containers"][0]["network_connection"][0]["ipaddress"]
-    elif kind == "kubernetes":
-        network_name, container_address = j.sal.reservation_chatflow.gateway_get_kube_network_ip(reservation_data)
 
-
-    network = j.sal.reservation_chatflow.network_get(bot, identity.id, network_name)
+    if chosen_domain != "Custom Domain":
+        # create a subdomain
+        j.sal.zosv2.gateway.sub_domain(reservation, domain_gateway.node_id, domain, [container_address])
+    network = j.sal.reservation_chatflow.network_get(bot, j.me.tid, network_name)
     network.add_node(node_selected)
-    network.update(identity.id, currency=currency)
+    network.update(j.me.tid, currency=currency)
     ip_address = network.get_free_ip(node_selected)
     if not ip_address:
         raise j.exceptions.Value("No available free ips")
 
-
-    secret = f"{identity.id}:{uuid.uuid4().hex}"
+    secret = f"{j.me.tid}:{uuid.uuid4().hex}"
     user_form_data["secret"] = secret
     secret_env = {}
     secret_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, user_form_data["secret"])
@@ -150,7 +152,7 @@ def chat(bot):
     # create proxy
     j.sal.zosv2.gateway.tcp_proxy_reverse(reservation, domain_gateway.node_id, domain, user_form_data["secret"])
     resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
-        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
+        reservation, expiration, customer_tid=j.me.tid, currency=currency, bot=bot
     )
     user_form_data["rid"] = resv_id
 
