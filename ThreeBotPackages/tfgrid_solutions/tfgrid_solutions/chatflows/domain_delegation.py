@@ -6,7 +6,7 @@ def chat(bot):
     """
     user_form_data = {}
     user_info = bot.user_info()
-    identity = j.sal.reservation_chatflow.validate_user(user_info)
+    j.sal.reservation_chatflow.validate_user(user_info)
     domain = bot.string_ask("Please enter a domain name")
     user_form_data["domain"] = domain
 
@@ -26,7 +26,7 @@ def chat(bot):
     j.sal.zosv2.gateway.delegate_domain(reservation=reservation, node_id=gateway_id, domain=domain)
 
     resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
-        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
+        reservation, expiration, customer_tid=j.me.tid, currency=currency, bot=bot
     )
 
     j.sal.reservation_chatflow.reservation_save(

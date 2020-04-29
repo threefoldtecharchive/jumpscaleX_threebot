@@ -19,7 +19,7 @@ def chat(bot):
     user_form_data = {}
     user_info = bot.user_info()
     reservation = j.sal.zosv2.reservation_create()
-    identity = j.sal.reservation_chatflow.validate_user(user_info)
+    j.sal.reservation_chatflow.validate_user(user_info)
     kind = bot.single_choice("Please choose the solution type", list(kinds.keys()))
     user_form_data["kind"] = kind
 
@@ -65,9 +65,9 @@ def chat(bot):
     network_name = reservation_data["containers"][0]["network_connection"][0]["network_id"]
     container_address = reservation_data["containers"][0]["network_connection"][0]["ipaddress"]
 
-    network = j.sal.reservation_chatflow.network_get(bot, identity.id, network_name)
+    network = j.sal.reservation_chatflow.network_get(bot, j.me.tid, network_name)
     network.add_node(node_selected)
-    network.update(identity.id, currency=currency)
+    network.update(j.me.tid, currency=currency)
     ip_address = network.ask_ip_from_node(node_selected, "Please choose IP Address for your solution")
     user_form_data["ip"] = ip_address
     if domain_type == "sub":
@@ -98,7 +98,7 @@ def chat(bot):
     # create proxy
     j.sal.zosv2.gateway.tcp_proxy_reverse(reservation, gateway_id, domain, user_form_data["secret"])
     resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
-        reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
+        reservation, expiration, customer_tid=j.me.tid, currency=currency, bot=bot
     )
     user_form_data["rid"] = resv_id
 
