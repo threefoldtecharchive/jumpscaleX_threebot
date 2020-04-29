@@ -13,7 +13,7 @@ domain_types = {
     "sub": "tfgrid.workloads.reservation.gateway.subdomain.1",
 }
 
-ports = {"minio": 9000, "kubernetes": 8443}  # TODO: Check this port
+ports = {"minio": 9000, "kubernetes": 6443}
 
 
 def chat(bot):
@@ -49,14 +49,12 @@ def chat(bot):
         for dom in g.managed_domains:
             managed_domains[dom] = g
             domain_ask_list.append(f"Managed Domain: {dom}")
-    domain_ask_list.append("Crystal Domain")
+    domain_ask_list.append("Custom Domain")
 
-    choosed_domain = bot.single_choice(
+    choosen_domain = bot.single_choice(
         "Please choose the domain you wish to use", domain_ask_list
     )
-    temp = choosed_domain.split()
-    domain_type = temp[0].strip()
-    if domain_type == "Crystal":
+    if choosen_domain == "Custom Domain":
         domain = bot.string_ask(
             f''' Warning: you will have to create a cname record to point to the gateway you'll choose.
             Please specify the domain name you wish to bind to:'''
@@ -72,6 +70,8 @@ def chat(bot):
         bot.md_show(res)
 
     else:
+        temp = choosen_domain.split()
+        domain_type = temp[0].strip()
         domain_name = temp[-1].strip()
         if domain_type == "Managed":
             domain_obj = managed_domains[domain_name]
@@ -100,18 +100,23 @@ def chat(bot):
     query = {"mru": 1, "cru": 1, "currency": currency, "free_to_use": domain_gateway.free_to_use}
     node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
 
-    if len(reservation_data["containers"][0]["network_connection"]) > 1:
-        # select network if container connected to multiple networks
-        network_addresses = {}
-        for con in reservation_data["containers"][0]["network_connection"]:
-            network_addresses[con["network_id"]] = con["ipaddress"]
-        network_name = bot.single_choice(
-            "Please choose on which network you wish to expose your solution", list(network_addresses.keys())
-        )
-        container_address = network_addresses[network_name]
-    else:
-        network_name = reservation_data["containers"][0]["network_connection"][0]["network_id"]
-        container_address = reservation_data["containers"][0]["network_connection"][0]["ipaddress"]
+    if kind in ["ubuntu", "flist"]:
+        # valid for containers only
+        if len(reservation_data["containers"][0]["network_connection"]) > 1:
+            # select network if container connected to multiple networks
+            network_addresses = {}
+            for con in reservation_data["containers"][0]["network_connection"]:
+                network_addresses[con["network_id"]] = con["ipaddress"]
+            network_name = bot.single_choice(
+                "Please choose on which network you wish to expose your solution", list(network_addresses.keys())
+            )
+            container_address = network_addresses[network_name]
+        else:
+            network_name = reservation_data["containers"][0]["network_connection"][0]["network_id"]
+            container_address = reservation_data["containers"][0]["network_connection"][0]["ipaddress"]
+    elif kind == "kubernetes":
+        network_name, container_address = j.sal.reservation_chatflow.gateway_get_kube_network_ip(reservation_data)
+
 
     network = j.sal.reservation_chatflow.network_get(bot, identity.id, network_name)
     network.add_node(node_selected)
