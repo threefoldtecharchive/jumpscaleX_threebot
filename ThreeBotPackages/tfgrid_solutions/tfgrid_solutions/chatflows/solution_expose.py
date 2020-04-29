@@ -115,8 +115,10 @@ def chat(bot):
     secret_env = {}
     secret_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, user_form_data["secret"])
     secret_env["TRC_SECRET"] = secret_encrypted
+    remote = f"{domain_gateway.dns_nameserver[0]}:{domain_gateway.tcp_router_port}"
+    local = f"{container_address}:{port}"
     entrypoint = (
-        f"/bin/trc -local {container_address}:{port} -remote {domain_gateway.dns_nameserver[0]}:{domain_gateway.tcp_router_port}"
+        f"/bin/trc -local {local} -remote {remote}"
     )
 
     j.sal.zosv2.container.create(
