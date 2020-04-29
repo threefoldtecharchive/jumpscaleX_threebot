@@ -120,7 +120,10 @@ def chat(bot):
 
     if chosen_domain != "Custom Domain":
         # create a subdomain
-        j.sal.zosv2.gateway.sub_domain(reservation, domain_gateway.node_id, domain, [container_address])
+        addresses = []
+        for ns in domain_gateway.dns_nameserver:
+            addresses.append(j.sal.nettools.getHostByName(ns))
+        j.sal.zosv2.gateway.sub_domain(reservation, domain_gateway.node_id, domain, addresses)
     network = j.sal.reservation_chatflow.network_get(bot, j.me.tid, network_name)
     network.add_node(node_selected)
     network.update(j.me.tid, currency=currency)
