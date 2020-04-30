@@ -85,11 +85,11 @@ export default class WalletDetailsView extends JetView {
                 let walletInfo = data.json();
                 walletInfo.name = self.name;
                 self.showInfo(walletInfo);
+                self.secret_btn.enable()
             });
         }).catch(error => {
             webix.message({ type: "error", text: "Failed to update trustlines" });
         });
-
     }
 
     showInfo(data) {
