@@ -13,7 +13,7 @@ def chat(bot):
     user_form_data["chatflow"] = "ubuntu"
 
     j.sal.reservation_chatflow.validate_user(user_info)
-    bot.md_show("This wizard wil help you deploy an ubuntu container")
+    bot.md_show("# This wizard wil help you deploy an ubuntu container")
     network = j.sal.reservation_chatflow.network_select(bot, j.me.tid)
     if not network:
         return
