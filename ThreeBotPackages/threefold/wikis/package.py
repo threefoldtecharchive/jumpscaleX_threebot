@@ -75,3 +75,20 @@ class Package(j.baseclasses.threebot_package):
             # add a handler for github webhooks for every wiki
             # https://github.com/threefoldtech/jumpscaleX_threebot/tree/unstable/ThreeBotPackages/zerobot/webhooks/wiki
             j.tools.packages.github_webhooks.register_handler(f"{ORG}/{name}", webhook_handler)
+
+    def stop(self):
+        for name, domains in WIKIS.items():
+            url = get_repo_url(name)
+
+            for port in (80, 443):
+                default_website = self.openresty.get_from_port(port)
+                default_locations = default_website.locations.get(f"{name}_wiki_{port}_locations_default")
+                default_locations.delete()
+                for domain in domains:
+                    domain_without_dots = domain.replace(".", "_")
+                    website_name = f"{name}_{domain_without_dots}_{port}"
+                    website = self.openresty.websites.get(website_name)
+
+                    locations = website.locations.get(name=f"{website_name}_locations")
+                    locations.delete()
+                    website.configure()

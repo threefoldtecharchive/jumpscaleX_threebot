@@ -33,3 +33,11 @@ class Package(j.baseclasses.threebot_package):
 
             locations.configure()
             website.configure()
+
+    def stop(self):
+        server = self.openresty
+        for port in [80, 443]:
+            website = server.get_from_port(port)
+            locations = website.locations.get(f"blogs_locations_{port}")
+            locations.delete()
+            website.configure()
