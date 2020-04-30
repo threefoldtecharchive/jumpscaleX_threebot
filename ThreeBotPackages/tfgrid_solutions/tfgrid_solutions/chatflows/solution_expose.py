@@ -99,7 +99,7 @@ def chat(bot):
     user_form_data["expiration"] = expiration
 
     # create tcprouter
-    query = {"mru": 1, "cru": 1, "currency": currency, "free_to_use": domain_gateway.free_to_use}
+    query = {"mru": 1, "cru": 1, "currency": currency}
     node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
 
     if kind == "kubernetes":
