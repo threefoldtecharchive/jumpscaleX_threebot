@@ -12,7 +12,7 @@ def chat(bot):
     env = dict()
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.flist.1")
     j.sal.reservation_chatflow.validate_user(user_info)
-    bot.md_show("This wizard will help you deploy a container using any flist provided")
+    bot.md_show("# This wizard will help you deploy a container using any flist provided")
     network = j.sal.reservation_chatflow.network_select(bot, j.me.tid)
     if not network:
         return
