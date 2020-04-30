@@ -44,7 +44,7 @@ def chat(bot):
 
     # List all available domains
     gateways = {g.node_id: g for g in j.sal.zosv2._explorer.gateway.list() if g.free_to_use == free_to_use}
-    user_domains = j.sal.reservation_chatflow.delegate_domains_list(j.me.tid, solution_currency=solution_currency)
+    user_domains = j.sal.reservation_chatflow.delegate_domains_list(j.me.tid, currency=solution_currency)
     domain_ask_list = []
     for dom in user_domains:
         if gateways.get(user_domains[dom].node_id):
@@ -60,7 +60,7 @@ def chat(bot):
     chosen_domain = bot.single_choice("Please choose the domain you wish to use", domain_ask_list)
     if chosen_domain == "Custom Domain":
         domain = bot.string_ask("Please specify the domain name you wish to bind to:")
-        domain_gateway = j.sal.reservation_chatflow.gateway_select(bot, solution_currency=solution_currency)
+        domain_gateway = j.sal.reservation_chatflow.gateway_select(bot, currency=solution_currency)
         res = """\
     Please create a `CNAME` record in your dns manager for domain: `{{domain}}` pointing to:
     {% for dns in gateway.dns_nameserver -%}
