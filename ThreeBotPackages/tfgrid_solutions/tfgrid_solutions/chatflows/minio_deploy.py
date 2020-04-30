@@ -96,7 +96,7 @@ def chat(bot):
     nodequery["mru"] = math.ceil(memory.value / 1024)
     nodequery["cru"] = cpu.value
     cont_farms = j.sal.reservation_chatflow.farm_names_get(
-        user_form_data["ZDB number"], bot, message="minio container" ** nodequery
+        user_form_data["ZDB number"], bot, message="minio container", **nodequery
     )
     cont_node = j.sal.reservation_chatflow.nodes_get(number_of_nodes=1, farm_names=cont_farms, **nodequery)[0]
 
