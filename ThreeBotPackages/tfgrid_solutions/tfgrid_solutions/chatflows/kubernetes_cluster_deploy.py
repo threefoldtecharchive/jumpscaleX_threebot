@@ -17,7 +17,6 @@ def chat(bot):
     if not network:
         return
     currency = network.currency
-    farms = j.sal.reservation_chatflow.farms_select(bot)
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
 
     while True:
@@ -35,11 +34,13 @@ def chat(bot):
         else:
             nodequery = {"sru": 100, "mru": 4, "cru": 2, "currency": currency}
         try:
+            farms = j.sal.reservation_chatflow.farm_names_get(masternodes.value + workernodes.value, bot, **nodequery)
             master_nodes_selected = j.sal.reservation_chatflow.nodes_get(
-                masternodes.value, farm_names=farms, **nodequery
+                masternodes.value, farm_names=farms[: masternodes.value], **nodequery
             )
+
             worker_nodes_selected = j.sal.reservation_chatflow.nodes_get(
-                workernodes.value, farm_names=farms, **nodequery
+                workernodes.value, farm_names=farms[masternodes.value :], **nodequery
             )
             break
         except StopChatFlow as e:
