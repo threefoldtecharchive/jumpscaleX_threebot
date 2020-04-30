@@ -31,6 +31,11 @@ def chat(bot):
     solution_name = bot.single_choice("Please choose the solution to expose", list(sols.keys()))
     solution = sols[solution_name]
     user_form_data["solution_name"] = solution_name
+    reservation_data = j.data.serializers.json.loads(solution["reservation"])["data_reservation"]
+    solution_currency = reservation_data["currencies"][0]
+    free_to_use = False
+    if "FreeTFT" == solution_currency:
+        free_to_use = True
 
     port = ports.get(kind)
     if not port:
@@ -38,11 +43,12 @@ def chat(bot):
         user_form_data["port"] = port
 
     # List all available domains
-    gateways = {g.node_id: g for g in j.sal.zosv2._explorer.gateway.list()}
-    user_domains = j.sal.reservation_chatflow.delegate_domains_list(j.me.tid)
+    gateways = {g.node_id: g for g in j.sal.zosv2._explorer.gateway.list() if g.free_to_use == free_to_use}
+    user_domains = j.sal.reservation_chatflow.delegate_domains_list(j.me.tid, currency=solution_currency)
     domain_ask_list = []
     for dom in user_domains:
-        domain_ask_list.append(f"Delegated Domain: {dom}")
+        if gateways.get(user_domains[dom].node_id):
+            domain_ask_list.append(f"Delegated Domain: {dom}")
 
     managed_domains = dict()
     for g in gateways.values():
@@ -51,14 +57,10 @@ def chat(bot):
             domain_ask_list.append(f"Managed Domain: {dom}")
     domain_ask_list.append("Custom Domain")
 
-    chosen_domain = bot.single_choice(
-        "Please choose the domain you wish to use", domain_ask_list
-    )
+    chosen_domain = bot.single_choice("Please choose the domain you wish to use", domain_ask_list)
     if chosen_domain == "Custom Domain":
-        domain = bot.string_ask(
-            "Please specify the domain name you wish to bind to:"
-        )
-        domain_gateway = j.sal.reservation_chatflow.gateway_select(bot)
+        domain = bot.string_ask("Please specify the domain name you wish to bind to:")
+        domain_gateway = j.sal.reservation_chatflow.gateway_select(bot, currency=solution_currency)
         res = """\
     Please create a `CNAME` record in your dns manager for domain: `{{domain}}` pointing to:
     {% for dns in gateway.dns_nameserver -%}
@@ -97,8 +99,11 @@ def chat(bot):
     user_form_data["expiration"] = expiration
 
     # create tcprouter
-    reservation_data = j.data.serializers.json.loads(solution["reservation"])["data_reservation"]
-    query = {"mru": 1, "cru": 1, "currency": currency, "free_to_use": domain_gateway.free_to_use}
+    if domain_gateway.free_to_use:
+        currency = "FreeTFT"
+    else:
+        currency = None
+    query = {"mru": 1, "cru": 1, "currency": currency}
     node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
 
     if kind == "kubernetes":
@@ -126,7 +131,7 @@ def chat(bot):
         j.sal.zosv2.gateway.sub_domain(reservation, domain_gateway.node_id, domain, addresses)
     network = j.sal.reservation_chatflow.network_get(bot, j.me.tid, network_name)
     network.add_node(node_selected)
-    network.update(j.me.tid, currency=currency)
+    network.update(j.me.tid, currency=currency, bot=bot)
     ip_address = network.get_free_ip(node_selected)
     if not ip_address:
         raise j.exceptions.Value("No available free ips")
@@ -138,9 +143,7 @@ def chat(bot):
     secret_env["TRC_SECRET"] = secret_encrypted
     remote = f"{domain_gateway.dns_nameserver[0]}:{domain_gateway.tcp_router_port}"
     local = f"{container_address}:{port}"
-    entrypoint = (
-        f"/bin/trc -local {local} -remote {remote}"
-    )
+    entrypoint = f"/bin/trc -local {local} -remote {remote}"
 
     j.sal.zosv2.container.create(
         reservation=reservation,

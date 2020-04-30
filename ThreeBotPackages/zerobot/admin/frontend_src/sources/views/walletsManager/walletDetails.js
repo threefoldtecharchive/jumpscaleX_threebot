@@ -1,4 +1,5 @@
 import { JetView } from "webix-jet";
+import { wallet } from "../../services/wallet";
 
 export default class WalletDetailsView extends JetView {
     config() {
@@ -25,22 +26,30 @@ export default class WalletDetailsView extends JetView {
                 rows: [
                     info,
                     {
-                        view: "button",
-                        id: "secret_btn",
-                        value: "Show Secret",
-                        css: "webix_primary",
-                        click: function () {
-                            this.$scope.showSecret();
-                        }
-                    },
-                    {
-                        view: "button",
-                        value: "OK",
-                        css: "webix_primary",
-                        click: function () {
-                            $$("secret_btn").enable()
-                            this.getTopParentView().hide();
-                        }
+                        cols: [{
+                            view: "button",
+                            id: "secret_btn",
+                            value: "Show Secret",
+                            css: "webix_primary",
+                            click: function () {
+                                this.$scope.showSecret();
+                            }
+                        }, {
+                            view: "button",
+                            value: "Update trustlines",
+                            css: "webix_primary",
+                            click: function () {
+                                this.$scope.updateTrustLines();
+                            }
+                        }, {
+                            view: "button",
+                            value: "Close",
+                            css: "webix_primary",
+                            click: function () {
+                                $$("secret_btn").enable()
+                                this.getTopParentView().hide();
+                            }
+                        }]
                     }
                 ]
             }
@@ -52,6 +61,8 @@ export default class WalletDetailsView extends JetView {
         self.info = this.$$("wallet_info");
         self.secret_btn = this.$$("secret_btn");
         self.secret = "";
+        self.name = "";
+        webix.extend(self.info, webix.ProgressBar);
     }
 
     showSecret() {
@@ -63,8 +74,25 @@ export default class WalletDetailsView extends JetView {
         });
         self.secret_btn.disable()
     }
-    
-    showInfo(data){
+
+    updateTrustLines() {
+        var self = this;
+        self.info.showProgress({
+            hide: false
+        })
+        wallet.updateTrustLines(self.name).then(data => {
+            wallet.manageWallet(self.name).then(data => {
+                let walletInfo = data.json();
+                walletInfo.name = self.name;
+                self.showInfo(walletInfo);
+                self.secret_btn.enable()
+            });
+        }).catch(error => {
+            webix.message({ type: "error", text: "Failed to update trustlines" });
+        });
+    }
+
+    showInfo(data) {
         var self = this
 
         var balances = "";
@@ -85,7 +113,10 @@ export default class WalletDetailsView extends JetView {
             value: balances
         });
         self.secret = data.secret;
-
+        self.name = data.name;
+        self.info.showProgress({
+            hide: true
+        })
         this.getRoot().show();
     }
 }

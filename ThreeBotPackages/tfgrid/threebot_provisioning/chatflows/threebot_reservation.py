@@ -109,7 +109,7 @@ def chat(bot):
         reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
     rid = reservation_create.reservation_id
-    payment = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
+    payment = j.sal.reservation_chatflow.payments_show(bot, reservation_create, currency)
     if payment["free"]:
         pass
     elif payment["wallet"]:
@@ -143,7 +143,7 @@ def chat(bot):
         reservation, expiration, customer_tid=identity.id, currency=currency, bot=bot
     )
     resv_id = reservation_create.reservation_id
-    payment = j.sal.reservation_chatflow.payments_show(bot, reservation_create)
+    payment = j.sal.reservation_chatflow.payments_show(bot, reservation_create, currency)
     if payment["free"]:
         pass
     elif payment["wallet"]:

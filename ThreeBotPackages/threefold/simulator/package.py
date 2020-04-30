@@ -44,3 +44,9 @@ class Package(j.baseclasses.threebot_package):
 
     def stop(self):
         j.tools.tfgrid_simulator.stop()
+        for port in (443, 80):
+            website = self.openresty.get_from_port(port)
+
+            locations = website.locations.get(name=f"simulator_locations_{port}")
+            locations.delete()
+            website.configure()

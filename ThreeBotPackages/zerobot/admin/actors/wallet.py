@@ -1,4 +1,5 @@
 from Jumpscale import j
+from JumpscaleLibs.clients.stellar.StellarClient import _NETWORK_KNOWN_TRUSTS
 
 
 class wallet(j.baseclasses.threebot_actor):
@@ -20,9 +21,10 @@ class wallet(j.baseclasses.threebot_actor):
         except Exception:
             wallet.delete()
             raise
-        wallet.add_known_trustline("TFT")
-        wallet.add_known_trustline("FreeTFT")
-        wallet.add_known_trustline("TFTA")
+
+        trustlines = _NETWORK_KNOWN_TRUSTS[str(wallet.network)].copy()
+        for asset_code in trustlines.keys():
+            wallet.add_known_trustline(asset_code)
 
         return j.data.serializers.json.dumps(wallet.address)
 
@@ -40,6 +42,18 @@ class wallet(j.baseclasses.threebot_actor):
 
         ret = {"address": wallet.address, "secret": wallet.secret, "balances": data}
         return j.data.serializers.json.dumps(ret)
+
+    @j.baseclasses.actor_method
+    def updateTrustLines(self, name, schema_out=None, user_session=None):
+        name = str(name)
+        wallet = j.clients.stellar.get(name=name)
+        trustlines = _NETWORK_KNOWN_TRUSTS[str(wallet.network)].copy()
+        for balance in wallet.get_balance().balances:
+            if balance.asset_code in trustlines:
+                trustlines.pop(balance.asset_code)
+        for asset_code in trustlines.keys():
+            wallet.add_known_trustline(asset_code)
+        return trustlines
 
     @j.baseclasses.actor_method
     def get_wallets(self, schema_out=None, user_session=None):

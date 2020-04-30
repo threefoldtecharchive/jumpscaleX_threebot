@@ -12,12 +12,11 @@ def chat(bot):
     env = dict()
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.flist.1")
     j.sal.reservation_chatflow.validate_user(user_info)
-    bot.md_show("This wizard will help you deploy a container using any flist provided")
+    bot.md_show("# This wizard will help you deploy a container using any flist provided")
     network = j.sal.reservation_chatflow.network_select(bot, j.me.tid)
     if not network:
         return
     currency = network.currency
-    farms = j.sal.reservation_chatflow.farms_select(bot)
 
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
     while True:
@@ -76,6 +75,7 @@ def chat(bot):
     hru = math.ceil(memory.value / 1024)
     cru = cpu.value
     sru = 1  # needed space for a container is 250MiB
+    farms = j.sal.reservation_chatflow.farm_names_get(1, bot, hru=hru, cru=cru, sru=sru, currency=currency)
     node = j.sal.reservation_chatflow.nodes_get(1, farm_names=farms, hru=hru, cru=cru, sru=sru, currency=currency)[0]
     network.add_node(node)
     ip_address = network.ask_ip_from_node(node, "Please choose your IP Address for this solution")

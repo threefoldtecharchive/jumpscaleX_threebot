@@ -27,3 +27,13 @@ class Package(j.baseclasses.threebot_package):
 
             locations.configure()
             website.configure()
+
+    def stop(self):
+        server = self.openresty
+        server.configure()
+        for port in (443, 80):
+            website = server.get_from_port(port=port)
+            locations = website.locations.get(f"github_webhooks_{port}")
+            locations.delete()
+            website.configure()
+        super().stop()

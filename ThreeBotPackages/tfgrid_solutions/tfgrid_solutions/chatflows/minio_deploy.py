@@ -19,7 +19,6 @@ def chat(bot):
     if not network:
         return
     currency = network.currency
-    farms = j.sal.reservation_chatflow.farms_select(bot)
 
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
 
@@ -85,15 +84,21 @@ def chat(bot):
     if user_form_data["Disk type"] == "HDD":
         zdb_nodequery["hru"] = 10
 
+    zdb_farms = j.sal.reservation_chatflow.farm_names_get(
+        user_form_data["ZDB number"], bot, message="zdb", **zdb_nodequery
+    )
     nodes_selected = j.sal.reservation_chatflow.nodes_get(
-        number_of_nodes=user_form_data["ZDB number"], farm_names=farms, **zdb_nodequery
+        number_of_nodes=user_form_data["ZDB number"], farm_names=zdb_farms, **zdb_nodequery
     )
 
     nodequery = {}
     nodequery["currency"] = currency
     nodequery["mru"] = math.ceil(memory.value / 1024)
     nodequery["cru"] = cpu.value
-    cont_node = j.sal.reservation_chatflow.nodes_get(number_of_nodes=1, farm_names=farms, **nodequery)[0]
+    cont_farms = j.sal.reservation_chatflow.farm_names_get(
+        user_form_data["ZDB number"], bot, message="minio container", **nodequery
+    )
+    cont_node = j.sal.reservation_chatflow.nodes_get(number_of_nodes=1, farm_names=cont_farms, **nodequery)[0]
 
     for node_selected in nodes_selected:
         network.add_node(node_selected)

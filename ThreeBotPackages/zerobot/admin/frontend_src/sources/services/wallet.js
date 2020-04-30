@@ -19,6 +19,10 @@ class WalletService extends Service {
         return this.getCall("get_wallets");
     }
 
+    updateTrustLines(name) {
+        return this.postCall("updateTrustLines", {name: name});
+    }
+
     importWallet(name, secret, network) {
         return this.postCall("import_wallet", {name, secret, network});
     }
