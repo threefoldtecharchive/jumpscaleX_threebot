@@ -82,7 +82,8 @@ class Package(j.baseclasses.threebot_package):
 
             for port in (80, 443):
                 default_website = self.openresty.get_from_port(port)
-
+                default_locations = default_website.locations.get(f"{name}_wiki_{port}_locations_default")
+                default_locations.delete()
                 for domain in domains:
                     domain_without_dots = domain.replace(".", "_")
                     website_name = f"{name}_{domain_without_dots}_{port}"
