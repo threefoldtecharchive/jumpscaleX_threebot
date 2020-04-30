@@ -106,8 +106,12 @@ export default class WalletManagerView extends JetView {
                     'secret': res.secret,
                     'balances': res.balances
                 }
-                self.wallets_table.showProgress({hide: true});
                 self.WalletDetailsView.showInfo(info)
+                self.wallets_table.showProgress({hide: true});
+            }).catch(data => {
+                console.log(data);
+                self.wallets_table.showProgress({hide: true});
+                webix.message({ type: "error", text: "Failed to load wallet" });
             });
         });
     }
