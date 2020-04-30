@@ -87,9 +87,6 @@ class Package(j.baseclasses.threebot_package):
                     domain_without_dots = domain.replace(".", "_")
                     website_name = f"{name}_{domain_without_dots}_{port}"
                     website = self.openresty.websites.get(website_name)
-                    website.port = port
-                    website.ssl = port == 443
-                    website.domain = domain
 
                     locations = website.locations.get(name=f"{website_name}_locations")
                     locations.delete()
