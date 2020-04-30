@@ -99,6 +99,10 @@ def chat(bot):
     user_form_data["expiration"] = expiration
 
     # create tcprouter
+    if domain_gateway.free_to_use:
+        currency = "FreeTFT"
+    else:
+        currency = None
     query = {"mru": 1, "cru": 1, "currency": currency}
     node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
 
