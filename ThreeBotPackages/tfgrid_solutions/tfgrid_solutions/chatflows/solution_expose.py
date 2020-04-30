@@ -126,7 +126,7 @@ def chat(bot):
         j.sal.zosv2.gateway.sub_domain(reservation, domain_gateway.node_id, domain, addresses)
     network = j.sal.reservation_chatflow.network_get(bot, j.me.tid, network_name)
     network.add_node(node_selected)
-    network.update(j.me.tid, currency=currency)
+    network.update(j.me.tid, currency=currency, bot=bot)
     ip_address = network.get_free_ip(node_selected)
     if not ip_address:
         raise j.exceptions.Value("No available free ips")
