@@ -51,13 +51,9 @@ def chat(bot):
             domain_ask_list.append(f"Managed Domain: {dom}")
     domain_ask_list.append("Custom Domain")
 
-    chosen_domain = bot.single_choice(
-        "Please choose the domain you wish to use", domain_ask_list
-    )
+    chosen_domain = bot.single_choice("Please choose the domain you wish to use", domain_ask_list)
     if chosen_domain == "Custom Domain":
-        domain = bot.string_ask(
-            "Please specify the domain name you wish to bind to:"
-        )
+        domain = bot.string_ask("Please specify the domain name you wish to bind to:")
         domain_gateway = j.sal.reservation_chatflow.gateway_select(bot)
         res = """\
     Please create a `CNAME` record in your dns manager for domain: `{{domain}}` pointing to:
@@ -98,7 +94,11 @@ def chat(bot):
 
     # create tcprouter
     reservation_data = j.data.serializers.json.loads(solution["reservation"])["data_reservation"]
-    query = {"mru": 1, "cru": 1, "currency": currency, "free_to_use": domain_gateway.free_to_use}
+    if domain_gateway.free_to_use:
+        currency = "FreeTFT"
+    else:
+        currency = None
+    query = {"mru": 1, "cru": 1, "currency": currency, "currency": currency}
     node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
 
     if kind == "kubernetes":
@@ -138,9 +138,7 @@ def chat(bot):
     secret_env["TRC_SECRET"] = secret_encrypted
     remote = f"{domain_gateway.dns_nameserver[0]}:{domain_gateway.tcp_router_port}"
     local = f"{container_address}:{port}"
-    entrypoint = (
-        f"/bin/trc -local {local} -remote {remote}"
-    )
+    entrypoint = f"/bin/trc -local {local} -remote {remote}"
 
     j.sal.zosv2.container.create(
         reservation=reservation,
