@@ -50,3 +50,9 @@ class Package(j.baseclasses.threebot_package):
         j.servers.notebook.stop(
             voila=False, background=True, base_url="/threefold/sdkexamples/notebook/", pname="sdkexamples"
         )
+
+        for port in (443, 80):
+            website = self.openresty.get_from_port(port)
+            locations = website.locations.get(name=f"sdk_examples_{port}")
+            locations.delete()
+            website.configure()

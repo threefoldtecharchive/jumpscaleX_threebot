@@ -39,7 +39,13 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot stops
         :return:
         """
-        pass
+        server = self.openresty
+
+        website = server.get_from_port(443)
+
+        locations = website.locations.get("threebotapp_locations")
+        locations.delete()
+        website.configure()
 
     def uninstall(self):
         """

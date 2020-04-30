@@ -74,3 +74,12 @@ class Package(j.baseclasses.threebot_package):
 
             locations_2.configure()
             website_2.configure()
+
+    def stop(self):
+        for server_port, client_port in ((443, 4430), (80, 8000)):
+            website = self.openresty.websites.get(f"simulator_playground_chat_{server_port}")
+
+            locations = website.locations.get(name=f"simulator_playground_chat_{server_port}_locations")
+            locations.delete()
+            website.configure()
+        super().stop()

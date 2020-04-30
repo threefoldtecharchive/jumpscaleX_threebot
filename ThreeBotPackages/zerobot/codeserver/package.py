@@ -46,3 +46,12 @@ class Package(j.baseclasses.threebot_package):
         if not j.sal.fs.exists("{DIR_BIN}/code-server"):
             j.builders.apps.codeserver.install()
         self.startupcmd.stop()
+        server = self.openresty
+        server.configure()
+
+        for port in (443, 80):
+            website = server.get_from_port(port=port)
+            locations = website.locations.get(f"codeserver_{port}")
+
+            locations.delete()
+            website.configure()
