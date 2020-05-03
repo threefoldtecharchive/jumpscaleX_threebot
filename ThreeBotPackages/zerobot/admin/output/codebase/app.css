@@ -1,3 +1,25 @@
+.solutions_list {
+  border-radius: 15px !important;
+  color: cornflowerblue !important;
+}
+.webix_list_item.webix_group {
+  color: #171920 !important;
+  height: 4em !important;
+  background-color: #f3f3f3 !important;
+  font-size: medium !important;
+  padding: 1em !important;
+  border-radius: 20px !important;
+  margin: 3px !important;
+  border: 1px solid #afaeae !important;
+}
+.webix_list_item.webix_group_back {
+  height: 3em !important;
+}
+.webix_list_item.webix_group:hover {
+  background-color: #27496d !important;
+  color: #DADEE0 !important;
+  border: 1px solid #ffffff !important;
+}
 .webixappstart {
   opacity: 0;
 }

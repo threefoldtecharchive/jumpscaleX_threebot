@@ -80,7 +80,36 @@ export default class TopView extends JetView {
         {
             id: "deployedSolutions",
             value: "Deployed Solutions",
-            icon: "mdi mdi-animation-play"
+            icon: "mdi mdi-animation-play",
+            data: [{
+                id: "deployed_network",
+                value: '<span><img class="solutions-icon" src="static/img/network.png"/>Network</span>'
+            }, {
+                id: "deployed_ubuntu",
+                value: '<span><img class="solutions-icon" src="static/img/ubuntu.png"/>Ubuntu</span>'
+            }, {
+                id: "deployed_flist",
+                value: '<span><img class="solutions-icon" src="static/img/flist.png"/>Generic flist</span>'
+            }, {
+                id: "deployed_minio",
+                value: '<span><img class="solutions-icon" src="static/img/minio.png"/>Minio / S3</span>'
+            }, {
+                id: "deployed_k8s_cluster",
+                value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes Cluster</span>'
+            } , {
+                id: "deployed_domain_delegation",
+                value: 'Domain Delagation',
+                icon: 'mdi mdi-dns'
+            }, {
+                id: "deployed_solution_expose",
+                value: 'Solution expose',
+                icon: 'mdi mdi-wan'
+            }, {
+                id: "deployed_gateway_4to6",
+                value: '4 to 6 Gateway',
+                icon: 'mdi mdi-ip-network'
+            }
+            ]
         },
         {
             id: "solutions",
@@ -261,6 +290,7 @@ export default class TopView extends JetView {
                 domain_delegation: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=domain_delegation",
                 gateway_4to6: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=four_to_six_gateway",
                 solution_expose: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=solution_expose",
+                deployed_ubuntu:"deployedSolutions.ubuntu"
             }
         });
 
