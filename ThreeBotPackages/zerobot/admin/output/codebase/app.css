@@ -1,9 +1,13 @@
-.solutions_list {
+.solutions-list {
   border-radius: 15px !important;
-  color: cornflowerblue !important;
+  color: #27496d !important;
+  background-color: transparent !important;
+}
+.solutions-list .webix_arrow_icon {
+  color: #f3f3f3 !important;
 }
 .webix_list_item.webix_group {
-  color: #171920 !important;
+  /* color: rgb(23, 25, 32) !important; */
   height: 4em !important;
   background-color: #f3f3f3 !important;
   font-size: medium !important;
@@ -13,12 +17,29 @@
   border: 1px solid #afaeae !important;
 }
 .webix_list_item.webix_group_back {
-  height: 3em !important;
+  height: 4em !important;
+  background-color: #27496d !important;
+  color: #DADEE0 !important;
+  font-size: medium !important;
+  padding: 1em !important;
+  padding-left: 2em !important;
+  border-radius: 20px !important;
+  margin: 3px !important;
+  border: 1px solid #afaeae !important;
 }
 .webix_list_item.webix_group:hover {
   background-color: #27496d !important;
   color: #DADEE0 !important;
   border: 1px solid #ffffff !important;
+}
+.deployed-solution-icon {
+  height: 200px !important;
+  width: 200px !important;
+}
+.deployed-solution-logo-view {
+  background-color: transparent !important;
+  text-align-last: center !important;
+  margin-top: 40px !important;
 }
 .webixappstart {
   opacity: 0;

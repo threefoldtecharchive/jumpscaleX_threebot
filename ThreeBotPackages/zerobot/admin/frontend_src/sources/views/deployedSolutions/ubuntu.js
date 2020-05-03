@@ -36,7 +36,7 @@ export default class DeployedUbuntuView extends JetView {
                     { id: "p_2_3", type: "file", value: "hostname" },
                     { id: "p_2_4", type: "file", value: "SSh-key" },
                     { id: "p_2_5", type: "file", value: "ip-address" },
-                    { id: "p_2_6", type: "file", value: "CPnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnU" },
+                    { id: "p_2_6", type: "file", value: "CPU" },
                     { id: "p_2_7", type: "file", value: "Memory" }
                 ]
             }
@@ -44,25 +44,28 @@ export default class DeployedUbuntuView extends JetView {
 
         const logo = {
             view: "template",
-            template: '<img class="solutions-icon" src="static/img/ubuntu.png"/>'
+            template: '<img class="deployed-solution-icon" src="static/img/ubuntu.png"/>',
+            css: 'deployed-solution-logo-view',
+            align: "center",
+            borderless: true,
+            height: 250
         }
 
         const view = {
             view: "grouplist",
-            scroll: false,
             data: data,
-            css: 'solutions_list',
-            scroll: 'xy'
+            css: 'solutions-list',
+            scroll: 'auto',
+            width: 700,
+            borderless: true
         };
+
         return {
             type: "space",
-            rows: [
-
-                logo
-                ,
-
-                view
-
+            rows:
+            [
+                logo,
+                {cols:[{}, view, {}]}
             ]
         };
     }
