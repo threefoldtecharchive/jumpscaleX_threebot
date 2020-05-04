@@ -30,7 +30,7 @@ def chat(bot):
 
     while not user_form_data.get("Public key"):
         user_form_data["Public key"] = bot.upload_file(
-            """"Please add your public ssh key, this will allow you to access the deployed container using ssh.
+            """Please add your public ssh key, this will allow you to access the deployed container using ssh.
                 Just upload the file with the key"""
         ).split("\n")[0]
 
@@ -79,7 +79,6 @@ def chat(bot):
         interactive=False,
         entrypoint=entry_point,
         cpu=user_form_data["CPU"],
-        public_ipv6=True,
         memory=user_form_data["Memory"],
     )
     metadata = dict()
