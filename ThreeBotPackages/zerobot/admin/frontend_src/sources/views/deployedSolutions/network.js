@@ -1,53 +1,20 @@
-import { JetView } from "webix-jet";
+import { BaseView } from './baseview'
 import { solutions } from '../../services/deployedSolutions'
 import SolutionDetailsView from './SolutionDetails'
 
-export default class DeployedNetworkView extends JetView {
-    config() {
-
-        const logo = {
-            view: "template",
-            template: '<img class="deployed-solution-icon" src="static/img/network.png"/>',
-            css: 'deployed-solution-logo-view',
-            align: "center",
-            borderless: true,
-            height: 250
-        }
-
-        const view = {
-            view: "dataview",
-            id: "networklist",
-            width: 1000,
-            height: 600,
-            scroll:false,
-            select: 1,
-            css: "solutions-list",
-            type: {
-                width: 480,
-                height: 120,
-                template: "<div class='overall'><div class='title'>#name#</div><div class='ip'>#iprange# </div> </div>"
-            }
-        }
-
-        return {
-            type: "space",
-            rows:
-                [
-                    logo,
-                    { cols: [{}, view, {}] }
-                ]
-        };
+export default class DeployedNetworkView extends BaseView {
+    constructor(app, name) {
+        
+        super(app, name, "network.png");
     }
-
-    init(view) {
+    
+    init(view){
+        super.init(view)
         let self = this
-        self.networkList = $$("networklist")
-        self.SolutionDetailsView = self.ui(SolutionDetailsView)
-
-
+        // self.SolutionDetailsView = self.ui(SolutionDetailsView)
+        let parseData = []
         solutions.listSolution('network').then((data) => {
             const solutions = data.json().solutions
-            self.parseData = []
             for (let i = 0; i < solutions.length; i++) {
                 const solution = solutions[i];
                 let dict = {}
@@ -63,16 +30,16 @@ export default class DeployedNetworkView extends JetView {
                 dict.nodes = []
                 for (let i = 0; i < nodes.length; i++) {
                     const node = nodes[i];
-                    dict.nodes.push({'node_id':node.node_id,'iprange':node.iprange})
+                    dict.nodes.push({ 'node_id': node.node_id, 'iprange': node.iprange })
                 }
-                self.parseData.push(dict)
+                parseData.push(dict)
             }
-            self.networkList.parse(self.parseData)
-
+            console.log(parseData)
+            self.solutionlist.parse(parseData)
         });
-        
-        self.networkList.attachEvent("onItemDblClick", function (id) {
-            let ret = self.parseData.find(network => network.id == id)
+
+        self.solutionlist.attachEvent("onItemDblClick", function (id) {
+            let ret = parseData.find(solution => solution.id == id)
             self.SolutionDetailsView.showInfo(ret)
         });
     }

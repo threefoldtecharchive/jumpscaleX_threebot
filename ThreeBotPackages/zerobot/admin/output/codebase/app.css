@@ -16,7 +16,8 @@
   border-style: none;
 }
 .solutions-list .webix_dataview_item.webix_selected .overall {
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #e6e6e7), color-stop(1, #0ba598));
+  background: #04a194;
+  color: white;
   background: -o-linear-gradient(top, #DBFFB0 0%, #D0F4A4 100%);
   background: -ms-linear-gradient(top, #DBFFB0 0%, #D0F4A4 100%);
 }
