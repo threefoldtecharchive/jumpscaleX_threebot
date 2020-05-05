@@ -1,60 +1,73 @@
-let my_vars = {
-    "sessionid": "",
+var sessionId = null
+var newStep = true
+var chatBotClient = packageGedisClient.zerobot.webinterface.actors.chatbot
+
+
+var stringGenerator = function (work, field = "") {
+    let name = field || "value"
+    let value =  work.kwargs.default || "" 
+    let content = `
+        <div class="form-group">
+            <h4>${work.msg}</h4>
+            <input type="text" name="${name}" class="form-control" value="${value}">
+        </div>
+    `
+    return content
 }
 
-var stringContentGenerate = function (message, kwargs, idx) {
-    let contents = ``
-    if (typeof kwargs['default'] == 'undefined') {
-        contents = `<input type="text" class="form-control" id="value_${idx}">`
-    } else {
-        contents = `<input type="text" class="form-control" id="value_${idx}" value="${kwargs["default"]}"`
-    }
-    var lines = message.split("\n");
-    let output = ``
-    for (var i = 0; i < lines.length; i++) {
-        output += "<h4>" + `${lines[i]}` + "</h4>\n"
-    }
-    return `
-    ${output}
-    <div class="form-group">
-        ${contents}
-    </div>`
+
+var secretGenerator = function (work, field = "") {
+    let name = field || "value"
+    let value =  work.kwargs.default || "" 
+    let content = `
+        <div class="form-group">
+            <h4>${work.msg}</h4>
+            <input type="password" name="${name}" class="form-control" value="${value}">
+        </div>
+    `
+    return content
 }
 
-var secretContentGenerate = function (message, kwargs, idx) {
-    var lines = message.split("\n");
-    let output = ``
-    for (var i = 0; i < lines.length; i++) {
-        output += "<h4>" + `${lines[i]}` + "</h4>\n"
-    }
-    return `
-    ${output}
-    <div class="form-group">
-		<input type="password" class="form-control" id="value_${idx}">
-    </div>`
+
+var textContentGenerator = function (work, field = "") {
+    let name = field || "value"
+    let value =  work.kwargs.default || "" 
+    let content = `
+        <div class="form-group">
+            <h4>${work.msg}</h4>
+            <textarea rows="4" cols="50" name="${name}" class="form-control">${value}</textarea>
+        </div>
+    `
+    return content
 }
 
-var textContentGenerate = function (message, kwargs, idx) {
-    return `
-    <h4>${message}</h4>
-    <div class="form-group">
-		<textarea rows="4" cols="50" class="form-control" id="value_${idx}"></textarea>
-    </div>`
+
+var intGenerator = function (work, field = "") {
+    let name = field || "value"
+    let value =  work.kwargs.default || "" 
+    let content = `
+        <div class="form-group">
+            <h4>${work.msg}</h4>
+            <input type="number" name="${name}" class="form-control" value="${value}">
+        </div>
+    `
+    return content
 }
 
-var intContentGenerate = function (message, kwargs, idx) {
-    let contents = ``
-    if (typeof kwargs['default'] == 'undefined') {
-        contents = `<input type="number" class="form-control" id="value_${idx}">`
-    } else {
-        contents = `<input type="number" class="form-control" id="value_${idx}" value="${kwargs["default"]}">`
-    }
-    return `
-    <h4>${message}</h4>
-    <div class="form-group">
-        ${contents}
-    </div>`
+
+var mdContentGenerate = function (message) {
+    let converter = new showdown.Converter({
+        tables: true,
+        tablesHeaderId: "table"
+    });
+    const htmlContents = converter.makeHtml(message.msg);
+    return htmlContents;
 }
+
+
+
+
+
 
 var captchaContentGenerate = function (message, captcha, label, kwargs, idx) {
     return `
@@ -115,15 +128,6 @@ var locationContentGenerate = function (message, label, kwargs) {
 
 
     `
-}
-
-var mdContentGenerate = function (message, kwargs) {
-    let converter = new showdown.Converter({
-        tables: true,
-        tablesHeaderId: "table"
-    });
-    const htmlContents = converter.makeHtml(message);
-    return htmlContents;
 }
 
 var multiChoiceGenerate = function (message, options, kwargs, idx) {
@@ -327,12 +331,14 @@ var generateUploadFile = function (message, kwargs, idx) {
     </div>`
 }
 
+
+
+
 var generateSlide = function (message) {
-    $("#spinner").hide();
     // if error: leave the old slide and show the error
     if (message["error"]) {
-        $("#error").html(message['error']);
-        $(".btn-submit").attr("disabled", "false");
+        // $("#error").html(message['error']);
+        // $(".btn-submit").attr("disabled", "false");
         $(".form-box").hide({
             "duration": 400
         });
@@ -344,172 +350,285 @@ var generateSlide = function (message) {
         return
     }
 
-    function work_get() {
-        packageGedisClient.zerobot.webinterface.actors.chatbot.work_get({ "sessionid": my_vars.sessionid }).then(resp => {
-            return resp.json().then(function (parsedJson) {
-                generateSlide(parsedJson);
-            });
-        })
+    // let contents = "";
+    // let messages = [];
+    // let res = null;
+    // if (message['cat'] == "form") {
+    //     messages = message['msg'];
+    // } else {
+    //     messages = [message];
+    // }
+    let contents = ""
+
+    switch (message.cat) {
+        case "string_ask":
+            contents += stringGenerator(message);
+            break;
+        case "secret_ask":
+            contents += secretGenerator(message);
+            break;
+        case "text_ask":
+            contents += textContentGenerator(message);
+            break;
+        case "int_ask":
+            contents += intGenerator(message);
+            break;
+        case "md_show":
+        case "md_show_update":
+            contents += mdContentGenerate(message);
+            break;
     }
 
-    function next(value, spinner) {
-        $("#error").addClass("hidden");
-        $(this).attr("disabled", "disabled");
-        if (spinner) {
-            $("#spinner").show();
-            $(".form-box").show({
-                "duration": 400
-            });
-        }
-        if (value !== null) {
-            packageGedisClient.zerobot.webinterface.actors.chatbot.work_report({ "sessionid": my_vars.sessionid, "result": value }).then(function (res) {
-                work_get();
-            })
-        } else {
-            work_get();
-        }
-    }
+    
 
-    let contents = "";
-    let messages = [];
-    let res = null;
-    if (message['cat'] == "form") {
-        messages = message['msg'];
-    } else {
-        messages = [message];
-    }
+    // for (var i = 0; i < messages.length; i++) {
+    //     res = messages[i];
+    //     switch (res['cat']) {
+    //         case "string_ask":
+    //             contents += stringContentGenerate(res['msg'], res['kwargs'], i);
+    //             break;
+    //         case "secret_ask":
+    //             contents += secretContentGenerate(res['msg'], res['kwargs'], i);
+    //             break;
+    //         case "download_file":
+    //             contents += generateDownloadAsFile(res['msg'], res['filename'], res['kwargs'], i);
+    //             break;
+    //         case "upload_file":
+    //             contents += generateUploadFile(res['msg'], res['kwargs'], i);
+    //             break;
+    //         case "text_ask":
+    //             contents += textContentGenerate(res['msg'], res['kwargs'], i);
+    //             break;
+    //         case "int_ask":
+    //             contents += intContentGenerate(res['msg'], res['kwargs'], i);
+    //             break;
+    //         case "captcha_ask":
+    //             contents += captchaContentGenerate(res['msg'], res['captcha'], res['label'], res['kwargs']);
+    //             break;
+    //         case "md_show":
+    //             contents += mdContentGenerate(res['msg'], res['kwargs']);
+    //             break;
+    //         case "md_show_update":
+    //             contents += mdContentGenerate(res['msg'], res['kwargs']);
+    //             break;
+    //         case "multi_choice":
+    //             contents += multiChoiceGenerate(res['msg'], res['options'], res['kwargs'], i)
+    //             break;
+    //         case "single_choice":
+    //             contents += singleChoiceGenerate(res['msg'], res['options'], res['kwargs'], i)
+    //             break;
+    //         case "drop_down_choice":
+    //             contents += dropDownChoiceGenerate(res['msg'], res['options'], res['kwargs'], i)
+    //             break;
+    //         case "location_ask":
+    //             contents += locationContentGenerate(res['msg'], res['options'], res['kwargs'])
+    //             break;
+    //         case "multi_list_choice":
+    //             contents += multiListChoice(res['msg'], res['options'], res['kwargs'], i);
+    //             break;
+    //     }
+    // }
 
-    for (var i = 0; i < messages.length; i++) {
-        res = messages[i];
-        switch (res['cat']) {
-            case "string_ask":
-                contents += stringContentGenerate(res['msg'], res['kwargs'], i);
-                break;
-            case "secret_ask":
-                contents += secretContentGenerate(res['msg'], res['kwargs'], i);
-                break;
-            case "download_file":
-                contents += generateDownloadAsFile(res['msg'], res['filename'], res['kwargs'], i);
-                break;
-            case "upload_file":
-                contents += generateUploadFile(res['msg'], res['kwargs'], i);
-                break;
-            case "text_ask":
-                contents += textContentGenerate(res['msg'], res['kwargs'], i);
-                break;
-            case "int_ask":
-                contents += intContentGenerate(res['msg'], res['kwargs'], i);
-                break;
-            case "captcha_ask":
-                contents += captchaContentGenerate(res['msg'], res['captcha'], res['label'], res['kwargs']);
-                break;
-            case "md_show":
-                contents += mdContentGenerate(res['msg'], res['kwargs']);
-                break;
-            case "md_show_update":
-                contents += mdContentGenerate(res['msg'], res['kwargs']);
-                break;
-            case "multi_choice":
-                contents += multiChoiceGenerate(res['msg'], res['options'], res['kwargs'], i)
-                break;
-            case "single_choice":
-                contents += singleChoiceGenerate(res['msg'], res['options'], res['kwargs'], i)
-                break;
-            case "drop_down_choice":
-                contents += dropDownChoiceGenerate(res['msg'], res['options'], res['kwargs'], i)
-                break;
-            case "location_ask":
-                contents += locationContentGenerate(res['msg'], res['options'], res['kwargs'])
-                break;
-            case "multi_list_choice":
-                contents += multiListChoice(res['msg'], res['options'], res['kwargs'], i);
-                break;
-            case "datetime_picker":
-                contents += dateTimePickerAsk(res['msg'], res['options'], res['kwargs'], i)
-                break;
-        }
-    }
-    if (res['cat'] === "user_info") {
-        next(JSON.stringify({ "username": USERNAME, "email": EMAIL }), true);
-    }
-    contents = `
-        <fieldset>
-            <p id="error" class="red"></p>
-			${contents}
-			<span class="f1-buttons-right">
-				<button type="submit" class="btn btn-submit" required="true">Next</button>
-			</span>
-        </fieldset>`;
-    $("#wizard").html(contents);
-    $(".form-box").show({
-        "duration": 400
-    });
-    if (message['cat'] == "md_show_update") {
-        $(".btn-submit").html("<i class='fa fa-spinner fa-spin '></i>");
-        $(".btn-submit").attr("disabled", "disabled");
-        return next(null);
-    }
 
-    $(".btn-submit").on("click", function (ev) {
-        ev.preventDefault();
-        let values = [];
-        value = "";
-        for (var idx = 0; idx < messages.length; idx++) {
-            res = messages[idx];
-            if (["string_ask", "int_ask", "text_ask", "secret_ask", "download_file", "drop_down_choice", "captcha_ask", "location_ask"].includes(res['cat'])) {
-                value = $(`#value_${idx}`).val();
-            } else if (res['cat'] === "upload_file") {
-                value = $(`#value_${idx}`)[0].textContent;
-            } else if (res['cat'] === "single_choice") {
-                value = $(`input[name='value_${idx}']:checked`).val();
-            } else if (res['cat'] === "multi_choice") {
-                let mvalues = [];
-                $(`input[name='value_${idx}']:checked`).each(function () {
-                    mvalues.push($(this).val());
-                });
-                value = JSON.stringify(mvalues);
-            } else if (res['cat'] === "multi_list_choice") {
-                let mvalues = document.getElementById("multiListChoice").innerText.split("\n");
-                value = JSON.stringify(mvalues);
-            } else if (res['cat'] === "datetime_picker") {
-                value = new Date($('#datetimepicker1').datetimepicker().data().date).valueOf() / 1000
-            }
-            // Validate the input
-            const errors = validate(value, res['kwargs']['validate']);
-            if (errors.length > 0) {
-                var ul = $('<ul>');
-                $(errors).each(function (index, error) {
-                    ul.append($('<li>').html(error));
-                });
-                $("#error").html(ul);
-                $("#error").removeClass("hidden");
-                return
-            }
-            values.push(value);
-        }
-        if (message["cat"] == "form") {
-            next(JSON.stringify(values), true);
-        } else {
-            next(values[0], true);
-        }
-    });
+    // if (res['cat'] === "user_info") {
+    //     next(JSON.stringify({ "username": USERNAME, "email": EMAIL }), true);
+    // }
+    
+
+    $("#spinner").hide();
+    $("#form").html(contents);
+    $(".form-box").show({duration: 400});
+  
+  
+  
+    // if (message['cat'] == "md_show_update") {
+    //     // $(".btn-submit").html("<i class='fa fa-spinner fa-spin '></i>");
+    //     // $(".btn-submit").attr("disabled", "disabled");
+    //     return next(null);
+    // }
+
+    // $(".btn-submit").on("click", function (ev) {
+    //     ev.preventDefault();
+    //     let values = [];
+    //     value = "";
+    //     for (var idx = 0; idx < messages.length; idx++) {
+    //         res = messages[idx];
+    //         if (["string_ask", "int_ask", "text_ask", "secret_ask", "download_file", "drop_down_choice", "captcha_ask", "location_ask"].includes(res['cat'])) {
+    //             value = $(`#value_${idx}`).val();
+    //         } else if (res['cat'] === "upload_file") {
+    //             value = $(`#value_${idx}`)[0].textContent;
+    //         } else if (res['cat'] === "single_choice") {
+    //             value = $(`input[name='value_${idx}']:checked`).val();
+    //         } else if (res['cat'] === "multi_choice") {
+    //             let mvalues = [];
+    //             $(`input[name='value_${idx}']:checked`).each(function () {
+    //                 mvalues.push($(this).val());
+    //             });
+    //             value = JSON.stringify(mvalues);
+    //         } else if (res['cat'] === "multi_list_choice") {
+    //             let mvalues = document.getElementById("multiListChoice").innerText.split("\n");
+    //             value = JSON.stringify(mvalues);
+    //         }
+    //         // Validate the input
+    //         const errors = validate(value, res['kwargs']['validate']);
+    //         if (errors.length > 0) {
+    //             var ul = $('<ul>');
+    //             $(errors).each(function (index, error) {
+    //                 ul.append($('<li>').html(error));
+    //             });
+    //             $("#error").html(ul);
+    //             $("#error").removeClass("hidden");
+    //             return
+    //         }
+    //         values.push(value);
+    //     }
+    //     if (message["cat"] == "form") {
+    //         workReport(JSON.stringify(values));
+    //     } else {
+    //         workReport(values[0]);
+    //     }
+    // });
 }
 
 
-let seach_res = packageGedisClient.zerobot.webinterface.actors.chatbot.session_new({ "topic": TOPIC, "query_params": QS }).then(resp => {
-    return resp.json().then(function (resp) {
-        work_get_results(resp)
-        return resp;
-    });
 
-})
 
-// load main chat
-function work_get_results(session_id_resp) {
-    packageGedisClient.zerobot.webinterface.actors.chatbot.work_get({ "sessionid": session_id_resp['sessionid'] }).then(resp => {
-        return resp.json().then(function (parsedJson) {
-            my_vars.sessionid = session_id_resp.sessionid
-            generateSlide(parsedJson);
-        });
+
+function newSession() {
+    chatBotClient.session_new({topic: TOPIC, query_params: QS}).then(response => {
+        return response.json().then((json) => {
+            sessionId = json.sessionid
+            getWork()
+        })
     })
 }
+
+
+function getWork() {
+    chatBotClient.work_get({sessionid: sessionId}).then(response => {
+        response.json().then(json => {
+            
+            toggleNextButton(json.next)
+            togglePreviousButton(json.previous)
+
+            if (json.cat == "next") { 
+                next_step()
+            }
+            else { 
+                generateSlide(json) 
+            }
+            getWork()
+        })
+    })
+}
+
+function workReport(result) {
+    let data = {sessionid: sessionId, result: result}
+    chatBotClient.work_report(data).then(response => {
+        newStep = false
+    })
+}
+
+
+function next_step() {
+    let data = {sessionid: sessionId}
+    chatBotClient.next_step(data).then(response => {
+        newStep = true
+    })
+}
+
+
+function prev_step() {
+    let data = {sessionid: sessionId, newstep: newStep}
+    chatBotClient.prev_step(data).then(response => {
+        newStep = true
+    })
+}
+
+
+function toggleNextButton(show) {
+    // $("#next-button").attr("disabled", !show);
+}
+
+
+function togglePreviousButton(show) {
+    // $("#previous-button").attr("disabled", !show);
+}
+
+
+function getFormData() {
+    data = {}
+    var formData = $('#form').serializeArray();
+    formData.forEach((item) => {
+        data[item["name"]] = item["value"]
+    })
+    return data
+}
+
+
+$("#next-button").on("click", () => {
+    let result = getFormData()
+    workReport(result["value"])
+})
+
+
+$("#previous-button").on("click", () => {
+    prev_step()
+})
+
+
+newSession()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// function work_get_results(session_id_resp) {
+//     packageGedisClient.zerobot.webinterface.actors.chatbot.work_get({ "sessionid": session_id_resp['sessionid'] }).then(resp => {
+//         return resp.json().then(function (parsedJson) {
+//             my_vars.sessionid = session_id_resp.sessionid
+//             generateSlide(parsedJson);
+//         });
+//     })
+// }
+
+
+// let seach_res = packageGedisClient.zerobot.webinterface.actors.chatbot.session_new({ "topic": TOPIC, "query_params": QS }).then(resp => {
+//     return resp.json().then(function (resp) {
+//         work_get_results(resp)
+//         return resp;
+//     });
+
+// })
+
+// // load main chat
+// function work_get_results(session_id_resp) {
+//     packageGedisClient.zerobot.webinterface.actors.chatbot.work_get({ "sessionid": session_id_resp['sessionid'] }).then(resp => {
+//         return resp.json().then(function (parsedJson) {
+//             my_vars.sessionid = session_id_resp.sessionid
+//             generateSlide(parsedJson);
+//         });
+//     })
+// }
+
+
+
+
+
+
+// function previous() {
+//     chatBotClient.prev_step({sessionid: session_id_resp['sessionid'] }).then(resp => {})
+// }
