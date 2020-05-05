@@ -19,7 +19,7 @@ def chat(bot):
         user_form_data["Currency"] = "TFT"
 
     expiration = bot.datetime_picker("Please enter network expiration time.")
-    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
+    user_form_data["expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     ips = ["IPv6", "IPv4"]
     ipversion = bot.single_choice(

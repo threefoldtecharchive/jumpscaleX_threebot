@@ -12,7 +12,7 @@ def chat(bot):
     gateway_id = gateway.node_id
     user_form_data["gateway"] = gateway_id
     expiration = bot.datetime_picker("Please enter solution expiration time.")
-    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
+    user_form_data["expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
     publickey = bot.string_ask(
         "Please enter wireguard public key or leave empty if you want us to generate one for you."
     )
