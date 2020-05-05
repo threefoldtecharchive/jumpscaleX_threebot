@@ -81,30 +81,22 @@
             </div>
             <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-12 form-box">
-                    <div class="f1-buttons-right">
+                    <div class="alert alert-danger text-left hidden" id="error"></div>
+                    <div class="top-bar">
+                        <h3 id="step-title"></h3><h5 id="step-range"></h5>
                         <button onClick="window.location.reload()" class="btn" style="color:grey">
                             <i class="fa fa-refresh"></i>
                         </button>
                     </div>
-                    
-                    <div id="wizard">
-                        <div class="alert alert-danger text-left hidden" id="error"></div>
-                        <form id="form" class="f1">
-                            <div class="form-group">
-                                <input type="text" name="a" value="1"></input>
-                            </div>
-                        </form>
+                    <form id="form" class="f1"></form>
+                    <div class="action-buttons">
+                        <button id="previous-button" type="button" class="btn btn-submit">Previous Step</button>
+                        <button id="next-button" type="button" class="btn btn-submit">Next</button>
                     </div>
-        
-                    <button id="next-button" type="button" class="btn btn-submit">Next</button>
-                    <button id="previous-button" type="button" class="btn btn-submit">Previous</button>
                 </div>
             </div>
         </div>
     </div>
-
-
-
 
     <script>
         var SERVER = '{{ url }}'

@@ -98,6 +98,7 @@ ul.navbar-nav {
 .form-box { padding-top: 40px; display: none;}
 
 .f1 {
+	text-align: left;
 	padding: 25px; background: #fff;
 	-moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px;
 }
@@ -221,6 +222,15 @@ only screen and (                min-resolution: 2dppx) {
 }
 .checkbox-container .btn.active span.glyphicon {
     opacity: 1;
+}
+.checkbox-container {
+	height: 100%;
+	clear:both;
+
+}
+
+.refresh-button {
+	width: 50px !important;
 }
 
 .btndownload {
@@ -354,3 +364,46 @@ table-with-border, th-with-border, td-with-border{
 }
 
 tr:nth-child(even) {background-color: #f2f2f2;}
+
+
+.action-buttons, .top-bar {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	background-color: #fff;
+	padding: 25px 30px;
+}
+
+.action-buttons {
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+.top-bar {
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	padding-bottom: 0px;
+}
+
+.top-bar h3, .top-bar h5 {
+	padding: 0px;
+	margin: 0px;
+}
+
+.top-bar h5 {
+	color: #95A5A6;
+	padding-top: 5px;
+}
+
+.top-bar .btn {
+	min-width: 50px !important;
+}
+
+
+.btn:hover {
+	opacity: 0.8 !important;
+}
+
+.btn:disabled {
+	background-color: gray !important;
+}

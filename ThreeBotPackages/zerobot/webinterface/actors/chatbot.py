@@ -62,6 +62,6 @@ class chatbot(j.baseclasses.threebot_actor):
         return self.chatbot.session_next_step(sessionid)
 
     @j.baseclasses.actor_method
-    def prev_step(self, sessionid, newstep, schema_out=None, user_session=None):
-        return self.chatbot.session_prev_step(sessionid, newstep)
+    def prev_step(self, sessionid, schema_out=None, user_session=None):
+        return self.chatbot.session_prev_step(sessionid)
 
