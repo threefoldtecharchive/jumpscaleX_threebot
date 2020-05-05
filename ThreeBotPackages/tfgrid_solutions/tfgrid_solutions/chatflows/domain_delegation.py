@@ -13,8 +13,8 @@ def chat(bot):
     if not gateways:
         return bot.stop("No available gateway")
     options = sorted(list(gateways.keys()))
-    gateway_choice = form.drop_down_choice("Please choose a gateway", options)
-    form.ask()
+    gateway_choice = form.drop_down_choice("Please choose a gateway", options, allow_empty=False)
+    form.ask(allow_empty=False)
     user_form_data["domain"] = domain.value
 
     gateway = gateways[gateway_choice.value]

@@ -11,7 +11,7 @@ def chat(bot):
 
     j.sal.reservation_chatflow.validate_user(user_info)
     user_form_data["chatflow"] = "network"
-    network_name = bot.string_ask("Please enter a network name")
+    network_name = bot.string_ask("Please enter a network name", allow_empty=False)
     user_form_data["Currency"] = bot.single_choice(
         "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"]
     )

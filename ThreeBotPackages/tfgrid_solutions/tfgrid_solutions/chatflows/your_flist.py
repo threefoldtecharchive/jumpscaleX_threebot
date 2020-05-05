@@ -21,7 +21,8 @@ def chat(bot):
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
     while True:
         user_form_data["Flist link"] = bot.string_ask(
-            "Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
+            "Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist",
+            allow_empty=False,
         )
 
         if "hub.grid.tf" not in user_form_data["Flist link"]:
