@@ -15,14 +15,13 @@ def chat(bot):
     options = sorted(list(gateways.keys()))
     gateway_choice = form.drop_down_choice("Please choose a gateway", options)
     form.ask()
-    expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
     user_form_data["domain"] = domain.value
 
     gateway = gateways[gateway_choice.value]
     gateway_id = gateway.node_id
     user_form_data["gateway"] = gateway_id
-    expiration = j.data.time.epoch + int(expirationdelta)
-    user_form_data["expiration"] = expiration
+    expiration = bot.datetime_picker("Please enter solution expiration time.")
+    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     if gateway.free_to_use:
         currency = "FreeTFT"

@@ -17,9 +17,10 @@ def chat(bot):
     )
     if not user_form_data["Currency"]:
         user_form_data["Currency"] = "TFT"
-    expirationdelta = int(bot.time_delta_ask("Please enter network expiration time.", default="1d"))
-    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
-    expiration = j.data.time.epoch + expirationdelta
+
+    expiration = bot.datetime_picker("Please enter network expiration time.")
+    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
+
     ips = ["IPv6", "IPv4"]
     ipversion = bot.single_choice(
         "How would you like to connect to your network? IPv4 or IPv6? If unsure, choose IPv4", ips

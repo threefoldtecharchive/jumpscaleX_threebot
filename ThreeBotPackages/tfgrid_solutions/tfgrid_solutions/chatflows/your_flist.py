@@ -56,9 +56,8 @@ def chat(bot):
         Leave empty if not needed"""
     )
 
-    expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
-    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
-    expiration = j.data.time.epoch + expirationdelta
+    expiration = bot.datetime_picker("Please enter solution expiration time.")
+    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     if user_form_data["Env variables"]:
         var_list = user_form_data["Env variables"].split(",")

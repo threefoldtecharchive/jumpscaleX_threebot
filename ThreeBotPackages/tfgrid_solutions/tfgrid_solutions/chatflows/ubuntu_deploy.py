@@ -34,9 +34,8 @@ def chat(bot):
                 Just upload the file with the key"""
         ).split("\n")[0]
 
-    expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
-    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
-    expiration = j.data.time.epoch + expirationdelta
+    expiration = bot.datetime_picker("Please enter solution expiration time.")
+    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     var_dict = {"pub_key": user_form_data["Public key"]}
     query = {"mru": math.ceil(memory.value / 1024), "cru": cpu.value, "sru": 1}
