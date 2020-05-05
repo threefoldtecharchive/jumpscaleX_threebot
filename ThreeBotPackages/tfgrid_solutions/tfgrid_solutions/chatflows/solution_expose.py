@@ -38,16 +38,12 @@ def chat(bot):
         free_to_use = True
 
     port = ports.get(kind)
-    if not port:
-        form = bot.new_form()
-        port = form.int_ask("Which port you want to expose", default=80)
-        tlsport = form.int_ask("Which tls port you want to expose", default=443)
-        form.ask()
-        user_form_data["port"] = port.value
-        user_form_data["tls-port"] = tlsport.value
-    else:
-        user_form_data["port"] = port
-        user_form_data["tls-port"] = 443
+    form = bot.new_form()
+    tlsport = form.int_ask("Which tls port you want to expose", default=port or 443)
+    port = form.int_ask("Which port you want to expose", default=port or 80)
+    form.ask()
+    user_form_data["port"] = port.value
+    user_form_data["tls-port"] = tlsport.value
 
     # List all available domains
     gateways = {g.node_id: g for g in j.sal.zosv2._explorer.gateway.list() if g.free_to_use == free_to_use}
