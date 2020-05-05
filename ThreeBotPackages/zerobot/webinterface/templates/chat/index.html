@@ -68,7 +68,9 @@
         </div>
     </nav>
     {% endif %}
-    <!-- Top content -->
+
+
+
     <div class="top-content">
         <div class="container">
 
@@ -84,14 +86,26 @@
                             <i class="fa fa-refresh"></i>
                         </button>
                     </div>
-                    <form role="form" action="" method="GET" class="f1">
+                    
+                    <div id="wizard">
                         <div class="alert alert-danger text-left hidden" id="error"></div>
-                        <div id="wizard"></div>
-                    </form>
+                        <form id="form" class="f1">
+                            <div class="form-group">
+                                <input type="text" name="a" value="1"></input>
+                            </div>
+                        </form>
+                    </div>
+        
+                    <button id="next-button" type="button" class="btn btn-submit">Next</button>
+                    <button id="previous-button" type="button" class="btn btn-submit">Previous</button>
                 </div>
             </div>
         </div>
     </div>
+
+
+
+
     <script>
         var SERVER = '{{ url }}'
         var TOPIC = '{{ topic }}'
@@ -99,10 +113,6 @@
         var USERNAME = '{{ username }}'
         var EMAIL = '{{ email }}'
     </script>
-    <!-- Javascript -->
-
-    <!-- <script src="/weblibs/jquery/jquery.min.js"></script> -->
-    <!-- <script src="/weblibs/bootstrap3/js/bootstrap.min.js"></script> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="/weblibs/jquery/jquery.backstretch.min.js"></script>
