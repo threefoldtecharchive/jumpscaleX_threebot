@@ -101,9 +101,8 @@ def chat(bot):
     if domain_gateway.free_to_use:
         currency = "FreeTFT"
 
-    expirationdelta = int(bot.time_delta_ask("Please enter gateway expiration time.", default="1d"))
-    expiration = j.data.time.epoch + expirationdelta
-    user_form_data["expiration"] = expiration
+    expiration = bot.datetime_picker("Please enter gateway expiration time.")
+    user_form_data["expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     # create tcprouter
     if domain_gateway.free_to_use:

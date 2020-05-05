@@ -55,9 +55,8 @@ def chat(bot):
     )
     ssh_keys_list = user_form_data["SSH keys"].split("\n")
 
-    expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
-    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
-    expiration = j.data.time.epoch + expirationdelta
+    expiration = bot.datetime_picker("Please enter solution expiration time.")
+    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     user_form_data["Cluster secret"] = bot.string_ask("Please add the cluster secret", default="secret")
 

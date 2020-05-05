@@ -71,9 +71,9 @@ def chat(bot):
     user_form_data["Locations allowed to fail"] = int(parity.value)
     user_form_data["ZDB number"] = int(data_number.value) + int(parity.value)
 
-    expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
-    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
-    expiration = j.data.time.epoch + expirationdelta
+    expiration = bot.datetime_picker("Please enter solution expiration time.")
+    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
+
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
 
