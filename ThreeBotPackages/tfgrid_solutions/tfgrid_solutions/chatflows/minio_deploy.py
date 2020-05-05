@@ -156,7 +156,6 @@ def chat(bot):
         flist=flist_url,
         entrypoint=entry_point,
         cpu=user_form_data["CPU"],
-        public_ipv6=True,
         memory=user_form_data["Memory"],
         env={"DATA": str(data_number.value), "PARITY": str(parity.value), "ACCESS_KEY": user_form_data["Access key"]},
         secret_env=secret_env,

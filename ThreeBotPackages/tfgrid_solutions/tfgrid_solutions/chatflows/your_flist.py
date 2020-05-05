@@ -102,7 +102,6 @@ def chat(bot):
         storage_url=storage_url,
         env=env,
         interactive=interactive,
-        public_ipv6=True,
         entrypoint=user_form_data["Entry point"],
         cpu=user_form_data["CPU"],
         memory=user_form_data["Memory"],
