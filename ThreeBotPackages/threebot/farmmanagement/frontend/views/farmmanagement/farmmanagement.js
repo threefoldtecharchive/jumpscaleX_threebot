@@ -375,18 +375,22 @@ module.exports = new Promise(async (resolve, reject) => {
                                 type: "error",
                             }
                         }
+                        setTimeout(() => {
+                            this.editFarmAlert = undefined
+                            this.settingsDialog = false
+                        }, 2000)
                     }).catch(err => {
+                        var msg = "server error"
+                        if (err.response) {
+                            // The request was made and the server responded with a status code
+                            // that falls out of the range of 2xx
+                            msg = err.response.data['error'] ? err.response.data['error'] : "server error"
+                        }
                         this.editFarmAlert = {
-                            message: "server error",
+                            message: msg,
                             type: "error",
                         }
                     })
-
-                setTimeout(() => {
-                    this.editFarmAlert = undefined
-                    this.settingsDialog = false
-                }, 2000)
-
             },
             addWallet(farm) {
                 farm.wallet_addresses.push({ 'asset': 'TFT', address: '' })
