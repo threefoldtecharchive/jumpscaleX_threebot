@@ -1,29 +1,35 @@
 import { BaseView } from './baseview'
+import { solutions } from '../../services/deployedSolutions'
 
-let data = [
-    {
-        id: "1", type: "folder", value: "solution1", data: [
-            { id: "p_0_1", type: "file", value: "ID" },
-            { id: "p_0_0", type: "file", value: "name" }
-        ]
-    },
-    {
-        id: "2", type: "folder", value: "solution2", data: [
-            { id: "p_1_1", type: "file", value: "ID" },
-            { id: "p_1_0", type: "file", value: "name" }
-        ]
-    },
-    {
-        id: "3", type: "folder", value: "solution3", data: [
-            { id: "p_2_1", type: "file", value: "ID" },
-            { id: "p_2_0", type: "file", value: "name" }
-        ]
-    }
-];
-
+const CHAT = "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=your_flist"
 export default class DeployedFlistView extends BaseView {
     constructor(app, name) {
-        super(app, name, data, "flist.png");
+        super(app, name, CHAT, "flist.png");
+    }
+    init(view) {
+        super.init(view)
+        let self = this
+        let parseData = []
+        solutions.listSolution('flist').then((data) => {
+            const solutions = data.json().solutions
+            console.log("flist:  ", solutions)
+            // for (let i = 0; i < solutions.length; i++) {
+            //     const solution = solutions[i];
+            //     let dict = JSON.parse(solution.form_info)
+            //     let reservation = JSON.parse(String(solution.reservation))
+            //     dict.id = reservation.id
+
+            //     // Assign new key
+            //     dict.name = dict['Solution name'];
+            //     dict.ip = dict['IP Address']
+            //     delete dict['IP Address']
+            //     delete dict['Solution name'];
+
+            //     parseData.push(dict)
+            // }
+            // self.solutionlist.parse(parseData)
+        });
     }
 }
+
 

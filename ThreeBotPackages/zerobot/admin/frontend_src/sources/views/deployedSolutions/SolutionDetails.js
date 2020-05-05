@@ -1,5 +1,4 @@
 import { JetView } from "webix-jet";
-import { wallet } from "../../services/deployedSolutions";
 
 export default class SolutionDetailsView extends JetView {
     config() {
@@ -47,9 +46,6 @@ export default class SolutionDetailsView extends JetView {
 
     showInfo(data) {
         var self = this
-
-        
-
         self.info.clearAll()
         for (let [key, value] of Object.entries(data)) {
             if(key == 'nodes'){

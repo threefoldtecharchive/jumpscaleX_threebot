@@ -1,17 +1,16 @@
 import { BaseView } from './baseview'
 import { solutions } from '../../services/deployedSolutions'
-import SolutionDetailsView from './SolutionDetails'
+
+const CHAT = "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=network_deploy"
 
 export default class DeployedNetworkView extends BaseView {
     constructor(app, name) {
-        
-        super(app, name, "network.png");
+        super(app, name, CHAT, "network.png");
     }
-    
-    init(view){
+
+    init(view) {
         super.init(view)
         let self = this
-        // self.SolutionDetailsView = self.ui(SolutionDetailsView)
         let parseData = []
         solutions.listSolution('network').then((data) => {
             const solutions = data.json().solutions
@@ -26,7 +25,7 @@ export default class DeployedNetworkView extends BaseView {
                 dict.expiration_reservation = reservation.data_reservation.expiration_reservation
                 dict.currencies = reservation.data_reservation.currencies.join(' ')
                 dict.expiration = JSON.parse(solution.form_info)['Solution expiration']
-                dict.iprange = reservation.data_reservation.networks[0].iprange
+                dict.ip = reservation.data_reservation.networks[0].iprange
                 dict.nodes = []
                 for (let i = 0; i < nodes.length; i++) {
                     const node = nodes[i];
@@ -34,13 +33,7 @@ export default class DeployedNetworkView extends BaseView {
                 }
                 parseData.push(dict)
             }
-            console.log(parseData)
             self.solutionlist.parse(parseData)
-        });
-
-        self.solutionlist.attachEvent("onItemDblClick", function (id) {
-            let ret = parseData.find(solution => solution.id == id)
-            self.SolutionDetailsView.showInfo(ret)
         });
     }
 }

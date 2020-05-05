@@ -1,3 +1,12 @@
+.createnewdiv .overall {
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #0482a1), color-stop(1, #01505e)) !important;
+  color: #e6e6e6;
+}
+.createnewdiv .overall .title {
+  padding-left: 3.5em;
+  font-size: 35px;
+  padding-top: .9em;
+}
 .webix_scroll_cont {
   background-color: transparent !important;
 }

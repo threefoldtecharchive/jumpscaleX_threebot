@@ -1,13 +1,12 @@
-import { JetView } from "webix-jet";
+import { JetView, plugins } from "webix-jet";
 import SolutionDetailsView from './SolutionDetails'
 
 
 export class BaseView extends JetView {
-    constructor(app, name, logo) {
+    constructor(app, name ,chat, logo) {
         super(app, name);
-
         this.logo = logo || "3bot.png";
-        console.log("baseview:  ",this.data)
+        this.chat = chat;
     }
     config() {
 
@@ -21,6 +20,7 @@ export class BaseView extends JetView {
         }
 
         const view = {
+            localId:"solutionMenu",
             view: "dataview",
             id: "solutionlist",
             data: this.data,
@@ -32,7 +32,7 @@ export class BaseView extends JetView {
             type: {
                 width: 480,
                 height: 120,
-                template: "<div class='overall'><div class='title'>#name#</div><div class='ip'>#iprange# </div> </div>"
+                template: "<div class='overall'><div class='title'>#name#</div><div class='ip'>#ip# </div> </div>"
             }
         }
         
@@ -50,5 +50,25 @@ export class BaseView extends JetView {
         let self = this;
         self.solutionlist = $$("solutionlist")
         self.SolutionDetailsView = self.ui(SolutionDetailsView)
+
+        self.solutionlist.add({
+            name:"Create new",
+            ip:"",
+            id:'-1'
+        }, 0);
+        self.solutionlist.addCss(self.solutionlist.getFirstId(),'createnewdiv')
+
+        self.solutionlist.attachEvent("onItemClick", function (id) {
+            if(id == -1){
+                self.show(self.chat)
+            }
+        });
+
+        self.solutionlist.attachEvent("onItemDblClick", function (id) {
+            if(id != -1){
+                let ret = self.parseData.find(solution => solution.id == id)
+                self.SolutionDetailsView.showInfo(ret)
+            }
+        });
     }
 }
