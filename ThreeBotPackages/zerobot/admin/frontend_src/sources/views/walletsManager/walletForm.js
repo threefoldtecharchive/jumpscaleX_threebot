@@ -62,7 +62,7 @@ export default class WalletFormView extends JetView {
             this.form.getTopParentView().hide();
             this.app.refresh()
         }).catch(error => {
-            webix.message({ type: "error", text: "Could not create wallet" });
+            webix.message({ type: "error", text: "Could not create wallet", expire: -1});
             this.form.showProgress({hide: true});
             this.form.getTopParentView().hide();
             this.app.refresh()

@@ -30,13 +30,12 @@ def chat(bot):
 
     while not user_form_data.get("Public key"):
         user_form_data["Public key"] = bot.upload_file(
-            """"Please add your public ssh key, this will allow you to access the deployed container using ssh.
+            """Please add your public ssh key, this will allow you to access the deployed container using ssh.
                 Just upload the file with the key"""
         ).split("\n")[0]
 
-    expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
-    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
-    expiration = j.data.time.epoch + expirationdelta
+    expiration = bot.datetime_picker("Please enter solution expiration time.")
+    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     var_dict = {"pub_key": user_form_data["Public key"]}
     query = {"mru": math.ceil(memory.value / 1024), "cru": cpu.value, "sru": 1}
@@ -79,7 +78,6 @@ def chat(bot):
         interactive=False,
         entrypoint=entry_point,
         cpu=user_form_data["CPU"],
-        public_ipv6=True,
         memory=user_form_data["Memory"],
     )
     metadata = dict()

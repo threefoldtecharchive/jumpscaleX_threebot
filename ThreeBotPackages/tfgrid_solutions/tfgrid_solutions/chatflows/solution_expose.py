@@ -38,9 +38,12 @@ def chat(bot):
         free_to_use = True
 
     port = ports.get(kind)
-    if not port:
-        port = bot.int_ask("Which port you want to expose")
-        user_form_data["port"] = port
+    form = bot.new_form()
+    tlsport = form.int_ask("Which tls port you want to expose", default=port or 443)
+    port = form.int_ask("Which port you want to expose", default=port or 80)
+    form.ask()
+    user_form_data["port"] = port.value
+    user_form_data["tls-port"] = tlsport.value
 
     # List all available domains
     gateways = {g.node_id: g for g in j.sal.zosv2._explorer.gateway.list() if g.free_to_use == free_to_use}
@@ -94,16 +97,15 @@ def chat(bot):
     if domain_gateway.free_to_use:
         currency = "FreeTFT"
 
-    expirationdelta = int(bot.time_delta_ask("Please enter gateway expiration time.", default="1d"))
-    expiration = j.data.time.epoch + expirationdelta
-    user_form_data["expiration"] = expiration
+    expiration = bot.datetime_picker("Please enter gateway expiration time.")
+    user_form_data["expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     # create tcprouter
     if domain_gateway.free_to_use:
         currency = "FreeTFT"
     else:
         currency = None
-    query = {"mru": 1, "cru": 1, "currency": currency}
+    query = {"mru": 1, "cru": 1, "currency": currency, "sru": 1}
     node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
 
     if kind == "kubernetes":
@@ -142,8 +144,9 @@ def chat(bot):
     secret_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, user_form_data["secret"])
     secret_env["TRC_SECRET"] = secret_encrypted
     remote = f"{domain_gateway.dns_nameserver[0]}:{domain_gateway.tcp_router_port}"
-    local = f"{container_address}:{port}"
-    entrypoint = f"/bin/trc -local {local} -remote {remote}"
+    local = f"{container_address}:{user_form_data['port']}"
+    localtls = f"{container_address}:{user_form_data['tls-port']}"
+    entrypoint = f"/bin/trc -local {local} -local-tls {localtls} -remote {remote}"
 
     j.sal.zosv2.container.create(
         reservation=reservation,

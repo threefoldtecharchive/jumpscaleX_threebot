@@ -2,7 +2,6 @@ let my_vars = {
     "sessionid": "",
 }
 
-
 var stringContentGenerate = function (message, kwargs, idx) {
     let contents = ``
     if (typeof kwargs['default'] == 'undefined') {
@@ -247,6 +246,29 @@ var dropDownChoiceGenerate = function (message, options, kwargs, idx) {
     return contents;
 }
 
+var dateTimePickerAsk = function (message, kwargs, idx) {
+    let contents = `
+    <h4>${message}</h4>
+    <div class="row">
+        <div class='col-sm-6'>
+            <div class="form-group">
+                <div class='input-group date' id='datetimepicker1'>
+                    <input type='text' class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $('#datetimepicker1').datetimepicker();
+        });
+    </script>
+    `
+    return contents;
+}
+
 
 function download(text, filename) {
 
@@ -397,6 +419,9 @@ var generateSlide = function (message) {
             case "multi_list_choice":
                 contents += multiListChoice(res['msg'], res['options'], res['kwargs'], i);
                 break;
+            case "datetime_picker":
+                contents += dateTimePickerAsk(res['msg'], res['options'], res['kwargs'], i)
+                break;
         }
     }
     if (res['cat'] === "user_info") {
@@ -441,6 +466,8 @@ var generateSlide = function (message) {
             } else if (res['cat'] === "multi_list_choice") {
                 let mvalues = document.getElementById("multiListChoice").innerText.split("\n");
                 value = JSON.stringify(mvalues);
+            } else if (res['cat'] === "datetime_picker") {
+                value = new Date($('#datetimepicker1').datetimepicker().data().date).valueOf() / 1000
             }
             // Validate the input
             const errors = validate(value, res['kwargs']['validate']);

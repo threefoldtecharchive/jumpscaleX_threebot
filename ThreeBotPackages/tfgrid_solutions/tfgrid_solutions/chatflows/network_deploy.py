@@ -11,15 +11,16 @@ def chat(bot):
 
     j.sal.reservation_chatflow.validate_user(user_info)
     user_form_data["chatflow"] = "network"
-    network_name = bot.string_ask("Please enter a network name")
+    network_name = bot.string_ask("Please enter a network name", allow_empty=False)
     user_form_data["Currency"] = bot.single_choice(
         "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"]
     )
     if not user_form_data["Currency"]:
         user_form_data["Currency"] = "TFT"
-    expirationdelta = int(bot.time_delta_ask("Please enter network expiration time.", default="1d"))
-    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
-    expiration = j.data.time.epoch + expirationdelta
+
+    expiration = bot.datetime_picker("Please enter network expiration time.")
+    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
+
     ips = ["IPv6", "IPv4"]
     ipversion = bot.single_choice(
         "How would you like to connect to your network? IPv4 or IPv6? If unsure, choose IPv4", ips
