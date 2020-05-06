@@ -152,14 +152,14 @@ var multiListChoice = function (field, id) {
     return content
 }
 
-var locategoryionContentGenerate = function (field, id) {
+var locationContentGenerate = function (field, id) {
     return `
     <h4>${field.msg}</h4>
     <div class="form-group">
-        <input type="text" placeholder="Locategoryion" class="form-control" id="${id}" readonly>
+        <input type="text" placeholder="Location" class="form-control" id="${id}" readonly>
         <div id="mymap" class="mapdiv" style="width: 60%; height: 300px;">
         <script>
-            function locategoryionChoiceGenerate() {
+            function locationChoiceGenerate() {
                 let lat = 51.260197;
                 let lng = 4.402771;
 
@@ -191,11 +191,11 @@ var locategoryionContentGenerate = function (field, id) {
                     }, 1);
                 });
             }
-            locategoryionChoiceGenerate();
+            locationChoiceGenerate();
         </script>
         </div>
     </div>
-    <label class="locategoryion-error">${field.label}</label>
+    <label class="location-error">${field.label}</label>
     `
 }
 
@@ -232,12 +232,13 @@ var dropDownChoiceGenerate = function (field, id) {
 }
 
 var dateTimePickerAsk = function (field, id) {
+    let defaultValue = field.default ? new Date(field.default * 1000) : "";
     let contents = `
     <h4>${field.msg}</h4>
     <div class="row">
         <div class='col-sm-6'>
             <div class="form-group">
-                <div class='input-group date' id='datetimepicker1'>
+                <div class='input-group date' id="${id}">
                     <input type='text' class="form-control" />
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
@@ -291,7 +292,7 @@ var generateUploadFile = function (field, id) {
 }
 
 function redirect (url) {
-    $(locategoryion).attr("href", url);
+    $(location).attr("href", url);
 }
 
 function download(text, filename) {
@@ -349,6 +350,8 @@ function generateField(work, fieldName) {
             return generateDownloadAsFile(work, fieldName);
         case "upload_file":
             return generateUploadFile(work, fieldName);
+        case "datetime_picker":
+            return dateTimePickerAsk(work, fieldName)
     }
 }
 
@@ -424,12 +427,12 @@ function newSession() {
 function getWork() {
     chatBotClient.work_get({sessionid: sessionId}).then(response => {
         response.json().then(work => {
-            workHandler(work)
             if (work.category == "end_of_chat") {
                 $("#step-title").html("Done")
                 $("#step-range").hide()
                 return;
             }
+            workHandler(work)
             getWork()
         })
     })
@@ -479,7 +482,7 @@ $("#next-button").on("click", (event) => {
             let mvalues = document.getElementById("multiListChoice").innerText.split("\n");
             value = JSON.stringify(mvalues);
         } else if (field.category === "datetime_picker") {
-            value = new Date($('#datetimepicker1').datetimepicker().data().date).valueOf() / 1000
+            value = new Date($(`#value-${index}`).datetimepicker().data().date).valueOf() / 1000
         }
 
         const errors = validate(value, field.kwargs.validate);
