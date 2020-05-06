@@ -8,8 +8,7 @@ def chat(bot):
     """
     user_form_data = {}
     user_info = bot.user_info()
-
-    HUB_URL = "https://hub.grid.tf/mikhaieb/bishoyabdo-gitea-latest.flist"
+    HUB_URL = "https://hub.grid.tf/tf-official-apps/gitea-latest.flist"
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.gitea.1")
     user_form_data["chatflow"] = "gitea"
 
