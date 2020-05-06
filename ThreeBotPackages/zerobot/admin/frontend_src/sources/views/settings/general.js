@@ -42,6 +42,16 @@ export default class GeneralView extends JetView {
             }
             console.log(data);
             this.form.showProgress({ hide: true });
+        }).catch((data) => {
+            this.form.showProgress({ hide: true });
+            var msg = "Could not switch explorers";
+            try {
+                msg = JSON.parse(data.responseText).error;
+            } catch (e) {
+                console.log(e);
+            }
+            webix.message({ type: "error", text: msg, expire: -1});
+
         });
     }
 
