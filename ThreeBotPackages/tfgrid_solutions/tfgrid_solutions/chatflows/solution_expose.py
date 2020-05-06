@@ -70,7 +70,7 @@ def chat(bot):
     - {{dns}}
     {% endfor %}
     """
-        res = j.tools.jinja2.template_render(gateway=domain_gateway, domain=domain)
+        res = j.tools.jinja2.template_render(text=res, gateway=domain_gateway, domain=domain)
         bot.md_show(res)
 
     else:
