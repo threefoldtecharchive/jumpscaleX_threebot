@@ -66,5 +66,7 @@ class admin(j.baseclasses.threebot_actor):
             j.me.tid = user.id
             j.me.save()
             j.clients.explorer.default_addr_set(explorers[explorer_type])
+            # update our solutions
+            j.sal.reservation_chatflow.solutions_explorer_get()
             return self.explorer_to_json(explorer_type)
         raise j.exceptions.Value(f"{explorer_type} is not a valid explorer type, must be 'testnet' or 'main'")
