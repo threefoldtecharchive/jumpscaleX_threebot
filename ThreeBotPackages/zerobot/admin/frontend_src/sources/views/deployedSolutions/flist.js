@@ -9,25 +9,22 @@ export default class DeployedFlistView extends BaseView {
     init(view) {
         super.init(view)
         let self = this
-        let parseData = []
+        self.parseData = []
         solutions.listSolution('flist').then((data) => {
             const solutions = data.json().solutions
-            console.log("flist:  ", solutions)
-            // for (let i = 0; i < solutions.length; i++) {
-            //     const solution = solutions[i];
-            //     let dict = JSON.parse(solution.form_info)
-            //     let reservation = JSON.parse(String(solution.reservation))
-            //     dict.id = reservation.id
+            for (let i = 0; i < solutions.length; i++) {
+                const solution = solutions[i];
+                let dict = JSON.parse(solution.form_info)
+                let reservation = JSON.parse(String(solution.reservation))
+                dict.id = reservation.id
+                dict._name = dict['Solution name'];
+                dict._ip = dict['IP Address']
+                
+                delete dict['chatflow']
 
-            //     // Assign new key
-            //     dict.name = dict['Solution name'];
-            //     dict.ip = dict['IP Address']
-            //     delete dict['IP Address']
-            //     delete dict['Solution name'];
-
-            //     parseData.push(dict)
-            // }
-            // self.solutionlist.parse(parseData)
+                self.parseData.push(dict)
+            }
+            self.solutionlist.parse(self.parseData)
         });
     }
 }

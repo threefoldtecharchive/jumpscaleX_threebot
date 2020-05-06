@@ -10,25 +10,35 @@ export default class DeployedK8sClustersView extends BaseView {
     init(view) {
         super.init(view)
         let self = this
-        let parseData = []
+        self.parseData = []
         solutions.listSolution('kubernetes').then((data) => {
             const solutions = data.json().solutions
-            console.log("kubernetes:  ", solutions)
-            // for (let i = 0; i < solutions.length; i++) {
-            //     const solution = solutions[i];
-            //     let dict = JSON.parse(solution.form_info)
-            //     let reservation = JSON.parse(String(solution.reservation))
-            //     dict.id = reservation.id
-    
-            //     // Assign new key
-            //     dict.name = dict['Solution name'];
-            //     dict.ip = dict['IP Address']
-            //     delete dict['IP Address']
-            //     delete dict['Solution name'];
-    
-            //     parseData.push(dict)
-            // }
-            // self.solutionlist.parse(parseData)
+            for (let i = 0; i < solutions.length; i++) {
+                const solution = solutions[i];
+                let master_ips = new Set();
+                let slaves_ips = new Set()
+                let dict = JSON.parse(solution.form_info)
+                let reservation = JSON.parse(String(solution.reservation))
+                let nodes = reservation.data_reservation.kubernetes
+                for (let i = 0; i < nodes.length; i++) {
+                    const node = nodes[i];
+                    if(node.master_ips.length === 0)
+                        master_ips.add(node.ipaddress)
+                    else
+                        slaves_ips.add(node.ipaddress)
+                }
+                dict['Master IPs'] = Array.from(master_ips).join('<br>')
+                dict['Slaves IPs'] = Array.from(slaves_ips).join('<br>')
+                dict.id = reservation.id
+                dict._name = dict['Solution name'];
+                dict._ip = Array.from(master_ips).join('<br>')
+                
+                delete dict['IP Address']
+                delete dict['chatflow']
+
+                self.parseData.push(dict)
+            }
+            self.solutionlist.parse(self.parseData)
         });
     }
 

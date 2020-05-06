@@ -10,25 +10,25 @@ export default class DeployedMinioView extends BaseView {
     init(view) {
         super.init(view)
         let self = this
-        let parseData = []
+        self.parseData = []
         solutions.listSolution('minio').then((data) => {
             const solutions = data.json().solutions
             console.log("Minio:  ", solutions)
-            // for (let i = 0; i < solutions.length; i++) {
-            //     const solution = solutions[i];
-            //     let dict = JSON.parse(solution.form_info)
-            //     let reservation = JSON.parse(String(solution.reservation))
-            //     dict.id = reservation.id
-    
-            //     // Assign new key
-            //     dict.name = dict['Solution name'];
-            //     dict.ip = dict['IP Address']
-            //     delete dict['IP Address']
-            //     delete dict['Solution name'];
-    
-            //     parseData.push(dict)
-            // }
-            // self.solutionlist.parse(parseData)
+            for (let i = 0; i < solutions.length; i++) {
+                const solution = solutions[i];
+                let dict = JSON.parse(solution.form_info)
+                let reservation = JSON.parse(String(solution.reservation))
+                let ip = reservation.data_reservation.containers[0].network_connection[0].ipaddress
+                console.log(ip)
+                dict['IP address']=ip
+                dict.id = reservation.id
+                dict._name = dict['Solution name'];
+                dict._ip = ip
+
+                delete dict['chatflow']
+                self.parseData.push(dict)
+            }
+            self.solutionlist.parse(self.parseData)
         });
     }
 }

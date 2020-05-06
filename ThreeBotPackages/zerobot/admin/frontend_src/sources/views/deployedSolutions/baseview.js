@@ -3,7 +3,7 @@ import SolutionDetailsView from './SolutionDetails'
 
 
 export class BaseView extends JetView {
-    constructor(app, name ,chat, logo) {
+    constructor(app, name, chat, logo) {
         super(app, name);
         this.logo = logo || "3bot.png";
         this.chat = chat;
@@ -20,27 +20,27 @@ export class BaseView extends JetView {
         }
 
         const view = {
-            localId:"solutionMenu",
+            localId: "solutionMenu",
             view: "dataview",
             id: "solutionlist",
             data: this.data,
             width: 1000,
             height: 600,
-            scroll:false,
+            scroll: false,
             select: 1,
             css: "solutions-list",
             type: {
                 width: 480,
                 height: 120,
-                template: "<div class='overall'><div class='title'>#name#</div><div class='ip'>#ip# </div> </div>"
+                template: "<div class='overall'><div class='title'>#_name#</div><div class='ip'>#_ip# </div> </div>"
             }
         }
-        
+
         return {
             type: "space",
             rows:
-            [
-                logo,
+                [
+                    logo,
                     { cols: [{}, view, {}] }
                 ]
         };
@@ -52,22 +52,32 @@ export class BaseView extends JetView {
         self.SolutionDetailsView = self.ui(SolutionDetailsView)
 
         self.solutionlist.add({
-            name:"Create new",
-            ip:"",
-            id:'-1'
+            _name: "Create new",
+            _ip: "",
+            id: '-1'
         }, 0);
-        self.solutionlist.addCss(self.solutionlist.getFirstId(),'createnewdiv')
+        self.solutionlist.addCss(self.solutionlist.getFirstId(), 'createnewdiv')
 
         self.solutionlist.attachEvent("onItemClick", function (id) {
-            if(id == -1){
+            if (id == -1) {
                 self.show(self.chat)
             }
         });
 
         self.solutionlist.attachEvent("onItemDblClick", function (id) {
-            if(id != -1){
+            if (id != -1) {
                 let ret = self.parseData.find(solution => solution.id == id)
-                self.SolutionDetailsView.showInfo(ret)
+                let filtered = Object.assign({}, ret);
+                for (let i = 0; i < Object.keys(filtered).length; i++) {
+                    const key = Object.keys(filtered)[i];
+                    if (key[0] === '_') {
+                        delete filtered[key];
+                        i--;
+                    }
+                }
+                filtered['Reservation id']=filtered.id
+                delete filtered['id']
+                self.SolutionDetailsView.showInfo(filtered)
             }
         });
     }

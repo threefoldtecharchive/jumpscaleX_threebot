@@ -21,12 +21,9 @@ export default class DeployedUbuntuView extends BaseView {
                 let dict = JSON.parse(solution.form_info)
                 let reservation = JSON.parse(String(solution.reservation))
                 dict.id = reservation.id
+                dict._name = dict['Solution name'];
+                dict._ip = dict['IP Address']
                 
-                // Assign new key
-                dict.name = dict['Solution name'];
-                dict.ip = dict['IP Address']
-                delete dict['IP Address']  
-                delete dict['Solution name'];
                 
                 self.parseData.push(dict)
             }
