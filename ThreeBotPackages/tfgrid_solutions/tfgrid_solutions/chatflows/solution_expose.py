@@ -17,6 +17,10 @@ ports = {"minio": 9000, "kubernetes": 6443}
 
 
 def chat(bot):
+    url = "tfgrid.solutions.exposed.1"
+    model = j.clients.bcdbmodel.get(url=url, name="tfgrid_solutions")
+    obj = model.new()
+
     user_form_data = {}
     user_info = bot.user_info()
     j.sal.reservation_chatflow.validate_user(user_info)
@@ -171,5 +175,14 @@ def chat(bot):
 
     j.sal.reservation_chatflow.payment_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
+
+    obj.kind = user_form_data["kind"]
+    obj.solution_name = user_form_data["solution_name"]
+    obj.port = user_form_data["port"]
+    obj.tls_port = user_form_data["tls-port"]
+    obj.domain = domain
+    obj.gateway_id = domain_gateway.node_id
+    obj.save()
+
     res_md = f"Use this Gateway to connect to your exposed solutions {domain}"
     bot.md_show(res_md)

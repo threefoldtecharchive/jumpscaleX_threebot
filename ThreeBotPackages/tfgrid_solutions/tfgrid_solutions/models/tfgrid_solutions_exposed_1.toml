@@ -1,0 +1,7 @@
+@url = tfgrid.solutions.exposed.1
+domain** = (S)
+kind** = (S)
+solution_name** = (S)
+gateway_id** = (S)
+tls_port** = (I)
+port** = (I)
