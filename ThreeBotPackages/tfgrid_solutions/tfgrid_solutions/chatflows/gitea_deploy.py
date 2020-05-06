@@ -32,7 +32,7 @@ def chat(bot):
     user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
 
-    query = {"mru": math.ceil(1024 / 1024), "cru": 2, "hru": 5}
+    query = {"mru": math.ceil(1024 / 1024), "cru": 2, "hru": 5, "sru": 1}
     # create new reservation
     reservation = j.sal.zosv2.reservation_create()
     nodeid = bot.string_ask(
