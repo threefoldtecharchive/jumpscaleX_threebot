@@ -16,12 +16,15 @@ export default class DeployedFlistView extends BaseView {
                 const solution = solutions[i];
                 let dict = JSON.parse(solution.form_info)
                 let reservation = JSON.parse(String(solution.reservation))
+
+                if (!dict['Solution name'])     // for flists created by other solutions not flist chatflow
+                    continue;
+                
                 dict.id = reservation.id
                 dict._name = dict['Solution name'];
                 dict._ip = dict['IP Address']
-                
-                delete dict['chatflow']
 
+                delete dict['chatflow']
                 self.parseData.push(dict)
             }
             self.solutionlist.parse(self.parseData)

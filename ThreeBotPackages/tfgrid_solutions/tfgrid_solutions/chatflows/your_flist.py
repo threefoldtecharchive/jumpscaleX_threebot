@@ -21,7 +21,8 @@ def chat(bot):
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
     while True:
         user_form_data["Flist link"] = bot.string_ask(
-            "Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist"
+            "Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist",
+            allow_empty=False,
         )
 
         if "hub.grid.tf" not in user_form_data["Flist link"]:
@@ -56,9 +57,8 @@ def chat(bot):
         Leave empty if not needed"""
     )
 
-    expirationdelta = int(bot.time_delta_ask("Please enter solution expiration time.", default="1d"))
-    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expirationdelta)
-    expiration = j.data.time.epoch + expirationdelta
+    expiration = bot.datetime_picker("Please enter solution expiration time.")
+    user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     if user_form_data["Env variables"]:
         var_list = user_form_data["Env variables"].split(",")
@@ -103,7 +103,6 @@ def chat(bot):
         storage_url=storage_url,
         env=env,
         interactive=interactive,
-        public_ipv6=True,
         entrypoint=user_form_data["Entry point"],
         cpu=user_form_data["CPU"],
         memory=user_form_data["Memory"],

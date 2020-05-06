@@ -98,7 +98,7 @@ export default class TopView extends JetView {
                 value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes Cluster</span>'
             } , {
                 id: "deployed_domain_delegation",
-                value: 'Domain Delagation',
+                value: 'Domain Delegation',
                 icon: 'mdi mdi-dns'
             }, {
                 id: "deployed_solution_expose",
@@ -253,9 +253,9 @@ export default class TopView extends JetView {
                 deployed_flist:"deployedSolutions.flist",
                 deployed_minio:"deployedSolutions.minio",
                 deployed_k8s_cluster:"deployedSolutions.k8s_cluster",
-                deployed_domain_delegation:"deployedSolutions.domain_delegation",
-                deployed_solution_expose:"deployedSolutions.solution_expose",
-                deployed_gateway_4to6:"deployedSolutions.gateway_4to6"
+                deployed_domain_delegation:"solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=domain_delegation",
+                deployed_solution_expose:"solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=solution_expose",
+                deployed_gateway_4to6:"solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=four_to_six_gateway"
             }
         });
 

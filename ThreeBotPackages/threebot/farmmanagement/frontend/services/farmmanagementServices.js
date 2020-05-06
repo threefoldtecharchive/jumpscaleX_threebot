@@ -1,5 +1,4 @@
 import axios from "/weblibs/axios/axios.min.js";
-import config from "../config/farmmanagement.config.local.js";
 
 export default {
   getExplorer() {

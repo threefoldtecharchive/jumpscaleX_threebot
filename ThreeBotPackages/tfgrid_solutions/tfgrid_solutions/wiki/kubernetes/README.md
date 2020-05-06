@@ -25,44 +25,68 @@ Go to your admin dashboard `https://localhost:4000/admin` and click on Network
 ## Inputs
 
 - `container name` a name of your container to help you to get it again with reservation id.
-- `number of workers` : number of worker nodes to be deployed, the cluster size will then be the number of workers + 1(master node)
+- `number of mater` : number of worker nodes to be deployed
+- `number of workers` : number of worker nodes to be deployed, the cluster size will then be the number of workers nodes + number of master nodes
 - `ssh keys` : ssh keys which will be used to allow access for the ssh key holders to the deployed cluster. They should be in a file where each ssh key is on a seperate line
 - `Expiration time`: a network expiration time (minutes=m ,hour=h, day=d, week=w, month=M)
 - `cluster secret` : the secret that will be used to access the cluster deployed. Please keep it safe.
 - `IP range` : Configure network manually by choosing an IP range to use or the deployer can choose for you and generate an IP range automatically
 - `Network name` : a name for the network to deploy on,  if left empty it will be a generated name
 
-
 ## Deploying Kubernetes:
 
+### Choosing the network
+
+![Step1](k8s3.png)
+Here we choose which network we connect our kubernetes cluster to
+
 ### Choosing deployment name
+
 ![Step2](k8s2.png)
 
 Choosing the name of the solution to be deployed. This allows the user to view the solution's reservation info in the dashboard deployed solutions
 
-### Choosing the network
-![Step3](k8s3.png)
-Here we choose which network we connect our kubernetes cluster to
+### Choosing the nodes specification
 
-### Choosing number of worker nodes
 ![Step4](k8s4.png)
+Here we specify the size of the nodes that will be selected for deployment. We also specify the number of master nodes and worker nodes that will be in the cluster
 
-Here, we specify the number of worker nodes used in the cluster.
+### Choose a farm to deploy on
 
-### Uploading your public Key 
+![step8](../farms.png)
+
+We can choose the farms on which to deploy on. The farms are basically a group of nodes where multiple solutions can be deployed on them. We can either choose farm names from the drop down list or leave it empty to randomly choose from any farms.
+
+### Uploading your public Key
+
 ![Step5](k8s5.png)
 This step is necessary to access the kubernetes machine and authorize you to be able to SSH into it
 
 ### Expiration time
+
 ![Step6](k8s6.png)
 Here we specify for how long you want to reserve kubernetes cluster on our grid
 
 ### Choosing a secret for the cluster
+
 ![Step7](k8s7.png)
 Now it's time to choose the secret for your kubernetes cluster, make sure you don't forget it.
 
-### Set the IP Address for the solution
-![Step8](k8s8.png)
+### Set the IP Addresses for the solution master nodes
+
+![Step9](k8s8.png)
+We select IP addresses equal to the number of master nodes we entered earlier.
+
+### Set the IP Addresses for the solution worker nodes
+
+![Step9](k8s9.png)
+We then select IP addresses equal to the number of worker nodes we entered earlier
+
+### Payment
+
+![step10](../payment.png)
+
+Finally we select the wallet that we will pay with to proceed with the payment for the solution that will be deployed.
 
 After the deployment of the Kubernetes cluster is complete, the user with the ssh keys will have access to the deployed cluster.
 
