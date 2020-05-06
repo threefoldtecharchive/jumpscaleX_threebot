@@ -36,6 +36,7 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
             "tfgrid.solutions.kubernetes.1",
             "tfgrid.solutions.ubuntu.1",
             "tfgrid.solutions.network.1",
+            "tfgrid.solutions.gitea.1",
         ]
 
         if solution_type == "all":
