@@ -93,7 +93,7 @@ def chat(bot):
         domain = domain + "." + domain_name
     user_form_data["Domain"] = domain
     user_form_data["Gateway"] = domain_gateway.node_id
-    user_form_data["Name Servers"] = domain_gateway.dns_nameserver
+    user_form_data["Name Server"] = domain_gateway.dns_nameserver[0]
 
     expiration = bot.datetime_picker("Please enter gateway expiration time.")
     user_form_data["Expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)

@@ -19,7 +19,7 @@ export default class Deployed4to6GatewayView extends BaseView {
                 let reservation = JSON.parse(String(solution.reservation))
                 dict.id = reservation.id
                 dict._name = solution.name;
-                
+                dict._ip = ""
                 self.parseData.push(dict)
             }
             self.solutionlist.parse(self.parseData)

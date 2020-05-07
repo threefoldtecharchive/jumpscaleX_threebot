@@ -20,7 +20,7 @@ export default class DeployedDomainDelegationView extends BaseView {
                 dict['Expiration Provisioning'] = reservation.data_reservation.expiration_provisioning
                 dict['Currencies'] = reservation.data_reservation.currencies
                 dict.id = dict.rid
-                dict._name = dict.domain;
+                dict._name = dict["Domain"]
                 dict._ip = ""
 
                 delete dict['rid']
