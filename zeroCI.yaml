@@ -1,20 +1,26 @@
-prequisties:
-  - jsx
+prerequisites:
+  imageName: threefoldtech/3bot2
 
-install:
-  - apt-get update
-  - pip3 install click loguru parameterized pyperclip xmltodict imbox logbook
-  - eval `ssh-agent -s`; ssh-add
-  - cd /sandbox/code/github/threefoldtech/
-  - rm -rf /sandbox/code/github/threefoldtech/jumpscaleX_threebot
-  - cp -r /opt/code/github/threefoldtech/jumpscaleX_threebot /sandbox/code/github/threefoldtech/jumpscaleX_threebot
-  - cd /sandbox/code/github/threefoldtech/jumpscaleX_threebot ; threebot_branch=$(git rev-parse --abbrev-ref HEAD)
-  - declare strs=('libs' 'core' 'builders' 'libs_extra') && for s in ${strs[@]}; do 
-    cd /sandbox/code/github/threefoldtech/ && rm -rf /sandbox/code/github/threefoldtech/jumpscaleX_$s && 
-    git clone https://github.com/threefoldtech/jumpscaleX_$s.git --branch $threebot_branch || git clone https://github.com/threefoldtech/jumpscaleX_$s.git --branch development ; done
-  - source /sandbox/env.sh; js_init generate
-  - source /sandbox/env.sh; kosmos "j.builders.runtimes.lua.install_autossl()"
+install: |
+  apt-get update
+  pip3 install click pytest loguru parameterized requests checksumdir xmltodict imbox logbook nltk imapclient black==19.10b0
+  ssh-keygen -t rsa -N "" -f /root/.ssh/id_rsa <<< y
+  eval `ssh-agent -s`; ssh-add
+  mkdir -p /sandbox/code/github/threefoldtech/
+  cd /sandbox/code/github/threefoldtech/ 
+  cp -r /opt/code/vcs_repos/threefoldtech/jumpscaleX_threebot /sandbox/code/github/threefoldtech/
+  declare strs=('core' 'libs' 'libs_extra' 'builders') 
+  for s in ${strs[@]};
+  do
+  git clone https://github.com/threefoldtech/jumpscaleX_$s.git --branch development
+  done
+  source /sandbox/env.sh
+  jsx generate
+  jsx secret $secret
+  kosmos "j.builders.runtimes.lua.install_autossl()"
 
 script:
-  - source /sandbox/env.sh && python3 /sandbox/code/github/threefoldtech/jumpscaleX_core/cmds/js_testrun --with-xml  --xml-path /test.xml --xml-testsuite-name "UI_tests" -p "/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/tests/" && yes | bcdb delete --all
-  - source /sandbox/env.sh && python3 /sandbox/code/github/threefoldtech/jumpscaleX_core/cmds/js_testrun --with-xml  --xml-path /test.xml --xml-testsuite-name "wikis_tests" -p "/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/zerobot/webinterface/tests" && yes | bcdb delete --all
+  - name: Black Formatting
+    cmd: |
+      cd /opt/code/vcs_repos/threefoldtech
+      black jumpscaleX_threebot -l 120 -t py37 --diff --exclude 'templates' 1>/dev/null

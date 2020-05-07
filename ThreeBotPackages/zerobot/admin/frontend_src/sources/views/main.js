@@ -96,18 +96,18 @@ export default class TopView extends JetView {
             }, {
                 id: "deployed_k8s_cluster",
                 value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes Cluster</span>'
+            } ,{
+                id: "deployed_gitea",
+                value: '<span><img class="solutions-icon" src="static/img/gitea.png"/>Gitea</span>'
             } , {
                 id: "deployed_domain_delegation",
-                value: 'Domain Delegation',
-                icon: 'mdi mdi-dns'
+                value: '<span><img class="solutions-icon" src="static/img/domain.png"/>Domain Delegation</span>'
             }, {
                 id: "deployed_solution_expose",
-                value: 'Solution expose',
-                icon: 'mdi mdi-wan'
+                value: '<span><img class="solutions-icon" src="static/img/wan.png"/>Solution Expose</span>'
             }, {
                 id: "deployed_gateway_4to6",
-                value: '4 to 6 Gateway',
-                icon: 'mdi mdi-ip-network'
+                value: '<span><img class="solutions-icon" src="static/img/ip.png"/>4 to 5 Gateway</span>'
             }
             ]
         },
@@ -253,6 +253,7 @@ export default class TopView extends JetView {
                 deployed_flist:"deployedSolutions.flist",
                 deployed_minio:"deployedSolutions.minio",
                 deployed_k8s_cluster:"deployedSolutions.k8s_cluster",
+                deployed_gitea:"deployedSolutions.gitea",
                 deployed_domain_delegation:"solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=domain_delegation",
                 deployed_solution_expose:"solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=solution_expose",
                 deployed_gateway_4to6:"solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=four_to_six_gateway"

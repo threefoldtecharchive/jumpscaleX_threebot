@@ -39,6 +39,7 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
             "tfgrid.solutions.exposed.1",
             "tfgrid.solutions.delegated_domain.1",
             "tfgrid.solutions.4to6gw.1",
+            "tfgrid.solutions.gitea.1",
         ]
 
         if solution_type == "all":

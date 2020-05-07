@@ -103,7 +103,7 @@ def chat(bot):
         currency = "FreeTFT"
     else:
         currency = None
-    query = {"mru": 1, "cru": 1, "currency": currency}
+    query = {"mru": 1, "cru": 1, "currency": currency, "sru": 1}
     node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
 
     if kind == "kubernetes":
@@ -170,6 +170,5 @@ def chat(bot):
     j.sal.reservation_chatflow.payment_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
 
-
-    res_md = f"Use this Gateway to connect to your exposed solutions {domain}"
+    res_md = f"Use this Gateway to connect to your exposed solutions `{domain}`"
     bot.md_show(res_md)

@@ -36,9 +36,8 @@ class admin(j.baseclasses.threebot_actor):
         """
         get current explorer (testnet/main)
         """
-        if not "EXPLORER_ADDR" in j.core.myenv.config:
-            j.core.myenv.config["EXPLORER_ADDR"] = explorers["testnet"]
-            j.core.myenv.config.save()
+        if "EXPLORER_ADDR" not in j.core.myenv.config:
+            j.clients.explorer.default_addr_set(explorers["testnet"])
             return self.explorer_to_json("testnet")
 
         current_address = j.core.myenv.config["EXPLORER_ADDR"].strip().lower().strip("/")
@@ -47,7 +46,7 @@ class admin(j.baseclasses.threebot_actor):
         elif current_address == explorers["main"]:
             explorer_type = "main"
         else:
-            raise j.exceptions.Value("current explorer address is not recognized")
+            return {"type": "custom", "url": current_address}
         return self.explorer_to_json(explorer_type)
 
     @j.baseclasses.actor_method
@@ -56,7 +55,18 @@ class admin(j.baseclasses.threebot_actor):
         set current explorer (testnet/main)
         """
         if explorer_type in explorers:
-            j.core.myenv.config["EXPLORER_ADDR"] = explorers[explorer_type]
-            j.core.myenv.config_save()
+            client = j.clients.explorer.get(name=explorer_type, url=f"https://{explorers[explorer_type]}/explorer")
+            # check if we can switch with existing identity
+            try:
+                user = client.users.get(name=j.me.tname, email=j.me.email)
+            except j.exceptions.NotFound:
+                raise j.exceptions.Value(f"Your identity does not exists on {explorer_type} please setup a new identity with 3sdk")
+            if user.pubkey != j.me.encryptor.verify_key_hex:
+                raise j.exceptions.Value(f"Your identity does not match on {explorer_type} please create a new container with 3sdk instead")
+            j.me.tid = user.id
+            j.me.save()
+            j.clients.explorer.default_addr_set(explorers[explorer_type])
+            # update our solutions
+            j.sal.reservation_chatflow.solutions_explorer_get()
             return self.explorer_to_json(explorer_type)
         raise j.exceptions.Value(f"{explorer_type} is not a valid explorer type, must be 'testnet' or 'main'")
