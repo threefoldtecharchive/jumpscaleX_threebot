@@ -56,10 +56,10 @@ def chat(bot):
         "Please add the secret for your gitea database. Make sure not to loose it", default="postgres",
     )
     form.ask()
-    user_form_data["database_name"] = database_name.value
-    user_form_data["database_user"] = database_user.value
-    user_form_data["database_password"] = database_password.value
-    user_form_data["repository"] = bot.string_ask("Please add the name of repository in your gitea", default="myrepo")
+    user_form_data["Database Name"] = database_name.value
+    user_form_data["Database User"] = database_user.value
+    user_form_data["Database Password"] = database_password.value
+    user_form_data["Repository"] = bot.string_ask("Please add the name of repository in your gitea", default="myrepo")
 
     if not nodeid:
         farms = j.sal.reservation_chatflow.farm_names_get(1, bot, **query)
@@ -70,15 +70,15 @@ def chat(bot):
     user_form_data["IP Address"] = ip_address
     var_dict = {
         "pub_key": user_form_data["Public key"],
-        "POSTGRES_DB": user_form_data["database_name"],
+        "POSTGRES_DB": user_form_data["Database Name"],
         "DB_TYPE": "postgres",
         "DB_HOST": f"{ip_address}:5432",
-        "POSTGRES_USER": user_form_data["database_user"],
-        "APP_NAME": user_form_data["repository"],
+        "POSTGRES_USER": user_form_data["Database User"],
+        "APP_NAME": user_form_data["Repository"],
         "ROOT_URL": f"http://{ip_address}:3000",
     }
     database_password_encrypted = j.sal.zosv2.container.encrypt_secret(
-        node_selected.node_id, user_form_data["database_password"]
+        node_selected.node_id, user_form_data["Database Password"]
     )
     secret_env = {"POSTGRES_PASSWORD": database_password_encrypted}
     bot.md_show_confirm(user_form_data)
@@ -110,7 +110,7 @@ def chat(bot):
     metadata["Database name"] = database_name.value
     metadata["Database user"] = database_user.value
     metadata["Database password"] = database_password.value
-    metadata["Repository"] = user_form_data["repository"]
+    metadata["Repository"] = user_form_data["Repository"]
 
     res = j.sal.reservation_chatflow.solution_model_get(
         user_form_data["Solution name"], "tfgrid.solutions.gitea.1", metadata

@@ -13,21 +13,19 @@ export default class DeployedDomainDelegationView extends BaseView {
         solutions.listSolution('delegated_domain').then((data) => {
             const solutions = data.json().solutions
             console.log('delegation : >>>',solutions)
-            // for (let i = 0; i < solutions.length; i++) {
-            //     const solution = solutions[i];
-            //     let dict = JSON.parse(solution.form_info)
-            //     let reservation = JSON.parse(String(solution.reservation))
+            for (let i = 0; i < solutions.length; i++) {
+                const solution = solutions[i];
+                let dict = JSON.parse(solution.form_info)
+                let reservation = JSON.parse(String(solution.reservation))
+                dict['Expiration Provisioning'] = reservation.data_reservation.expiration_provisioning
+                dict['Currencies'] = reservation.data_reservation.currencies
+                dict.id = dict.rid
+                dict._name = dict.domain;
+                dict._ip = ""
 
-            //     if (!dict['Solution name'])     // for flists created by other solutions not flist chatflow
-            //         continue;
-                
-            //     dict.id = reservation.id
-            //     dict._name = dict['Solution name'];
-            //     dict._ip = dict['IP Address']
-
-            //     delete dict['chatflow']
-            //     self.parseData.push(dict)
-            // }
+                delete dict['rid']
+                self.parseData.push(dict)
+            }
             self.solutionlist.parse(self.parseData)
         });
     }

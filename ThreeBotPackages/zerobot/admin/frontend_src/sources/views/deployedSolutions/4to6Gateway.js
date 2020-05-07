@@ -13,21 +13,15 @@ export default class Deployed4to6GatewayView extends BaseView {
         solutions.listSolution('4to6gw').then((data) => {
             const solutions = data.json().solutions
             console.log('4to6 : >>>',solutions)
-            // for (let i = 0; i < solutions.length; i++) {
-            //     const solution = solutions[i];
-            //     let dict = JSON.parse(solution.form_info)
-            //     let reservation = JSON.parse(String(solution.reservation))
-
-            //     if (!dict['Solution name'])     // for flists created by other solutions not flist chatflow
-            //         continue;
+            for (let i = 0; i < solutions.length; i++) {
+                const solution = solutions[i];
+                let dict = JSON.parse(solution.form_info)
+                let reservation = JSON.parse(String(solution.reservation))
+                dict.id = reservation.id
+                dict._name = solution.name;
                 
-            //     dict.id = reservation.id
-            //     dict._name = dict['Solution name'];
-            //     dict._ip = dict['IP Address']
-
-            //     delete dict['chatflow']
-            //     self.parseData.push(dict)
-            // }
+                self.parseData.push(dict)
+            }
             self.solutionlist.parse(self.parseData)
         });
     }

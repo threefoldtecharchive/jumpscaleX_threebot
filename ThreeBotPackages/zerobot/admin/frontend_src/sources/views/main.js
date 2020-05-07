@@ -107,7 +107,7 @@ export default class TopView extends JetView {
                 value: '<span><img class="solutions-icon" src="static/img/wan.png"/>Solution Expose</span>'
             }, {
                 id: "deployed_gateway_4to6",
-                value: '<span><img class="solutions-icon" src="static/img/ip.png"/>4 to 5 Gateway</span>'
+                value: '<span><img class="solutions-icon" src="static/img/ip.png"/>4 to 6 Gateway</span>'
             }
             ]
         },
