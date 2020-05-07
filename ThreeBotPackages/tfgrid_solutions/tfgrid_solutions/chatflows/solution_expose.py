@@ -161,7 +161,7 @@ def chat(bot):
 
     message = """
     <h4>Click next to proceed with the payment</h4>
-    Tcp routers are used in the process of being able to expose your solutions. This payment is to deploy a container with a <a target="_blank" href="https://github.com/threefoldtech/tcprouter">tcprouter client</a> on it.
+    Tcp routers are used in the process of being able to expose your solutions. This payment is to deploy a container with a <a target="_blank" href="https://github.com/threefoldtech/tcprouter#reverse-tunneling">tcprouter client</a> on it.
     """
     bot.md_show_confirm(user_form_data, message=j.core.text.strip(message))
     user_form_data["secret"] = secret
