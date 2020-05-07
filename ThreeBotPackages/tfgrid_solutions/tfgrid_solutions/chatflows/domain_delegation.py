@@ -34,9 +34,10 @@ def chat(bot):
     resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
         reservation, expiration, customer_tid=j.me.tid, currency=currency, bot=bot
     )
+    user_form_data["rid"] = resv_id
 
     j.sal.reservation_chatflow.reservation_save(
-        resv_id, f"tcprouter:{resv_id}", "tfgrid.solutions.flist.1", user_form_data
+        resv_id, user_form_data["domain"], "tfgrid.solutions.delegated_domain.1", user_form_data
     )
     res = """\
     # Delegated your domain successfully

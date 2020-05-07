@@ -33,6 +33,10 @@ def chat(bot):
     )
     reservation_result = j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
 
+    j.sal.reservation_chatflow.reservation_save(
+        resv_id, f"4to6GW:{resv_id}", "tfgrid.solutions.4to6gw.1", user_form_data
+    )
+
     res = """
             # Use the following template to configure your wireguard connection. This will give you access to your network.
             ## Make sure you have <a target="_blank" href="https://www.wireguard.com/install/">wireguard</a> installed
