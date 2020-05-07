@@ -12,7 +12,6 @@ export default class Deployed4to6GatewayView extends BaseView {
         self.parseData = []
         solutions.listSolution('4to6gw').then((data) => {
             const solutions = data.json().solutions
-            console.log('4to6 : >>>',solutions)
             for (let i = 0; i < solutions.length; i++) {
                 const solution = solutions[i];
                 let dict = JSON.parse(solution.form_info)

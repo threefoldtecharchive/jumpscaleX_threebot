@@ -12,7 +12,6 @@ export default class DeployedGiteaView extends BaseView {
         self.parseData = []
         solutions.listSolution('gitea').then((data) => {
             const solutions = data.json().solutions
-            console.log("Gitea:  ", solutions)
             for (let i = 0; i < solutions.length; i++) {
                 const solution = solutions[i];
                 let dict = JSON.parse(solution.form_info)

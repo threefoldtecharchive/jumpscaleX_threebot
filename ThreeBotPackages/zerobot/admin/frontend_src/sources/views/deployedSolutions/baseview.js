@@ -25,8 +25,6 @@ export class BaseView extends JetView {
             id: "solutionlist",
             data: this.data,
             width: 1000,
-            height: 600,
-            scroll: false,
             select: 1,
             css: "solutions-list",
             type: {

@@ -12,7 +12,6 @@ export default class DeployedSolutionExposeView extends BaseView {
         self.parseData = []
         solutions.listSolution('exposed').then((data) => {
             const solutions = data.json().solutions
-            console.log('exposed : >>>',solutions)
             for (let i = 0; i < solutions.length; i++) {
                 const solution = solutions[i];
                 let dict = JSON.parse(solution.form_info)

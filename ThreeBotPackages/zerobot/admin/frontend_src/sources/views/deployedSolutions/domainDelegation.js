@@ -12,7 +12,6 @@ export default class DeployedDomainDelegationView extends BaseView {
         self.parseData = []
         solutions.listSolution('delegated_domain').then((data) => {
             const solutions = data.json().solutions
-            console.log('delegation : >>>',solutions)
             for (let i = 0; i < solutions.length; i++) {
                 const solution = solutions[i];
                 let dict = JSON.parse(solution.form_info)
