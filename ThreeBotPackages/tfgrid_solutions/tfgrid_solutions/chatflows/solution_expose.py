@@ -21,6 +21,7 @@ def chat(bot):
     user_info = bot.user_info()
     j.sal.reservation_chatflow.validate_user(user_info)
     reservation = j.sal.zosv2.reservation_create()
+    bot.md_show("# This wizard will help you expose a deployed solution using the web gateway")
     kind = bot.single_choice("Please choose the solution type", list(kinds.keys()))
     user_form_data["kind"] = kind
 
@@ -92,6 +93,7 @@ def chat(bot):
                 break
         domain = domain + "." + domain_name
 
+    user_form_data["domain"] = domain
     # use gateway currency
     currency = "TFT"
     if domain_gateway.free_to_use:
@@ -139,9 +141,8 @@ def chat(bot):
         raise j.exceptions.Value("No available free ips")
 
     secret = f"{j.me.tid}:{uuid.uuid4().hex}"
-    user_form_data["secret"] = secret
     secret_env = {}
-    secret_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, user_form_data["secret"])
+    secret_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, secret)
     secret_env["TRC_SECRET"] = secret_encrypted
     remote = f"{domain_gateway.dns_nameserver[0]}:{domain_gateway.tcp_router_port}"
     local = f"{container_address}:{user_form_data['port']}"
@@ -158,6 +159,12 @@ def chat(bot):
         secret_env=secret_env,
     )
 
+    message = """
+    <h4>Click next to proceed with the payment</h4>
+    Tcp routers are used in the process of being able to expose your solutions. This payment is to deploy a container with a <a target="_blank" href="https://github.com/threefoldtech/tcprouter">tcprouter client</a> on it.
+    """
+    bot.md_show_confirm(user_form_data, message=j.core.text.strip(message))
+    user_form_data["secret"] = secret
     # create proxy
     j.sal.zosv2.gateway.tcp_proxy_reverse(reservation, domain_gateway.node_id, domain, user_form_data["secret"])
     resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
