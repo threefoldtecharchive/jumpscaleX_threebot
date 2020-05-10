@@ -37,7 +37,6 @@ export default class ProcessesView extends JetView {
             view: "chart",
             responsive: true,
             type: "pie",
-            height: 400,
             color: "#color#",
             value: "#rss#",
             label: "<h4>#name#</h4>",
