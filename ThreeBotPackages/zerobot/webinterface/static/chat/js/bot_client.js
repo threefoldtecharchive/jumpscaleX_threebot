@@ -249,6 +249,7 @@ var dropDownChoiceGenerate = function (message, options, kwargs, idx) {
 var dateTimePickerAsk = function (message, kwargs, idx) {
     let contents = `
     <h4>${message}</h4>
+    <p>Default: 2 hours<p>
     <div class="row">
         <div class='col-sm-6'>
             <div class="form-group">
@@ -262,7 +263,11 @@ var dateTimePickerAsk = function (message, kwargs, idx) {
     </div>
     <script type="text/javascript">
         $(function () {
-            $('#datetimepicker1').datetimepicker();
+            var dateNow = new Date();
+            dateNow.setHours(dateNow.getHours()+2)
+            $('#datetimepicker1').datetimepicker({
+                defaultDate:dateNow
+            });
         });
     </script>
     `
