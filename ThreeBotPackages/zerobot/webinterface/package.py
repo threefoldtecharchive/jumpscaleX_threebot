@@ -48,7 +48,7 @@ class Package(j.baseclasses.threebot_package):
 
             chat_static_location = locations.get_location_static("chat_static")
             chat_static_location.path_url = "/staticchat"
-            chat_static_location.path_location = f"{self._dirpath}/static"
+            chat_static_location.path_location = f"{self._dirpath}/chatflows"
 
             wiki_static_location = locations.get_location_static("wiki_static")
             wiki_static_location.path_url = "/staticwiki"
