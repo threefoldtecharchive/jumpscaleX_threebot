@@ -79,7 +79,7 @@ export default class TopView extends JetView {
         },
         {
             id: "deployedSolutions",
-            value: "Deployed Solutions",
+            value: "Solutions",
             icon: "mdi mdi-animation-play",
             data: [{
                 id: "deployed_network",
@@ -167,6 +167,13 @@ export default class TopView extends JetView {
             css: "webix_dark",
             width: 200,
             data: sidebarData,
+            on:{
+                // this is for refreshing view on selecting current selected item
+                onItemClick:function(id){
+                    this.unselect(id);
+                    this.select(id);
+                }
+            }          
         };
 
         const toolbar = {

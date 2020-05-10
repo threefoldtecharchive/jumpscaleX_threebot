@@ -18,13 +18,15 @@ export default class DeployedGiteaView extends BaseView {
                 let reservation = JSON.parse(String(solution.reservation))
                 dict['Network'] = reservation.data_reservation.containers[0].network_connection[0].network_id
                 dict.id = reservation.id
-                dict._name = dict['Solution name'];
+                dict._name = dict['Solution name'].length > self.maxTitleLength ?
+                    dict['Solution name'].substring(0, self.maxTitleLength) + '...' : dict['Solution name'];
                 dict._ip = dict['IP Address']
 
                 delete dict['chatflow']
                 self.parseData.push(dict)
             }
             self.solutionlist.parse(self.parseData)
+            self.solutionlist.showProgress({hide: true});
         });
     }
 }

@@ -19,13 +19,16 @@ export default class DeployedDomainDelegationView extends BaseView {
                 dict['Expiration Provisioning'] = reservation.data_reservation.expiration_provisioning
                 dict['Currencies'] = reservation.data_reservation.currencies
                 dict.id = dict.rid
+                dict._name = dict["Domain"].length > self.maxTitleLength ?
+                    dict["Domain"].substring(0, self.maxTitleLength) + '...' : dict["Domain"];
                 dict._name = dict["Domain"]
                 dict._ip = ""
 
                 delete dict['rid']
                 self.parseData.push(dict)
             }
-            self.solutionlist.parse(self.parseData)
+            self.solutionlist.parse(self.parseData);
+            self.solutionlist.showProgress({hide: true});
         });
     }
 }

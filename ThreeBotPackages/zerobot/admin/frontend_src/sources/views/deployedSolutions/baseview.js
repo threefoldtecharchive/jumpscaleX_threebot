@@ -16,7 +16,7 @@ export class BaseView extends JetView {
             css: 'deployed-solution-logo-view',
             align: "center",
             borderless: true,
-            height: 250
+            height: 150
         }
 
         const view = {
@@ -24,12 +24,12 @@ export class BaseView extends JetView {
             view: "dataview",
             id: "solutionlist",
             data: this.data,
-            width: 1000,
+            width: 930,
             select: 1,
             css: "solutions-list",
             type: {
-                width: 480,
-                height: 120,
+                width: 300,
+                height: 100,
                 template: "<div class='overall'><div class='title'>#_name#</div><div class='ip'>#_ip# </div> </div>"
             }
         }
@@ -39,6 +39,19 @@ export class BaseView extends JetView {
             rows:
                 [
                     logo,
+                    {
+                        cols: [{}, {
+                            view: "button",
+                            id: "btnAddNew",
+                            value: "Create New",
+                            width:170,
+                            height:70,
+                            css: "webix_primary btnCreateNew",
+                            click: function () {
+                                this.$scope.show(this.$scope.chat)
+                            }
+                        }, {}]
+                    },
                     { cols: [{}, view, {}] }
                 ]
         };
@@ -47,23 +60,16 @@ export class BaseView extends JetView {
     init(view) {
         let self = this;
         self.solutionlist = $$("solutionlist")
+        self.maxTitleLength = 20;
+        webix.extend(self.solutionlist, webix.ProgressBar);
+        self.solutionlist.showProgress({
+            type: "icon",
+            hide: false
+        });
         self.SolutionDetailsView = self.ui(SolutionDetailsView)
 
-        self.solutionlist.add({
-            _name: "Create new",
-            _ip: "",
-            id: '-1'
-        }, 0);
         self.solutionlist.addCss(self.solutionlist.getFirstId(), 'createnewdiv')
-
         self.solutionlist.attachEvent("onItemClick", function (id) {
-            if (id == -1) {
-                self.show(self.chat)
-            }
-        });
-
-        self.solutionlist.attachEvent("onItemDblClick", function (id) {
-            if (id != -1) {
                 let ret = self.parseData.find(solution => solution.id == id)
                 let filtered = Object.assign({}, ret);
                 for (let i = 0; i < Object.keys(filtered).length; i++) {
@@ -73,10 +79,9 @@ export class BaseView extends JetView {
                         i--;
                     }
                 }
-                filtered['Reservation id']=filtered.id
+                filtered['Reservation id'] = filtered.id
                 delete filtered['id']
                 self.SolutionDetailsView.showInfo(filtered)
-            }
         });
     }
 }

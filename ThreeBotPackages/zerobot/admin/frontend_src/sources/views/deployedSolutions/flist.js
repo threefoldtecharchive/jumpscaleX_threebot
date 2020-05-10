@@ -21,13 +21,15 @@ export default class DeployedFlistView extends BaseView {
                     continue;
                 
                 dict.id = reservation.id
-                dict._name = dict['Solution name'];
+                dict._name = dict['Solution name'].length > self.maxTitleLength ?
+                    dict['Solution name'].substring(0, self.maxTitleLength) + '...' : dict['Solution name'];
                 dict._ip = dict['IP Address']
 
                 delete dict['chatflow']
                 self.parseData.push(dict)
             }
             self.solutionlist.parse(self.parseData)
+            self.solutionlist.showProgress({hide: true});
         });
     }
 }
