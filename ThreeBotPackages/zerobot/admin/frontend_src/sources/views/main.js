@@ -9,14 +9,16 @@ export default class TopView extends JetView {
                 {
                     id: "button_hide_menu",
                     view: "icon", icon: "mdi mdi-menu",
-                    css: "custom_dark", height: 58,
+                    css: "custom_dark",
+                    height: 58,
                     click: this.hideMenu,
                     tooltip: "Hide menu",
                 },
                 {
                     id: "header",
                     type: "header",
-                    css: "custom_dark", height: 58,
+                    css: "custom_dark",
+                    height: 58,
                     template: "ADMIN",
                     borderless: true,
                 },
@@ -169,9 +171,10 @@ export default class TopView extends JetView {
         const sidebar = {
             localId: "menu",
             view: "sidebar",
-            css: "webix_dark",
-            width: 200,
+            css: "webix_dark admin_sidebar",
+            width: 230,
             data: sidebarData,
+            scroll: "y"
         };
 
         const toolbar = {
