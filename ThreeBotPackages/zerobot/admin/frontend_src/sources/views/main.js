@@ -81,40 +81,35 @@ export default class TopView extends JetView {
         },
         {
             id: "deployedSolutions",
-            value: "Deployed Solutions",
-            icon: "mdi mdi-animation-play"
-        },
-        {
-            id: "solutions",
             value: "Solutions",
             icon: "mdi mdi-animation-play",
             data: [{
-                id: "network",
+                id: "deployed_network",
                 value: '<span><img class="solutions-icon" src="static/img/network.png"/>Network</span>'
             }, {
-                id: "ubuntu",
+                id: "deployed_ubuntu",
                 value: '<span><img class="solutions-icon" src="static/img/ubuntu.png"/>Ubuntu</span>'
             }, {
-                id: "flist",
+                id: "deployed_flist",
                 value: '<span><img class="solutions-icon" src="static/img/flist.png"/>Generic flist</span>'
             }, {
-                id: "minio",
+                id: "deployed_minio",
                 value: '<span><img class="solutions-icon" src="static/img/minio.png"/>Minio / S3</span>'
             }, {
-                id: "k8s_cluster",
+                id: "deployed_k8s_cluster",
                 value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes Cluster</span>'
+            } ,{
+                id: "deployed_gitea",
+                value: '<span><img class="solutions-icon" src="static/img/gitea.png"/>Gitea</span>'
             } , {
-                id: "domain_delegation",
-                value: 'Domain Delagation',
-                icon: 'mdi mdi-dns'
+                id: "deployed_domain_delegation",
+                value: '<span><img class="solutions-icon" src="static/img/domain.png"/>Domain Delegation</span>'
             }, {
-                id: "solution_expose",
-                value: 'Solution expose',
-                icon: 'mdi mdi-wan'
+                id: "deployed_solution_expose",
+                value: '<span><img class="solutions-icon" src="static/img/wan.png"/>Solution Expose</span>'
             }, {
-                id: "gateway_4to6",
-                value: '4 to 6 Gateway',
-                icon: 'mdi mdi-ip-network'
+                id: "deployed_gateway_4to6",
+                value: '<span><img class="solutions-icon" src="static/img/ip.png"/>4 to 6 Gateway</span>'
             }
             ]
         },
@@ -174,7 +169,14 @@ export default class TopView extends JetView {
             css: "webix_dark admin_sidebar",
             width: 230,
             data: sidebarData,
-            scroll: "y"
+            scroll: "y",
+            on:{
+                // this is for refreshing view on selecting current selected item
+                onItemClick:function(id){
+                    this.unselect(id);
+                    this.select(id);
+                }
+            }          
         };
 
         const toolbar = {
@@ -255,15 +257,16 @@ export default class TopView extends JetView {
                 workers: "myjobs.workers",
                 tfgridsdk: "tfwikis.tfgridsdk",
                 threefold: "tfwikis.threefold",
-                ubuntu: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=ubuntu_deploy",
-                network: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=network_deploy",
-                flist: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=your_flist",
-                minio: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=minio_deploy",
-                k8s_cluster: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=kubernetes_cluster_deploy",
                 threebot: "solutions.chatflow?author=tfgrid&package=threebot_provisioning&chat=threebot_reservation",
-                domain_delegation: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=domain_delegation",
-                gateway_4to6: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=four_to_six_gateway",
-                solution_expose: "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=solution_expose",
+                deployed_network:"deployedSolutions.network",
+                deployed_ubuntu:"deployedSolutions.ubuntu",
+                deployed_flist:"deployedSolutions.flist",
+                deployed_minio:"deployedSolutions.minio",
+                deployed_k8s_cluster:"deployedSolutions.k8sCluster",
+                deployed_gitea:"deployedSolutions.gitea",
+                deployed_domain_delegation:"deployedSolutions.domainDelegation",
+                deployed_solution_expose:"deployedSolutions.solutionExpose",
+                deployed_gateway_4to6:"deployedSolutions.4to6Gateway"
             }
         });
 

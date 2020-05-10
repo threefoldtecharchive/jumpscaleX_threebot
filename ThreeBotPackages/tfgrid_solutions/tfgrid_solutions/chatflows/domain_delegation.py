@@ -15,13 +15,13 @@ def chat(bot):
     options = sorted(list(gateways.keys()))
     gateway_choice = form.drop_down_choice("Please choose a gateway", options, allow_empty=False)
     form.ask(allow_empty=False)
-    user_form_data["domain"] = domain.value
+    user_form_data["Domain"] = domain.value
 
     gateway = gateways[gateway_choice.value]
     gateway_id = gateway.node_id
-    user_form_data["gateway"] = gateway_id
+    user_form_data["Gateway"] = gateway_id
     expiration = bot.datetime_picker("Please enter solution expiration time.")
-    user_form_data["expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
+    user_form_data["Expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     if gateway.free_to_use:
         currency = "FreeTFT"
@@ -36,7 +36,7 @@ def chat(bot):
     )
 
     j.sal.reservation_chatflow.reservation_save(
-        resv_id, f"tcprouter:{resv_id}", "tfgrid.solutions.flist.1", user_form_data
+        resv_id, user_form_data["Domain"], "tfgrid.solutions.delegated_domain.1", user_form_data
     )
     res = """\
     # Delegated your domain successfully

@@ -10,9 +10,9 @@ def chat(bot):
 
     gateway = j.sal.reservation_chatflow.gateway_select(bot)
     gateway_id = gateway.node_id
-    user_form_data["gateway"] = gateway_id
+    user_form_data["Gateway"] = gateway_id
     expiration = bot.datetime_picker("Please enter solution expiration time.")
-    user_form_data["expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
+    user_form_data["Expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
     publickey = bot.string_ask(
         "Please enter wireguard public key or leave empty if you want us to generate one for you."
     )
@@ -32,6 +32,10 @@ def chat(bot):
         reservation, expiration, customer_tid=j.me.tid, currency=currency, bot=bot
     )
     reservation_result = j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
+
+    j.sal.reservation_chatflow.reservation_save(
+        resv_id, f"4to6GW:{resv_id}", "tfgrid.solutions.4to6gw.1", user_form_data
+    )
 
     res = """
             # Use the following template to configure your wireguard connection. This will give you access to your network.

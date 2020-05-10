@@ -31,7 +31,7 @@ def chat(bot):
     sols = {sol["name"]: sol for sol in solutions}
     solution_name = bot.single_choice("Please choose the solution to expose", list(sols.keys()))
     solution = sols[solution_name]
-    user_form_data["solution_name"] = solution_name
+    user_form_data["Solution name"] = solution_name
     reservation_data = j.data.serializers.json.loads(solution["reservation"])["data_reservation"]
     solution_currency = reservation_data["currencies"][0]
     free_to_use = False
@@ -43,7 +43,7 @@ def chat(bot):
     tlsport = form.int_ask("Which tls port you want to expose", default=port or 443)
     port = form.int_ask("Which port you want to expose", default=port or 80)
     form.ask()
-    user_form_data["port"] = port.value
+    user_form_data["Port"] = port.value
     user_form_data["tls-port"] = tlsport.value
 
     # List all available domains
@@ -92,15 +92,12 @@ def chat(bot):
             else:
                 break
         domain = domain + "." + domain_name
-
-    user_form_data["domain"] = domain
-    # use gateway currency
-    currency = "TFT"
-    if domain_gateway.free_to_use:
-        currency = "FreeTFT"
+    user_form_data["Domain"] = domain
+    user_form_data["Gateway"] = domain_gateway.node_id
+    user_form_data["Name Server"] = domain_gateway.dns_nameserver[0]
 
     expiration = bot.datetime_picker("Please enter gateway expiration time.")
-    user_form_data["expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
+    user_form_data["Expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     # create tcprouter
     if domain_gateway.free_to_use:
@@ -141,11 +138,12 @@ def chat(bot):
         raise j.exceptions.Value("No available free ips")
 
     secret = f"{j.me.tid}:{uuid.uuid4().hex}"
+    user_form_data["Secret"] = secret
     secret_env = {}
-    secret_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, secret)
+    secret_encrypted = j.sal.zosv2.container.encrypt_secret(node_selected.node_id, user_form_data["Secret"])
     secret_env["TRC_SECRET"] = secret_encrypted
     remote = f"{domain_gateway.dns_nameserver[0]}:{domain_gateway.tcp_router_port}"
-    local = f"{container_address}:{user_form_data['port']}"
+    local = f"{container_address}:{user_form_data['Port']}"
     localtls = f"{container_address}:{user_form_data['tls-port']}"
     entrypoint = f"/bin/trc -local {local} -local-tls {localtls} -remote {remote}"
 
@@ -166,17 +164,17 @@ def chat(bot):
     bot.md_show_confirm(user_form_data, message=j.core.text.strip(message))
     user_form_data["secret"] = secret
     # create proxy
-    j.sal.zosv2.gateway.tcp_proxy_reverse(reservation, domain_gateway.node_id, domain, user_form_data["secret"])
+    j.sal.zosv2.gateway.tcp_proxy_reverse(reservation, domain_gateway.node_id, domain, user_form_data["Secret"])
     resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
         reservation, expiration, customer_tid=j.me.tid, currency=currency, bot=bot
     )
-    user_form_data["rid"] = resv_id
 
     j.sal.reservation_chatflow.reservation_save(
-        resv_id, f"tcprouter:{resv_id}", "tfgrid.solutions.flist.1", user_form_data
+        resv_id, user_form_data["Domain"], "tfgrid.solutions.exposed.1", user_form_data
     )
 
     j.sal.reservation_chatflow.payment_wait(bot, resv_id)
     j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
+
     res_md = f"Use this Gateway to connect to your exposed solutions `{domain}`"
     bot.md_show(res_md)
