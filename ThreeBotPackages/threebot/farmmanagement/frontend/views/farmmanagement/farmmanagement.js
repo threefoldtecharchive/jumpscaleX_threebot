@@ -392,7 +392,7 @@ module.exports = new Promise(async (resolve, reject) => {
                 farm.wallet_addresses.push({ 'asset': 'TFT', address: '' })
             },
             removeWallet(farm, i) {
-                farm.wallet_addresses.pop(i)
+                farm.wallet_addresses.splice(i, 1)
             },
             cancelEditFarm() {
                 this.settingsDialog = false;
