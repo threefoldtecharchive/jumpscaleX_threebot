@@ -50,6 +50,7 @@ def chat(bot):
     if user_form_data["Interactive"] == "NO":
         user_form_data["Entry point"] = bot.string_ask("Please add your entrypoint for your flist")
     else:
+        user_form_data["Port"] = "7681"
         user_form_data["Entry point"] = ""
     user_form_data["Env variables"] = bot.string_ask(
         """To set environment variables on your deployed container, enter comma-separated variable=value

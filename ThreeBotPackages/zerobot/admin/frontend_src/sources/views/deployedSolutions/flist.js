@@ -19,7 +19,9 @@ export default class DeployedFlistView extends BaseView {
 
                 if (!dict['Solution name'])     // for flists created by other solutions not flist chatflow
                     continue;
-                
+                if(dict['Interactive'] === 'YES'){
+                    delete dict['Entry point']
+                }
                 dict.id = reservation.id
                 dict._name = dict['Solution name'].length > self.maxTitleLength ?
                     dict['Solution name'].substring(0, self.maxTitleLength) + '...' : dict['Solution name'];
