@@ -1,5 +1,5 @@
 # Gitea
-Gitea is a painless self-hosted Git service. It is similar to GitHub, Bitbucket, and GitLab. Gitea is a fork of Gogs. See the Gitea Announcement blog post to read about the justification for a fork.
+Gitea is a painless self-hosted Git service. It is similar to GitHub, Bitbucket, and GitLab.
 
 ## Accessing the solution
 
@@ -53,7 +53,7 @@ Uploading your public key for SSH access
 ![step4](5.png)
 Now we need to tell the grid how long we want our solution to stay alive on the grid
 
-### database credentials 
+### Database credentials 
 
 ![step5](6.png)
 add all database requirements (name , username of database and secret) to initialize it .
@@ -90,5 +90,5 @@ We select the wallet that we will pay with to proceed with the payment for the s
 ![step11](11.png)
 Here we get the container
 
-### Gitea from your browser 
+### Gitea has been deployed
 ![step12](12.png)
