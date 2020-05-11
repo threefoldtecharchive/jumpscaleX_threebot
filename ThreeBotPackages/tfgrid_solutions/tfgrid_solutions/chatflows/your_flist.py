@@ -1,6 +1,7 @@
 from Jumpscale import j
 import math
 import requests
+from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 
 
 def chat(bot):
@@ -12,30 +13,24 @@ def chat(bot):
     env = dict()
     model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.flist.1")
     j.sal.reservation_chatflow.validate_user(user_info)
-    bot.md_show("# This wizard will help you deploy a container using any flist provided")
+    bot.md_show("# This wizard will help you deploy a container using any flist provided", md=True)
     network = j.sal.reservation_chatflow.network_select(bot, j.me.tid)
-    if not network:
-        return
+
     currency = network.currency
 
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
-    while True:
-        user_form_data["Flist link"] = bot.string_ask(
-            "Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist",
-            allow_empty=False,
-        )
+    user_form_data["Flist link"] = bot.string_ask(
+        "Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist",
+        allow_empty=False,
+        required=True,
+    )
 
-        if "hub.grid.tf" not in user_form_data["Flist link"]:
-            res = "This flist is not correct. Please make sure you enter a valid link to an existing flist"
-            bot.md_show(res)
-            continue
+    if "hub.grid.tf" not in user_form_data["Flist link"]:
+        raise StopChatFlow("This flist is not correct. Please make sure you enter a valid link to an existing flist")
 
-        response = requests.head(user_form_data["Flist link"])
-        if response.status_code == 200:
-            break
-        else:
-            res = "This flist doesn't exist. Please make sure you enter a valid link to an existing flist"
-            bot.md_show(res)
+    response = requests.head(user_form_data["Flist link"])
+    if response.status_code != 200:
+        raise StopChatFlow("This flist doesn't exist. Please make sure you enter a valid link to an existing flist")
 
     form = bot.new_form()
     cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
@@ -45,7 +40,7 @@ def chat(bot):
     user_form_data["Memory"] = memory.value
 
     user_form_data["Interactive"] = bot.single_choice(
-        "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"]
+        "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"], required=True
     )
     if user_form_data["Interactive"] == "NO":
         user_form_data["Entry point"] = bot.string_ask("Please add your entrypoint for your flist")
@@ -57,7 +52,11 @@ def chat(bot):
         Leave empty if not needed"""
     )
 
-    expiration = bot.datetime_picker("Please enter solution expiration time.")
+    expiration = bot.datetime_picker(
+        "Please enter solution expiration time.",
+        required=True,
+        min_time=[3600, "Date/time should be at least 1 hour from now"],
+    )
     user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     if user_form_data["Env variables"]:
@@ -128,10 +127,10 @@ def chat(bot):
             # Container has been deployed successfully: your reservation id is: {resv_id}
             Open your browser at [http://{ip_address}:7681](http://{ip_address}:7681)
             """
-        bot.md_show(j.core.text.strip(res))
+        bot.md_show(j.core.text.strip(res), md=True)
     else:
         res = f"""\
             # Container has been deployed successfully: your reservation id is: {resv_id}
             Your IP is  ```{ip_address}```
             """
-        bot.md_show(j.core.text.strip(res))
+        bot.md_show(j.core.text.strip(res), md=True)
