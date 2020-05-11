@@ -1,7 +1,7 @@
 validators = {
   common: {
     required: (field) => {
-      return field.val !== undefined ? true: 'Field is required'
+      return field.val !== undefined ? true : 'Field is required'
     },
     min_length: (field, length) => {
       if (field.val !== undefined) {
@@ -10,12 +10,12 @@ validators = {
     },
     max_length: (field, length) => {
       if (field.val !== undefined) {
-        return field.val.length <= length ? true: `Value length is too large, maximum value is ${length}`
+        return field.val.length <= length ? true : `Value length is too large, maximum value is ${length}`
       }
     }
   },
   string_ask: {
-    
+
   },
   int_ask: {
     min: (field, min) => {
@@ -41,7 +41,7 @@ validators = {
   multi_choice: {
     min_options: (field, min) => {
       if (field.val !== undefined) {
-        return field.val.length >= min ? true: `Required at least ${min} options`
+        return field.val.length >= min ? true : `Required at least ${min} options`
       }
     },
     max_options: (field, max) => {
@@ -50,7 +50,7 @@ validators = {
       }
     },
     required: (field) => {
-        return field.val !== undefined && field.val.length > 0 ? true: 'Field is required'
+      return field.val !== undefined && field.val.length > 0 ? true : 'Field is required'
     },
   },
   drop_down_choice: {
@@ -66,10 +66,16 @@ validators = {
       if (field.val !== undefined) {
         return field.val > new Date().getTime() / 1000 ? true : "Date must not be in the past"
       }
+    },
+    min_time: (field, args) => {
+      if (field.val !== undefined) {
+        var message = args.length >= 2 ? args[1] : "Date must be in the future";
+        return field.val > Date.now() / 1000 + args[0] ? true : message
+      }
     }
   },
   time_delta: {
-   
+
   },
   location_ask: {
     is_valid: (field) => {
@@ -79,7 +85,7 @@ validators = {
     },
     required: (field) => {
       if (field.val !== undefined) {
-        return field.val.length == 2 ? true: 'Field is required'
+        return field.val.length == 2 ? true : 'Field is required'
       }
     },
   },
@@ -107,27 +113,27 @@ validators = {
 
 field = {
   props: ["value"],
-  data () {
+  data() {
     return {
-      validators: {},  
+      validators: {},
     }
   },
   computed: {
     val: {
-      get () {
+      get() {
         return this.value
       },
-      set (value) {
+      set(value) {
         this.$emit('input', value)
       }
     },
-    rules () {
+    rules() {
       return [this.validate]
     },
-    commonValidators () {
+    commonValidators() {
       return Object.keys(validators.common)
     },
-    categoryValidators () {
+    categoryValidators() {
       if (validators.hasOwnProperty(this.payload.category)) {
         return Object.keys(validators[this.payload.category])
       } else {
@@ -136,8 +142,8 @@ field = {
     }
   },
   methods: {
-    validate () {
-      let fieldValidators = {...this.validators, ...this.payload.kwargs}
+    validate() {
+      let fieldValidators = { ...this.validators, ...this.payload.kwargs }
       for (let [key, value] of Object.entries(fieldValidators)) {
         let validator = null
         if (this.categoryValidators.includes(key)) {
@@ -153,7 +159,7 @@ field = {
       return true
     }
   },
-  mounted () {
+  mounted() {
     if ((this.val === undefined || !this.val.length) && this.payload.kwargs.default) {
       this.val = this.payload.kwargs.default
     }

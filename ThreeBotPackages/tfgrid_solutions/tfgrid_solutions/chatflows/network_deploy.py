@@ -20,7 +20,11 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
         if not user_form_data["Currency"]:
             user_form_data["Currency"] = "TFT"
 
-        expiration = self.datetime_picker("Please enter network expiration time.", field="expiration")
+        expiration = self.datetime_picker(
+            "Please enter network expiration time.",
+            required=True,
+            min_time=[3600, "Date/time should be at least 1 hour from now"],
+        )
         user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
         ips = ["IPv6", "IPv4"]

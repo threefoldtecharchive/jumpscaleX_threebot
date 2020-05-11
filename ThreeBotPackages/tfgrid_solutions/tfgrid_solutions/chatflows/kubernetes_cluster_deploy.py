@@ -22,9 +22,13 @@ def chat(bot):
     while True:
         form = bot.new_form()
         sizes = ["1 vCPU 2 GiB ram 50GiB disk space", "2 vCPUs 4 GiB ram 100GiB disk space"]
-        cluster_size_string = form.drop_down_choice("Choose the size of your nodes", sizes)
-        masternodes = form.int_ask("Please specify the number of master nodes", default=1)  # minimum should be 1
-        workernodes = form.int_ask("Please specify the number of worker nodes", default=1)  # minimum should be 1
+        cluster_size_string = form.drop_down_choice("Choose the size of your nodes", sizes, default=sizes[0])
+        masternodes = form.int_ask(
+            "Please specify the number of master nodes", default=1, required=True, min=1
+        )  # minimum should be 1
+        workernodes = form.int_ask(
+            "Please specify the number of worker nodes", default=1, required=True, min=1
+        )  # minimum should be 1
 
         form.ask()
         cluster_size = sizes.index(cluster_size_string.value) + 1  # sizes are index 1
@@ -55,7 +59,11 @@ def chat(bot):
     )
     ssh_keys_list = user_form_data["SSH keys"].split("\n")
 
-    expiration = bot.datetime_picker("Please enter solution expiration time.")
+    expiration = bot.datetime_picker(
+        "Please enter solution expiration time.",
+        required=True,
+        min_time=[3600, "Date/time should be at least 1 hour from now"],
+    )
     user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     user_form_data["Cluster secret"] = bot.string_ask("Please add the cluster secret", default="secret")
