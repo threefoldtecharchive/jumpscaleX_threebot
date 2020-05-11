@@ -15,8 +15,8 @@
     <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
     <script src="https://unpkg.com/http-vue-loader"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown.js/0.5.0/markdown.min.js"></script>
     <script src='https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js'></script>
     <script type="text/javascript">
 
@@ -27,7 +27,8 @@
       const QS = '{{ qs }}'
       const USERNAME = '{{ username }}'
       const EMAIL = '{{ email }}'
-
+      
+      httpVueLoader.register(Vue, `${baseUrl}/components/Message.vue`)
       httpVueLoader.register(Vue, `${baseUrl}/components/String.vue`)
       httpVueLoader.register(Vue, `${baseUrl}/components/Number.vue`)
       httpVueLoader.register(Vue, `${baseUrl}/components/Secret.vue`)

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="title font-regular mb-2">{{payload.msg}}</h3>
+    <Message :payload="payload"></Message>
     <v-radio-group v-model="val" :rules="rules" validate-on-blur column>
       <v-radio v-for="(option, i) in payload.options" :key="i" :label="option" :color="getColor(i)" :value="option"></v-radio>
     </v-radio-group>

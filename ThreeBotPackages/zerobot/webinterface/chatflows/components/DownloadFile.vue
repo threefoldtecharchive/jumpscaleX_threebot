@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="title font-regular mb-5">{{payload.msg}}</h3>
+    <Message :payload="payload"></Message>
     <v-btn x-large color="success" width="300" height="50" @click="download">
       <v-icon left x-larg>mdi-download</v-icon> Download
     </v-btn>

@@ -6,6 +6,6 @@
 
 <script>
   module.exports = {
-    props: {payload: Object},
+    props: {payload: Object}
   }
 </script>

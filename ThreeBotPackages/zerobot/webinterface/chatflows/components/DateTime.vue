@@ -1,7 +1,6 @@
 <template>
   <div>
-    {{val}}
-    <h3 class="title font-regular mb-2">{{payload.msg}}</h3>
+    <Message :payload="payload"></Message>
     <v-menu v-model="menu" :close-on-content-click="false" min-width="290">
       <template v-slot:activator="{ on }">
         <v-text-field
@@ -23,10 +22,10 @@
 
       <v-tabs-items v-model="tab">
         <v-tab-item>
-          <v-date-picker v-model="date" color="primary" @click:date="tab = date ? 1 : 0;" no-title scrollable/>
+          <v-date-picker v-if="tab === 0" v-model="date" color="primary" @click:date="tab = date ? 1 : 0;" no-title scrollable/>
         </v-tab-item>
         <v-tab-item>
-          <v-time-picker v-model="time" color="primary" @click:minute="save" no-title scrollable/> 
+          <v-time-picker v-if="tab === 1" v-model="time" color="primary" @change="save" no-title scrollable/> 
         </v-tab-item>
       </v-tabs-items>
     </v-menu>
@@ -40,8 +39,8 @@
     props: {payload: Object},
     data () {
       return {
-        menu: false,
         tab: 0,
+        menu: false,
         date: null,
         time: null,
         dateTime: null,
@@ -51,23 +50,33 @@
       }
     },
     watch: {
-      val () {
-        this.setDefault()
+      date () {
+        this.update()
+      },
+      time () {
+        this.update()
       }
     },
     methods: {
-      setDefault () {
-        this.dateTime = new Date(this.val * 1000).toLocaleString()
+      update () {
+        if (this.date && this.time) {
+          let datetime = new Date(`${this.date} ${this.time}`)
+          this.dateTime = datetime.toLocaleString()
+          this.val = datetime.getTime() / 1000
+        }
       },
       save () {
         this.tab = 0
         this.menu = false
-        this.val = new Date(this.date + ' ' + this.time).getTime() / 1000
       }
     },
     mounted () {
       if (this.val){
-        this.setDefault()
+        this.dateTime = new Date(this.val * 1000).toLocaleString()
+      } else {
+        let datetime = new Date()
+        this.dateTime = datetime.toLocaleString()
+        this.val = Math.floor(datetime.getTime() / 1000)
       }
     }
   }

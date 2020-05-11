@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="title font-regular mb-2">{{payload.msg}}</h3>
+    <Message :payload="payload"></Message>
     <v-text-field v-model="val" :rules="rules" :append-icon="icon" :type="type" @click:append="show = !show" validate-on-blur outlined></v-text-field>
   </div>
 </template>

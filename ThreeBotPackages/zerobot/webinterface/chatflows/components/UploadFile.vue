@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="title font-regular mb-2">{{payload.msg}}</h3>
+    <Message :payload="payload"></Message>
     <v-file-input @change="readFile" prepend-icon="" prepend-inner-icon="mdi-paperclip" :rules="rules" validate-on-blur outlined></v-file-input>
     <v-sheet v-if="val" color="accent" class="pa-5">
       <pre>{{val}}</pre>
@@ -15,10 +15,7 @@
     data () {
       return {
         file: null,
-        validators: {
-          // max_size: 1000,
-          // file_types: 'text/plain'
-        }
+        validators: {}
       }
     },
     methods: {
