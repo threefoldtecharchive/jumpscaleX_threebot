@@ -61,6 +61,11 @@ validators = {
       if (field.val !== undefined) {
         return new Date(field.val * 1000) !== "Invalid date" ? true : "Invalid date"
       }
+    },
+    future: (field) => {
+      if (field.val !== undefined) {
+        return field.val > new Date().getTime() / 1000 ? true : "Date must not be in the past"
+      }
     }
   },
   time_delta: {
@@ -149,7 +154,7 @@ field = {
     }
   },
   mounted () {
-    if (this.val === undefined && this.payload.kwargs) {
+    if ((this.val === undefined || !this.val.length) && this.payload.kwargs) {
       this.val = this.payload.kwargs.default
     }
   }
