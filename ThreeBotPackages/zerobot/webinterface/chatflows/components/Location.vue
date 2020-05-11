@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="title font-regular mb-4">{{payload.msg}}</h3>
+    <Message :payload="payload"></Message>
     <div id="map"></div><br>
     <v-row>
       <v-col cols="12" md="6">

@@ -1,15 +1,26 @@
 <template>
-  <div v-if="payload" v-html="render()"></div>
+  <div v-html="html"></div>
 </template>
 
 <script>  
-  module.exports = {
-    mixins: [field],
+  module.exports = {    
     props: {payload: Object},
-    methods: {
-      render () {
-        return markdown.toHTML(this.payload.msg)
+    computed: {
+      html () {
+        return marked(this.payload.msg)
       }
     }
   }
 </script>
+
+<style scoped>
+ code {
+   padding: 7px;
+   margin: 10px 0px;
+ }
+
+ h1, h2, h3 {
+   font-weight: 600 !important;
+   font-family: sans-serif !important;
+ }
+</style>

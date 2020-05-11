@@ -1,12 +1,12 @@
 <template>
     <div>
-      <h3 class="title font-regular mb-5">{{payload.msg}}</h3>
+      <Message :payload="payload"></Message>
       <v-text-field class="time-delta" v-model="val" height="50" placeholder="Time delta format" :rules="rules" readonly validate-on-blur outlined></v-text-field>
-      <v-slider label="Years" v-model="parts.Y" thumb-label dense></v-slider>
-      <v-slider label="Months" v-model="parts.M" max="11" thumb-label dense></v-slider>
-      <v-slider label="Weeks" v-model="parts.w" max="3" thumb-label dense></v-slider>
-      <v-slider label="Days" v-model="parts.d" max="29" thumb-label dense></v-slider>
-      <v-slider label="Hours" v-model="parts.h" max="23" thumb-label dense></v-slider>
+      <v-slider label="Years" v-model="years" thumb-label dense></v-slider>
+      <v-slider label="Months" v-model="months" max="11" thumb-label dense></v-slider>
+      <v-slider label="Weeks" v-model="weeks" max="3" thumb-label dense></v-slider>
+      <v-slider label="Days" v-model="days" max="29" thumb-label dense></v-slider>
+      <v-slider label="Hours" v-model="hours" max="23" thumb-label dense></v-slider>
     </div>
 </template>
 
@@ -16,52 +16,57 @@
     props: {payload: Object},
     data () {
       return {
-        parts: {
-          Y: null,
-          M: null,
-          w: null,
-          d: null,
-          h: null,
-          m: null,
-          s: null
-        },
+        years: null,
+        months: null,
+        weeks: null,
+        days: null,
+        hours: null,
         validators: {
           is_valid: true
         }
       }
     },
+    computed: {
+      format () {
+        return `${this.years}Y ${this.months}M ${this.weeks}w ${this.days}d ${this.hours}h`
+      }
+    },
     watch: {
-      parts: {
-        handler (val) {
-          this.val = this.toString()
-        },
-        deep: true
+      format (val) {
+        this.val = val
       }
     },
     methods: {
-      toString () {
-        let values = []
-        for (let [name, value] of Object.entries(this.parts)) {
-          if (value > 0) {
-            values.push(`${Number(value)}${name}`)
-          }
-        }
-        return values.join(" ")
-      },
       fromString () {
         let parts = this.val.split(" ")
         parts.forEach((part) => {
           if (part.length < 2) return 
           let name = part.slice(-1)
           let value = part.slice(0, -1)
-          this.parts[name] = value
+          switch (name) {
+            case "Y":
+              this.years = value
+              break
+            case "M":
+              this.months = value
+              break
+            case "w":
+              this.weeks = value
+              break
+            case "d":
+              this.days = value
+              break
+            case "h":
+              this.hours = value
+              break
+          }
         })
       }
     },
     mounted () {
-      if (this.val) {
-        this.fromString()
-      }
+      this.$nextTick(() => {
+        if (this.val) this.fromString()
+      })
     }
   }
 </script>

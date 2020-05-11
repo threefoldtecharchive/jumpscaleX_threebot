@@ -1,9 +1,8 @@
 <template>
   <v-app>
-    <v-app-bar app>
+    <v-app-bar v-if="$route.query.noheader !== 'yes'" app>
       <img src="/staticchat/assets/images/3bot.png" width="24"/>
       <v-spacer></v-spacer>
-
       <v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-x>
         <template v-slot:activator="{ on }">
           <v-btn text v-on="on">
@@ -52,8 +51,8 @@
           <v-card v-if="work && !end" :disabled="loading" :loading="loading" class="mx-auto" width="70%" min-height="350" raised shaped>
             <div class="chat">
               <v-toolbar flat>
-                <v-toolbar-title v-if="step.title" class="headline font-regular primary--text">
-                  {{step.title}}
+                <v-toolbar-title v-if="work.info.title" class="headline font-regular primary--text">
+                  {{work.info.title}}
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-btn color="primary" @click="restart" icon large>
@@ -62,24 +61,24 @@
               </v-toolbar>
 
               <v-card-text style="text-align:left">
-                
                 <v-form ref="form" :lazy-validation="true">
-                  <component 
-                    v-model="state[step.step][step.slide]"
-                    v-bind:is="categories[category]"
-                    :payload="payload"
+                  <component
+                    v-model="state[stepId]"
+                    :key="stepId"
+                    :is="categories[this.work.payload.category]"
+                    :payload="this.work.payload"
                   />
                 </v-form>
 
               </v-card-text>
 
               <div class="text-center mt-10">
-                <v-icon style="opacity: 0.8; padding-left:1px" x-small v-for="i in step.steps" :key="i" :color="i <= step.step ? 'primary' : '#E5E7E9'">mdi-checkbox-blank-circle</v-icon>
+                <v-icon style="opacity: 0.8; padding-left:1px" x-small v-for="i in work.info.steps" :key="i" :color="i <= work.info.step ? 'primary' : '#E5E7E9'">mdi-checkbox-blank-circle</v-icon>
               </div>
 
               <v-card-actions>
                 <v-btn color="primary" raised x-large class="px-5" min-width="120" @click="back" :disabled="backButtonDisable">
-                  {{step.first_slide ? 'Previous step' : 'Back'}}
+                  {{work.info.first_slide ? 'Previous step' : 'Back'}}
                 </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn color="primary" raised x-large class="px-5" min-width="120" @click="next" :loading="loading" :disabled="nextButtonDisable">Next</v-btn>
@@ -97,39 +96,27 @@
   const baseUrl = "/zerobot/webinterface/actors/chatbot"
 
   module.exports =  {
-    name: 'app',
-    props: ["topic"],
     data () {
       return {
-        sessionId: null,
-        loading: true,
-        work: null,
-        end: false,
         state: {},
+        sessionId: null,
+        work: null,
+        loading: true,
+        end: false,
+        menu: false,
+        topic: TOPIC,
         userInfo: {username: USERNAME, email: EMAIL}
       }
     },
     computed: {
       nextButtonDisable () {
-        return this.category === "loading"
+        return this.work.payload.category === "loading"
       },
       backButtonDisable () {
-        return !this.step.previous || this.category === "loading"
+        return !this.work.info.previous || this.work.payload.category === "loading"
       },
-      category () {
-        if (this.work) {
-          return this.work.payload.category
-        }
-      },
-      payload () {
-        if (this.work) {
-          return this.work.payload
-        }
-      },
-      step () {
-        if (this.work) {
-          return this.work.info
-        }
+      stepId () {
+        return `${this.work.info.step}_${this.work.info.slide}`
       }
     },
     methods: {
@@ -153,9 +140,11 @@
         if (this.end === false) this.getWork()
       },
       handlerWork (work) {
-        this.work = work    
-        if (! this.state[this.step.step]) {
-          this.$set(this.state, this.step.step, {})
+        this.work = work
+        if (this.state[this.stepId] === undefined) {
+          if (['form', 'multi_choice', 'multi_list_choice', 'location_ask'].includes(this.work.payload.category)) {
+            this.$set(this.state, this.stepId, Array())
+          }
         }
       },
       redirect (url) {
@@ -196,19 +185,22 @@
         })
       },
       next () {
-        if (! this.validate()) return
-        this.loading = true
-        let result = this.state[this.step.step][this.step.slide]
-        if (typeof(result) == "object") {
-          result = JSON.stringify(result)
+        if (this.validate()) {
+          let result = this.state[this.stepId]
+
+          if (typeof result === 'object') {
+            result = JSON.stringify(result)
+          }
+
+          this.loading = true
+          this.reportWork(result)
         }
-        this.reportWork(result)
       },
       back () {
         axios({
-          url: `${baseUrl}/prev_step`,
+          url: `${baseUrl}/prev_step`, 
           params: {
-            sessionid: this.sessionId,
+            sessionid: this.sessionId
           }
         })
       },

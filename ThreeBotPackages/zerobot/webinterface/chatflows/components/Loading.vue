@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <h3 class="title font-regular mb-6">{{payload.msg}}</h3>
+    <Message :payload="payload"></Message>
     <v-progress-circular
       :rotate="-90"
       :size="150"
@@ -15,6 +15,7 @@
 
 <script>  
   module.exports = {
+    mixins: [field],
     props: {payload: Object}
   }
 </script>

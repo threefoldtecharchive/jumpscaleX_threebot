@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="title font-regular mb-2">{{payload.msg}}</h3>
+    <Message :payload="payload"></Message>
     <div class="text-center">
       <img :src="src" style="border:1px dashed #85929E" width="250"/><br><br>
       <v-text-field v-model="val" outlined :rules="rules" validate-on-blur></v-text-field>
