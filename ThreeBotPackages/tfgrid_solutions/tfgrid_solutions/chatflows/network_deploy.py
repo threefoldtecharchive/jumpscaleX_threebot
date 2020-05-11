@@ -3,12 +3,8 @@ import time
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 
 
-
 class NetworkDeploy(j.servers.chatflow.get_class()):
-    steps = [
-        "network_reservation",
-        "network_info"
-    ]
+    steps = ["network_reservation", "network_info"]
 
     @j.baseclasses.chatflow_step(title="Deploy Network")
     def network_reservation(self):
@@ -29,7 +25,9 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
 
         ips = ["IPv6", "IPv4"]
         ipversion = self.single_choice(
-            "How would you like to connect to your network? IPv4 or IPv6? If unsure, choose IPv4", ips, field="ipversion"
+            "How would you like to connect to your network? IPv4 or IPv6? If unsure, choose IPv4",
+            ips,
+            field="ipversion",
         )
 
         # create new reservation
@@ -37,7 +35,7 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
         ip_range = j.sal.reservation_chatflow.ip_range_get(self)
         res = j.sal.reservation_chatflow.solution_model_get(network_name, "tfgrid.solutions.network.1", user_form_data)
         reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res)
-        
+
         # Check if reservation failed
         while True:
             self.config = j.sal.reservation_chatflow.network_create(
@@ -73,18 +71,20 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
             to download your configuration
         """
 
-        self.md_show(j.core.text.strip(message))
+        self.md_show(j.core.text.strip(message), md=True)
 
         filename = "wg-{}.conf".format(self.config["rid"])
-        self.download_file(self.config["wg"], filename)
+        self.download_file(msg=f'<pre>{self.config["wg"]}</pre>', data=self.config["wg"], filename=filename, html=True)
 
         message = """
             ### In order to have the network active and accessible from your local/container machine. To do this, execute this command:
             #### ```wg-quick up /etc/wireguard/{}```
-            Click next
-        """.format(filename)
+            # Click next
+        """.format(
+            filename
+        )
 
-        self.md_show(j.core.text.strip(message))
+        self.md_show(j.core.text.strip(message), md=True)
 
 
 chat = NetworkDeploy
