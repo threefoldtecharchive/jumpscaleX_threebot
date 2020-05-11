@@ -154,7 +154,7 @@ field = {
     }
   },
   mounted () {
-    if ((this.val === undefined || !this.val.length) && this.payload.kwargs) {
+    if ((this.val === undefined || !this.val.length) && this.payload.kwargs.default) {
       this.val = this.payload.kwargs.default
     }
   }
