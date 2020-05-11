@@ -96,7 +96,11 @@ def chat(bot):
     user_form_data["Gateway"] = domain_gateway.node_id
     user_form_data["Name Server"] = domain_gateway.dns_nameserver[0]
 
-    expiration = bot.datetime_picker("Please enter gateway expiration time.")
+    expiration = bot.datetime_picker(
+        "Please enter gateway expiration time.",
+        required=True,
+        min_time=[3600, "Date/time should be at least 1 hour from now"],
+    )
     user_form_data["Expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     # create tcprouter
