@@ -31,7 +31,7 @@ export default {
     },
     getName: async context => {
       var response = await tfService.getName();
-      return response.data.username;
+      return response.data.name;
     },
     getUser: async context => {
       var name = await context.dispatch("getName");

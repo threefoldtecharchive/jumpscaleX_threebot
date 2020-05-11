@@ -7,7 +7,7 @@ export default {
     });
   },
   getName() {
-    return axios.get("/auth/authenticated", {
+    return axios.get("/zerobot/webinterface/actors/identity/threebot_name", {
       args: {}
     });
   },
