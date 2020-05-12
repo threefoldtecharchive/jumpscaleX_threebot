@@ -71,13 +71,15 @@
       }
     },
     mounted () {
-      if (this.val){
-        this.dateTime = new Date(this.val * 1000).toLocaleString()
-      } else {
-        let datetime = new Date()
-        this.dateTime = datetime.toLocaleString()
-        this.val = Math.floor(datetime.getTime() / 1000)
-      }
+      this.$nextTick(() => {
+        if (this.val){
+          this.dateTime = new Date(this.val * 1000).toLocaleString()
+        } else {
+          let datetime = new Date()
+          this.dateTime = datetime.toLocaleString()
+          this.val = Math.floor(datetime.getTime() / 1000)
+        }
+      })
     }
   }
 </script>
