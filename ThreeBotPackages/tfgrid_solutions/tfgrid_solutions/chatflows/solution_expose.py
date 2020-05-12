@@ -83,11 +83,14 @@ def chat(bot):
         elif domain_type == "Delegated":
             domain_obj = user_domains[domain_name]
             domain_gateway = gateways[domain_obj.node_id]
+        retry = False
         while True:
             domain = bot.string_ask(
-                f"Please specify the sub domain name you wish to bind to. will be (subdomain).{domain_name}"
+                f"Please specify the sub domain name you wish to bind to. will be (subdomain).{domain_name}",
+                retry=retry,
             )
             if "." in domain:
+                retry = True
                 bot.md_show("You can't nest domains. please click next to try again")
             else:
                 break
