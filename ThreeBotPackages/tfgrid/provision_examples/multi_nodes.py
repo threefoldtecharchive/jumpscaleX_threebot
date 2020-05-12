@@ -29,7 +29,7 @@ def find_free_wg_port(node):
 def deploy_multi_node_network():
     j.clients.threebot.explorer_addr_set("explorer.testnet.grid.tf")
     explorer = j.clients.threebot.explorer
-    me = j.myidentities.me
+    me = j.me
 
     nodes = explorer.actors_all.nodes.list().nodes
 
