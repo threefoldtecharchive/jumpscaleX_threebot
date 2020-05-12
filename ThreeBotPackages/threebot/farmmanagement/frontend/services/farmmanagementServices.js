@@ -2,21 +2,10 @@ import axios from "/weblibs/axios/axios.min.js";
 
 export default {
   getExplorer() {
-    return axios.get("/zerobot/admin/actors/admin/get_explorer", {
-      args: {}
-    });
+    return axios.get("/zerobot/admin/actors/admin/get_explorer");
   },
-  getName() {
-    return axios.get("/zerobot/webinterface/actors/identity/threebot_name", {
-      args: {}
-    });
-  },
-  getUser(tfgridUrl, name) {
-    return axios.get(`${tfgridUrl}/users`, {
-      params: {
-        name: name
-      }
-    });
+  getUser() {
+    return axios.get("/zerobot/webinterface/actors/identity/threebot_name");
   },
   getFarms(tfgridUrl, user_id) {
     return axios.get(`${tfgridUrl}/farms`, {
