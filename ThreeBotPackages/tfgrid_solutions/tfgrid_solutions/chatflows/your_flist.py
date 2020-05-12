@@ -21,7 +21,6 @@ def chat(bot):
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
     user_form_data["Flist link"] = bot.string_ask(
         "Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist",
-        allow_empty=False,
         required=True,
     )
 
@@ -56,6 +55,7 @@ def chat(bot):
         "Please enter solution expiration time.",
         required=True,
         min_time=[3600, "Date/time should be at least 1 hour from now"],
+        default=j.data.time.epoch + 3900,
     )
     user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 

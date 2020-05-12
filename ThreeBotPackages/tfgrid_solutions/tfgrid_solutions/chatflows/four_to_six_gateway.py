@@ -11,7 +11,12 @@ def chat(bot):
     gateway = j.sal.reservation_chatflow.gateway_select(bot)
     gateway_id = gateway.node_id
     user_form_data["gateway"] = gateway_id
-    expiration = bot.datetime_picker("Please enter solution expiration time.")
+    expiration = bot.datetime_picker(
+        "Please enter solution expiration time.",
+        required=True,
+        min_time=[3600, "Date/time should be at least 1 hour from now"],
+        default=j.data.time.epoch + 3900,
+    )
     user_form_data["expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
     publickey = bot.string_ask(
         "Please enter wireguard public key or leave empty if you want us to generate one for you."
