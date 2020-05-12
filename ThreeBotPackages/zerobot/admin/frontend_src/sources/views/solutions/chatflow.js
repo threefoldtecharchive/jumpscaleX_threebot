@@ -17,7 +17,7 @@ export default class ChatflowView extends ExternalView {
         const packageName = `${params.author}.${params.package}`
         const packageUrl = packageName.replace(".", "/");
 
-        this.targetUrl = `/${packageUrl}/chat/${params.chat}#/?noheader=yes`;
+        this.targetUrl = `/${packageUrl}/chat/${params.chat}?noheader=yes#/`;
         this.requiredPackages = {}
         this.requiredPackages[packageName] = `${this.baseGitUrl}/${packageUrl}`;
 

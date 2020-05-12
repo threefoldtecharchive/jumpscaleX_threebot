@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar v-if="noheader !== 'yes'" app>
+    <v-app-bar v-if="$route.query.noheader !== 'yes'" app>
       <img src="/staticchat/assets/images/3bot.png" width="24"/>
       <v-spacer></v-spacer>
       <v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-x>
