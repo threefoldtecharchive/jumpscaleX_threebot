@@ -57,6 +57,28 @@
           </v-alert>
         </v-flex>
       </v-row>
+      <v-row>
+        <v-tooltip right>
+          <template v-slot:activator="{ on }">
+            <v-flex xs3 class="text-left pr-2">Healthy Network</v-flex>
+            <v-flex class="text-truncate font-weight-bold">
+              <span v-on="on"><v-icon :color="healthyIcon.color">{{healthyIcon.icon}}</v-icon> <v-icon x-small>fa-question-circle</v-icon></span>
+            </v-flex>
+          </template>
+          <span v-if="node.npub6HealthError">
+            {{node.npub6HealthError}}<a id='asd'></a>
+          </span>
+          <span v-if="node.npub4HealthError">
+            {{node.npub4HealthError}}<a id='asd'></a>
+          </span>
+          <span v-if="node.publicConfig6Error">
+            {{node.publicConfig6Error}}<a id='asd'></a>
+          </span>
+          <span v-if="!node.publicConfig6Error && !node.npub4HealthError && !node.publicConfig6Error">
+            Your network is configured properly!<a id='asd'></a>
+          </span>
+        </v-tooltip>
+      </v-row>
     </v-container>
   </v-col>
   <v-col v-if="node.workloads">
