@@ -61,16 +61,18 @@ module.exports = {
     }
   },
   mounted () {
-    if (this.val && this.val.length > 0) {
-      this.lng = this.val[0]
-      this.lat = this.val[1]
-      this.zoom = 5  
-    } else {
-      this.val = []
-      this.zoom = 1
-    }
-    this.init()
-    this.fly()
+    this.$nextTick(() => {
+      if (this.val && this.val.length > 0) {
+        this.lng = this.val[0]
+        this.lat = this.val[1]
+        this.zoom = 5  
+      } else {
+        this.val = []
+        this.zoom = 1
+      }
+      this.init()
+      this.fly()
+    })
   }
 }
 </script>
