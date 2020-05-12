@@ -13,7 +13,7 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
 
         j.sal.reservation_chatflow.validate_user(user_info)
         user_form_data["chatflow"] = "network"
-        network_name = self.string_ask("Please enter a network name", allow_empty=False, field="name")
+        network_name = self.string_ask("Please enter a network name", required=True, field="name")
         user_form_data["Currency"] = self.single_choice(
             "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"], field="currency"
         )
@@ -24,6 +24,7 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
             "Please enter network expiration time.",
             required=True,
             min_time=[3600, "Date/time should be at least 1 hour from now"],
+            default=j.data.time.epoch + 3900,
         )
         user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
