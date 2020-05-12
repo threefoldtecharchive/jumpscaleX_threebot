@@ -128,7 +128,7 @@ export default class WalletManagerView extends JetView {
                     title: "Delete Wallet",
                     ok: "Delete",
                     cancel: "No",
-                    text: `Delete ${walletName} wallet?`
+                    text: `Delete ${walletName} wallet?<br>Warning: You must save your wallet secret otherwise this action can't be undone`
                 }).then(() => {
 
                     wallet.delete(walletName).then(() => {
@@ -147,7 +147,6 @@ export default class WalletManagerView extends JetView {
 
         self.wallets_table = $$("wallets_table");
         wallet.getWallets().then(data => {
-            console.log(data.json())
             self.wallets_table.parse(data.json())
         });
     }
