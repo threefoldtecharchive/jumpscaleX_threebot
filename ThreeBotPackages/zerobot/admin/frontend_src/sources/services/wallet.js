@@ -26,6 +26,10 @@ class WalletService extends Service {
     importWallet(name, secret, network) {
         return this.postCall("import_wallet", {name, secret, network});
     }
+
+    delete(name) {
+        return this.postCall("delete_wallet", { name: name });
+    }
 }
 
 export const wallet = new WalletService();

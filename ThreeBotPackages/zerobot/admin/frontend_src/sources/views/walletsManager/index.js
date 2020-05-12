@@ -2,7 +2,7 @@ import { JetView } from "webix-jet";
 
 import WalletFormView from "./walletForm";
 import WalletDetailsView from "./walletDetails";
-import WalletImportView from  "./importForm"
+import WalletImportView from "./importForm"
 import { wallet } from "../../services/wallet";
 
 export default class WalletManagerView extends JetView {
@@ -51,22 +51,22 @@ export default class WalletManagerView extends JetView {
                     type: "header", template: "Wallets",
                 },
                 {
-                    view:"button", 
-                    id:"btn_create", 
-                    value:"Create Wallet", 
-                    css:"webix_secondary", 
-                    autowidth:true,
-                    click: function (){
+                    view: "button",
+                    id: "btn_create",
+                    value: "Create Wallet",
+                    css: "webix_secondary",
+                    autowidth: true,
+                    click: function () {
                         this.$scope.WalletFormView.showForm()
                     }
                 },
                 {
-                    view:"button", 
-                    id:"btn_import", 
-                    value:"Import Wallet", 
-                    css:"webix_secondary", 
-                    autowidth:true,
-                    click: function (){
+                    view: "button",
+                    id: "btn_import",
+                    value: "Import Wallet",
+                    css: "webix_secondary",
+                    autowidth: true,
+                    click: function () {
                         this.$scope.WalletImportView.showForm()
                     }
                 }
@@ -88,14 +88,14 @@ export default class WalletManagerView extends JetView {
         self.WalletDetailsView = self.ui(WalletDetailsView)
         self.WalletFormView = self.ui(WalletFormView);
         self.WalletImportView = self.ui(WalletImportView);
-        
+
         self.wallets_table.attachEvent("onItemDblClick", function () {
             webix.extend(self.wallets_table, webix.ProgressBar);
             self.wallets_table.showProgress({
-                type:"icon",
+                type: "icon",
                 hide: false
             });
-            
+
             let item = self.wallets_table.getSelectedItem()
             wallet.manageWallet(item.name).then(data => {
                 console.log(data.json())
@@ -107,21 +107,46 @@ export default class WalletManagerView extends JetView {
                     'balances': res.balances
                 }
                 self.WalletDetailsView.showInfo(info)
-                self.wallets_table.showProgress({hide: true});
+                self.wallets_table.showProgress({ hide: true });
             }).catch(data => {
                 console.log(data);
-                self.wallets_table.showProgress({hide: true});
+                self.wallets_table.showProgress({ hide: true });
                 webix.message({ type: "error", text: "Failed to load wallet" });
             });
+        });
+
+        webix.ui({
+            view: "contextmenu",
+            id: "wallet_cm",
+            data: ["delete"]
+        }).attachTo(self.wallets_table);
+
+        $$("wallet_cm").attachEvent("onMenuItemClick", function (id) {
+            if (id == "delete") {
+                let walletName = self.wallets_table.getSelectedItem().name
+                webix.confirm({
+                    title: "Delete Wallet",
+                    ok: "Delete",
+                    cancel: "No",
+                    text: `Delete ${walletName} wallet?<br>Warning: You must save your wallet secret otherwise this action can't be undone`
+                }).then(() => {
+
+                    wallet.delete(walletName).then(() => {
+                        self.refresh();
+                        webix.message({ type: "success", text: `${walletName} wallet deleted successfully` });
+                    }).catch(error => {
+                        webix.message({ type: "error", text: "Could not delete wallet" });
+                    })
+                });
+            }
         });
     }
 
     urlChange(view, url) {
         var self = this;
-    
-        self.wallets_table =  $$("wallets_table");
+
+        self.wallets_table = $$("wallets_table");
         wallet.getWallets().then(data => {
-            console.log(data.json())
             self.wallets_table.parse(data.json())
         });
     }
