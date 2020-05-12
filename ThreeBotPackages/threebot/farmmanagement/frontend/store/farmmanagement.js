@@ -29,15 +29,11 @@ export default {
       }  
       context.commit("setTfgridUrl", url);
     },
-    getName: async context => {
-      var response = await tfService.getName();
-      return response.data.username;
-    },
     getUser: async context => {
-      var name = await context.dispatch("getName");
-      var response = await tfService.getUser(context.getters.tfgridUrl, name);
-      if (name.length > 0) {
-        context.commit("setUser", response.data[0]);
+      var response = await tfService.getUser();
+      console.log(response.data)
+      if (response.data.name.length > 0) {
+        context.commit("setUser", response.data);
       }
     },
     getNodes(context, farm_id) {
@@ -50,7 +46,7 @@ export default {
       return tfService.setNodeFree(node_id, free)
     },
     getFarms: context => {
-      tfService.getFarms(context.getters.tfgridUrl, context.getters.user.id).then(response => {
+      tfService.getFarms(context.getters.tfgridUrl, context.getters.user.tid).then(response => {
         context.commit("setFarms", response.data);
       });
     },
