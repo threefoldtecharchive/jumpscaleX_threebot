@@ -76,3 +76,13 @@ class wallet(j.baseclasses.threebot_actor):
         network = network or "TEST"
         wallet = j.clients.stellar.new(name=name, secret=secret, network=network)
         return j.data.serializers.json.dumps(wallet.address)
+
+    @j.baseclasses.actor_method
+    def delete_wallet(self, name, schema_out=None, user_session=None):
+        """
+        ```in
+        name = (S)
+        ```
+        """
+        j.clients.stellar.delete(name=name)
+        return j.data.serializers.json.dumps({"result": True})
