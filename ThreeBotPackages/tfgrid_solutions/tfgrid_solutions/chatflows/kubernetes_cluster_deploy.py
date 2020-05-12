@@ -18,16 +18,18 @@ def chat(bot):
         return
     currency = network.currency
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
-
+    retry = False
     while True:
         form = bot.new_form()
         sizes = ["1 vCPU 2 GiB ram 50GiB disk space", "2 vCPUs 4 GiB ram 100GiB disk space"]
-        cluster_size_string = form.drop_down_choice("Choose the size of your nodes", sizes, default=sizes[0])
+        cluster_size_string = form.drop_down_choice(
+            "Choose the size of your nodes", sizes, default=sizes[0], retry=retry
+        )
         masternodes = form.int_ask(
-            "Please specify the number of master nodes", default=1, required=True, min=1
+            "Please specify the number of master nodes", default=1, required=True, min=1, retry=retry
         )  # minimum should be 1
         workernodes = form.int_ask(
-            "Please specify the number of worker nodes", default=1, required=True, min=1
+            "Please specify the number of worker nodes", default=1, required=True, min=1, retry=retry
         )  # minimum should be 1
 
         form.ask()
@@ -48,6 +50,7 @@ def chat(bot):
             )
             break
         except StopChatFlow as e:
+            retry = True
             bot.md_show(e.msg)
 
     user_form_data["Master number"] = masternodes.value
