@@ -269,9 +269,9 @@ module.exports = new Promise(async (resolve, reject) => {
         async mounted() {
             await this.getTfgridUrl();
             await this.getUser();
-            this.getFarms(this.user.id);
+            this.getFarms();
             this.initialiseRefresh()
-            this.newFarm.threebot_id = this.user.id;
+            this.newFarm.threebot_id = this.user.tid;
         },
         methods: {
             ...vuex.mapActions("farmmanagement", [
@@ -289,7 +289,7 @@ module.exports = new Promise(async (resolve, reject) => {
                 }, 60000)
             },
             isLoggedIn() {
-                return Boolean(this.user.id)
+                return Boolean(this.user.tid)
             },
             refreshFarms() {
                 clearInterval(this.refreshInterval);

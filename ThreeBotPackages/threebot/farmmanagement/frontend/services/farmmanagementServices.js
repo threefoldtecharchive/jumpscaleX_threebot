@@ -1,23 +1,11 @@
 import axios from "/weblibs/axios/axios.min.js";
-import config from "../config/farmmanagement.config.local.js";
 
 export default {
   getExplorer() {
-    return axios.get("/zerobot/admin/actors/admin/get_explorer", {
-      args: {}
-    });
+    return axios.get("/zerobot/admin/actors/admin/get_explorer");
   },
-  getName() {
-    return axios.get("/auth/authenticated", {
-      args: {}
-    });
-  },
-  getUser(tfgridUrl, name) {
-    return axios.get(`${tfgridUrl}/users`, {
-      params: {
-        name: name
-      }
-    });
+  getUser() {
+    return axios.get("/zerobot/webinterface/actors/identity/threebot_name");
   },
   getFarms(tfgridUrl, user_id) {
     return axios.get(`${tfgridUrl}/farms`, {
