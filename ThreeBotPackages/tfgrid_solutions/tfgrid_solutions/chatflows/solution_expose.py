@@ -83,11 +83,14 @@ def chat(bot):
         elif domain_type == "Delegated":
             domain_obj = user_domains[domain_name]
             domain_gateway = gateways[domain_obj.node_id]
+        retry = False
         while True:
             domain = bot.string_ask(
-                f"Please specify the sub domain name you wish to bind to. will be (subdomain).{domain_name}"
+                f"Please specify the sub domain name you wish to bind to. will be (subdomain).{domain_name}",
+                retry=retry,
             )
             if "." in domain:
+                retry = True
                 bot.md_show("You can't nest domains. please click next to try again")
             else:
                 break
@@ -96,7 +99,12 @@ def chat(bot):
     user_form_data["Gateway"] = domain_gateway.node_id
     user_form_data["Name Server"] = domain_gateway.dns_nameserver[0]
 
-    expiration = bot.datetime_picker("Please enter gateway expiration time.")
+    expiration = bot.datetime_picker(
+        "Please enter gateway expiration time.",
+        required=True,
+        min_time=[3600, "Date/time should be at least 1 hour from now"],
+        default=j.data.time.epoch + 3900,
+    )
     user_form_data["Expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     # create tcprouter

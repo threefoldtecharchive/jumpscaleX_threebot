@@ -68,7 +68,9 @@
         </div>
     </nav>
     {% endif %}
-    <!-- Top content -->
+
+
+
     <div class="top-content">
         <div class="container">
 
@@ -79,19 +81,23 @@
             </div>
             <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-12 form-box">
-                    <div class="f1-buttons-right">
+                    <div class="alert alert-danger text-left hidden" id="error"></div>
+                    <div class="top-bar">
+                        <h3 id="step-title"></h3><h5 id="step-range"></h5>
                         <button onClick="window.location.reload()" class="btn" style="color:grey">
                             <i class="fa fa-refresh"></i>
                         </button>
                     </div>
-                    <form role="form" action="" method="GET" class="f1">
-                        <div class="alert alert-danger text-left hidden" id="error"></div>
-                        <div id="wizard"></div>
-                    </form>
+                    <form id="form" class="f1"></form>
+                    <div class="action-buttons">
+                        <button id="previous-button" type="button" class="btn btn-submit">Previous Step</button>
+                        <button id="next-button" type="button" class="btn btn-submit">Next</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
     <script>
         var SERVER = '{{ url }}'
         var TOPIC = '{{ topic }}'
@@ -99,10 +105,6 @@
         var USERNAME = '{{ username }}'
         var EMAIL = '{{ email }}'
     </script>
-    <!-- Javascript -->
-
-    <!-- <script src="/weblibs/jquery/jquery.min.js"></script> -->
-    <!-- <script src="/weblibs/bootstrap3/js/bootstrap.min.js"></script> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="/weblibs/jquery/jquery.backstretch.min.js"></script>
