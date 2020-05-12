@@ -54,7 +54,7 @@ def chat(bot):
             break
         except (j.exceptions.Value, j.exceptions.NotFound) as e:
             message = "<br> Please enter a different nodeid to deploy on or leave it empty"
-            nodeid = bot.string_ask(str(e) + message)
+            nodeid = bot.string_ask(str(e) + message, html=True, retry=True)
 
     query["currency"] = currency
     if not nodeid:
