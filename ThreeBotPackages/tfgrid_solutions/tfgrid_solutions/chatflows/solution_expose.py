@@ -100,6 +100,7 @@ def chat(bot):
         "Please enter gateway expiration time.",
         required=True,
         min_time=[3600, "Date/time should be at least 1 hour from now"],
+        default=j.data.time.epoch + 3900,
     )
     user_form_data["Expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
