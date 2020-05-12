@@ -13,23 +13,25 @@ def chat(bot):
     user_form_data["chatflow"] = "gitea"
 
     j.sal.reservation_chatflow.validate_user(user_info)
-    bot.md_show("# This wizard wil help you deploy an gitea container")
+    bot.md_show("# This wizard wil help you deploy an gitea container", md=True)
     network = j.sal.reservation_chatflow.network_select(bot, j.me.tid)
-    if not network:
-        return
+
     currency = network.currency
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
 
-    while not user_form_data.get("Public key"):
-        user_form_data["Public key"] = bot.upload_file(
-            """Please add your public ssh key, this will allow you to access the deployed container using ssh.
-                Just upload the file with the key"""
-        ).split("\n")[0]
+    user_form_data["Public key"] = bot.upload_file(
+        """Please add your public ssh key, this will allow you to access the deployed container using ssh.
+                Just upload the file with the key""",
+        required=True,
+    ).split("\n")[0]
 
-
-    expiration = bot.datetime_picker("Please enter solution expiration time.")
+    expiration = bot.datetime_picker(
+        "Please enter solution expiration time.",
+        required=True,
+        min_time=[3600, "Date/time should be at least 1 hour from now"],
+        default=j.data.time.epoch + 3900,
+    )
     user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
-
 
     query = {"mru": math.ceil(1024 / 1024), "cru": 2, "hru": 5, "sru": 1}
     # create new reservation
@@ -43,24 +45,25 @@ def chat(bot):
             break
         except (j.exceptions.Value, j.exceptions.NotFound) as e:
             message = "<br> Please enter a different node id to deploy on or leave it empty"
-            nodeid = bot.string_ask(str(e) + message)
+            nodeid = bot.string_ask(str(e) + message, html=True, retry=True)
 
     query["currency"] = currency
 
     form = bot.new_form()
-    database_name = form.string_ask("Please add the database name of your gitea", default="postgres")
+    database_name = form.string_ask("Please add the database name of your gitea", default="postgres", required=True)
     database_user = form.string_ask(
-        "Please add the username for your gitea database. Make sure not to loose it", default="postgres",
+        "Please add the username for your gitea database. Make sure not to loose it", default="postgres", required=True
     )
     database_password = form.string_ask(
-        "Please add the secret for your gitea database. Make sure not to loose it", default="postgres",
+        "Please add the secret for your gitea database. Make sure not to loose it", default="postgres", required=True
     )
     form.ask()
     user_form_data["Database Name"] = database_name.value
     user_form_data["Database User"] = database_user.value
     user_form_data["Database Password"] = database_password.value
-    user_form_data["Repository"] = bot.string_ask("Please add the name of repository in your gitea", default="myrepo")
-
+    user_form_data["Repository"] = bot.string_ask(
+        "Please add the name of repository in your gitea", default="myrepo", required=True
+    )
     if not nodeid:
         farms = j.sal.reservation_chatflow.farm_names_get(1, bot, **query)
         node_selected = j.sal.reservation_chatflow.nodes_get(1, farm_names=farms, **query)[0]
@@ -129,4 +132,4 @@ def chat(bot):
         To connect ```ssh git@{ip_address}``` .It may take a few minutes.
         open gitea from browser at ```{ip_address}:3000```
         """
-    bot.md_show(j.core.text.strip(res))
+    bot.md_show(j.core.text.strip(res), md=True)

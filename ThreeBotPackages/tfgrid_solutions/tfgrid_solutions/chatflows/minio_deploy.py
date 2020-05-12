@@ -22,32 +22,24 @@ def chat(bot):
 
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
 
-    user_form_data["Disk type"] = bot.drop_down_choice("Please choose a the type of disk for zdb", ["SSD", "HDD"])
+    user_form_data["Disk type"] = bot.drop_down_choice(
+        "Please choose a the type of disk for zdb", ["SSD", "HDD"], required=True, default="SSD"
+    )
 
     accesskey_string = f"{name.split('.')[0]}"
     secret_string = "secret12345"
-    while True:
-        form = bot.new_form()
-        accesskey = form.string_ask(
-            "Please add the key to be used for minio when logging in. Make sure not to loose it",
-            default=accesskey_string,
-        )
-        secret = form.string_ask(
-            "Please add the secret to be used for minio when logging in to match the previous key. Make sure not to loose it",
-            default=secret_string,
-        )
-        form.ask()
-        accesskey_string = accesskey.value
-        secret_string = secret.value
-        ok = True
-        if len(accesskey_string) < 3:
-            ok = False
-            bot.md_show("Access key should be atleast 3 characters")
-        if len(secret_string) < 8:
-            ok = False
-            bot.md_show("Secret should be atleast 8 characters")
-        if ok:
-            break
+    form = bot.new_form()
+    accesskey = form.string_ask(
+        "Please add the key to be used for minio when logging in. Make sure not to loose it",
+        default=accesskey_string,
+        min_length=3,
+    )
+    secret = form.string_ask(
+        "Please add the secret to be used for minio when logging in to match the previous key. Make sure not to loose it",
+        default=secret_string,
+        min_length=8,
+    )
+    form.ask()
 
     user_form_data["Access key"] = accesskey.value
     user_form_data["Secret"] = secret.value
@@ -71,7 +63,12 @@ def chat(bot):
     user_form_data["Locations allowed to fail"] = int(parity.value)
     user_form_data["ZDB number"] = int(data_number.value) + int(parity.value)
 
-    expiration = bot.datetime_picker("Please enter solution expiration time.")
+    expiration = bot.datetime_picker(
+        "Please enter solution expiration time.",
+        required=True,
+        min_time=[3600, "Date/time should be at least 1 hour from now"],
+        default=j.data.time.epoch + 3900,
+    )
     user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     # create new reservation

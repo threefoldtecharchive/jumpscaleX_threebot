@@ -13,28 +13,32 @@ def chat(bot):
     user_form_data["chatflow"] = "ubuntu"
 
     j.sal.reservation_chatflow.validate_user(user_info)
-    bot.md_show("# This wizard wil help you deploy an ubuntu container")
+    bot.md_show("# This wizard wil help you deploy an ubuntu container", md=True)
     network = j.sal.reservation_chatflow.network_select(bot, j.me.tid)
-    if not network:
-        return
+
     currency = network.currency
     user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(bot, model)
-    user_form_data["Version"] = bot.single_choice("Please choose ubuntu version", IMAGES)
+    user_form_data["Version"] = bot.single_choice("Please choose ubuntu version", IMAGES, required=True)
 
     form = bot.new_form()
-    cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
+    cpu = form.int_ask("Please add how many CPU cores are needed", default=1, required=True)
     memory = form.int_ask("Please add the amount of memory in MB", default=1024)
     form.ask()
     user_form_data["CPU"] = cpu.value
     user_form_data["Memory"] = memory.value
 
-    while not user_form_data.get("Public key"):
-        user_form_data["Public key"] = bot.upload_file(
-            """Please add your public ssh key, this will allow you to access the deployed container using ssh.
-                Just upload the file with the key"""
-        ).split("\n")[0]
+    user_form_data["Public key"] = bot.upload_file(
+        """Please add your public ssh key, this will allow you to access the deployed container using ssh.
+                Just upload the file with the key""",
+        required=True,
+    ).split("\n")[0]
 
-    expiration = bot.datetime_picker("Please enter solution expiration time.")
+    expiration = bot.datetime_picker(
+        "Please enter solution expiration time.",
+        required=True,
+        min_time=[3600, "Date/time should be at least 1 hour from now"],
+        default=j.data.time.epoch + 3900,
+    )
     user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     var_dict = {"pub_key": user_form_data["Public key"]}
@@ -50,7 +54,7 @@ def chat(bot):
             break
         except (j.exceptions.Value, j.exceptions.NotFound) as e:
             message = "<br> Please enter a different nodeid to deploy on or leave it empty"
-            nodeid = bot.string_ask(str(e) + message)
+            nodeid = bot.string_ask(str(e) + message, html=True, retry=True)
 
     query["currency"] = currency
     if not nodeid:
@@ -102,4 +106,4 @@ def chat(bot):
         # Ubuntu has been deployed successfully: your reservation id is: {resv_id}
         To connect ```ssh root@{ip_address}``` .It may take a few minutes.
         """
-    bot.md_show(j.core.text.strip(res))
+    bot.md_show(j.core.text.strip(res), md=True)

@@ -56,3 +56,12 @@ class chatbot(j.baseclasses.threebot_actor):
     @j.baseclasses.actor_method
     def chatflows_list(self, schema_out=None, user_session=None):
         return self.chatbot.chatflows_list()
+
+    @j.baseclasses.actor_method
+    def next_step(self, sessionid, schema_out=None, user_session=None):
+        return self.chatbot.session_next_step(sessionid)
+
+    @j.baseclasses.actor_method
+    def prev_step(self, sessionid, schema_out=None, user_session=None):
+        return self.chatbot.session_prev_step(sessionid)
+
