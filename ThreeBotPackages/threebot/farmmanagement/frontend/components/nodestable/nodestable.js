@@ -31,7 +31,8 @@ module.exports = new Promise(async (resolve, reject) => {
                     { text: "ID", value: "id" },
                     { text: "Uptime", value: "uptime" },
                     { text: "Version", value: "version" },
-                    { text: "Status", value: "status", align: "center" }
+                    { text: "Status", value: "status", align: "center" },
+                    { text: "Network Health", value: "healthy", align: "center" }
                 ]
             }
         },
@@ -50,6 +51,7 @@ module.exports = new Promise(async (resolve, reject) => {
                     let npub6Healthy = false
                     let npub4Healthy = false
                     let npub6HealthError, npub4HealthError, publicConfig6Error
+                    let npub6Value, npub4Value, publicConfig6Value
             
                     const Global = "Global unicast"
                     const allowedIfaces = ["zos", "npub6", "npub4"]
@@ -64,6 +66,7 @@ module.exports = new Promise(async (resolve, reject) => {
                                     const ip6 = new window.Address6(addr)
                                     if (ip6.isValid()) {
                                         if (ip6.getType() === Global) {
+                                            npub6Value = ip6.correctForm()
                                             npub6Healthy = true
                                         }
                                     }
@@ -71,6 +74,7 @@ module.exports = new Promise(async (resolve, reject) => {
                                   case "npub4": {
                                     const ip4 = new window.Address4(addr)
                                     if (ip4.isValid()) {
+                                        npub4Value = ip4.correctForm()
                                         npub4Healthy = true
                                     }
                                   }
@@ -97,6 +101,7 @@ module.exports = new Promise(async (resolve, reject) => {
                         if (ip4.isValid() && ip6.isValid()) {
                             // if public iface has a public ipv6 then the node is healthy
                             if (ip6.getType() !== Global) {
+                                publicConfig6Value = ip6.correctForm()
                                 publicConfig6Error = "public ipv6 is missing, please check your router configuration."
                                 return healthy = false
                             }
@@ -120,7 +125,10 @@ module.exports = new Promise(async (resolve, reject) => {
                         healthy,
                         npub6HealthError,
                         npub4HealthError,
-                        publicConfig6Error
+                        publicConfig6Error,
+                        npub6Value,
+                        npub4Value,
+                        publicConfig6Value
                     }
                 })
                 return parsedNodes

@@ -7,6 +7,7 @@ module.exports = new Promise(async (resolve, reject) => {
       return {
         freeSwitchAlert: undefined,
         healthyIcon: this.node.healthy === true ? { icon: 'fa-check', color: 'green' } : { icon: 'fa-times', color: 'red' },
+        dialog: false,
       }
     },
     mounted() {
