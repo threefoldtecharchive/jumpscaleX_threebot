@@ -19,7 +19,7 @@ def chat(bot):
 
     gateway = gateways[gateway_choice.value]
     gateway_id = gateway.node_id
-    user_form_data["Dateway"] = gateway_id
+    user_form_data["Gateway"] = gateway_id
     expiration = bot.datetime_picker(
         "Please enter solution expiration time.",
         required=True,
