@@ -11,6 +11,7 @@ NETWORK_NAME = "pub.play.grid.tf"
 NETWORK = netaddr.IPNetwork("10.40.0.0/16")
 FLIST = "https://hub.grid.tf/ahmedelsayed.3bot/threefoldtech-simulator-latest.flist"
 LIFETIME = 5 * 60 * 60
+CURRENCY = "FreeTFT"
 
 
 class Deployer:
@@ -18,7 +19,10 @@ class Deployer:
         self._zos = j.sal.zosv2
         self._redis = j.clients.redis.get()
         self._pubkey = j.clients.sshkey.default.pubkey.strip()
-        self._nodes = list(self._zos.nodes_finder.nodes_search(farm_id=FARM_ID))
+        self._nodes = list(filter(
+            self._zos.nodes_finder.filter_is_free_to_use,
+            self._zos.nodes_finder.nodes_search(farm_id=FARM_ID)
+        ))
         self._gateway = j.tools.tf_gateway.get(self._redis)
 
     def _deploy_volume(self, reservation, node, expiration):
@@ -43,7 +47,9 @@ class Deployer:
 
     def _wireguard_connect(self, wireguard):
         j.sal.fs.writeFile("/etc/wireguard/network.conf", wireguard)
-        j.tools.executor.local.execute("wg-quick down network")
+        _, res, _ = j.tools.executor.local.execute("wg | grep 'interface: network'")
+        if res:
+            j.tools.executor.local.execute("wg-quick down network")
         j.tools.executor.local.execute("wg-quick up network")
 
     def _wait_for_result(self, reservation_id, category, timeout=120):
@@ -77,7 +83,7 @@ class Deployer:
         wireguard = self._zos.network.add_access(network, node.node_id, str(next(subnetworks)), ipv4=True)
 
         expiration = j.data.time.epoch + (3600 * 24 * 365)
-        reservation = self._zos.reservation_register(reservation, expiration)
+        reservation = self._zos.reservation_register(reservation, expiration, currencies=[CURRENCY])
 
         self._wait_for_result(reservation.reservation_id, "NETWORK")
         self._wireguard_connect(wireguard)
@@ -86,6 +92,7 @@ class Deployer:
         expiration = j.data.time.epoch + LIFETIME
 
         nodes = self._zos.nodes_finder.nodes_by_capacity(farm_id=FARM_ID, cru=4, mru=2, hru=8)
+        nodes = filter(self._zos.nodes_finder.filter_is_free_to_use, nodes)
         node = random.choice(list(nodes))
 
         reservation = self._zos.reservation_create()
