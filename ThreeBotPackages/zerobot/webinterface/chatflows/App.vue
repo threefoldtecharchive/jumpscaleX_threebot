@@ -111,10 +111,10 @@
     },
     computed: {
       nextButtonDisable () {
-        return this.work.payload.category === "loading"
+        return ['error', 'loading', 'infinite_loading'].includes(this.work.payload.category)
       },
       backButtonDisable () {
-        return !this.work.info.previous || this.work.payload.category === "loading"
+        return !this.work.info.previous || ['loading', 'infinite_loading'].includes(this.work.payload.category)
       },
       stepId () {
         return `${this.work.info.step}_${this.work.info.slide}`

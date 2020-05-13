@@ -18,7 +18,7 @@ export default class DeployedDomainDelegationView extends BaseView {
                 let reservation = JSON.parse(String(solution.reservation))
                 dict['Expiration Provisioning'] = reservation.data_reservation.expiration_provisioning
                 dict['Currencies'] = reservation.data_reservation.currencies
-                dict.id = dict.rid
+                dict.id = reservation.id
                 dict._name = dict["Domain"].length > self.maxTitleLength ?
                     dict["Domain"].substring(0, self.maxTitleLength) + '...' : dict["Domain"];
                 dict._name = dict["Domain"]
