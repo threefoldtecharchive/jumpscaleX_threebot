@@ -61,7 +61,7 @@
               </v-toolbar>
 
               <v-card-text style="text-align:left">
-                <v-form ref="form" :lazy-validation="true">
+                <v-form ref="form" :lazy-validation="true" @submit.prevent>
                   <component
                     v-model="state[stepId]"
                     :key="stepId"
@@ -211,6 +211,11 @@
     },
     mounted () {
       this.newSession()
+      document.body.addEventListener('keypress', (e) => {
+        if (e.key == 'Enter') {
+          this.next()
+        }
+      })
     }
   }
 </script>
