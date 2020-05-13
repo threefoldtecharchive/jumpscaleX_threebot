@@ -169,6 +169,7 @@ def chat(bot):
     user_form_data["secret"] = secret
     # create proxy
     j.sal.zosv2.gateway.tcp_proxy_reverse(reservation, domain_gateway.node_id, domain, user_form_data["Secret"])
+    reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, {"Solution name": solution_name})
     resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
         reservation, expiration, customer_tid=j.me.tid, currency=solution_currency, bot=bot
     )
