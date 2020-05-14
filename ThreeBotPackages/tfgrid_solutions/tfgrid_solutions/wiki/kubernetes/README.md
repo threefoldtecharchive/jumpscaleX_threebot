@@ -37,34 +37,34 @@ Go to your admin dashboard `https://localhost:4000/admin` and click on Network
 
 ### Choosing the network
 
-![Step1](k8s3.png)
+![Step1](k8s2.png)
 Here we choose which network we connect our kubernetes cluster to
 
 ### Choosing deployment name
 
-![Step2](k8s2.png)
+![Step2](k8s3.png)
 
 Choosing the name of the solution to be deployed. This allows the user to view the solution's reservation info in the dashboard deployed solutions
 
 ### Choosing the nodes specification
 
-![Step4](k8s4.png)
+![Step2](k8s4.png)
 Here we specify the size of the nodes that will be selected for deployment. We also specify the number of master nodes and worker nodes that will be in the cluster
 
 ### Choose a farm to deploy on
 
-![step8](../farms.png)
+![step4](k8s5.png)
 
 We can choose the farms on which to deploy on. The farms are basically a group of nodes where multiple solutions can be deployed on them. We can either choose farm names from the drop down list or leave it empty to randomly choose from any farms.
 
 ### Uploading your public Key
 
-![Step5](k8s5.png)
+![Step5](k8s6.png)
 This step is necessary to access the kubernetes machine and authorize you to be able to SSH into it
 
 ### Expiration time
 
-![Step6](k8s6.png)
+![Step6](k8s8.png)
 Here we specify for how long you want to reserve kubernetes cluster on our grid
 
 ### Choosing a secret for the cluster
@@ -74,17 +74,20 @@ Now it's time to choose the secret for your kubernetes cluster, make sure you do
 
 ### Set the IP Addresses for the solution master nodes
 
-![Step9](k8s8.png)
+![Step8](k8s8.png)
 We select IP addresses equal to the number of master nodes we entered earlier.
 
 ### Set the IP Addresses for the solution worker nodes
 
 ![Step9](k8s9.png)
+![Step10](k8s10.png)
 We then select IP addresses equal to the number of worker nodes we entered earlier
-
+### Confirm your reservation
+![step11](k8s11.png)
+Here we confirm the specifications we entered in the chatflow
 ### Payment
 
-![step10](../payment.png)
+![step12](k8s12.png)
 
 Finally we select the wallet that we will pay with to proceed with the payment for the solution that will be deployed.
 
