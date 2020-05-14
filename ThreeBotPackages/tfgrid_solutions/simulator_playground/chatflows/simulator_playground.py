@@ -5,17 +5,16 @@ import netaddr
 from Jumpscale import j
 
 
-# FARM_ID = 1
-FARM_ID = 71
+FARM_ID = 1
 DOMAIN = "play.grid.tf"
 NETWORK_NAME = "pub.play.grid.tf"
 NETWORK = netaddr.IPNetwork("10.40.0.0/16")
 FLIST = "https://hub.grid.tf/ahmedelsayed.3bot/threefoldtech-simulator-latest.flist"
 LIFETIME = 6 * 60 * 60
 CURRENCY = "FreeTFT"
-# WALLET_NAME = "playground"
+WALLET_NAME = "playground"
 WALLET_NAME = "fr"
-GATEWAT_ID = "C57earvre9QGj5oHbsDB2gjudbrAMXXtGsBReF8TE1ZR"
+GATEWAT_ID = "EwPS7nPZHd5KH6YH7PtbmUpJUyWgseqsqS7cGhjXLUjz"
 
 
 class Deployer:
@@ -104,8 +103,7 @@ class Deployer:
 
     def deploy_container(self, bot=None):
         expiration = j.data.time.epoch + LIFETIME
-        # nodes = self._zos.nodes_finder.nodes_by_capacity(farm_id=FARM_ID, cru=4, mru=4, hru=1, sru=1, currency=CURRENCY)
-        nodes = self._zos.nodes_finder.nodes_by_capacity(farm_id=FARM_ID, cru=1, mru=1, hru=1, sru=1, currency=CURRENCY)
+        nodes = self._zos.nodes_finder.nodes_by_capacity(farm_id=FARM_ID, cru=4, mru=4, hru=1, sru=1, currency=CURRENCY)
         node = random.choice(list(nodes))
 
         reservation = self._zos.reservation_create()
@@ -117,11 +115,13 @@ class Deployer:
         secret_env = {}
         secret = f"{j.me.tid}:{uuid.uuid4().hex}"
         secret_encrypted = j.sal.zosv2.container.encrypt_secret(node.node_id, secret)
-        secret_env["TRC_SECRET"] = secret_encrypted
         remote = f"{gateway.dns_nameserver[0]}:{gateway.tcp_router_port}"
+        remote_encrypted = j.sal.zosv2.container.encrypt_secret(node.node_id, remote)
         local = f"{ip_address}:8888"
-        # TODO Update Entry Point
-        entrypoint = "/startup.sh"
+        local_encrypted = j.sal.zosv2.container.encrypt_secret(node.node_id, local)
+        secret_env["TRC_SECRET"] = secret_encrypted
+        secret_env["TRC_LOCAL"] = local_encrypted
+        secret_env["TRC_REMOTE"] = remote_encrypted
 
         container = j.sal.zosv2.container.create(
             reservation=reservation,
@@ -129,9 +129,9 @@ class Deployer:
             network_name=NETWORK_NAME,
             ip_address=ip_address,
             flist=FLIST,
-            entrypoint=entrypoint,
-            # cpu=4,
-            # memory=4096,
+            entrypoint="/startup.sh",
+            cpu=4,
+            memory=4096,
             secret_env=secret_env,
         )
 
@@ -139,7 +139,6 @@ class Deployer:
         domain = self._register_service(reservation, gateway, secret)
 
         wallet = j.clients.stellar.find(name=WALLET_NAME)[0]
-        print(reservation)
         reservation_id = j.sal.reservation_chatflow.reservation_register_and_pay(
             reservation, expiration, currency=CURRENCY, bot=bot, customer_tid=j.me.tid, wallet=wallet
         )
@@ -151,19 +150,24 @@ class Deployer:
 deployer = Deployer()
 
 
-def chat(bot):
-    options = ["Continue", "Cancel"]
-    confirm = bot.single_choice("Do you want to deploy a threefold simulator container ?", options)
+class SimulatorDeploy(j.servers.chatflow.get_class()):
+    steps = ["simulator_reservation"]
 
-    if confirm == "Continue":
-        url = deployer.deploy_container(bot=bot)
+    @j.baseclasses.chatflow_step(title="Deploy Simulator")
+    def simulator_reservation(self):
+        options = ["Continue", "Cancel"]
+        confirm = self.single_choice("Do you want to deploy a threefold simulator container ?", options)
+        if confirm == "Continue":
+            url = deployer.deploy_container(bot=self)
+            message = """
+                    ### Visit your container using this link:
+                    #### [http://{url}](http://{url})
+                    > Note: Your container will be destroyed after 6 hours
+                    """.format(
+                url=url
+            )
 
-        message = """
-        ### Visit your container using this link:
-        #### [http://{url}](http://{url})
-        > Note: Your container will be destroyed after 6 hours
-        """.format(
-            url=url
-        )
+            self.md_show(j.tools.jinja2.template_render(text=j.core.text.strip(message)))
 
-        bot.md_show(j.tools.jinja2.template_render(text=j.core.text.strip(message)))
+
+chat = SimulatorDeploy
