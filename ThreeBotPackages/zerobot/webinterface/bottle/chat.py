@@ -28,7 +28,7 @@ def chat_home(package):
 @package_route
 def chat_handler(package, chat_name):
     session = request.environ.get("beaker.session", {})
-    client_ip = request.environ.get("REMOTE_ADDR", "")
+    client_ip = request.environ.get("HTTP_X_FORWARDED_FOR") or request.environ.get("REMOTE_ADDR", "")
     username = session.get("username", "")
     query = dict(**request.query)  # converts from FormDict to dict
     session["kwargs"] = j.data.serializers.json.dumps(query)
