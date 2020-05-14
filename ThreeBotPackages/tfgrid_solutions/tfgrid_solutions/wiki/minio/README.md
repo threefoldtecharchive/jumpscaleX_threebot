@@ -74,7 +74,7 @@ We can choose the farms on which the container can be deployed on. The farms are
 
 ### Choosing IP for the solution
 
-![step9](minio10.png)
+![step9](minio14.png)
 Here we choose the IP to access the solution
 
 ### Confirming
