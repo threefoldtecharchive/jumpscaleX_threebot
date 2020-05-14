@@ -12,17 +12,16 @@ NETWORK = netaddr.IPNetwork("10.40.0.0/16")
 FLIST = "https://hub.grid.tf/ahmedelsayed.3bot/threefoldtech-simulator-latest.flist"
 LIFETIME = 6 * 60 * 60
 CURRENCY = "FreeTFT"
-WALLET_NAME = "simulator_playground"
+WALLET_NAME = "playground"
 
 
 class Deployer:
     def __init__(self):
         self._zos = j.sal.zosv2
         self._redis = j.clients.redis.get()
-        self._nodes = list(filter(
-            self._zos.nodes_finder.filter_is_free_to_use,
-            self._zos.nodes_finder.nodes_search(farm_id=FARM_ID)
-        ))
+        self._nodes = list(
+            filter(self._zos.nodes_finder.filter_is_free_to_use, self._zos.nodes_finder.nodes_search(farm_id=FARM_ID))
+        )
         self._gateway = j.tools.tf_gateway.get(self._redis)
 
     def _deploy_volume(self, reservation, node, expiration):
@@ -107,8 +106,8 @@ class Deployer:
             ip_address=ip_address,
             flist=FLIST,
             entrypoint="/startup.sh",
-            #cpu=4,
-            #memory=4096,
+            # cpu=4,
+            # memory=4096,
         )
 
         volume = self._zos.volume.create(reservation, node.node_id)
@@ -135,8 +134,8 @@ def chat(bot):
         url = deployer.deploy_container(bot=bot)
 
         message = """
-        ### Visit your container using this link: 
-        #### [http://{url}](http://{url}) 
+        ### Visit your container using this link:
+        #### [http://{url}](http://{url})
         > Note: Your container will be destroyed after 6 hours
         """.format(
             url=url
