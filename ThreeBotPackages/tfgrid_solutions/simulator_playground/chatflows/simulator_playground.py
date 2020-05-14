@@ -12,13 +12,13 @@ NETWORK = netaddr.IPNetwork("10.40.0.0/16")
 FLIST = "https://hub.grid.tf/ahmedelsayed.3bot/threefoldtech-simulator-latest.flist"
 LIFETIME = 6 * 60 * 60
 CURRENCY = "FreeTFT"
+WALLET_NAME = "simulator_playground"
 
 
 class Deployer:
     def __init__(self):
         self._zos = j.sal.zosv2
         self._redis = j.clients.redis.get()
-        self._pubkey = j.clients.sshkey.default.pubkey.strip()
         self._nodes = list(filter(
             self._zos.nodes_finder.filter_is_free_to_use,
             self._zos.nodes_finder.nodes_search(farm_id=FARM_ID)
@@ -47,9 +47,10 @@ class Deployer:
 
     def _wireguard_connect(self, wireguard):
         j.sal.fs.writeFile("/etc/wireguard/network.conf", wireguard)
-        _, res, _ = j.tools.executor.local.execute("wg | grep 'interface: network'")
-        if res:
+        try:
             j.tools.executor.local.execute("wg-quick down network")
+        except Exception:
+            pass
         j.tools.executor.local.execute("wg-quick up network")
 
     def _wait_for_result(self, reservation_id, category, timeout=120):
@@ -88,14 +89,13 @@ class Deployer:
         self._wait_for_result(reservation.reservation_id, "NETWORK")
         self._wireguard_connect(wireguard)
 
-    def deploy_container(self):
+    def deploy_container(self, bot=None):
         expiration = j.data.time.epoch + LIFETIME
-
-        nodes = self._zos.nodes_finder.nodes_by_capacity(farm_id=FARM_ID, cru=4, mru=2, hru=8, currency=CURRENCY)
+        # nodes = self._zos.nodes_finder.nodes_by_capacity(farm_id=FARM_ID, cru=4, mru=4, hru=1, sru=1, currency=CURRENCY)
+        nodes = self._zos.nodes_finder.nodes_by_capacity(farm_id=FARM_ID, cru=1, mru=1, hru=1, sru=1, currency=CURRENCY)
         node = random.choice(list(nodes))
 
         reservation = self._zos.reservation_create()
-        volume_id = self._deploy_volume(reservation, node, expiration)
 
         subnet = self._redis.hget("play:subnets", node.node_id).decode()
         ip_address = self._get_free_ip_address(node.node_id, subnet)
@@ -106,16 +106,17 @@ class Deployer:
             network_name=NETWORK_NAME,
             ip_address=ip_address,
             flist=FLIST,
-            env={"pub_key": self._pubkey},
             entrypoint="/startup.sh",
-            cpu=4,
-            memory=4096,
+            #cpu=4,
+            #memory=4096,
         )
 
-        self._zos.volume.attach_existing(container, volume_id, "/sandbox/var")
-
-        reservation = j.sal.zosv2.reservation_register(reservation, expiration)
-        self._wait_for_result(reservation.reservation_id, "CONTAINER")
+        volume = self._zos.volume.create(reservation, node.node_id)
+        self._zos.volume.attach(container, volume, "/sandbox/var")
+        wallet = j.clients.stellar.find(name=WALLET_NAME)[0]
+        reservation_id = j.sal.reservation_chatflow.reservation_register_and_pay(
+            reservation, expiration, currency=CURRENCY, bot=bot, customer_tid=j.me.tid, wallet=wallet
+        )
         j.sal.nettools.tcpPortConnectionTest(ip_address, port=22, timeout=30)
 
         domain = "tf-simulator-%s.%s" % (uuid.uuid4().hex[:5], DOMAIN)
@@ -131,12 +132,12 @@ def chat(bot):
     confirm = bot.single_choice("Do you want to deploy a threefold simulator container ?", options)
 
     if confirm == "Continue":
-        url = deployer.deploy_container()
+        url = deployer.deploy_container(bot=bot)
 
         message = """
         ### Visit your container using this link: 
         #### [http://{url}](http://{url}) 
-        > Note: Your container will be destroyed after 5 hours
+        > Note: Your container will be destroyed after 6 hours
         """.format(
             url=url
         )
