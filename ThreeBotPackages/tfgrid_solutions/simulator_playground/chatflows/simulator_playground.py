@@ -5,12 +5,12 @@ import netaddr
 from Jumpscale import j
 
 
-FARM_ID = 71
+FARM_ID = 1
 DOMAIN = "play.grid.tf"
 NETWORK_NAME = "pub.play.grid.tf"
 NETWORK = netaddr.IPNetwork("10.40.0.0/16")
 FLIST = "https://hub.grid.tf/ahmedelsayed.3bot/threefoldtech-simulator-latest.flist"
-LIFETIME = 5 * 60 * 60
+LIFETIME = 6 * 60 * 60
 CURRENCY = "FreeTFT"
 
 
@@ -91,8 +91,7 @@ class Deployer:
     def deploy_container(self):
         expiration = j.data.time.epoch + LIFETIME
 
-        nodes = self._zos.nodes_finder.nodes_by_capacity(farm_id=FARM_ID, cru=4, mru=2, hru=8)
-        nodes = filter(self._zos.nodes_finder.filter_is_free_to_use, nodes)
+        nodes = self._zos.nodes_finder.nodes_by_capacity(farm_id=FARM_ID, cru=4, mru=2, hru=8, currency=CURRENCY)
         node = random.choice(list(nodes))
 
         reservation = self._zos.reservation_create()
