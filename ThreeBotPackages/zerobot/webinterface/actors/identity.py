@@ -4,11 +4,11 @@ from Jumpscale import j
 class identity(j.baseclasses.threebot_actor):
     @j.baseclasses.actor_method
     def email(self, schema_out=None, user_session=None):
-        return j.myidentities.me.email
+        return j.me.email
 
     @j.baseclasses.actor_method
     def pubkey(self, schema_out=None, user_session=None):
-        return j.myidentities.me.pubkey
+        return j.me.pubkey
 
     @j.baseclasses.actor_method
     def threebot_name(self, name="default", schema_out=None, user_session=None):
