@@ -108,7 +108,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         self.user_form_data["IP Address"] = self.ip_address
         self.md_show_confirm(self.user_form_data)
 
-    @j.baseclasses.chatflow_step(title="Container pay", disable_previous=True)
+    @j.baseclasses.chatflow_step(title="Payment", disable_previous=True)
     def container_pay(self):
         self.network.update(j.me.tid, currency=self.query["currency"], bot=self)
         container_flist = f"{self.HUB_URL}/{self.user_form_data['Version']}-r1.flist"
@@ -147,7 +147,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
             self.resv_id, self.user_form_data["Solution name"], "tfgrid.solutions.ubuntu.1", self.user_form_data
         )
 
-    @j.baseclasses.chatflow_step(title="Ubuntu access", disable_previous=True)
+    @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
     def ubuntu_acess(self):
         res = f"""\
             # Ubuntu has been deployed successfully: your reservation id is: {self.resv_id}
