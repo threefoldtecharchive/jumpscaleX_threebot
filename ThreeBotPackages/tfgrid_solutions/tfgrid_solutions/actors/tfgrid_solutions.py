@@ -29,6 +29,10 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
         form_info = (S)
         ```
         """
+        
+        # Update the solutions from the explorer
+        j.sal.reservation_chatflow.solutions_explorer_get()
+       
         solutions = []
         urls = [
             "tfgrid.solutions.minio.1",
