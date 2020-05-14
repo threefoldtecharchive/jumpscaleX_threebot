@@ -158,7 +158,8 @@
         axios({
           url: `${baseUrl}/session_new`,
           params: {
-            topic: TOPIC
+            topic: TOPIC,
+            client_ip: CLIENT_IP
           }
         }).then((response) => {
             this.sessionId = response.data.sessionid
@@ -173,7 +174,7 @@
           }
         }).then((response) => {
             this.loading = false
-            this.handleResponse(response.data)            
+            this.handleResponse(response.data)
         })
       },
       reportWork (result) {
@@ -199,7 +200,7 @@
       },
       back () {
         axios({
-          url: `${baseUrl}/prev_step`, 
+          url: `${baseUrl}/prev_step`,
           params: {
             sessionid: this.sessionId
           }

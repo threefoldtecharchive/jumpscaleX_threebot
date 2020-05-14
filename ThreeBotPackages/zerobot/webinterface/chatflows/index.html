@@ -1,11 +1,11 @@
 <html lang="en">
-  <head>    
+  <head>
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
     <link href='https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css' rel='stylesheet' />
     <link href="/staticchat/style.css" rel="stylesheet">
   </head>
- 
+
   <body>
     <div id="app"><router-view></router-view></div>
     <script src="/staticchat/mixins/field.js"></script>
@@ -28,7 +28,8 @@
       const USERNAME = '{{ username }}'
       const EMAIL = '{{ email }}'
       const NOHEADER = '{{ noheader }}'
-      
+      const CLIENT_IP = '{{ client_ip }}'
+
       httpVueLoader.register(Vue, `${baseUrl}/components/Message.vue`)
       httpVueLoader.register(Vue, `${baseUrl}/components/String.vue`)
       httpVueLoader.register(Vue, `${baseUrl}/components/Number.vue`)
@@ -97,7 +98,7 @@
           },
         }
       })
-      
+
       const app = httpVueLoader('/staticchat/App.vue')
       const router = new VueRouter({
         routes: [
@@ -112,6 +113,6 @@
         router,
         vuetify
       })
-    </script> 
+    </script>
   </body>
 </html>
