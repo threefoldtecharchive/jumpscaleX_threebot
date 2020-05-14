@@ -129,7 +129,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
 
         self.md_show_confirm(self.user_form_data)
 
-    @j.baseclasses.chatflow_step(title="Container pay", disable_previous=True)
+    @j.baseclasses.chatflow_step(title="Payment", disable_previous=True)
     def container_pay(self):
         # update network
         self.network.update(j.me.tid, currency=self.currency, bot=self)
@@ -164,7 +164,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             self.resv_id, self.user_form_data["Solution name"], "tfgrid.solutions.flist.1", self.user_form_data
         )
 
-    @j.baseclasses.chatflow_step(title="Container access", disable_previous=True)
+    @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
     def container_acess(self):
         if self.interactive:
             res = f"""\

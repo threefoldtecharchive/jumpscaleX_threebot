@@ -113,7 +113,7 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
         self.user_form_data["IP Address"] = self.ip_address
         self.md_show_confirm(self.user_form_data)
 
-    @j.baseclasses.chatflow_step(title="Container pay", disable_previous=True)
+    @j.baseclasses.chatflow_step(title="Payment", disable_previous=True)
     def container_pay(self):
         var_dict = {
             "pub_key": self.user_form_data["Public key"],
@@ -169,7 +169,7 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
             self.resv_id, self.user_form_data["Solution name"], "tfgrid.solutions.gitea.1", self.user_form_data
         )
 
-    @j.baseclasses.chatflow_step(title="Gitea access", disable_previous=True)
+    @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
     def container_acess(self):
         res = f"""\
             # gitea has been deployed successfully: your reservation id is: {self.resv_id}
