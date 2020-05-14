@@ -13,7 +13,6 @@ FLIST = "https://hub.grid.tf/ahmedelsayed.3bot/threefoldtech-simulator-latest.fl
 LIFETIME = 6 * 60 * 60
 CURRENCY = "FreeTFT"
 WALLET_NAME = "playground"
-WALLET_NAME = "fr"
 GATEWAT_ID = "EwPS7nPZHd5KH6YH7PtbmUpJUyWgseqsqS7cGhjXLUjz"
 
 
