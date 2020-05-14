@@ -1,9 +1,12 @@
 import { JetView, plugins } from "webix-jet";
 import { auth } from "../services/auth";
+import NotificationPopup from "./notifications/popup";
 
 
 export default class TopView extends JetView {
     config() {
+        const _ = this.app.getService("locale")._;
+
         const header = {
             cols: [
                 {
@@ -98,10 +101,10 @@ export default class TopView extends JetView {
             }, {
                 id: "deployed_k8s_cluster",
                 value: '<span><img class="solutions-icon" src="static/img/k8s.png"/>Kubernetes Cluster</span>'
-            } ,{
+            }, {
                 id: "deployed_gitea",
                 value: '<span><img class="solutions-icon" src="static/img/gitea.png"/>Gitea</span>'
-            } , {
+            }, {
                 id: "deployed_domain_delegation",
                 value: '<span><img class="solutions-icon" src="static/img/domain.png"/>Domain Delegation</span>'
             }, {
@@ -170,13 +173,13 @@ export default class TopView extends JetView {
             width: 230,
             data: sidebarData,
             scroll: "y",
-            on:{
+            on: {
                 // this is for refreshing view on selecting current selected item
-                onItemClick:function(id){
+                onItemClick: function (id) {
                     this.unselect(id);
                     this.select(id);
                 }
-            }          
+            }
         };
 
         const toolbar = {
@@ -197,12 +200,23 @@ export default class TopView extends JetView {
                 borderless: true,
                 height: 40,
             },
+            { batch:"default" },
+            {
+                view: "icon",
+                icon: "mdi mdi-bell",
+                badge: 0,
+                batch: "default",
+                localId: "bell",
+                tooltip: _("View the latest notifications"),
+                click: function () {
+                    this.$scope.notifications.showWindow(this.$view);
+                }
+            },
             {
                 id: "username_label",
                 view: "label",
                 label: "username",
                 borderless: true,
-                align: "right",
             },
             {
                 id: "user_icon",
@@ -258,24 +272,35 @@ export default class TopView extends JetView {
                 tfgridsdk: "tfwikis.tfgridsdk",
                 threefold: "tfwikis.threefold",
                 threebot: "solutions.chatflow?author=tfgrid&package=threebot_provisioning&chat=threebot_reservation",
-                deployed_network:"deployedSolutions.network",
-                deployed_ubuntu:"deployedSolutions.ubuntu",
-                deployed_flist:"deployedSolutions.flist",
-                deployed_minio:"deployedSolutions.minio",
-                deployed_k8s_cluster:"deployedSolutions.k8sCluster",
-                deployed_gitea:"deployedSolutions.gitea",
-                deployed_domain_delegation:"deployedSolutions.domainDelegation",
-                deployed_solution_expose:"deployedSolutions.solutionExpose",
-                deployed_gateway_4to6:"deployedSolutions.4to6Gateway"
+                deployed_network: "deployedSolutions.network",
+                deployed_ubuntu: "deployedSolutions.ubuntu",
+                deployed_flist: "deployedSolutions.flist",
+                deployed_minio: "deployedSolutions.minio",
+                deployed_k8s_cluster: "deployedSolutions.k8sCluster",
+                deployed_gitea: "deployedSolutions.gitea",
+                deployed_domain_delegation: "deployedSolutions.domainDelegation",
+                deployed_solution_expose: "deployedSolutions.solutionExpose",
+                deployed_gateway_4to6: "deployedSolutions.4to6Gateway"
             }
         });
 
         this.menu = this.$$("menu");
         this.header = this.$$("header");
+        this.notificationsBell = this.$$("bell");
+        this.notifications = this.ui(NotificationPopup);
 
         this.buttonShowMenu = this.$$("button_show_menu");
         this.buttonHideMenu = this.$$("button_hide_menu");
 
+        this.on(this.app,"read:notifications",() => {
+			this.notificationsBell.config.badge = 0;
+			this.notificationsBell.refresh();
+        });
+
+        this.on(this.app, "update:badge", (data) => {
+			this.notificationsBell.config.badge += data;
+			this.notificationsBell.refresh();
+		});
 
         this.webix.ui({
             view: "submenu",
@@ -302,8 +327,8 @@ export default class TopView extends JetView {
             }
 
             self.usernameLabel.config.label = username;
-            self.usernameLabel.config.width = webix.html.getTextSize(username) + 10;
-            self.usernameLabel.refresh();
+            self.usernameLabel.config.width = webix.html.getTextSize(username).width + 10;
+            self.usernameLabel.resize();
 
             self.userMenu.add({ id: 'email', value: info.email })
             self.userMenu.add({ id: 'logout', value: "Logout" })
