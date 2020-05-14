@@ -111,7 +111,7 @@ class Deployer:
         secret_encrypted = self._zos.container.encrypt_secret(node.node_id, secret)
         remote = f"{gateway.dns_nameserver[0]}:{gateway.tcp_router_port}"
         remote_encrypted = self._zos.container.encrypt_secret(node.node_id, remote)
-        local = f"{ip_address}:8888"
+        local = f"{ip_address}:80"
         local_encrypted = self._zos.container.encrypt_secret(node.node_id, local)
         secret_env["TRC_SECRET"] = secret_encrypted
         secret_env["TRC_LOCAL"] = local_encrypted
