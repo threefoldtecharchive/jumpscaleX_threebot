@@ -90,8 +90,7 @@ class Deployer:
 
     def deploy_container(self, bot=None):
         expiration = j.data.time.epoch + LIFETIME
-        # nodes = self._zos.nodes_finder.nodes_by_capacity(farm_id=FARM_ID, cru=4, mru=4, hru=1, sru=1, currency=CURRENCY)
-        nodes = self._zos.nodes_finder.nodes_by_capacity(farm_id=FARM_ID, cru=1, mru=1, hru=1, sru=1, currency=CURRENCY)
+        nodes = self._zos.nodes_finder.nodes_by_capacity(farm_id=FARM_ID, cru=4, mru=4, hru=1, sru=1, currency=CURRENCY)
         node = random.choice(list(nodes))
 
         reservation = self._zos.reservation_create()
@@ -106,8 +105,8 @@ class Deployer:
             ip_address=ip_address,
             flist=FLIST,
             entrypoint="/startup.sh",
-            # cpu=4,
-            # memory=4096,
+            cpu=4,
+            memory=4096,
         )
 
         volume = self._zos.volume.create(reservation, node.node_id)
