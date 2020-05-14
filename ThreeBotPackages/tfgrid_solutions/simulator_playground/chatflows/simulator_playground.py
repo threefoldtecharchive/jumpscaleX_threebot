@@ -33,11 +33,6 @@ class Deployer:
     def _register_service(self, reservation, gateway, secret):
         subdomain = f"tf-simulator-{uuid.uuid4().hex[:5]}"
         domain = f"{subdomain}.{DOMAIN}"
-
-        addresses = []
-        for ns in gateway.dns_nameserver:
-            addresses.append(j.sal.nettools.getHostByName(ns))
-        self._zos.gateway.sub_domain(reservation, gateway.node_id, domain, addresses)
         self._zos.gateway.tcp_proxy_reverse(reservation, gateway.node_id, domain, secret)
         return domain
 
