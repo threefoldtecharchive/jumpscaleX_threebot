@@ -101,11 +101,7 @@ def chat(bot):
     user_form_data["expiration"] = j.data.time.secondsToHRDelta(expiration - j.data.time.epoch)
 
     # create tcprouter
-    if domain_gateway.free_to_use:
-        currency = "FreeTFT"
-    else:
-        currency = None
-    query = {"mru": 1, "cru": 1, "currency": currency, "sru": 1}
+    query = {"mru": 1, "cru": 1, "currency": solution_currency, "sru": 1}
     node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
 
     if kind == "kubernetes":
@@ -133,7 +129,7 @@ def chat(bot):
         j.sal.zosv2.gateway.sub_domain(reservation, domain_gateway.node_id, domain, addresses)
     network = j.sal.reservation_chatflow.network_get(bot, j.me.tid, network_name)
     network.add_node(node_selected)
-    network.update(j.me.tid, currency=currency, bot=bot)
+    network.update(j.me.tid, currency=solution_currency, bot=bot)
     ip_address = network.get_free_ip(node_selected)
     if not ip_address:
         raise j.exceptions.Value("No available free ips")
@@ -161,7 +157,7 @@ def chat(bot):
     # create proxy
     j.sal.zosv2.gateway.tcp_proxy_reverse(reservation, domain_gateway.node_id, domain, user_form_data["secret"])
     resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
-        reservation, expiration, customer_tid=j.me.tid, currency=currency, bot=bot
+        reservation, expiration, customer_tid=j.me.tid, currency=solution_currency, bot=bot
     )
     user_form_data["rid"] = resv_id
 
@@ -169,7 +165,5 @@ def chat(bot):
         resv_id, f"tcprouter:{resv_id}", "tfgrid.solutions.flist.1", user_form_data
     )
 
-    j.sal.reservation_chatflow.payment_wait(bot, resv_id)
-    j.sal.reservation_chatflow.reservation_wait(bot, resv_id)
-    res_md = f"Use this Gateway to connect to your exposed solutions {domain}"
+    res_md = f"Use this Gateway to connect to your exposed solutions `{domain}`"
     bot.md_show(res_md)
