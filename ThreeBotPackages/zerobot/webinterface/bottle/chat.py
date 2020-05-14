@@ -13,6 +13,7 @@ ADMIN_ONLY_PACKAGES = ["tfgrid_solutions"]
 templates_path = j.sal.fs.joinPaths(j.sal.fs.getDirName(__file__), "..", "chatflows")
 env = Environment(loader=FileSystemLoader(templates_path), autoescape=select_autoescape(["html", "xml"]))
 
+
 @app.get(CHAT_HOME_URL)
 @package_route
 def chat_home(package):
@@ -27,6 +28,7 @@ def chat_home(package):
 @package_route
 def chat_handler(package, chat_name):
     session = request.environ.get("beaker.session", {})
+    client_ip = request.environ.get("REMOTE_ADDR", "")
     username = session.get("username", "")
     query = dict(**request.query)  # converts from FormDict to dict
     session["kwargs"] = j.data.serializers.json.dumps(query)
@@ -51,5 +53,6 @@ def chat_handler(package, chat_name):
         username=username,
         email=session.get("email", ""),
         qs=session.get("kwargs", ""),
-        noheader=query.get("noheader", False)
+        noheader=query.get("noheader", False),
+        client_ip=client_ip,
     )
