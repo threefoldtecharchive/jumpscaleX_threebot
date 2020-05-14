@@ -54,7 +54,7 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
                 bot=self,
             )
             try:
-                j.sal.reservation_chatflow.reservation_register_and_pay(self.config["reservation_create"], self)
+                j.sal.reservation_chatflow.reservation_register_and_pay(self.config["reservation_create"], bot=self)
                 break
             except StopChatFlow as e:
                 if "wireguard listen port already in use" in e.msg:
