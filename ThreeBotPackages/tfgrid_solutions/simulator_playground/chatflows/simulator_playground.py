@@ -108,11 +108,11 @@ class Deployer:
         gateway = self._zos._explorer.gateway.get(node_id=GATEWAT_ID)
         secret_env = {}
         secret = f"{j.me.tid}:{uuid.uuid4().hex}"
-        secret_encrypted = j.sal.zosv2.container.encrypt_secret(node.node_id, secret)
+        secret_encrypted = self._zos.container.encrypt_secret(node.node_id, secret)
         remote = f"{gateway.dns_nameserver[0]}:{gateway.tcp_router_port}"
-        remote_encrypted = j.sal.zosv2.container.encrypt_secret(node.node_id, remote)
+        remote_encrypted = self._zos.container.encrypt_secret(node.node_id, remote)
         local = f"{ip_address}:8888"
-        local_encrypted = j.sal.zosv2.container.encrypt_secret(node.node_id, local)
+        local_encrypted = self._zos.container.encrypt_secret(node.node_id, local)
         secret_env["TRC_SECRET"] = secret_encrypted
         secret_env["TRC_LOCAL"] = local_encrypted
         secret_env["TRC_REMOTE"] = remote_encrypted
