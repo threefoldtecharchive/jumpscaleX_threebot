@@ -74,20 +74,20 @@ Now it's time to choose the secret for your kubernetes cluster, make sure you do
 
 ### Set the IP Addresses for the solution master nodes
 
-![Step8](k8s8.png)
+![Step8](k8s9.png)
 We select IP addresses equal to the number of master nodes we entered earlier.
 
 ### Set the IP Addresses for the solution worker nodes
 
-![Step9](k8s9.png)
-![Step10](k8s10.png)
+![Step9](k8s10.png)
+
 We then select IP addresses equal to the number of worker nodes we entered earlier
 ### Confirm your reservation
-![step11](k8s11.png)
+![step10](k8s11.png)
 Here we confirm the specifications we entered in the chatflow
 ### Payment
 
-![step12](k8s12.png)
+![step11](k8s12.png)
 
 Finally we select the wallet that we will pay with to proceed with the payment for the solution that will be deployed.
 
