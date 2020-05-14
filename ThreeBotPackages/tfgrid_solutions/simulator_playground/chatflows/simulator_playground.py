@@ -149,10 +149,16 @@ class SimulatorDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Deploy Simulator")
     def simulator_reservation(self):
+        client_ip = self.kwargs.get("client_ip")
+        simulator_url = deployer._redis.get(client_ip)
+        if simulator_url:
+            self.md_show(f"You already have a running simulator on url {simulator_url}")
+            return
         options = ["Continue", "Cancel"]
         confirm = self.single_choice("Do you want to deploy a threefold simulator container ?", options)
         if confirm == "Continue":
             url = deployer.deploy_container(bot=self)
+            deployer._redis.set(client_ip, url, ex=LIFETIME)
             message = """
                     ### Visit your container using this link:
                     #### [http://{url}](http://{url})
