@@ -207,7 +207,7 @@ class SolutionExpose(j.servers.chatflow.get_class()):
         <h4>Click next to proceed with the payment</h4>
         Tcp routers are used in the process of being able to expose your solutions. This payment is to deploy a container with a <a target="_blank" href="https://github.com/threefoldtech/tcprouter#reverse-tunneling">tcprouter client</a> on it.
         """
-        self.md_show_confirm(self.user_form_data, message=j.core.text.strip(message))
+        self.md_show_confirm(self.user_form_data, message=j.core.text.strip(message), html=True)
 
     @j.baseclasses.chatflow_step(title="Reserve TCP router container", disable_previous=True)
     def tcp_router_reservation(self):
