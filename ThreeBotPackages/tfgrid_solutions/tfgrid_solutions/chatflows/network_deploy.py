@@ -5,15 +5,17 @@ from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 
 class NetworkDeploy(j.servers.chatflow.get_class()):
     steps = ["network_reservation", "network_info"]
+    model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.network.1")
 
     @j.baseclasses.chatflow_step(title="Deploy Network")
     def network_reservation(self):
         user_form_data = {}
         user_info = self.user_info()
-
+    
         j.sal.reservation_chatflow.validate_user(user_info)
         user_form_data["chatflow"] = "network"
-        network_name = self.string_ask("Please enter a network name", required=True, field="name")
+        network_name = j.sal.reservation_chatflow.network_name_add(self, self.model)
+
         user_form_data["Currency"] = self.single_choice(
             "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"], field="currency"
         )
@@ -54,7 +56,7 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
                 bot=self,
             )
             try:
-                j.sal.reservation_chatflow.reservation_register_and_pay(self.config["reservation_create"], self)
+                j.sal.reservation_chatflow.reservation_register_and_pay(self.config["reservation_create"], bot=self)
                 break
             except StopChatFlow as e:
                 if "wireguard listen port already in use" in e.msg:
