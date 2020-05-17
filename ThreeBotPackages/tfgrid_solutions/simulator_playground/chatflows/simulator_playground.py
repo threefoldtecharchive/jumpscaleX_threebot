@@ -153,7 +153,7 @@ class SimulatorDeploy(j.servers.chatflow.get_class()):
         client_ip = self.kwargs.get("client_ip")
         simulator_url = deployer._redis.get(client_ip)
         if simulator_url:
-            self.md_show(f"You already have a running simulator on url {simulator_url}")
+            self.md_show(f"You already have a running simulator on url {simulator_url.decode()}")
             return
         options = ["Continue", "Cancel"]
         confirm = self.single_choice("Do you want to deploy a threefold simulator container ?", options)
