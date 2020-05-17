@@ -13,8 +13,8 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         "container_resources",
         "container_interactive",
         "container_env",
-        "expiration_time",
         "container_farm",
+        "expiration_time",
         "container_ip",
         "container_pay",
         "container_acess",
@@ -92,16 +92,6 @@ class FlistDeploy(j.servers.chatflow.get_class()):
 
             self.env.update(var_dict)
 
-    @j.baseclasses.chatflow_step(title="Expiration time")
-    def expiration_time(self):
-        self.expiration = self.datetime_picker(
-            "Please enter solution expiration time.",
-            required=True,
-            min_time=[3600, "Date/time should be at least 1 hour from now"],
-            default=j.data.time.epoch + 3900,
-        )
-        self.user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(self.expiration - j.data.time.epoch)
-
     @j.baseclasses.chatflow_step(title="Container farm")
     def container_farm(self):
         # create new reservation
@@ -114,10 +104,25 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             1, farm_names=farms, hru=hru, cru=cru, sru=sru, currency=self.currency
         )[0]
 
-    @j.baseclasses.chatflow_step(title="Container IP & Confirmation about conatiner details", disable_previous=True)
+    @j.baseclasses.chatflow_step(title="Expiration time")
+    def expiration_time(self):
+        self.expiration = self.datetime_picker(
+            "Please enter solution expiration time.",
+            required=True,
+            min_time=[3600, "Date/time should be at least 1 hour from now"],
+            default=j.data.time.epoch + 3900,
+        )
+        self.user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(self.expiration - j.data.time.epoch)
+
+    @j.baseclasses.chatflow_step(title="Container IP & Confirmation about conatiner details")
     def container_ip(self):
-        self.network.add_node(self.node)
-        self.ip_address = self.network.ask_ip_from_node(self.node, "Please choose your IP Address for this solution")
+        self.network_copy = j.sal.reservation_chatflow.network_get_from_reservation(
+            self, j.me.tid, self.network.name, self.network.resv_id
+        )
+        self.network_copy.add_node(self.node)
+        self.ip_address = self.network_copy.ask_ip_from_node(
+            self.node, "Please choose your IP Address for this solution"
+        )
         self.user_form_data["IP Address"] = self.ip_address
 
         self.conatiner_flist = self.user_form_data["Flist link"]
@@ -131,6 +136,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Payment", disable_previous=True)
     def container_pay(self):
+        self.network = self.network_copy
         # update network
         self.network.update(j.me.tid, currency=self.currency, bot=self)
 
@@ -174,7 +180,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             self.md_show(j.core.text.strip(res), md=True)
         else:
             res = f"""\
-                # Container has been deployed successfully: your reservation id is: {resv_id}
+                # Container has been deployed successfully: your reservation id is: {self.resv_id}
                 Your IP is  ```{self.ip_address}```
                 """
             self.md_show(j.core.text.strip(res), md=True)

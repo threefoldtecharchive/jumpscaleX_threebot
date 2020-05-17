@@ -28,8 +28,6 @@ class kubernetesDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Network")
     def network_selection(self):
         self.network = j.sal.reservation_chatflow.network_select(self, j.me.tid)
-        if not self.network:
-            return
 
     @j.baseclasses.chatflow_step(title="Solution name")
     def solution_name(self):
@@ -99,36 +97,38 @@ class kubernetesDeploy(j.servers.chatflow.get_class()):
         )
         self.user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(self.expiration - j.data.time.epoch)
 
-    @j.baseclasses.chatflow_step(title="IP selection", disable_previous=True)
+    @j.baseclasses.chatflow_step(title="IP selection")
     def ip_selection(self):
-
+        self.network_copy = j.sal.reservation_chatflow.network_get_from_reservation(
+            self, j.me.tid, self.network.name, self.network.resv_id
+        )
         ipaddresses = list()
         for idx, node_selected in enumerate(self.master_nodes_selected):
-            self.network.add_node(node_selected)
+            self.network_copy.add_node(node_selected)
             msg = f"Please choose IP Address for master node {idx + 1} of your kubernets cluster"
-            ip_address = self.network.ask_ip_from_node(node_selected, msg)
+            ip_address = self.network_copy.ask_ip_from_node(node_selected, msg)
             ipaddresses.append(ip_address)
 
         for idx, node_selected in enumerate(self.worker_nodes_selected):
             if node_selected not in self.master_nodes_selected:
-                self.network.add_node(node_selected)
+                self.network_copy.add_node(node_selected)
             msg = f"Please choose IP Address for worker node {idx + 1} of your kubernets cluster"
-            ip_address = self.network.ask_ip_from_node(node_selected, msg)
+            ip_address = self.network_copy.ask_ip_from_node(node_selected, msg)
             ipaddresses.append(ip_address)
 
         self.user_form_data["IP Address"] = ipaddresses
 
-    @j.baseclasses.chatflow_step(title="Confirmation", disable_previous=True)
+    @j.baseclasses.chatflow_step(title="Confirmation")
     def overview(self):
         self.md_show_confirm(self.user_form_data)
+
+    @j.baseclasses.chatflow_step(title="Cluster reservations", disable_previous=True)
+    def cluster_reservation(self):
+        self.network = self.network_copy
         # update network
         self.network.update(j.me.tid, currency=self.network.currency, bot=self)
         # create new reservation
         self.reservation = j.sal.zosv2.reservation_create()
-
-    @j.baseclasses.chatflow_step(title="Cluster reservations", disable_previous=True)
-    def cluster_reservation(self):
-
         # Create master and workers
         # Master is in the first node from the selected nodes
         for idx, master_node in enumerate(self.master_nodes_selected):

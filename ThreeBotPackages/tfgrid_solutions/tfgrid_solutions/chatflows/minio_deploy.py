@@ -32,8 +32,6 @@ class MinioDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Network")
     def network_selection(self):
         self.network = j.sal.reservation_chatflow.network_select(self, j.me.tid)
-        if not self.network:
-            return
 
     @j.baseclasses.chatflow_step(title="Solution name")
     def solution_name(self):
@@ -126,25 +124,33 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         cont_farms = j.sal.reservation_chatflow.farm_names_get(1, self, message="minio container", **nodequery)
         self.cont_node = j.sal.reservation_chatflow.nodes_get(number_of_nodes=1, farm_names=cont_farms, **nodequery)[0]
 
-    @j.baseclasses.chatflow_step(title="Minio container IP", disable_previous=True)
+    @j.baseclasses.chatflow_step(title="Minio container IP")
     def ip_selection(self):
+        self.network_copy = j.sal.reservation_chatflow.network_get_from_reservation(
+            self, j.me.tid, self.network.name, self.network.resv_id
+        )
         for node_selected in self.nodes_selected:
-            self.network.add_node(node_selected)
+            self.network_copy.add_node(node_selected)
 
         if self.cont_node not in self.nodes_selected:
-            self.network.add_node(self.cont_node)
+            self.network_copy.add_node(self.cont_node)
 
-        self.ip_address = self.network.ask_ip_from_node(self.cont_node, "Please choose IP Address for your solution")
+        self.ip_address = self.network_copy.ask_ip_from_node(
+            self.cont_node, "Please choose IP Address for your solution"
+        )
+        self.user_form_data["IP Address"] = self.ip_address
 
-    @j.baseclasses.chatflow_step(title="Confirmation", disable_previous=True)
+    @j.baseclasses.chatflow_step(title="Confirmation")
     def overview(self):
         self.md_show_confirm(self.user_form_data)
+
+    @j.baseclasses.chatflow_step(title="Reserve zdb", disable_previous=True)
+    def zdb_reservation(self):
+        self.network = self.network_copy
         self.network.update(j.me.tid, currency=self.network.currency, bot=self)
         # create new reservation
         self.reservation = j.sal.zosv2.reservation_create()
 
-    @j.baseclasses.chatflow_step(title="Reserve zdb", disable_previous=True)
-    def zdb_reservation(self):
         self.password = j.data.idgenerator.generateGUID()
 
         for node in self.nodes_selected:

@@ -93,16 +93,17 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Ubuntu container farm")
     def ubuntu_farm(self):
+        self.network_copy = j.sal.reservation_chatflow.network_get_from_reservation(
+            self, j.me.tid, self.network.name, self.network.resv_id
+        )
         if not self.nodeid:
             farms = j.sal.reservation_chatflow.farm_names_get(1, self, **self.query)
             self.node_selected = j.sal.reservation_chatflow.nodes_get(1, farm_names=farms, **self.query)[0]
+        self.network_copy.add_node(self.node_selected)
 
-    @j.baseclasses.chatflow_step(
-        title="Container IP & Confirmation about ubuntu conatiner  details", disable_previous=True
-    )
+    @j.baseclasses.chatflow_step(title="Container IP & Confirmation about ubuntu conatiner  details")
     def container_ip(self):
-        self.network.add_node(self.node_selected)
-        self.ip_address = self.network.ask_ip_from_node(
+        self.ip_address = self.network_copy.ask_ip_from_node(
             self.node_selected, "Please choose IP Address for your solution"
         )
         self.user_form_data["IP Address"] = self.ip_address
@@ -110,6 +111,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Payment", disable_previous=True)
     def container_pay(self):
+        self.network = self.network_copy
         self.network.update(j.me.tid, currency=self.query["currency"], bot=self)
         container_flist = f"{self.HUB_URL}/{self.user_form_data['Version']}-r1.flist"
         storage_url = "zdb://hub.grid.tf:9900"
