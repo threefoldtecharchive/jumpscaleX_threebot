@@ -17,14 +17,14 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         "container_pay",
         "ubuntu_acess",
     ]
-    user_form_data = {}
-    query = {}
-    HUB_URL = "https://hub.grid.tf/tf-bootable"
-    IMAGES = ["ubuntu:16.04", "ubuntu:18.04"]
-    model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.ubuntu.1")
 
     @j.baseclasses.chatflow_step()
     def ubuntu_start(self):
+        self.user_form_data = dict()
+        self.query = dict()
+        self.HUB_URL = "https://hub.grid.tf/tf-bootable"
+        self.IMAGES = ["ubuntu:16.04", "ubuntu:18.04"]
+        self.model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.ubuntu.1")
         user_info = self.user_info()
         self.user_form_data["chatflow"] = "ubuntu"
         self.md_show("# This wizard wil help you deploy an ubuntu container", md=True)

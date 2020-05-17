@@ -6,11 +6,11 @@ class DomainDelegation(j.servers.chatflow.get_class()):
     """
 
     steps = ["domain_name", "expiration_time", "domain_pay", "success"]
-    user_form_data = {}
 
     @j.baseclasses.chatflow_step(title="Domain name & Choose gateway")
     def domain_name(self):
         user_info = self.user_info()
+        self.user_form_data = {}
         j.sal.reservation_chatflow.validate_user(user_info)
         form = self.new_form()
         domain = form.string_ask("Please enter a domain name to delegate", required=True)

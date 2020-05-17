@@ -12,10 +12,10 @@ class FourToSixGateway(j.servers.chatflow.get_class()):
         "wg_reservation",
         "wg_config",
     ]
-    user_form_data = {}
 
     @j.baseclasses.chatflow_step(title="Gateway")
     def gateway_start(self):
+        self.user_form_data = {}
         user_info = self.user_info()
         j.sal.reservation_chatflow.validate_user(user_info)
 
@@ -39,6 +39,8 @@ class FourToSixGateway(j.servers.chatflow.get_class()):
             "Please enter wireguard public key or leave empty if you want us to generate one for you."
         )
         self.privatekey = "enter private key here"
+        res = "# Click next to continue with wireguard related deployment. Once you proceed you will not be able to go back to this step"
+        self.md_show(res, md=True)
 
     @j.baseclasses.chatflow_step(title="Create your Wireguard ", disable_previous=True)
     def wg_reservation(self):

@@ -11,7 +11,7 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
     def network_reservation(self):
         user_form_data = {}
         user_info = self.user_info()
-    
+
         j.sal.reservation_chatflow.validate_user(user_info)
         user_form_data["chatflow"] = "network"
         network_name = j.sal.reservation_chatflow.network_name_add(self, self.model)

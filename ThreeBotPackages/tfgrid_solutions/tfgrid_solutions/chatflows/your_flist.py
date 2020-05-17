@@ -14,18 +14,18 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         "container_interactive",
         "container_env",
         "expiration_time",
-        "container_fram",
+        "container_farm",
         "container_ip",
         "container_pay",
         "container_acess",
     ]
-    user_form_data = {}
-    model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.flist.1")
-    env = dict()
 
     @j.baseclasses.chatflow_step()
     def flist_start(self):
         user_info = self.user_info()
+        self.user_form_data = dict()
+        self.model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.flist.1")
+        self.env = dict()
         self.user_form_data["chatflow"] = "flist"
         j.sal.reservation_chatflow.validate_user(user_info)
         self.md_show("# This wizard will help you deploy a container using any flist provided", md=True)
@@ -103,7 +103,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         self.user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(self.expiration - j.data.time.epoch)
 
     @j.baseclasses.chatflow_step(title="Container farm")
-    def container_fram(self):
+    def container_farm(self):
         # create new reservation
         self.reservation = j.sal.zosv2.reservation_create()
         hru = math.ceil(self.memory.value / 1024)
