@@ -9,7 +9,7 @@ FARM_ID = 1
 DOMAIN = "play.grid.tf"
 NETWORK_NAME = "pub.play.grid.tf"
 NETWORK = netaddr.IPNetwork("10.40.0.0/16")
-FLIST = "https://hub.grid.tf/jo.3bot/threefoldtech-simulator-latest.flist"
+FLIST = "https://hub.grid.tf/magidentfinal.3bot/mmotawea-simualtor-latest.flist"
 LIFETIME = 6 * 60 * 60
 CURRENCY = "FreeTFT"
 WALLET_NAME = "playground"
@@ -25,9 +25,9 @@ class Deployer:
         )
         self._gateway = j.tools.tf_gateway.get(self._redis)
 
-    def _deploy_volume(self, reservation, node, container):
+    def _deploy_volume(self, reservation, node, container, mountpoint):
         volume = self._zos.volume.create(reservation, node.node_id)
-        self._zos.volume.attach(container, volume, "/sandbox/var")
+        self._zos.volume.attach(container, volume, mountpoint)
         return volume
 
     def _register_service(self, reservation, gateway, secret):
@@ -129,7 +129,8 @@ class Deployer:
             secret_env=secret_env,
         )
 
-        volume = self._deploy_volume(reservation, node, container)
+        vol1 = self._deploy_volume(reservation, node, container, "/sandbox/var")
+        vol2 = self._deploy_volume(reservation, node, container, "/sandbox/code")
         domain = self._register_service(reservation, gateway, secret)
 
         wallet = j.clients.stellar.find(name=WALLET_NAME)[0]
