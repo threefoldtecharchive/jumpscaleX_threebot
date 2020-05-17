@@ -137,7 +137,7 @@ class Deployer:
         reservation_id = j.sal.reservation_chatflow.reservation_register_and_pay(
             reservation, expiration, currency=CURRENCY, bot=bot, customer_tid=j.me.tid, wallet=wallet
         )
-        j.sal.nettools.tcpPortConnectionTest(ip_address, port=22, timeout=30)
+        j.sal.nettools.waitConnectionTest(ip_address, port=8888, timeout=180)
 
         return domain
 
