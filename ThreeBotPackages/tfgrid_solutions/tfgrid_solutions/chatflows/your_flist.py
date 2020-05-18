@@ -16,6 +16,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         "container_farm",
         "expiration_time",
         "container_ip",
+        "overview",
         "container_pay",
         "container_acess",
     ]
@@ -116,9 +117,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Container IP & Confirmation about conatiner details")
     def container_ip(self):
-        self.network_copy = j.sal.reservation_chatflow.network_get_from_reservation(
-            self, j.me.tid, self.network.name, self.network.resv_id, used_ips=self.network._used_ips
-        )
+        self.network_copy = self.network.copy(j.me.tid)
         self.network_copy.add_node(self.node)
         self.ip_address = self.network_copy.ask_ip_from_node(
             self.node, "Please choose your IP Address for this solution"
@@ -132,6 +131,8 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         else:
             self.interactive = False
 
+    @j.baseclasses.chatflow_step(title="Confirmation")
+    def overview(self):
         self.md_show_confirm(self.user_form_data)
 
     @j.baseclasses.chatflow_step(title="Payment", disable_previous=True)

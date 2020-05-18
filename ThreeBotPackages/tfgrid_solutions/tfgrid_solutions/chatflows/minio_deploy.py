@@ -126,9 +126,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Minio container IP")
     def ip_selection(self):
-        self.network_copy = j.sal.reservation_chatflow.network_get_from_reservation(
-            self, j.me.tid, self.network.name, self.network.resv_id, used_ips=self.network._used_ips
-        )
+        self.network_copy = self.network.copy(j.me.tid)
         for node_selected in self.nodes_selected:
             self.network_copy.add_node(node_selected)
 

@@ -10,10 +10,11 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         "ubuntu_version",
         "container_resources",
         "public_key_get",
-        "expiration_time",
         "container_node_id",
         "ubuntu_farm",
         "container_ip",
+        "expiration_time",
+        "overview",
         "container_pay",
         "ubuntu_acess",
     ]
@@ -59,16 +60,6 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
             required=True,
         ).split("\n")[0]
 
-    @j.baseclasses.chatflow_step(title="Expiration time")
-    def expiration_time(self):
-        self.expiration = self.datetime_picker(
-            "Please enter solution expiration time.",
-            required=True,
-            min_time=[3600, "Date/time should be at least 1 hour from now"],
-            default=j.data.time.epoch + 3900,
-        )
-        self.user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(self.expiration - j.data.time.epoch)
-
     @j.baseclasses.chatflow_step(title="Container node id")
     def container_node_id(self):
         self.var_dict = {"pub_key": self.user_form_data["Public key"]}
@@ -93,20 +84,31 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Ubuntu container farm")
     def ubuntu_farm(self):
-        self.network_copy = j.sal.reservation_chatflow.network_get_from_reservation(
-            self, j.me.tid, self.network.name, self.network.resv_id, used_ips=self.network._used_ips
-        )
         if not self.nodeid:
             farms = j.sal.reservation_chatflow.farm_names_get(1, self, **self.query)
             self.node_selected = j.sal.reservation_chatflow.nodes_get(1, farm_names=farms, **self.query)[0]
-        self.network_copy.add_node(self.node_selected)
 
-    @j.baseclasses.chatflow_step(title="Container IP & Confirmation about ubuntu conatiner  details")
+    @j.baseclasses.chatflow_step(title="Container IP")
     def container_ip(self):
+        self.network_copy = self.network.copy(j.me.tid)
+        self.network_copy.add_node(self.node_selected)
         self.ip_address = self.network_copy.ask_ip_from_node(
             self.node_selected, "Please choose IP Address for your solution"
         )
         self.user_form_data["IP Address"] = self.ip_address
+
+    @j.baseclasses.chatflow_step(title="Expiration time")
+    def expiration_time(self):
+        self.expiration = self.datetime_picker(
+            "Please enter solution expiration time.",
+            required=True,
+            min_time=[3600, "Date/time should be at least 1 hour from now"],
+            default=j.data.time.epoch + 3900,
+        )
+        self.user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(self.expiration - j.data.time.epoch)
+
+    @j.baseclasses.chatflow_step(title="Confirmation")
+    def overview(self):
         self.md_show_confirm(self.user_form_data)
 
     @j.baseclasses.chatflow_step(title="Payment", disable_previous=True)

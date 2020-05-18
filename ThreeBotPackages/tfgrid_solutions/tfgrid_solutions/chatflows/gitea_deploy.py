@@ -17,6 +17,7 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
         "container_node_id",
         "container_farm",
         "container_ip",
+        "overview",
         "container_pay",
         "container_acess",
     ]
@@ -102,16 +103,17 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
             farms = j.sal.reservation_chatflow.farm_names_get(1, self, **self.query)
             self.node_selected = j.sal.reservation_chatflow.nodes_get(1, farm_names=farms, **self.query)[0]
 
-    @j.baseclasses.chatflow_step(title="Container IP & Confirmation about conatiner details")
+    @j.baseclasses.chatflow_step(title="Container IP")
     def container_ip(self):
-        self.network_copy = j.sal.reservation_chatflow.network_get_from_reservation(
-            self, j.me.tid, self.network.name, self.network.resv_id, used_ips=self.network._used_ips
-        )
+        self.network_copy = self.network.copy(j.me.tid)
         self.network_copy.add_node(self.node_selected)
         self.ip_address = self.network_copy.ask_ip_from_node(
             self.node_selected, "Please choose IP Address for your solution"
         )
         self.user_form_data["IP Address"] = self.ip_address
+
+    @j.baseclasses.chatflow_step(title="Confirmation")
+    def overview(self):
         self.md_show_confirm(self.user_form_data)
 
     @j.baseclasses.chatflow_step(title="Payment", disable_previous=True)
