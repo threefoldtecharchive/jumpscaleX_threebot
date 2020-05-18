@@ -13,13 +13,13 @@ class chatbot(j.baseclasses.threebot_actor):
         # all required commands are here
 
     @j.baseclasses.actor_method
-    def work_get(self, sessionid, schema_out=None, user_session=None):
+    def work_get(self, sessionid, restore=False, schema_out=None, user_session=None):
         """
         ```in
         sessionid = "" (S)
         ```
         """
-        res = self.chatbot.session_work_get(sessionid)
+        res = self.chatbot.session_work_get(sessionid, restore)
         return json.dumps(res)
 
     @j.baseclasses.actor_method
