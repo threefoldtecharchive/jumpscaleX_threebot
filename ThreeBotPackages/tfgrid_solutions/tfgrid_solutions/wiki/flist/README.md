@@ -53,16 +53,16 @@ The corex option allows the user to access the container through corex. If disab
 
 
 ### Choosing environment variables
-![Step8](flist8.png)
+![Step7](flist7.png)
 If the container needs any env variables on startup, they are passed through this option where they are in the format `variable=value` seperated by commas.
 
 ### Choosing the expiration time for the solution
-![Step9](flist9.png)
+![Step8](flist8.png)
 Choosing the expiration time for the solution on the grid
 
 ### Choose a farm to deploy on
 
-![step8](../farms.png)
+![step9](flist9.png)
 
 We can choose the farms on which the container can be deployed on. The farms are basically a group of nodes where multiple solutions can be deployed on them. We can either choose the farm name from the drop down list or leave it empty to randomly choose any farm.
 
@@ -71,9 +71,13 @@ We can choose the farms on which the container can be deployed on. The farms are
 ![Step10](flist10.png)
 Choosing the private IP address that will be used to access or communicate with the deployed solution
 
+### Confirm your reservation
+![step11](flist11.png)
+Here we confirm the specifications we entered in the chatflow
+
 ### Payment
 
-![step10](../payment.png)
+![step12](flist12.png)
 
 We select the wallet that we will pay with to proceed with the payment for the solution that will be deployed.
 

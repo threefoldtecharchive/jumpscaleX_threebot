@@ -28,15 +28,15 @@ After the deployment of MinIO is complete,  a url will be returned that can be u
 
 ## Deploying MinIO
 
-### Choosing the solution name
-
-![Step3](minio3.png)
-Choosing the name of the solution to be deployed. This allows the user to view the solution's reservation info in the dashboard deployed solutions
-
 ### Choosing the network name
 
 ![Step2](minio2.png)
 Choosing the network to be used from a list of existing networks created by the user
+
+### Choosing the solution name
+
+![Step3](minio3.png)
+Choosing the name of the solution to be deployed. This allows the user to view the solution's reservation info in the dashboard deployed solutions
 
 ### Choosing the Disk Type for zdb
 
@@ -66,13 +66,15 @@ Now we define the expiration time for the solution on the grid.
 
 ### Choose a farm to deploy on
 
-![step8](../farms.png)
+![step8](minio_farms_zdb.png)
+
+![](minio_farms_container.png)
 
 We can choose the farms on which the container can be deployed on. The farms are basically a group of nodes where multiple solutions can be deployed on them. We can either choose the farm name from the drop down list or leave it empty to randomly choose any farm.
 
 ### Choosing IP for the solution
 
-![step9](minio10.png)
+![step9](minio14.png)
 Here we choose the IP to access the solution
 
 ### Confirming
@@ -82,12 +84,14 @@ The user should confirm his reservation details
 
 ### Payment
 
-![step10](../payment.png)
+![step10](minio_payment_zdb.png)
+
+![](minio_payment_container.png)
 
 We select the wallet that we will pay with to proceed with the payment for the solution that will be deployed. There are two payments to be done, one for the zdb used for the cluster and the other one for the container that will have minio deployed on.
 
 ### Access information
-![Step15](minio16.jpg)
+![Step15](minio16.png)
 You will get a message indicating the success of your reservation or error in case of error for any reason.
 
 ### Login Page

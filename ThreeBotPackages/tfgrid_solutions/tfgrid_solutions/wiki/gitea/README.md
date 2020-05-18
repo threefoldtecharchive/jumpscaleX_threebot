@@ -34,60 +34,59 @@ After the deployment of the Gitea is complete, a url will be returned that can b
 
 ### Choosing the network name
 
-![step1](2.png)
+![step1](gitea1.png)
 Choosing the network to be used from a list of existing networks created by the user
 
 ### Choosing the solution name
 
-![step2](3.png)
+![step2](gitea2.png)
 Choosing the name of the solution to be deployed. This allows the user to view the solution's reservation info in the dashboard deployed solutions
 
 
 ### Authorizing yourself
 
-![step3](4.png)
+![step3](gitea3.png)
 Uploading your public key for SSH access
 
 ### Setting expiration
 
-![step4](5.png)
+![step4](gitea4.png)
 Now we need to tell the grid how long we want our solution to stay alive on the grid
 
-### Database credentials 
+### Database credentials & Create Repository
 
-![step5](6.png)
-add all database requirements (name , username of database and secret) to initialize it .
-
-### Create Repository
-
-![step6](7.png)
+![step5](gitea5.png)
+Add all database requirements (name , username of database and secret) to initialize it .
 Name of your repository .
 
 ### Choose a node to deploy on (optional)
 
-![step7](15.png)
+![step7](gitea6.png)
 
 Here we can provide a node id corresponding to a current node on the grid to deploy the container on. If there is no specific node to be used then it is left empty.
 
 ### Choose a farm to deploy on
 
-![step8](../farms.png)
+![step8](gitea7.png)
 If the nodeid is left empty, we can choose the farms on which the container can be deployed on. The farms are basically a group of nodes where multiple solutions can be deployed on them. We can either choose the farm name from the drop down list or leave it empty to randomly choose any farm.
 
 ### Choosing IP for the solution
 
-![step9](9.png)
+![step9](gitea8.png)
 Here we choose the IP to access the solution
 
+### Confirm your reservation
+![step11](gitea9.png)
+Here we confirm the specifications we entered in the chatflow
 
 ### Payment
 
-![step10](../payment.png)
+![step10](gitea10.png)
 We select the wallet that we will pay with to proceed with the payment for the solution that will be deployed.
 
 ### Reaching your container
 
-![step11](11.png)
+![step11](gitea11.png)
 Here we get the container
 
 ### Gitea has been deployed

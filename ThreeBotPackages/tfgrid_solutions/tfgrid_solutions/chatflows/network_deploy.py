@@ -11,7 +11,7 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
     def network_reservation(self):
         user_form_data = {}
         user_info = self.user_info()
-    
+
         j.sal.reservation_chatflow.validate_user(user_info)
         user_form_data["chatflow"] = "network"
         network_name = j.sal.reservation_chatflow.network_name_add(self, self.model)
@@ -75,20 +75,18 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
             to download your configuration
         """
 
-        self.md_show(j.core.text.strip(message), md=True)
+        self.md_show(j.core.text.strip(message), md=True, html=True)
 
         filename = "wg-{}.conf".format(self.config["rid"])
         self.download_file(msg=f'<pre>{self.config["wg"]}</pre>', data=self.config["wg"], filename=filename, html=True)
 
-        message = """
-            ### In order to have the network active and accessible from your local/container machine. To do this, execute this command:
-            #### ```wg-quick up /etc/wireguard/{}```
-            # Click next
-        """.format(
-            filename
-        )
+        message = f"""
+### In order to have the network active and accessible from your local/container machine. To do this, execute this command:
+#### ```wg-quick up /etc/wireguard/{filename}```
+# Click next
+        """
 
-        self.md_show(j.core.text.strip(message), md=True)
+        self.md_show(message, md=True)
 
 
 chat = NetworkDeploy
