@@ -97,12 +97,12 @@ class FlistDeploy(j.servers.chatflow.get_class()):
     def container_farm(self):
         # create new reservation
         self.reservation = j.sal.zosv2.reservation_create()
-        hru = math.ceil(self.memory.value / 1024)
+        mru = math.ceil(self.memory.value / 1024)
         cru = self.cpu.value
         sru = 1  # needed space for a container is 250MiB
-        farms = j.sal.reservation_chatflow.farm_names_get(1, self, hru=hru, cru=cru, sru=sru, currency=self.currency)
+        farms = j.sal.reservation_chatflow.farm_names_get(1, self, mru=mru, cru=cru, sru=sru, currency=self.currency)
         self.node = j.sal.reservation_chatflow.nodes_get(
-            1, farm_names=farms, hru=hru, cru=cru, sru=sru, currency=self.currency
+            1, farm_names=farms, mru=mru, cru=cru, sru=sru, currency=self.currency
         )[0]
 
     @j.baseclasses.chatflow_step(title="Expiration time")
