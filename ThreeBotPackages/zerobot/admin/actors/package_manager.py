@@ -78,8 +78,14 @@ class package_manager(j.baseclasses.threebot_actor):
             if j.sal.fs.exists(tomlpath):
                 meta = j.data.serializers.toml.load(tomlpath)
                 source = meta.get("source", {})
+                if not source:
+                    raise j.exceptions.Input("invalid toml :%s" % tomlpath)
                 threebot = source.get("threebot")
+                if not threebot:
+                    raise j.exceptions.Input("invalid toml :%s no threebot specified" % tomlpath)
                 name = source.get("name")
+                if not name:
+                    raise j.exceptions.Input("invalid toml :%s no name specified" % tomlpath)
                 return f"{threebot}.{name}"
             else:
                 raise j.exceptions.Input("could not find :%s" % tomlpath)
@@ -131,10 +137,10 @@ class package_manager(j.baseclasses.threebot_actor):
         if not j.tools.threebot_packages.exists(name):
             return
 
-        #check if package is in requiredpackages
+        # check if package is in requiredpackages
         if name in self._requiredpackages:
             raise j.exceptions.Input("could not delete :%s, it's required package" % name)
-        
+
         package = j.tools.threebot_packages.get(name)
         package.uninstall()
         package.delete()
@@ -158,10 +164,10 @@ class package_manager(j.baseclasses.threebot_actor):
         if not j.tools.threebot_packages.exists(name):
             raise j.exceptions.NotFound("package not found", data={"name": name})
 
-        #check if package is in requiredpackages
+        # check if package is in requiredpackages
         if name in self._requiredpackages:
             raise j.exceptions.Input("could not stop :%s, it's required package" % name)
-        
+
         package = j.tools.threebot_packages.get(name)
         package.stop()
 
@@ -202,10 +208,10 @@ class package_manager(j.baseclasses.threebot_actor):
         if not j.tools.threebot_packages.exists(name):
             raise j.exceptions.NotFound("package not found", data={"name": name})
 
-        #check if package is in requiredpackages
+        # check if package is in requiredpackages
         if name in self._requiredpackages:
             raise j.exceptions.Input("could not disable :%s, it's required package" % name)
-        
+
         package = j.tools.threebot_packages.get(name)
         package.disable()
 
