@@ -27,7 +27,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         self.model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.ubuntu.1")
         user_info = self.user_info()
         self.user_form_data["chatflow"] = "ubuntu"
-        self.md_show("# This wizard wil help you deploy an ubuntu container", md=True)
+        self.md_show("# This wizard will help you deploy an ubuntu container", md=True)
         j.sal.reservation_chatflow.validate_user(user_info)
 
     @j.baseclasses.chatflow_step(title="Network")
@@ -94,7 +94,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Ubuntu container farm")
     def ubuntu_farm(self):
         self.network_copy = j.sal.reservation_chatflow.network_get_from_reservation(
-            self, j.me.tid, self.network.name, self.network.resv_id
+            self, j.me.tid, self.network.name, self.network.resv_id, used_ips=self.network._used_ips
         )
         if not self.nodeid:
             farms = j.sal.reservation_chatflow.farm_names_get(1, self, **self.query)

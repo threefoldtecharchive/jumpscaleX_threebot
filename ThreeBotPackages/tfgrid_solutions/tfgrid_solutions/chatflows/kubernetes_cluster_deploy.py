@@ -100,7 +100,7 @@ class kubernetesDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="IP selection")
     def ip_selection(self):
         self.network_copy = j.sal.reservation_chatflow.network_get_from_reservation(
-            self, j.me.tid, self.network.name, self.network.resv_id
+            self, j.me.tid, self.network.name, self.network.resv_id, used_ips=self.network._used_ips
         )
         ipaddresses = list()
         for idx, node_selected in enumerate(self.master_nodes_selected):

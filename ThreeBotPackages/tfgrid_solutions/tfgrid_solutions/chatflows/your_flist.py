@@ -117,7 +117,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Container IP & Confirmation about conatiner details")
     def container_ip(self):
         self.network_copy = j.sal.reservation_chatflow.network_get_from_reservation(
-            self, j.me.tid, self.network.name, self.network.resv_id
+            self, j.me.tid, self.network.name, self.network.resv_id, used_ips=self.network._used_ips
         )
         self.network_copy.add_node(self.node)
         self.ip_address = self.network_copy.ask_ip_from_node(
