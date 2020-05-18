@@ -154,6 +154,27 @@
       sendUserInfo () {
         this.reportWork(JSON.stringify(this.userInfo))
       },
+      saveSession () {
+        let session = {
+          id: this.sessionId,
+          state: this.state,
+        }
+        localStorage.setItem(this.topic, JSON.stringify(session))
+      },
+      getSession () {
+        let session = localStorage.getItem(this.topic)
+        if (session) {
+          return JSON.parse(session)
+        }
+      },
+      start () {
+        let session = this.getSession()
+        if (session) {
+          this.restoreSession(session)
+        } else {
+          this.newSession()
+        }
+      },
       newSession () {
         axios({
           url: `${baseUrl}/session_new`,
@@ -166,14 +187,21 @@
             this.getWork()
         })
       },
-      getWork () {
+      restoreSession (session) {
+          this.sessionId = session.id
+          this.state = session.state
+          this.getWork(true)
+      },
+      getWork (restore) {
         axios({
           url: `${baseUrl}/work_get`,
           params: {
-            sessionid: this.sessionId
+            sessionid: this.sessionId,
+            restore: restore
           }
         }).then((response) => {
             this.loading = false
+            this.saveSession()
             this.handleResponse(response.data)
         })
       },
@@ -207,11 +235,12 @@
         })
       },
       restart () {
+        localStorage.clear()
         location.reload()
       }
     },
     mounted () {
-      this.newSession()
+      this.start()
       document.body.addEventListener('keypress', (e) => {
         if (e.key == 'Enter') {
           this.next()
