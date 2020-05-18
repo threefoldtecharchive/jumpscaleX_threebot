@@ -154,26 +154,55 @@
       sendUserInfo () {
         this.reportWork(JSON.stringify(this.userInfo))
       },
+      saveSession () {
+        let session = {
+          id: this.sessionId,
+          state: this.state,
+        }
+        localStorage.setItem(this.topic, JSON.stringify(session))
+      },
+      getSession () {
+        let session = localStorage.getItem(this.topic)
+        if (session) {
+          return JSON.parse(session)
+        }
+      },
+      start () {
+        let session = this.getSession()
+        if (session) {
+          this.restoreSession(session)
+        } else {
+          this.newSession()
+        }
+      },
       newSession () {
         axios({
           url: `${baseUrl}/session_new`,
           params: {
-            topic: TOPIC
+            topic: TOPIC,
+            client_ip: CLIENT_IP
           }
         }).then((response) => {
             this.sessionId = response.data.sessionid
             this.getWork()
         })
       },
-      getWork () {
+      restoreSession (session) {
+          this.sessionId = session.id
+          this.state = session.state
+          this.getWork(true)
+      },
+      getWork (restore) {
         axios({
           url: `${baseUrl}/work_get`,
           params: {
-            sessionid: this.sessionId
+            sessionid: this.sessionId,
+            restore: restore
           }
         }).then((response) => {
             this.loading = false
-            this.handleResponse(response.data)            
+            this.saveSession()
+            this.handleResponse(response.data)
         })
       },
       reportWork (result) {
@@ -199,18 +228,19 @@
       },
       back () {
         axios({
-          url: `${baseUrl}/prev_step`, 
+          url: `${baseUrl}/prev_step`,
           params: {
             sessionid: this.sessionId
           }
         })
       },
       restart () {
+        localStorage.clear()
         location.reload()
       }
     },
     mounted () {
-      this.newSession()
+      this.start()
       document.body.addEventListener('keypress', (e) => {
         if (e.key == 'Enter') {
           this.next()

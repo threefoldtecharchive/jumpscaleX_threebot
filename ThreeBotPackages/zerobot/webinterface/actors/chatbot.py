@@ -13,13 +13,13 @@ class chatbot(j.baseclasses.threebot_actor):
         # all required commands are here
 
     @j.baseclasses.actor_method
-    def work_get(self, sessionid, schema_out=None, user_session=None):
+    def work_get(self, sessionid, restore=False, schema_out=None, user_session=None):
         """
         ```in
         sessionid = "" (S)
         ```
         """
-        res = self.chatbot.session_work_get(sessionid)
+        res = self.chatbot.session_work_get(sessionid, restore)
         return json.dumps(res)
 
     @j.baseclasses.actor_method
@@ -43,7 +43,7 @@ class chatbot(j.baseclasses.threebot_actor):
         return "PONG"
 
     @j.baseclasses.actor_method
-    def session_new(self, topic, query_params, schema_out=None, user_session=None):
+    def session_new(self, topic, query_params, client_ip=None, schema_out=None, user_session=None):
         """
         ```in
         topic = "" (S)
@@ -51,7 +51,7 @@ class chatbot(j.baseclasses.threebot_actor):
         ```
         """
         self._log_info(f"Reuqest reached from {topic} and {query_params}")
-        return json.dumps(self.chatbot.session_new(topic=topic, query_params=query_params))
+        return json.dumps(self.chatbot.session_new(topic=topic, query_params=query_params, client_ip=client_ip))
 
     @j.baseclasses.actor_method
     def chatflows_list(self, schema_out=None, user_session=None):
@@ -64,4 +64,3 @@ class chatbot(j.baseclasses.threebot_actor):
     @j.baseclasses.actor_method
     def prev_step(self, sessionid, schema_out=None, user_session=None):
         return self.chatbot.session_prev_step(sessionid)
-

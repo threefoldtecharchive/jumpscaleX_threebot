@@ -17,11 +17,9 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
         network_name = j.sal.reservation_chatflow.network_name_add(self, self.model)
 
         user_form_data["Currency"] = self.single_choice(
-            "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"], field="currency"
+            "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"], default="TFT", required=True
         )
-        if not user_form_data["Currency"]:
-            user_form_data["Currency"] = "TFT"
-
+      
         expiration = self.datetime_picker(
             "Please enter network expiration time.",
             required=True,
@@ -33,8 +31,7 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
         ips = ["IPv6", "IPv4"]
         ipversion = self.single_choice(
             "How would you like to connect to your network? IPv4 or IPv6? If unsure, choose IPv4",
-            ips,
-            field="ipversion",
+            ips, required=True
         )
 
         # create new reservation
