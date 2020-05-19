@@ -11,17 +11,15 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
     def network_reservation(self):
         user_form_data = {}
         user_info = self.user_info()
-    
+
         j.sal.reservation_chatflow.validate_user(user_info)
         user_form_data["chatflow"] = "network"
         network_name = j.sal.reservation_chatflow.network_name_add(self, self.model)
 
         user_form_data["Currency"] = self.single_choice(
-            "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"], field="currency"
+            "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"], default="TFT", required=True
         )
-        if not user_form_data["Currency"]:
-            user_form_data["Currency"] = "TFT"
-
+      
         expiration = self.datetime_picker(
             "Please enter network expiration time.",
             required=True,
@@ -33,8 +31,7 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
         ips = ["IPv6", "IPv4"]
         ipversion = self.single_choice(
             "How would you like to connect to your network? IPv4 or IPv6? If unsure, choose IPv4",
-            ips,
-            field="ipversion",
+            ips, required=True
         )
 
         # create new reservation
@@ -78,20 +75,18 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
             to download your configuration
         """
 
-        self.md_show(j.core.text.strip(message), md=True)
+        self.md_show(j.core.text.strip(message), md=True, html=True)
 
         filename = "wg-{}.conf".format(self.config["rid"])
         self.download_file(msg=f'<pre>{self.config["wg"]}</pre>', data=self.config["wg"], filename=filename, html=True)
 
-        message = """
-            ### In order to have the network active and accessible from your local/container machine. To do this, execute this command:
-            #### ```wg-quick up /etc/wireguard/{}```
-            # Click next
-        """.format(
-            filename
-        )
+        message = f"""
+### In order to have the network active and accessible from your local/container machine. To do this, execute this command:
+#### ```wg-quick up /etc/wireguard/{filename}```
+# Click next
+        """
 
-        self.md_show(j.core.text.strip(message), md=True)
+        self.md_show(message, md=True)
 
 
 chat = NetworkDeploy

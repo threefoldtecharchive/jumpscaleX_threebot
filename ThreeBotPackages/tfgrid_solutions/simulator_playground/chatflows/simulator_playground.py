@@ -137,7 +137,7 @@ class Deployer:
         reservation_id = j.sal.reservation_chatflow.reservation_register_and_pay(
             reservation, expiration, currency=CURRENCY, bot=bot, customer_tid=j.me.tid, wallet=wallet
         )
-        j.sal.nettools.tcpPortConnectionTest(ip_address, port=22, timeout=30)
+        j.sal.nettools.waitConnectionTest(ip_address, port=8888, timeout=180)
 
         return domain
 
@@ -153,7 +153,8 @@ class SimulatorDeploy(j.servers.chatflow.get_class()):
         client_ip = self.kwargs.get("client_ip")
         simulator_url = deployer._redis.get(client_ip)
         if simulator_url:
-            self.md_show(f"You already have a running simulator on url {simulator_url}")
+            url = simulator_url.decode()
+            self.md_show(f"You already have a running simulator on url [http://{url}](http://{url})")
             return
         options = ["Continue", "Cancel"]
         confirm = self.single_choice("Do you want to deploy a threefold simulator container ?", options)
