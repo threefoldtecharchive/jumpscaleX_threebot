@@ -40,6 +40,13 @@
               </p>
             </template>
 
+            <template v-slot:item.healthy="{ item }">
+              <p class="text-center mt-1 mb-0 ">
+                <v-icon :color="'green'" v-if="item.healthy">{{"fa-check"}}</v-icon>
+                <v-icon :color="'red'" v-else>{{"fa-times"}}</v-icon>
+              </p>
+            </template>
+
             <template v-slot:expanded-item="{ headers, item }">
               <td :colspan="headers.length">
                 <nodeInfo :key="item.id" :node="item" />
