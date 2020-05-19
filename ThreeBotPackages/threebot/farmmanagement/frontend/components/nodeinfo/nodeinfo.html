@@ -82,7 +82,7 @@
             <v-card-title class="headline">You node's network configuration</v-card-title>
             <v-card-text>
               <ul>
-                <li v-if="!node.npub6HealthError">NDMZ ipv6 config: {{ node.npub6Value }}</li>
+                <li v-if="!node.npub6HealthError">NDMZ ipv6 config: <strong>{{ node.npub6Value }}</strong></li>
                 <li v-else>
                   {{node.npub6HealthError}}
                   <ul v-if="node.npub6Configs.length > 0">
@@ -90,12 +90,12 @@
                   </ul>
                 </li>
 
-                <li v-if="!node.npub4HealthError">NDMZ ipv4 config: {{ node.npub4Value }}</li>
+                <li v-if="!node.npub4HealthError">NDMZ ipv4 config: <strong>{{ node.npub4Value }}</strong></li>
                 <li v-else>{{node.npub4HealthError}}</li>
 
                 <li v-if="!node.publicConfig6Error && !node.publicConfig6Value">No ipv6 public config</li>
                 <li v-else-if="node.publicConfig6Error">{{node.publicConfig6Error}}</li>
-                <li v-else>Public config ipv6: {{ node.publicConfig6Value }}</li>
+                <li v-else>Public config ipv6: <strong>{{ node.publicConfig6Value }}</strong></li>
               </ul>
               <a href="https://github.com/threefoldtech/zos/blob/master/docs/network/Deploy_Network-V2.md" target="blank">Network documentation</a>
             </v-card-text>
