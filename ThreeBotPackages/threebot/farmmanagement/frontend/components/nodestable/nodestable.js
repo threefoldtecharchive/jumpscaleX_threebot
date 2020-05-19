@@ -97,7 +97,7 @@ module.exports = new Promise(async (resolve, reject) => {
                         npub6HealthError = "public ipv6 is missing on the NDMZ interface, please check your router configuration."
                     }
                     if (!npub4Healthy) {
-                        npub4HealthError = "ipv4 is misconfigured on the NDMZ interface, please check your router configuration."
+                        npub4HealthError = "ipv4 is missing on the NDMZ interface, please check your router configuration."
                     }
 
                     if (npub6Healthy && npub6Healthy && node.public_config) {
