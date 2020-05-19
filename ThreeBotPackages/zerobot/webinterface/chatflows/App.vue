@@ -93,7 +93,7 @@
 <script>
 
   const axios = require('axios')
-  const baseUrl = "/zerobot/webinterface/actors/chatbot"
+  const baseUrl = "/zerobot/webinterface/actors"
 
   module.exports =  {
     data () {
@@ -129,6 +129,7 @@
         switch (payload.category) {
           case 'end':
             this.end = true
+            localStorage.clear()
             break
           case 'user_info':
             this.sendUserInfo()
@@ -143,7 +144,7 @@
       handlerWork (work) {
         this.work = work
         if (this.state[this.stepId] === undefined) {
-          if (['form', 'multi_choice', 'multi_list_choice', 'location_ask'].includes(this.work.payload.category)) {
+          if (['form', 'multi_choice', 'multi_list_choice', 'location_ask', 'node_selector'].includes(this.work.payload.category)) {
             this.$set(this.state, this.stepId, Array())
           }
         }
@@ -177,7 +178,7 @@
       },
       newSession () {
         axios({
-          url: `${baseUrl}/session_new`,
+          url: `${baseUrl}/chatbot/session_new`,
           params: {
             topic: TOPIC,
             client_ip: CLIENT_IP
@@ -194,7 +195,7 @@
       },
       getWork (restore) {
         axios({
-          url: `${baseUrl}/work_get`,
+          url: `${baseUrl}/chatbot/work_get`,
           params: {
             sessionid: this.sessionId,
             restore: restore
@@ -207,7 +208,7 @@
       },
       reportWork (result) {
         axios({
-          url: `${baseUrl}/work_report`,
+          url: `${baseUrl}/chatbot/work_report`,
           params: {
             sessionid: this.sessionId,
             result: result
@@ -228,7 +229,7 @@
       },
       back () {
         axios({
-          url: `${baseUrl}/prev_step`,
+          url: `${baseUrl}/chatbot/prev_step`,
           params: {
             sessionid: this.sessionId
           }

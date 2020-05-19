@@ -53,6 +53,15 @@ validators = {
       return field.val !== undefined && field.val.length > 0 ? true : 'Field is required'
     },
   },
+  node_selector: {
+    required: (field) => {
+      if (field.multiple) {
+        return field.val.length > 0 ? true : 'Field is required'
+      } else {
+        return field.val && !Array.isArray(field.val) ? true : 'Field is required'
+      }
+    }
+  },
   drop_down_choice: {
 
   },
