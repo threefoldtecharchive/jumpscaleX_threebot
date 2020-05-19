@@ -78,7 +78,7 @@ class SolutionExpose(j.servers.chatflow.get_class()):
         self.gateways = {
             g.node_id: g
             for g in j.sal.zosv2._explorer.gateway.list()
-            if g.free_to_use == free_to_use and j.sal.reservation_chatflow.node_is_up(g.updated)
+            if g.free_to_use == free_to_use and j.sal.zosv2.nodes_finder.filter_is_up(g)
         }
         self.user_domains = j.sal.reservation_chatflow.delegate_domains_list(j.me.tid, currency=self.solution_currency)
         domain_ask_list = []
