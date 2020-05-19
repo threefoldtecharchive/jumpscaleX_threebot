@@ -21,7 +21,7 @@ export default {
   getFarms(tfgridUrl, user_id) {
     return axios.get(`${tfgridUrl}/farms`, {
       params: {
-        owner: user_id
+        owner: 1
       }
     });
   },

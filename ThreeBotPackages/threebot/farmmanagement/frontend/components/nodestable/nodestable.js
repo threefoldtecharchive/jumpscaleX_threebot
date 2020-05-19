@@ -52,6 +52,7 @@ module.exports = new Promise(async (resolve, reject) => {
                     let npub4Healthy = false
                     let npub6HealthError, npub4HealthError, publicConfig6Error
                     let npub6Value, npub4Value, publicConfig6Value
+                    let npub6Configs = []
             
                     const Global = "Global unicast"
                     const allowedIfaces = ["zos", "npub6", "npub4"]
@@ -68,6 +69,10 @@ module.exports = new Promise(async (resolve, reject) => {
                                         if (ip6.getType() === Global) {
                                             npub6Value = ip6.correctForm()
                                             npub6Healthy = true
+                                        } else {
+                                            console.log(`node with ${node.node_id} has ndmz private ip6`)
+                                            const correctForm = ip6.correctForm()
+                                            npub6Configs.push(correctForm)
                                         }
                                     }
                                   }
@@ -127,6 +132,7 @@ module.exports = new Promise(async (resolve, reject) => {
                         npub4HealthError,
                         publicConfig6Error,
                         npub6Value,
+                        npub6Configs,
                         npub4Value,
                         publicConfig6Value
                     }
