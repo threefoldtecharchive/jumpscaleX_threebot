@@ -168,6 +168,36 @@ export default class AlertsView extends JetView {
         });
     }
 
+    exportItem(objects) {
+        var self = this;
+
+        let items = []
+        let indexes = []
+
+        if (Array.isArray(objects)) {
+            for (let obj of objects) {
+                let item = self.table.getItem(obj.id);
+                items.push(item)
+                indexes.push(item.index);
+            }
+        } else {
+            let item = self.table.getItem(objects.id);
+            items.push(item)
+            indexes.push(item.index);
+        }
+
+        webix.confirm({
+            title: "Export alerts",
+            ok: "Yes",
+            cancel: "No",
+            text: `Export alert item(s) of ${indexes.join(", ")}`
+        }).then(() => {
+            var blob = new Blob([webix.stringify(items)], {type:"application/json"});
+            var d = new Date();
+            webix.html.download(blob, `alerts_export_${d.toString()}.json`)
+        });
+    }
+
     viewItem(id) {
         this.alertView.showFor(this.table.getItem(id));
     }
@@ -193,7 +223,7 @@ export default class AlertsView extends JetView {
         webix.ui({
             view: "contextmenu",
             id: "alerts_cm",
-            data: ["View", "Delete"]
+            data: ["View", "Delete", "Export"]
         }).attachTo(self.table);
 
 
@@ -206,6 +236,8 @@ export default class AlertsView extends JetView {
                 self.deleteItem(self.table.getSelectedId(true));
             } else if (id == "View") {
                 self.viewItem(self.table.getSelectedId());
+            } else if (id == "Export") {
+                self.exportItem(self.table.getSelectedId());
             }
         });
     }
