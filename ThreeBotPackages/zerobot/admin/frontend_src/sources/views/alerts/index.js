@@ -14,6 +14,16 @@ export default class AlertsView extends JetView {
         const view = {
             rows: [
                 {
+                        view:"button",
+                        id:"btn_export_all",
+                        value:"Export All",
+                        align:'right',
+                        inputWidth:150,
+                        click: function (){
+                            this.$scope.exportAll()
+                        }
+                 },
+                {
                     view: "datatable",
                     id: "alerts_table",
                     resizeColumn: true,
@@ -192,6 +202,21 @@ export default class AlertsView extends JetView {
             cancel: "No",
             text: `Export alert item(s) of ${indexes.join(", ")}`
         }).then(() => {
+            var blob = new Blob([webix.stringify(items)], {type:"application/json"});
+            var d = new Date();
+            webix.html.download(blob, `alerts_export_${d.toString()}.json`)
+        });
+    }
+
+    exportAll(){
+        var self = this;
+        webix.confirm({
+            title: "Export all alerts",
+            ok: "Export",
+            cancel: "No",
+            text: `Export all alerts?`
+        }).then(() => {
+            let items = self.table.serialize()
             var blob = new Blob([webix.stringify(items)], {type:"application/json"});
             var d = new Date();
             webix.html.download(blob, `alerts_export_${d.toString()}.json`)
