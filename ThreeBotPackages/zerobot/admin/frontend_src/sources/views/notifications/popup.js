@@ -48,8 +48,10 @@ export default class NotificationPopup extends JetView {
 		});
 
 		notifications.checkNewRelease().then((data) => {
-			if (self.app && data.json() !== {}) {
-				self.newReleaseNotification(data.json())
+			let retDate = data.json()
+			// check if return data is empty
+			if (self.app && Object.keys(retDate).length !== 0) {
+				self.newReleaseNotification(retDate)
 				// TODO: add check for notification status [ read, notRead ]
 				self.app.callEvent("update:badge", [1]);
 			}
