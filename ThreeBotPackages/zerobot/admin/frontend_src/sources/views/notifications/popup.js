@@ -48,8 +48,10 @@ export default class NotificationPopup extends JetView {
 		});
 
 		notifications.checkNewRelease().then((data) => {
-			if (self.app && !data.json()['up_to_date']) {
-				self.newReleaseNotification(data.json())
+			let retDate = data.json()
+			// check if return data is empty
+			if (self.app && Object.keys(retDate).length !== 0) {
+				self.newReleaseNotification(retDate)
 				// TODO: add check for notification status [ read, notRead ]
 				self.app.callEvent("update:badge", [1]);
 			}
@@ -71,9 +73,10 @@ export default class NotificationPopup extends JetView {
 	newReleaseNotification(data) {
 		let notification = {
 			'title': "New release available",
-			'message': `Version ${data.last_release} is now available.
-						<a href='${data.last_release_url}' target="_blank">Get it</a><br>
-						You can view installation guide <a href='${THREESDK_INSTALLATION_URL}' target="_blank">here</a>`
+			'message': `Version ${data.latest_release} is now available.
+						<a href='${data.latest_release_url}' target="_blank">Get it</a><br>
+						You can view installation guide <a href='${THREESDK_INSTALLATION_URL}' target="_blank">here</a><br>
+						And download from <a href='${data.download_link}' target="_blank">here</a>`
 		}
 		notificationsList.push(notification)
 		this.app.callEvent("new:notification", [notification]);

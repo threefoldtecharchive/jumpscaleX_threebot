@@ -1,5 +1,4 @@
 from Jumpscale import j
-from threesdk.InstallTools import Tools
 
 
 class notifications(j.baseclasses.threebot_actor):
@@ -8,4 +7,7 @@ class notifications(j.baseclasses.threebot_actor):
 
     @j.baseclasses.actor_method
     def check_new_release(self, schema_out=None, user_session=None):
-        return j.data.serializers.json.dumps(Tools.get_newest_version())
+        if not j.core.tools.is_latest_release():
+            return j.data.serializers.json.dumps(j.core.tools.get_latest_release())
+        else:
+            return j.data.serializers.json.dumps({})
