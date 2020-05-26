@@ -63,7 +63,6 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Container node id")
     def container_node_id(self):
         self.var_dict = {"pub_key": self.user_form_data["Public key"]}
-        self.query["currency"] = self.network.currency
         self.query["mru"] = math.ceil(self.user_form_data["Memory"] / 1024)
         self.query["cru"] = self.user_form_data["CPU"]
         self.query["sru"] = 1
@@ -75,12 +74,13 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         while self.nodeid:
             try:
                 self.node_selected = j.sal.reservation_chatflow.validate_node(
-                    self.nodeid, self.query, self.query["currency"]
+                    self.nodeid, self.query, self.network.currency
                 )
                 break
             except (j.exceptions.Value, j.exceptions.NotFound) as e:
                 message = "<br> Please enter a different nodeid to deploy on or leave it empty"
                 self.nodeid = self.string_ask(str(e) + message, html=True, retry=True)
+        self.query["currency"] = self.network.currency
 
     @j.baseclasses.chatflow_step(title="Ubuntu container farm")
     def ubuntu_farm(self):
