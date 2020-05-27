@@ -48,7 +48,12 @@ class DomainDelegation(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Payment", disable_previous=True)
     def domain_pay(self):
         if self.gateway.free_to_use:
-            currency = "FreeTFT"
+            currency = self.single_choice(
+                "Please choose a currency that will be used for the payment",
+                ["FreeTFT", "TFT"],
+                default="TFT",
+                required=True,
+            )
         else:
             currency = "TFT"
 
