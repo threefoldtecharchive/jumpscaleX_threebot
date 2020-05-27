@@ -61,9 +61,13 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         form = self.new_form()
         self.cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
         self.memory = form.int_ask("Please add the amount of memory in MB", default=1024)
+        self.rootfs_type = form.single_choice("Select the storage type for your rootfs", ["SSD", "HDD"], default="SSD")
+        self.rootfs_size = form.int_ask("Choose the amount of (writeable) storage for your rootfs in MiB", default=256)
         form.ask()
         self.user_form_data["CPU"] = self.cpu.value
         self.user_form_data["Memory"] = self.memory.value
+        self.user_form_data["Rootfs Type"] = self.rootfs_type.value
+        self.user_form_data["Rootfs Size"] = self.rootfs_size.value
 
     @j.baseclasses.chatflow_step(title="Container ineractive & EntryPoint")
     def container_interactive(self):
@@ -97,12 +101,18 @@ class FlistDeploy(j.servers.chatflow.get_class()):
     def container_farm(self):
         # create new reservation
         self.reservation = j.sal.zosv2.reservation_create()
-        mru = math.ceil(self.memory.value / 1024)
-        cru = self.cpu.value
-        sru = 1  # needed space for a container is 250MiB
-        farms = j.sal.reservation_chatflow.farm_names_get(1, self, mru=mru, cru=cru, sru=sru, currency=self.currency)
+        query = {}
+        query["mru"] = math.ceil(self.memory.value / 1024)
+        query["cru"] = self.cpu.value
+
+        storage_units = math.ceil(self.rootfs_size / 1024)
+        if self.rootfs_type.value == "SSD":
+            query["sru"] = storage_units
+        else:
+            query["hru"] = storage_units
+        farms = j.sal.reservation_chatflow.farm_names_get(1, self, currency=self.currency, **query)
         self.node = j.sal.reservation_chatflow.nodes_get(
-            1, farm_names=farms, mru=mru, cru=cru, sru=sru, currency=self.currency
+            1, farm_names=farms, currency=self.currency, **query
         )[0]
 
     @j.baseclasses.chatflow_step(title="Expiration time")
@@ -149,6 +159,8 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             ip_address=self.ip_address,
             flist=self.conatiner_flist,
             storage_url=self.storage_url,
+            disk_type=self.rootfs_type.value,
+            disk_size=self.rootfs_size.value,
             env=self.env,
             interactive=self.interactive,
             entrypoint=self.user_form_data["Entry point"],
