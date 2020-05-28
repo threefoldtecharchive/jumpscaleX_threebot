@@ -48,9 +48,13 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         form = self.new_form()
         cpu = form.int_ask("Please add how many CPU cores are needed", default=1, required=True)
         memory = form.int_ask("Please add the amount of memory in MB", default=1024, required=True)
+        self.rootfs_type = form.single_choice("Select the storage type for your rootfs", ["SSD", "HDD"], default="SSD")
+        self.rootfs_size = form.int_ask("Choose the amount of (writeable) storage for your rootfs in MiB", default=256)
         form.ask()
         self.user_form_data["CPU"] = cpu.value
         self.user_form_data["Memory"] = memory.value
+        self.user_form_data["Rootfs Type"] = self.rootfs_type.value
+        self.user_form_data["Rootfs Size"] = self.rootfs_size.value
 
     @j.baseclasses.chatflow_step(title="Access keys")
     def public_key_get(self):
@@ -63,10 +67,13 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Container node id")
     def container_node_id(self):
         self.var_dict = {"pub_key": self.user_form_data["Public key"]}
-        self.query["currency"] = self.network.currency
         self.query["mru"] = math.ceil(self.user_form_data["Memory"] / 1024)
         self.query["cru"] = self.user_form_data["CPU"]
-        self.query["sru"] = 1
+        storage_units = math.ceil(self.rootfs_size.value / 1024)
+        if self.rootfs_type.value == "SSD":
+            self.query["sru"] = storage_units
+        else:
+            self.query["hru"] = storage_units
         # create new reservation
         self.reservation = j.sal.zosv2.reservation_create()
         self.nodeid = self.string_ask(
@@ -75,12 +82,13 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         while self.nodeid:
             try:
                 self.node_selected = j.sal.reservation_chatflow.validate_node(
-                    self.nodeid, self.query, self.query["currency"]
+                    self.nodeid, self.query, self.network.currency
                 )
                 break
             except (j.exceptions.Value, j.exceptions.NotFound) as e:
                 message = "<br> Please enter a different nodeid to deploy on or leave it empty"
                 self.nodeid = self.string_ask(str(e) + message, html=True, retry=True)
+        self.query["currency"] = self.network.currency
 
     @j.baseclasses.chatflow_step(title="Ubuntu container farm")
     def ubuntu_farm(self):
@@ -127,6 +135,8 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
             ip_address=self.ip_address,
             flist=container_flist,
             storage_url=storage_url,
+            disk_type=self.rootfs_type.value,
+            disk_size=self.rootfs_size.value,
             env=self.var_dict,
             interactive=False,
             entrypoint=entry_point,
