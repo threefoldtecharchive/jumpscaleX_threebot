@@ -105,7 +105,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         query["mru"] = math.ceil(self.memory.value / 1024)
         query["cru"] = self.cpu.value
 
-        storage_units = math.ceil(self.rootfs_size / 1024)
+        storage_units = math.ceil(self.rootfs_size.value / 1024)
         if self.rootfs_type.value == "SSD":
             query["sru"] = storage_units
         else:
