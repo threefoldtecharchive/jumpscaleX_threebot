@@ -83,6 +83,11 @@ export default class TopView extends JetView {
             icon: "mdi mdi-package"
         },
         {
+            id: "invoices",
+            value: "Invoices",
+            icon: "mdi mdi-receipt"
+        },
+        {
             id: "deployedSolutions",
             value: "Solutions",
             icon: "mdi mdi-animation-play",

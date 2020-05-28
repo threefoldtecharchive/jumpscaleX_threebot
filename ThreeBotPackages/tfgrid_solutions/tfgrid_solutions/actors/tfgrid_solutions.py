@@ -95,7 +95,8 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
         total_amount = ""
         transaction_fees = ""
         payment_source = ""
-        farmers_payment = (dict)
+        farmers_payments = (dict)
+        time = (T)
 
         ```
         """
