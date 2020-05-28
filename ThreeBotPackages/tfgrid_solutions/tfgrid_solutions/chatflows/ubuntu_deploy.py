@@ -24,7 +24,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         self.user_form_data = dict()
         self.query = dict()
         self.HUB_URL = "https://hub.grid.tf/tf-bootable"
-        self.IMAGES = ["ubuntu:16.04", "ubuntu:18.04"]
+        self.IMAGES = ["ubuntu-18.04","ubuntu-19.10","ubuntu-20.04"]
         self.model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.ubuntu.1")
         user_info = self.user_info()
         self.user_form_data["chatflow"] = "ubuntu"
@@ -115,7 +115,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
     def container_pay(self):
         self.network = self.network_copy
         self.network.update(j.me.tid, currency=self.query["currency"], bot=self)
-        container_flist = f"{self.HUB_URL}/{self.user_form_data['Version']}-r1.flist"
+        container_flist = f"{self.HUB_URL}/3bot-{self.user_form_data['Version']}.flist"
         storage_url = "zdb://hub.grid.tf:9900"
         entry_point = "/bin/bash /start.sh"
 
