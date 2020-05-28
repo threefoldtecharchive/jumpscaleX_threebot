@@ -5,27 +5,36 @@ import netaddr
 from Jumpscale import j
 
 
-FARM_ID = 71
+FARM_ID = 1
 DOMAIN = "play.grid.tf"
 NETWORK_NAME = "pub.play.grid.tf"
 NETWORK = netaddr.IPNetwork("10.40.0.0/16")
-FLIST = "https://hub.grid.tf/ahmedelsayed.3bot/threefoldtech-simulator-latest.flist"
-LIFETIME = 5 * 60 * 60
+FLIST = "https://hub.grid.tf/magidentfinal.3bot/mmotawea-simualtor-latest.flist"
+LIFETIME = 6 * 60 * 60
+CURRENCY = "FreeTFT"
+WALLET_NAME = "playground"
+GATEWAT_ID = "EwPS7nPZHd5KH6YH7PtbmUpJUyWgseqsqS7cGhjXLUjz"
 
 
 class Deployer:
     def __init__(self):
         self._zos = j.sal.zosv2
         self._redis = j.clients.redis.get()
-        self._pubkey = j.clients.sshkey.default.pubkey.strip()
-        self._nodes = list(self._zos.nodes_finder.nodes_search(farm_id=FARM_ID))
+        self._nodes = list(
+            filter(self._zos.nodes_finder.filter_is_free_to_use, self._zos.nodes_finder.nodes_search(farm_id=FARM_ID))
+        )
         self._gateway = j.tools.tf_gateway.get(self._redis)
 
-    def _deploy_volume(self, reservation, node, expiration):
+    def _deploy_volume(self, reservation, node, container, mountpoint):
         volume = self._zos.volume.create(reservation, node.node_id)
-        reservation = self._zos.reservation_register(reservation, expiration)
-        self._wait_for_result(reservation.reservation_id, "VOLUME")
-        return f"{reservation.reservation_id}-{volume.workload_id}"
+        self._zos.volume.attach(container, volume, mountpoint)
+        return volume
+
+    def _register_service(self, reservation, gateway, secret):
+        subdomain = f"tf-simulator-{uuid.uuid4().hex[:5]}"
+        domain = f"{subdomain}.{DOMAIN}"
+        self._zos.gateway.tcp_proxy_reverse(reservation, gateway.node_id, domain, secret)
+        return domain
 
     def _get_free_ip_address(self, node_id, subnet):
         used = [ip.decode().split(":")[-1] for ip in self._redis.keys("play:used:ip:*")]
@@ -43,7 +52,10 @@ class Deployer:
 
     def _wireguard_connect(self, wireguard):
         j.sal.fs.writeFile("/etc/wireguard/network.conf", wireguard)
-        j.tools.executor.local.execute("wg-quick down network")
+        try:
+            j.tools.executor.local.execute("wg-quick down network")
+        except Exception:
+            pass
         j.tools.executor.local.execute("wg-quick up network")
 
     def _wait_for_result(self, reservation_id, category, timeout=120):
@@ -76,23 +88,34 @@ class Deployer:
         node = next(filter(self._zos.nodes_finder.filter_public_ip4, self._nodes))
         wireguard = self._zos.network.add_access(network, node.node_id, str(next(subnetworks)), ipv4=True)
 
+        self._zos.gateway.delegate_domain(reservation=reservation, node_id=GATEWAT_ID, domain=DOMAIN)
         expiration = j.data.time.epoch + (3600 * 24 * 365)
-        reservation = self._zos.reservation_register(reservation, expiration)
+        reservation = self._zos.reservation_register(reservation, expiration, currencies=[CURRENCY])
 
         self._wait_for_result(reservation.reservation_id, "NETWORK")
         self._wireguard_connect(wireguard)
 
-    def deploy_container(self):
+    def deploy_container(self, bot=None):
         expiration = j.data.time.epoch + LIFETIME
-
-        nodes = self._zos.nodes_finder.nodes_by_capacity(farm_id=FARM_ID, cru=4, mru=2, hru=8)
+        nodes = self._zos.nodes_finder.nodes_by_capacity(farm_id=FARM_ID, cru=4, mru=4, hru=1, sru=1, currency=CURRENCY)
         node = random.choice(list(nodes))
 
         reservation = self._zos.reservation_create()
-        volume_id = self._deploy_volume(reservation, node, expiration)
 
         subnet = self._redis.hget("play:subnets", node.node_id).decode()
         ip_address = self._get_free_ip_address(node.node_id, subnet)
+
+        gateway = self._zos._explorer.gateway.get(node_id=GATEWAT_ID)
+        secret_env = {}
+        secret = f"{j.me.tid}:{uuid.uuid4().hex}"
+        secret_encrypted = self._zos.container.encrypt_secret(node.node_id, secret)
+        remote = f"{gateway.dns_nameserver[0]}:{gateway.tcp_router_port}"
+        remote_encrypted = self._zos.container.encrypt_secret(node.node_id, remote)
+        local = f"localhost:8888"
+        local_encrypted = self._zos.container.encrypt_secret(node.node_id, local)
+        secret_env["TRC_SECRET"] = secret_encrypted
+        secret_env["TRC_LOCAL"] = local_encrypted
+        secret_env["TRC_REMOTE"] = remote_encrypted
 
         container = j.sal.zosv2.container.create(
             reservation=reservation,
@@ -100,39 +123,53 @@ class Deployer:
             network_name=NETWORK_NAME,
             ip_address=ip_address,
             flist=FLIST,
-            env={"pub_key": self._pubkey},
             entrypoint="/startup.sh",
             cpu=4,
             memory=4096,
+            secret_env=secret_env,
         )
 
-        self._zos.volume.attach_existing(container, volume_id, "/sandbox/var")
+        vol1 = self._deploy_volume(reservation, node, container, "/sandbox/var")
+        vol2 = self._deploy_volume(reservation, node, container, "/sandbox/code")
+        domain = self._register_service(reservation, gateway, secret)
 
-        reservation = j.sal.zosv2.reservation_register(reservation, expiration)
-        self._wait_for_result(reservation.reservation_id, "CONTAINER")
-        j.sal.nettools.tcpPortConnectionTest(ip_address, port=22, timeout=30)
+        wallet = j.clients.stellar.find(name=WALLET_NAME)[0]
+        reservation_id = j.sal.reservation_chatflow.reservation_register_and_pay(
+            reservation, expiration, currency=CURRENCY, bot=bot, customer_tid=j.me.tid, wallet=wallet
+        )
+        j.sal.nettools.waitConnectionTest(ip_address, port=8888, timeout=180)
 
-        domain = "tf-simulator-%s.%s" % (uuid.uuid4().hex[:5], DOMAIN)
-        self._gateway.tcpservice_register(domain, ip_address, service_http_port=8888, expire=LIFETIME)
         return domain
 
 
 deployer = Deployer()
 
 
-def chat(bot):
-    options = ["Continue", "Cancel"]
-    confirm = bot.single_choice("Do you want to deploy a threefold simulator container ?", options)
+class SimulatorDeploy(j.servers.chatflow.get_class()):
+    steps = ["simulator_reservation"]
 
-    if confirm == "Continue":
-        url = deployer.deploy_container()
+    @j.baseclasses.chatflow_step(title="Deploy Simulator")
+    def simulator_reservation(self):
+        client_ip = self.kwargs.get("client_ip")
+        simulator_url = deployer._redis.get(client_ip)
+        if simulator_url:
+            url = simulator_url.decode()
+            self.md_show(f"You already have a running simulator on url [http://{url}](http://{url})")
+            return
+        options = ["Continue", "Cancel"]
+        confirm = self.single_choice("Do you want to deploy a threefold simulator container ?", options)
+        if confirm == "Continue":
+            url = deployer.deploy_container(bot=self)
+            deployer._redis.set(client_ip, url, ex=LIFETIME)
+            message = """
+                    ### Visit your container using this link:
+                    #### [http://{url}](http://{url})
+                    > Note: Your container will be destroyed after 6 hours
+                    """.format(
+                url=url
+            )
 
-        message = """
-        ### Visit your container using this link: 
-        #### [http://{url}](http://{url}) 
-        > Note: Your container will be destroyed after 5 hours
-        """.format(
-            url=url
-        )
+            self.md_show(j.tools.jinja2.template_render(text=j.core.text.strip(message)))
 
-        bot.md_show(j.tools.jinja2.template_render(text=j.core.text.strip(message)))
+
+chat = SimulatorDeploy

@@ -29,6 +29,10 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
         form_info = (S)
         ```
         """
+        
+        # Update the solutions from the explorer
+        j.sal.reservation_chatflow.solutions_explorer_get()
+       
         solutions = []
         urls = [
             "tfgrid.solutions.minio.1",
@@ -36,6 +40,10 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
             "tfgrid.solutions.kubernetes.1",
             "tfgrid.solutions.ubuntu.1",
             "tfgrid.solutions.network.1",
+            "tfgrid.solutions.exposed.1",
+            "tfgrid.solutions.delegated_domain.1",
+            "tfgrid.solutions.4to6gw.1",
+            "tfgrid.solutions.gitea.1",
         ]
 
         if solution_type == "all":
