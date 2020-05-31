@@ -82,20 +82,8 @@ class FlistDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Environment variables")
     def container_env(self):
-        self.user_form_data["Env variables"] = self.string_ask(
-            """To set environment variables on your deployed container, enter comma-separated variable=value
-            For example: var1=value1, var2=value2.
-            Leave empty if not needed"""
-        )
-        if self.user_form_data["Env variables"]:
-            var_list = self.user_form_data["Env variables"].split(",")
-            var_dict = {}
-            for item in var_list:
-                splitted_item = item.split("=")
-                if len(splitted_item) == 2:
-                    var_dict[splitted_item[0]] = splitted_item[1]
-
-            self.env.update(var_dict)
+        self.user_form_data["Env variables"] = self.multi_values_ask("Set Environment Variables")
+        self.env.update(self.user_form_data["Env variables"])
 
     @j.baseclasses.chatflow_step(title="Container farm")
     def container_farm(self):
