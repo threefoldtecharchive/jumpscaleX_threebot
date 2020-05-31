@@ -124,10 +124,9 @@ export default class InvoicesView extends JetView {
             cancel: "No",
             text: `Export invoice(s) of ${indexes.join(", ")}`
         }).then(() => {
-            var d = new Date();
-            let filename = `invoices_export_${d.toString()}.pdf`
-            let text = ``
             for (let item of items) {
+                let filename = `invoice_${item.id}.pdf`
+                let text = ``
                 for (let [key, value] of Object.entries(item)) {
                     if (key == "index") {
                         continue
@@ -144,8 +143,6 @@ export default class InvoicesView extends JetView {
                         text += `\n${key}: ${value}\n`
                     }
                 }
-
-            }
             const specialElementHandlers = {
               '#editor': function (element, renderer) {
                 return true;
@@ -154,6 +151,8 @@ export default class InvoicesView extends JetView {
             var doc = new jsPDF('landscape');
             doc.text(text, 1, 1);
             doc.save(filename)
+            }
+
         });
     }
 
