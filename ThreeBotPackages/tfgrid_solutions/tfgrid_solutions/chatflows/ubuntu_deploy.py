@@ -48,13 +48,13 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         form = self.new_form()
         cpu = form.int_ask("Please add how many CPU cores are needed", default=1, required=True)
         memory = form.int_ask("Please add the amount of memory in MB", default=1024, required=True)
-        self.rootfs_type = form.single_choice("Select the storage type for your rootfs", ["SSD", "HDD"], default="SSD")
-        self.rootfs_size = form.int_ask("Choose the amount of (writeable) storage for your rootfs in MiB", default=256)
+        self.rootfs_type = form.single_choice("Select the storage type for your root filesystem", ["SSD", "HDD"], default="SSD")
+        self.rootfs_size = form.int_ask("Choose the amount of storage for your root filesystem in MiB", default=256)
         form.ask()
         self.user_form_data["CPU"] = cpu.value
         self.user_form_data["Memory"] = memory.value
-        self.user_form_data["Rootfs Type"] = self.rootfs_type.value
-        self.user_form_data["Rootfs Size"] = self.rootfs_size.value
+        self.user_form_data["Root filesystem Type"] = str(self.rootfs_type.value)
+        self.user_form_data["Root filesystem Size"] = self.rootfs_size.value
 
     @j.baseclasses.chatflow_step(title="Access keys")
     def public_key_get(self):
