@@ -136,6 +136,8 @@ export default class InvoicesView extends JetView {
 
 \tPayment: ${item.id}
 
+\tReservation ID: ${item.rid}
+
 \tExplorer: ${item.explorer}
 
 \tCurrency: ${item.currency}
