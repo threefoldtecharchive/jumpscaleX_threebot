@@ -127,21 +127,33 @@ export default class InvoicesView extends JetView {
             for (let item of items) {
                 let filename = `invoice_${item.id}.pdf`
                 let text = ``
+                let payment_info = ""
+                for (let [key, value] of Object.entries(item.farmer_payments)) {
+                    payment_info += `\n\t- Farm Name: ${key},  Amount: ${value}\n`
+                }
                 for (let [key, value] of Object.entries(item)) {
-                    if (key == "index") {
-                        continue
-                    }
-                    if (key == "farmer_payments") {
-                        let payment_info = ""
-                        for (let [key, value] of Object.entries(item.farmer_payments)) {
-                            payment_info += `\nFarm Name: ${key},  Amount: ${value}\n`
-                        }
-                        text += payment_info
-                    } else if (key == "time") {
-                        text += `\n${key}: ${value.toString()}\n`
-                    } else {
-                        text += `\n${key}: ${value}\n`
-                    }
+                    text = `
+
+                                           Payment: ${item.id}
+
+Explorer: ${item.explorer}
+
+Currency: ${item.currency}
+
+Total Amount: ${item.total_amount}
+
+Transaction Fees: ${item.transaction_fees}
+
+Payment Source: ${item.payment_source}
+
+Farmer Payments:
+${payment_info}
+Escrow Address: ${item.escrow_address}
+
+Escrow Asset: ${item.escrow_asset}
+
+Time: ${item.time.toString()}
+`
                 }
             const specialElementHandlers = {
               '#editor': function (element, renderer) {
