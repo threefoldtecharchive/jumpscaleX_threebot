@@ -184,6 +184,8 @@ class SolutionExpose(j.servers.chatflow.get_class()):
         query = {"mru": 1, "cru": 1, "currency": self.solution_currency, "sru": 1}
         node_selected = j.sal.reservation_chatflow.nodes_get(1, **query)[0]
         network = j.sal.reservation_chatflow.network_get(self, j.me.tid, self.network_name)
+        if not network:
+            self.stop(f"Network: {self.network_name} is expired.")
         network.add_node(node_selected)
         network.update(j.me.tid, currency=self.solution_currency, bot=self)
         ip_address = network.get_free_ip(node_selected)
