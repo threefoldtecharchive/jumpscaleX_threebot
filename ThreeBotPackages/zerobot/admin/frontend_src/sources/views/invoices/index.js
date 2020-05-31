@@ -129,30 +129,30 @@ export default class InvoicesView extends JetView {
                 let text = ``
                 let payment_info = ""
                 for (let [key, value] of Object.entries(item.farmer_payments)) {
-                    payment_info += `\n\t- Farm Name: ${key},  Amount: ${value}\n`
+                    payment_info += `\n\t\t- Farm Name: ${key},  Amount: ${value}\n`
                 }
                 for (let [key, value] of Object.entries(item)) {
                     text = `
 
-                                           Payment: ${item.id}
+\tPayment: ${item.id}
 
-Explorer: ${item.explorer}
+\tExplorer: ${item.explorer}
 
-Currency: ${item.currency}
+\tCurrency: ${item.currency}
 
-Total Amount: ${item.total_amount}
+\tTotal Amount: ${item.total_amount}
 
-Transaction Fees: ${item.transaction_fees}
+\tTransaction Fees: ${item.transaction_fees}
 
-Payment Source: ${item.payment_source}
+\tPayment Source: ${item.payment_source}
 
-Farmer Payments:
+\tFarmer Payments:
 ${payment_info}
-Escrow Address: ${item.escrow_address}
+\tEscrow Address: ${item.escrow_address}
 
-Escrow Asset: ${item.escrow_asset}
+\tEscrow Asset: ${item.escrow_asset}
 
-Time: ${item.time.toString()}
+\tTime: ${item.time.toString()}
 `
                 }
             const specialElementHandlers = {
