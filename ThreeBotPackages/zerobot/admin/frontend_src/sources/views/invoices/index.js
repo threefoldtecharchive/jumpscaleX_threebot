@@ -1,7 +1,4 @@
 import { JetView } from "webix-jet";
-
-import { ansiUp } from "../../common/colors";
-import { dateFormatter } from "../../common/formatters";
 import { invoices } from "../../services/invoices";
 
 import InvoiceView from "./invoices";

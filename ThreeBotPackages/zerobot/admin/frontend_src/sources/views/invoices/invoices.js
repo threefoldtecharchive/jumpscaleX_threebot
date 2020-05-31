@@ -1,8 +1,5 @@
 import { JetView } from "webix-jet";
 
-import { ansiUp } from "../../common/colors";
-import { dateFormatter } from "../../common/formatters";
-
 export default class InvoiceView extends JetView {
     config() {
         const info = {
