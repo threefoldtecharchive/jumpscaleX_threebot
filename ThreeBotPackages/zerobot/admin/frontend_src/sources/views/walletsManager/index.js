@@ -147,6 +147,7 @@ export default class WalletManagerView extends JetView {
 
         self.wallets_table = $$("wallets_table");
         wallet.getWallets().then(data => {
+            self.wallets_table.clearAll()
             self.wallets_table.parse(data.json())
         });
     }
