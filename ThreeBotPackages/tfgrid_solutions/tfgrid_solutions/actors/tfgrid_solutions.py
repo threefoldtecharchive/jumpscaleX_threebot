@@ -29,10 +29,10 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
         form_info = (S)
         ```
         """
-        
+
         # Update the solutions from the explorer
         j.sal.reservation_chatflow.solutions_explorer_get()
-       
+
         solutions = []
         urls = [
             "tfgrid.solutions.minio.1",
@@ -74,3 +74,44 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
             j.sal.reservation_chatflow.reservation_cancel_for_solution(url, solution_name)
             return True
         return False
+
+    @j.baseclasses.actor_method
+    def payments_list(self, payment_id=None, rid=None, schema_out=None, user_session=None):
+        """
+        ```in
+        payment_id = "" (S)
+        rid = "" (S)
+        ```
+
+        ```out
+        payments = (LO) !tfgrid.payment.1
+
+        @url = tfgrid.payment.1
+        rid = ""
+        explorer = ""
+        currency = ""
+        escrow_address = ""
+        escrow_asset = ""
+        total_amount = ""
+        transaction_fees = ""
+        payment_source = ""
+        farmers_payments = (dict)
+        time = (T)
+
+        ```
+        """
+        model = j.clients.bcdbmodel.get(url="tfgrid.solutions.payment.1")
+        payments = []
+        if payment_id:
+            payment = model.find(id=payment_id)
+            if payment:
+                payments.append(payment)
+        else:
+            for payment in model.find():
+                if payment.explorer == j.clients.explorer.default.url:
+                    if rid and payment.rid != rid:
+                        continue
+                    payments.append(payment)
+        out = schema_out.new()
+        out.payments = payments
+        return out
