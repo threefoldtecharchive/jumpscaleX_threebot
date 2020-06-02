@@ -119,14 +119,12 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             vol_disk_type = form.drop_down_choice(
                 "Please choose the type of disk for the volume", ["SSD", "HDD"], required=True, default="SSD"
             )
-            vol_disk_size = form.int_ask(
-                "If you need an extra volume to be attached to the container, please specify its size",
-                required=True,
-                default=10,
-            )
+            vol_disk_size = form.int_ask("Please specify the volume size", required=True, default=10)
+            vol_mount_point = form.string_ask("Please enter the mount point", required=True, default="/data")
             form.ask()
             self.user_form_data["Volume Disk type"] = vol_disk_type.value
             self.user_form_data["Volume Size"] = vol_disk_size.value
+            self.user_form_data["Volume mount point"] = vol_mount_point.value
 
     @j.baseclasses.chatflow_step(title="Expiration time")
     def expiration_time(self):
@@ -187,7 +185,9 @@ class FlistDeploy(j.servers.chatflow.get_class()):
                 size=self.user_form_data["Volume Size"],
                 type=self.user_form_data["Volume Disk type"],
             )
-            j.sal.zosv2.volume.attach(container=cont, volume=self.volume, mount_point="/data")
+            j.sal.zosv2.volume.attach(
+                container=cont, volume=self.volume, mount_point=self.user_form_data["Volume mount point"]
+            )
 
         metadata = dict()
         metadata["chatflow"] = self.user_form_data["chatflow"]
