@@ -19,7 +19,6 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         "expiration_time",
         "container_ip",
         "overview",
-        "volume_pay",
         "container_pay",
         "container_acess",
     ]
@@ -159,23 +158,6 @@ class FlistDeploy(j.servers.chatflow.get_class()):
     def overview(self):
         self.md_show_confirm(self.user_form_data)
 
-    @j.baseclasses.chatflow_step(title="Volume Payment", disable_previous=True)
-    def volume_pay(self):
-        if self.container_volume_attach:
-            self.volume = j.sal.zosv2.volume.create(
-                self.reservation,
-                self.node.node_id,
-                size=self.user_form_data["Volume Size"],
-                type=self.user_form_data["Volume Disk type"],
-            )
-            self.volume_rid = j.sal.reservation_chatflow.reservation_register_and_pay(
-                self.reservation, self.expiration, customer_tid=j.me.tid, currency=self.currency, bot=self
-            )
-            res = f"# Volume has been deployed with reservation id: {self.volume_rid}. Click next to continue with deployment of the container"
-
-            self.reservation_result = j.sal.reservation_chatflow.reservation_wait(self, self.volume_rid)
-            self.md_show(res)
-
     @j.baseclasses.chatflow_step(title="Container Payment", disable_previous=True)
     def container_pay(self):
         self.network = self.network_copy
@@ -199,9 +181,14 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             memory=self.user_form_data["Memory"],
         )
         if self.container_volume_attach:
-            j.sal.zosv2.volume.attach_existing(
-                container=cont, volume_id=f"{self.volume_rid}-{self.volume.workload_id}", mount_point="/data"
+            self.volume = j.sal.zosv2.volume.create(
+                self.reservation,
+                self.node.node_id,
+                size=self.user_form_data["Volume Size"],
+                type=self.user_form_data["Volume Disk type"],
             )
+            j.sal.zosv2.volume.attach(container=cont, volume=self.volume, mount_point="/data")
+
         metadata = dict()
         metadata["chatflow"] = self.user_form_data["chatflow"]
         metadata["Solution name"] = self.user_form_data["Solution name"]
