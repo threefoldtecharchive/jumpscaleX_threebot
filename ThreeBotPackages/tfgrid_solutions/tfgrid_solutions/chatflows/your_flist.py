@@ -14,9 +14,13 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         "container_interactive",
         "container_env",
         "container_farm",
+        "container_volume",
+        "container_volume_storage_type",
+        "container_volume_size",
         "expiration_time",
         "container_ip",
         "overview",
+        "volume_pay",
         "container_pay",
         "container_acess",
     ]
@@ -61,7 +65,9 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         form = self.new_form()
         self.cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
         self.memory = form.int_ask("Please add the amount of memory in MB", default=1024)
-        self.rootfs_type = form.single_choice("Select the storage type for your root filesystem", ["SSD", "HDD"], default="SSD")
+        self.rootfs_type = form.single_choice(
+            "Select the storage type for your root filesystem", ["SSD", "HDD"], default="SSD"
+        )
         self.rootfs_size = form.int_ask("Choose the amount of storage for your root filesystem in MiB", default=256)
         form.ask()
         self.user_form_data["CPU"] = self.cpu.value
@@ -75,7 +81,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"], required=True
         )
         if self.user_form_data["Interactive"] == "NO":
-            self.user_form_data["Entry point"] = self.string_ask("Please add your entrypoint for your flist")
+            self.user_form_data["Entry point"] = self.string_ask("Please add your entrypoint for your flist") or ""
         else:
             self.user_form_data["Port"] = "7681"
             self.user_form_data["Entry point"] = ""
@@ -99,9 +105,30 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         else:
             query["hru"] = storage_units
         farms = j.sal.reservation_chatflow.farm_names_get(1, self, currency=self.currency, **query)
-        self.node = j.sal.reservation_chatflow.nodes_get(
-            1, farm_names=farms, currency=self.currency, **query
-        )[0]
+        self.node = j.sal.reservation_chatflow.nodes_get(1, farm_names=farms, currency=self.currency, **query)[0]
+
+    @j.baseclasses.chatflow_step(title="Attach Volume")
+    def container_volume(self):
+        volume_attach = self.drop_down_choice(
+            "Would you like to attach an extra volume to the container", ["YES", "NO"], required=True, default="NO"
+        )
+        self.container_volume_attach = volume_attach == "YES" or False
+
+    @j.baseclasses.chatflow_step(title="Volume storage type")
+    def container_volume_storage_type(self):
+        if self.container_volume_attach:
+            self.user_form_data["Volume Disk type"] = self.drop_down_choice(
+                "Please choose the type of disk for the volume", ["SSD", "HDD"], required=True, default="SSD"
+            )
+
+    @j.baseclasses.chatflow_step(title="Volume Size")
+    def container_volume_size(self):
+        if self.container_volume_attach:
+            self.user_form_data["Volume Size"] = self.int_ask(
+                "If you need an extra volume to be attached to the container, please specify its size",
+                required=True,
+                default=10,
+            )
 
     @j.baseclasses.chatflow_step(title="Expiration time")
     def expiration_time(self):
@@ -133,14 +160,28 @@ class FlistDeploy(j.servers.chatflow.get_class()):
     def overview(self):
         self.md_show_confirm(self.user_form_data)
 
-    @j.baseclasses.chatflow_step(title="Payment", disable_previous=True)
+    @j.baseclasses.chatflow_step(title="Volume Payment", disable_previous=True)
+    def volume_pay(self):
+        if self.container_volume_attach:
+            self.volume = j.sal.zosv2.volume.create(
+                self.reservation, self.node.node_id, size=10, type=self.user_form_data["Volume Disk type"]
+            )
+            self.volume_rid = j.sal.reservation_chatflow.reservation_register_and_pay(
+                self.reservation, self.expiration, customer_tid=j.me.tid, currency=self.currency, bot=self
+            )
+            res = f"# Volume has been deployed with reservation id: {self.volume_rid}. Click next to continue with deployment of the container"
+
+            self.reservation_result = j.sal.reservation_chatflow.reservation_wait(self, self.volume_rid)
+            self.md_show(res)
+
+    @j.baseclasses.chatflow_step(title="Container Payment", disable_previous=True)
     def container_pay(self):
         self.network = self.network_copy
         # update network
         self.network.update(j.me.tid, currency=self.currency, bot=self)
 
         # create container
-        j.sal.zosv2.container.create(
+        cont = j.sal.zosv2.container.create(
             reservation=self.reservation,
             node_id=self.node.node_id,
             network_name=self.network.name,
@@ -155,6 +196,10 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             cpu=self.user_form_data["CPU"],
             memory=self.user_form_data["Memory"],
         )
+        if self.container_volume_attach:
+            j.sal.zosv2.volume.attach_existing(
+                container=cont, volume_id=f"{self.volume_rid}-{self.volume.workload_id}", mount_point="/data"
+            )
         metadata = dict()
         metadata["chatflow"] = self.user_form_data["chatflow"]
         metadata["Solution name"] = self.user_form_data["Solution name"]
