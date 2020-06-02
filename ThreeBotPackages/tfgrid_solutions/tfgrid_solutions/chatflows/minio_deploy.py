@@ -12,6 +12,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         "access_credentials",
         "container_resources",
         "minio_resources",
+        "public_key",
         "expiration_datetime",
         "zdb_nodes",
         "minio_node",
@@ -102,6 +103,17 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         elif self.user_form_data["Setup type"] == "Master/Slave Setup":
             self.user_form_data["ZDB number"] += 1
             self.number_of_minio_nodes = 2
+
+    @j.baseclasses.chatflow_step(title="Public key")
+    def public_key(self):
+        public_key_file = self.upload_file(
+            """Please add your public ssh key, this will allow you to access the deployed minio container using ssh.
+                Just upload the file with the key. (Optional)"""
+        ).split("\n")
+        if public_key_file:
+            self.public_key = public_key_file[0]
+        else:
+            self.public_key = ""
 
     @j.baseclasses.chatflow_step(title="Expiration")
     def expiration_datetime(self):
@@ -240,6 +252,8 @@ class MinioDeploy(j.servers.chatflow.get_class()):
                 "DATA": str(self.user_form_data["Locations"]),
                 "PARITY": str(self.user_form_data["Locations allowed to fail"]),
                 "ACCESS_KEY": self.user_form_data["Access key"],
+                "SSH_KEY": self.public_key,
+                "MINIO_PROMETHEUS_AUTH_TYPE": "public",
             },
             secret_env=secret_env,
         )
@@ -274,6 +288,8 @@ class MinioDeploy(j.servers.chatflow.get_class()):
                     "DATA": str(self.user_form_data["Locations"]),
                     "PARITY": str(self.user_form_data["Locations allowed to fail"]),
                     "ACCESS_KEY": self.user_form_data["Access key"],
+                    "SSH_KEY": self.public_key,
+                    "MINIO_PROMETHEUS_AUTH_TYPE": "public",
                 },
                 secret_env=secret_env,
             )
