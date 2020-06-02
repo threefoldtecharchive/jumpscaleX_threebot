@@ -15,8 +15,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         "container_env",
         "container_farm",
         "container_volume",
-        "container_volume_storage_type",
-        "container_volume_size",
+        "container_volume_details",
         "expiration_time",
         "container_ip",
         "overview",
@@ -114,21 +113,21 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         )
         self.container_volume_attach = volume_attach == "YES" or False
 
-    @j.baseclasses.chatflow_step(title="Volume storage type")
-    def container_volume_storage_type(self):
+    @j.baseclasses.chatflow_step(title="Volume details")
+    def container_volume_details(self):
         if self.container_volume_attach:
-            self.user_form_data["Volume Disk type"] = self.drop_down_choice(
+            form = self.new_form()
+            vol_disk_type = form.drop_down_choice(
                 "Please choose the type of disk for the volume", ["SSD", "HDD"], required=True, default="SSD"
             )
-
-    @j.baseclasses.chatflow_step(title="Volume Size")
-    def container_volume_size(self):
-        if self.container_volume_attach:
-            self.user_form_data["Volume Size"] = self.int_ask(
+            vol_disk_size = form.int_ask(
                 "If you need an extra volume to be attached to the container, please specify its size",
                 required=True,
                 default=10,
             )
+            form.ask()
+            self.user_form_data["Volume Disk type"] = vol_disk_type.value
+            self.user_form_data["Volume Size"] = vol_disk_size.value
 
     @j.baseclasses.chatflow_step(title="Expiration time")
     def expiration_time(self):
@@ -164,7 +163,10 @@ class FlistDeploy(j.servers.chatflow.get_class()):
     def volume_pay(self):
         if self.container_volume_attach:
             self.volume = j.sal.zosv2.volume.create(
-                self.reservation, self.node.node_id, size=10, type=self.user_form_data["Volume Disk type"]
+                self.reservation,
+                self.node.node_id,
+                size=self.user_form_data["Volume Size"],
+                type=self.user_form_data["Volume Disk type"],
             )
             self.volume_rid = j.sal.reservation_chatflow.reservation_register_and_pay(
                 self.reservation, self.expiration, customer_tid=j.me.tid, currency=self.currency, bot=self
