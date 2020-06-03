@@ -188,7 +188,7 @@ ${payment_info}
         webix.ui({
             view: "contextmenu",
             id: "invoices_cm",
-            data: ["View", "Export"]
+            data: ["Export"]
         }).attachTo(self.table);
 
 
@@ -200,9 +200,6 @@ ${payment_info}
         $$("invoices_cm").attachEvent("onMenuItemClick", function (id) {
             if (id == "Export") {
                 self.exportItem(self.table.getSelectedId());
-            } else if (id == "View") {
-                let item = self.table.getSelectedItem()
-                self.invoiceView.viewItem(item);
             }
         });
     }
