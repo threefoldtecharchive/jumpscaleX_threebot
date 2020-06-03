@@ -1,4 +1,5 @@
 import { JetView } from "webix-jet";
+import * as jsPDF from 'jspdf'
 
 export default class InvoiceView extends JetView {
     config() {
@@ -32,7 +33,16 @@ export default class InvoiceView extends JetView {
                             click: function () {
                                 this.getTopParentView().hide();
                             }
-                        }]
+                        },
+                        {
+                            view: "button",
+                            value: "Export",
+                            css: "webix_primary",
+                            click: function (){
+                            this.$scope.exportItem()
+                        }
+                            }
+                        ]
                     }
                 ]
             }
@@ -47,6 +57,7 @@ export default class InvoiceView extends JetView {
 
     viewItem(item) {
         var self = this
+        self.itemObj = item
         self.info.clearAll()
         for (let [key, value] of Object.entries(item)) {
             if (key === "farmer_payments") {
@@ -69,5 +80,58 @@ export default class InvoiceView extends JetView {
 
 
         this.getRoot().show();
+    }
+
+    exportItem() {
+        var self = this;
+        let item = self.itemObj
+        webix.confirm({
+            title: "Export invoice",
+            ok: "Yes",
+            cancel: "No",
+            text: `Export invoice ${item.id}`
+        }).then(() => {
+                let filename = `invoice_${item.id}.pdf`
+                let text = ``
+                let payment_info = ""
+                for (let [key, value] of Object.entries(item.farmer_payments)) {
+                    payment_info += `\n\t\t- Farm Name: ${key},  Amount: ${value}\n`
+                }
+                for (let [key, value] of Object.entries(item)) {
+                    text = `
+
+\tPayment: ${item.id}
+
+\tReservation ID: ${item.rid}
+
+\tExplorer: ${item.explorer}
+
+\tCurrency: ${item.currency}
+
+\tTotal Amount: ${item.total_amount}
+
+\tTransaction Fees: ${item.transaction_fees}
+
+\tPayment Source: ${item.payment_source}
+
+\tFarmer Payments:
+${payment_info}
+\tEscrow Address: ${item.escrow_address}
+
+\tEscrow Asset: ${item.escrow_asset}
+
+\tTime: ${item.time.toString()}
+`
+                }
+            const specialElementHandlers = {
+              '#editor': function (element, renderer) {
+                return true;
+              }
+            };
+            var doc = new jsPDF('landscape');
+            doc.text(text, 1, 1);
+            doc.save(filename)
+
+        });
     }
 }
