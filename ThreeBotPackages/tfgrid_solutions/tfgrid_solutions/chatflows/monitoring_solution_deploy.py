@@ -265,9 +265,8 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         )
         prometheus_logs = prometheus_cont.logs.new()
         prometheus_logs.type = "redis"
-        prometheus_logs_data = prometheus_logs.data.new()
-        prometheus_logs_data.stdout = f"redis://{redis_ip_address}:6379/container-stdout"
-        prometheus_logs_data.stderr = f"redis://{redis_ip_address}:6379/container-stderr"
+        prometheus_logs.data.stdout = f"redis://{redis_ip_address}:6379/prometheus-stdout"
+        prometheus_logs.data.stderr = f"redis://{redis_ip_address}:6379/prometheus-stderr"
         self.prometheus_volume = j.sal.zosv2.volume.create(
             self.reservation,
             self.nodes_selected["Prometheus"].node_id,
@@ -296,9 +295,8 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         )
         grafana_logs = grafana_cont.logs.new()
         grafana_logs.type = "redis"
-        grafana_logs_data = grafana_logs.data.new()
-        grafana_logs_data.stdout = f"redis://{redis_ip_address}:6379/container-stdout"
-        grafana_logs_data.stderr = f"redis://{redis_ip_address}:6379/container-stderr"
+        grafana_logs.data.stdout = f"redis://{redis_ip_address}:6379/grafana-stdout"
+        grafana_logs.data.stderr = f"redis://{redis_ip_address}:6379/grafana-stderr"
 
         metadata = dict()
         metadata["chatflow"] = self.user_form_data["chatflow"]
