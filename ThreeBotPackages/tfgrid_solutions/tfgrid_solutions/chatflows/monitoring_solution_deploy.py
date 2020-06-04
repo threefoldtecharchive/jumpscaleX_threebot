@@ -223,58 +223,11 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         self.network.update(j.me.tid, currency=self.network.currency, bot=self)
 
         storage_url = "zdb://hub.grid.tf:9900"
-
-        # create prometheus container
-        prometheus_flist = f"https://hub.grid.tf/tf-official-apps/prometheus:latest.flist"
-        prometheus_entry_point = ""
-
-        prometheus_cont = j.sal.zosv2.container.create(
-            reservation=self.reservation,
-            node_id=self.nodes_selected["Prometheus"].node_id,
-            network_name=self.network.name,
-            ip_address=self.ip_addresses["Prometheus"],
-            flist=prometheus_flist,
-            storage_url=storage_url,
-            disk_type=self.user_form_data["Prometheus Root filesystem Type"],
-            disk_size=self.user_form_data["Prometheus Root filesystem Size"],
-            env=self.env_var_dict,
-            interactive=False,
-            entrypoint=prometheus_entry_point,
-            cpu=self.user_form_data["Prometheus CPU"],
-            memory=self.user_form_data["Prometheus Memory"],
-        )
-        self.prometheus_volume = j.sal.zosv2.volume.create(
-            self.reservation,
-            self.nodes_selected["Prometheus"].node_id,
-            size=self.user_form_data["Prometheus Volume Size"],
-            type=self.user_form_data["Prometheus Volume Disk type"],
-        )
-        j.sal.zosv2.volume.attach(container=prometheus_cont, volume=self.prometheus_volume, mount_point="/data")
-
-        # # create grafana container
-        # grafana_flist = f""
-        # grafana_entry_point = ""
-
-        # grafana_cont = j.sal.zosv2.container.create(
-        #     reservation=self.reservation,
-        #     node_id=self.nodes_selected["Grafana"].node_id,
-        #     network_name=self.network.name,
-        #     ip_address=self.ip_addresses["Grafana"],
-        #     flist=grafana_flist,
-        #     storage_url=storage_url,
-        #     disk_type=self.user_form_data["Grafana Root filesystem Type"],
-        #     disk_size=self.user_form_data["Grafana Root filesystem Size"],
-        #     env=self.env_var_dict,
-        #     interactive=False,
-        #     entrypoint=grafana_entry_point,
-        #     cpu=self.user_form_data["Grafana CPU"],
-        #     memory=self.user_form_data["Grafana Memory"],
-        # )
+        redis_ip_address = self.ip_addresses["Redis"]
 
         # # create redis container
         # redis_flist = f""
         # redis_entry_point = ""
-        # redis_ip_address = self.ip_addresses["Redis"]
 
         # redis_cont = j.sal.zosv2.container.create(
         #     reservation=self.reservation,
@@ -291,11 +244,61 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         #     cpu=self.user_form_data["Redis CPU"],
         #     memory=self.user_form_data["Redis Memory"],
         # )
-        # redis_logs = redis_cont.logs.new()
-        # redis_logs.type = "redis"
-        # redis_logs_data = redis_logs.data.new()
-        # redis_logs_data.stdout = f"redis://{redis_ip_address}:6379/container-stdout"
-        # redis_logs_data.stderr = f"redis://{redis_ip_address}:6379/container-stderr"
+
+        # create prometheus container
+        prometheus_flist = "https://hub.grid.tf/tf-official-apps/prometheus:latest.flist"
+
+        prometheus_cont = j.sal.zosv2.container.create(
+            reservation=self.reservation,
+            node_id=self.nodes_selected["Prometheus"].node_id,
+            network_name=self.network.name,
+            ip_address=self.ip_addresses["Prometheus"],
+            flist=prometheus_flist,
+            storage_url=storage_url,
+            disk_type=self.user_form_data["Prometheus Root filesystem Type"],
+            disk_size=self.user_form_data["Prometheus Root filesystem Size"],
+            env=self.env_var_dict,
+            interactive=False,
+            entrypoint="",
+            cpu=self.user_form_data["Prometheus CPU"],
+            memory=self.user_form_data["Prometheus Memory"],
+        )
+        prometheus_logs = prometheus_cont.logs.new()
+        prometheus_logs.type = "redis"
+        prometheus_logs_data = prometheus_logs.data.new()
+        prometheus_logs_data.stdout = f"redis://{redis_ip_address}:6379/container-stdout"
+        prometheus_logs_data.stderr = f"redis://{redis_ip_address}:6379/container-stderr"
+        self.prometheus_volume = j.sal.zosv2.volume.create(
+            self.reservation,
+            self.nodes_selected["Prometheus"].node_id,
+            size=self.user_form_data["Prometheus Volume Size"],
+            type=self.user_form_data["Prometheus Volume Disk type"],
+        )
+        j.sal.zosv2.volume.attach(container=prometheus_cont, volume=self.prometheus_volume, mount_point="/data")
+
+        # create grafana container
+        grafana_flist = "https://hub.grid.tf/azmy.3bot/grafana-grafana-latest.flist"
+
+        grafana_cont = j.sal.zosv2.container.create(
+            reservation=self.reservation,
+            node_id=self.nodes_selected["Grafana"].node_id,
+            network_name=self.network.name,
+            ip_address=self.ip_addresses["Grafana"],
+            flist=grafana_flist,
+            storage_url=storage_url,
+            disk_type=self.user_form_data["Grafana Root filesystem Type"],
+            disk_size=self.user_form_data["Grafana Root filesystem Size"],
+            env=self.env_var_dict,
+            interactive=False,
+            entrypoint="",
+            cpu=self.user_form_data["Grafana CPU"],
+            memory=self.user_form_data["Grafana Memory"],
+        )
+        grafana_logs = grafana_cont.logs.new()
+        grafana_logs.type = "redis"
+        grafana_logs_data = grafana_logs.data.new()
+        grafana_logs_data.stdout = f"redis://{redis_ip_address}:6379/container-stdout"
+        grafana_logs_data.stderr = f"redis://{redis_ip_address}:6379/container-stderr"
 
         metadata = dict()
         metadata["chatflow"] = self.user_form_data["chatflow"]
