@@ -16,6 +16,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         "container_farm",
         "container_volume",
         "container_volume_details",
+        "container_logs",
         "expiration_time",
         "container_ip",
         "overview",
@@ -126,6 +127,33 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             self.user_form_data["Volume Size"] = vol_disk_size.value
             self.user_form_data["Volume mount point"] = vol_mount_point.value
 
+    @j.baseclasses.chatflow_step(title="Container logs")
+    def container_logs(self):
+        self.container_logs_option = self.single_choice(
+            "Do you want to push the container logs (stdout and stderr) onto an external redis channel",
+            ["YES", "NO"],
+            default="NO",
+        )
+        if self.container_logs_option == "YES":
+            form = self.new_form()
+            self.channel_type = form.string_ask("Please add the channel type", default="redis", required=True)
+            self.channel_host = form.string_ask(
+                "Please add the IP address where the logs will be output to", required=True
+            )
+            self.channel_port = form.int_ask(
+                "Please add the port available where the logs will be output to", required=True
+            )
+            self.channel_name = form.string_ask(
+                "Please add the channel name to be used. The channels will be in the form NAME-stdout and NAME-stderr",
+                default=self.user_form_data["Solution name"],
+                required=True,
+            )
+            form.ask()
+            self.user_form_data["Logs Channel type"] = self.channel_type.value
+            self.user_form_data["Logs Channel host"] = self.channel_host.value
+            self.user_form_data["Logs Channel port"] = self.channel_port.value
+            self.user_form_data["Logs Channel name"] = self.channel_name.value
+
     @j.baseclasses.chatflow_step(title="Expiration time")
     def expiration_time(self):
         self.expiration = self.datetime_picker(
@@ -178,6 +206,14 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             cpu=self.user_form_data["CPU"],
             memory=self.user_form_data["Memory"],
         )
+        if self.container_logs_option == "YES":
+            j.sal.zosv2.container.add_logs(
+                cont,
+                channel_type=self.channel_type,
+                channel_host=self.channel_host,
+                channel_port=self.channel_port,
+                channel_name=self.channel_name,
+            )
         if self.container_volume_attach:
             self.volume = j.sal.zosv2.volume.create(
                 self.reservation,

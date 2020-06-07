@@ -9,6 +9,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         "ubuntu_name",
         "ubuntu_version",
         "container_resources",
+        "container_logs",
         "public_key_get",
         "container_node_id",
         "ubuntu_farm",
@@ -57,6 +58,33 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         self.user_form_data["Memory"] = memory.value
         self.user_form_data["Root filesystem Type"] = str(self.rootfs_type.value)
         self.user_form_data["Root filesystem Size"] = self.rootfs_size.value
+
+    @j.baseclasses.chatflow_step(title="Container logs")
+    def container_logs(self):
+        self.container_logs_option = self.single_choice(
+            "Do you want to push the container logs (stdout and stderr) onto an external redis channel",
+            ["YES", "NO"],
+            default="NO",
+        )
+        if self.container_logs_option == "YES":
+            form = self.new_form()
+            self.channel_type = form.string_ask("Please add the channel type", default="redis", required=True)
+            self.channel_host = form.string_ask(
+                "Please add the IP address where the logs will be output to", required=True
+            )
+            self.channel_port = form.int_ask(
+                "Please add the port available where the logs will be output to", required=True
+            )
+            self.channel_name = form.string_ask(
+                "Please add the channel name to be used. The channels will be in the form NAME-stdout and NAME-stderr",
+                default=self.user_form_data["Solution name"],
+                required=True,
+            )
+            form.ask()
+            self.user_form_data["Logs Channel type"] = self.channel_type.value
+            self.user_form_data["Logs Channel host"] = self.channel_host.value
+            self.user_form_data["Logs Channel port"] = self.channel_port.value
+            self.user_form_data["Logs Channel name"] = self.channel_name.value
 
     @j.baseclasses.chatflow_step(title="Access keys")
     def public_key_get(self):
@@ -130,7 +158,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         entry_point = "/bin/bash /start.sh"
 
         # create container
-        j.sal.zosv2.container.create(
+        cont = j.sal.zosv2.container.create(
             reservation=self.reservation,
             node_id=self.node_selected.node_id,
             network_name=self.network.name,
@@ -145,6 +173,14 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
             cpu=self.user_form_data["CPU"],
             memory=self.user_form_data["Memory"],
         )
+        if self.container_logs_option == "YES":
+            j.sal.zosv2.container.add_logs(
+                cont,
+                channel_type=self.channel_type,
+                channel_host=self.channel_host,
+                channel_port=self.channel_port,
+                channel_name=self.channel_name,
+            )
         metadata = dict()
         metadata["chatflow"] = self.user_form_data["chatflow"]
         metadata["Solution name"] = self.user_form_data["Solution name"]
