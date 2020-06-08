@@ -24,7 +24,7 @@ export default class DeployedDomainDelegationView extends BaseView {
                     dict["Domain"].substring(0, self.maxTitleLength) + '...' : dict["Domain"];
                 dict._name = dict["Domain"]
                 dict._ip = ""
-
+                dict._type = 'delegated_domain'
                 delete dict['rid']
                 self.parseData.push(dict)
             }

@@ -72,6 +72,7 @@ export class BaseView extends JetView {
         self.solutionlist.attachEvent("onItemClick", function (id) {
                 let ret = self.parseData.find(solution => solution.id == id)
                 let filtered = Object.assign({}, ret);
+                let type =  filtered._type;
                 for (let i = 0; i < Object.keys(filtered).length; i++) {
                     const key = Object.keys(filtered)[i];
                     if (key[0] === '_') {
@@ -81,7 +82,7 @@ export class BaseView extends JetView {
                 }
                 filtered['Reservation id'] = filtered.id
                 delete filtered['id']
-                self.SolutionDetailsView.showInfo(filtered)
+                self.SolutionDetailsView.showInfo(filtered,type)
         });
     }
 }

@@ -21,6 +21,7 @@ export default class DeployedNetworkView extends BaseView {
                 let reservation_json = JSON.parse(reservation.json)
                 let nodes = reservation.data_reservation.networks[0].network_resources
                 dict.id = reservation.id
+                dict._type = 'network'
                 dict['Solution name'] = solution.name
                 dict.expiration_provisioning = (new Date(reservation_json.expiration_provisioning * 1000)).toLocaleString()
                 dict.expiration_reservation = (new Date(reservation_json.expiration_reservation * 1000)).toLocaleString()
