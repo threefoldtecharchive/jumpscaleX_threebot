@@ -118,6 +118,9 @@ export default class TopView extends JetView {
             }, {
                 id: "deployed_gateway_4to6",
                 value: '<span><img class="solutions-icon" src="static/img/ip.png"/>4 to 6 Gateway</span>'
+            }, {
+                id: "deployed_monitoring",
+                value: '<span><img class="solutions-icon" src="static/img/redis.png"/>Monitoring</span>'
             }
             ]
         },
@@ -205,7 +208,7 @@ export default class TopView extends JetView {
                 borderless: true,
                 height: 40,
             },
-            { batch:"default" },
+            { batch: "default" },
             {
                 view: "icon",
                 icon: "mdi mdi-bell",
@@ -285,7 +288,9 @@ export default class TopView extends JetView {
                 deployed_gitea: "deployedSolutions.gitea",
                 deployed_domain_delegation: "deployedSolutions.domainDelegation",
                 deployed_solution_expose: "deployedSolutions.solutionExpose",
-                deployed_gateway_4to6: "deployedSolutions.4to6Gateway"
+                deployed_gateway_4to6: "deployedSolutions.4to6Gateway",
+                deployed_monitoring: "deployedSolutions.monitoring"
+
             }
         });
 
@@ -297,15 +302,15 @@ export default class TopView extends JetView {
         this.buttonShowMenu = this.$$("button_show_menu");
         this.buttonHideMenu = this.$$("button_hide_menu");
 
-        this.on(this.app,"read:notifications",() => {
-			this.notificationsBell.config.badge = 0;
-			this.notificationsBell.refresh();
+        this.on(this.app, "read:notifications", () => {
+            this.notificationsBell.config.badge = 0;
+            this.notificationsBell.refresh();
         });
 
         this.on(this.app, "update:badge", (data) => {
-			this.notificationsBell.config.badge += data;
-			this.notificationsBell.refresh();
-		});
+            this.notificationsBell.config.badge += data;
+            this.notificationsBell.refresh();
+        });
 
         this.webix.ui({
             view: "submenu",
