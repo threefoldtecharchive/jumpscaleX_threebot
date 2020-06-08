@@ -47,15 +47,20 @@ class DomainDelegation(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Payment", disable_previous=True)
     def domain_pay(self):
-        if self.gateway.free_to_use:
+
+        currencies = list()
+        farm_id = self.gateway.farm_id
+        addresses = j.sal.zosv2._explorer.farms.get(farm_id).wallet_addresses
+        for address in addresses:
+            if address.asset not in currencies:
+                currencies.append(address.asset)
+
+        if len(currencies) > 1:
             currency = self.single_choice(
-                "Please choose a currency that will be used for the payment",
-                ["FreeTFT", "TFT"],
-                default="TFT",
-                required=True,
+                "Please choose a currency that will be used for the payment", currencies, default="TFT", required=True,
             )
         else:
-            currency = "TFT"
+            currency = currencies[0]
 
         self.reservation = j.sal.zosv2.reservation_create()
         j.sal.zosv2.gateway.delegate_domain(

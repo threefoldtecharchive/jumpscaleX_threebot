@@ -24,7 +24,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         self.user_form_data = dict()
         self.query = dict()
         self.HUB_URL = "https://hub.grid.tf/tf-bootable"
-        self.IMAGES = ["ubuntu-18.04","ubuntu-19.10","ubuntu-20.04"]
+        self.IMAGES = ["ubuntu-18.04", "ubuntu-19.10", "ubuntu-20.04"]
         self.model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.ubuntu.1")
         user_info = self.user_info()
         self.user_form_data["chatflow"] = "ubuntu"
@@ -48,7 +48,9 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         form = self.new_form()
         cpu = form.int_ask("Please add how many CPU cores are needed", default=1, required=True)
         memory = form.int_ask("Please add the amount of memory in MB", default=1024, required=True)
-        self.rootfs_type = form.single_choice("Select the storage type for your root filesystem", ["SSD", "HDD"], default="SSD")
+        self.rootfs_type = form.single_choice(
+            "Select the storage type for your root filesystem", ["SSD", "HDD"], default="SSD"
+        )
         self.rootfs_size = form.int_ask("Choose the amount of storage for your root filesystem in MiB", default=256)
         form.ask()
         self.user_form_data["CPU"] = cpu.value

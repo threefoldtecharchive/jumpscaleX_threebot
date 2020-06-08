@@ -47,11 +47,19 @@ class FourToSixGateway(j.servers.chatflow.get_class()):
         if not self.publickey:
             self.privatekey, self.publickey = j.tools.wireguard.generate_key_pair()
 
-        if self.gateway.free_to_use:
-            currency = "FreeTFT"
-        else:
-            currency = "TFT"
+        currencies = list()
+        farm_id = self.gateway.farm_id
+        addresses = j.sal.zosv2._explorer.farms.get(farm_id).wallet_addresses
+        for address in addresses:
+            if address.asset not in currencies:
+                currencies.append(address.asset)
 
+        if len(currencies) > 1:
+            currency = self.single_choice(
+                "Please choose a currency that will be used for the payment", currencies, default="TFT", required=True,
+            )
+        else:
+            currency = currencies[0]
         reservation = j.sal.zosv2.reservation_create()
         j.sal.zosv2.gateway.gateway_4to6(reservation=reservation, node_id=self.gateway_id, public_key=self.publickey)
 
