@@ -57,7 +57,7 @@ class DomainDelegation(j.servers.chatflow.get_class()):
 
         if len(currencies) > 1:
             currency = self.single_choice(
-                "Please choose a currency that will be used for the payment", currencies, default="TFT", required=True,
+                "Please choose a currency that will be used for the payment", currencies, default="", required=True,
             )
         else:
             currency = currencies[0]
