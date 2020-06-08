@@ -52,16 +52,6 @@ export default class WalletManagerView extends JetView {
                 },
                 {
                     view: "button",
-                    id: "btn_create",
-                    value: "Create Wallet",
-                    css: "webix_secondary",
-                    autowidth: true,
-                    click: function () {
-                        this.$scope.WalletFormView.showForm()
-                    }
-                },
-                {
-                    view: "button",
                     id: "btn_import",
                     value: "Import Wallet",
                     css: "webix_secondary",
