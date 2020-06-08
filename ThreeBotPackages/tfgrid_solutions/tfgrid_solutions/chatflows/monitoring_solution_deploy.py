@@ -225,25 +225,24 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         storage_url = "zdb://hub.grid.tf:9900"
         redis_ip_address = self.ip_addresses["Redis"]
 
-        # # create redis container
-        # redis_flist = f""
-        # redis_entry_point = ""
+        # create redis container
+        redis_flist = f"https://hub.grid.tf/ranatarek.3bot/redis_zinit.flist"
 
-        # redis_cont = j.sal.zosv2.container.create(
-        #     reservation=self.reservation,
-        #     node_id=self.nodes_selected["Redis"].node_id,
-        #     network_name=self.network.name,
-        #     ip_address=redis_ip_address,
-        #     flist=redis_flist,
-        #     storage_url=storage_url,
-        #     disk_type=self.user_form_data["Redis Root filesystem Type"],
-        #     disk_size=self.user_form_data["Redis Root filesystem Size"],
-        #     env=self.env_var_dict,
-        #     interactive=False,
-        #     entrypoint=redis_entry_point,
-        #     cpu=self.user_form_data["Redis CPU"],
-        #     memory=self.user_form_data["Redis Memory"],
-        # )
+        redis_cont = j.sal.zosv2.container.create(
+            reservation=self.reservation,
+            node_id=self.nodes_selected["Redis"].node_id,
+            network_name=self.network.name,
+            ip_address=redis_ip_address,
+            flist=redis_flist,
+            storage_url=storage_url,
+            disk_type=self.user_form_data["Redis Root filesystem Type"],
+            disk_size=self.user_form_data["Redis Root filesystem Size"],
+            env=self.env_var_dict,
+            interactive=False,
+            entrypoint="",
+            cpu=self.user_form_data["Redis CPU"],
+            memory=self.user_form_data["Redis Memory"],
+        )
 
         # create prometheus container
         prometheus_flist = "https://hub.grid.tf/tf-official-apps/prometheus:latest.flist"
@@ -263,10 +262,14 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             cpu=self.user_form_data["Prometheus CPU"],
             memory=self.user_form_data["Prometheus Memory"],
         )
-        prometheus_logs = prometheus_cont.logs.new()
-        prometheus_logs.type = "redis"
-        prometheus_logs.data.stdout = f"redis://{redis_ip_address}:6379/prometheus-stdout"
-        prometheus_logs.data.stderr = f"redis://{redis_ip_address}:6379/prometheus-stderr"
+        j.sal.zosv2.container.add_logs(
+            prometheus_cont,
+            channel_type="redis",
+            channel_host=redis_ip_address,
+            channel_port=6379,
+            channel_name="prometheus",
+        )
+
         self.prometheus_volume = j.sal.zosv2.volume.create(
             self.reservation,
             self.nodes_selected["Prometheus"].node_id,
@@ -293,10 +296,9 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             cpu=self.user_form_data["Grafana CPU"],
             memory=self.user_form_data["Grafana Memory"],
         )
-        grafana_logs = grafana_cont.logs.new()
-        grafana_logs.type = "redis"
-        grafana_logs.data.stdout = f"redis://{redis_ip_address}:6379/grafana-stdout"
-        grafana_logs.data.stderr = f"redis://{redis_ip_address}:6379/grafana-stderr"
+        j.sal.zosv2.container.add_logs(
+            grafana_cont, channel_type="redis", channel_host=redis_ip_address, channel_port=6379, channel_name="grafana"
+        )
 
         metadata = dict()
         metadata["chatflow"] = self.user_form_data["chatflow"]
