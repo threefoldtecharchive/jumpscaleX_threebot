@@ -18,7 +18,7 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
 
         user_form_data["Currency"] = self.single_choice(
             "Please choose a currency that will be used for the payment",
-            ["FreeTFT", "TFT"],
+            ["FreeTFT", "TFTA", "TFT"],
             default="TFT",
             required=True,
         )
