@@ -26,7 +26,7 @@ export default class DeployedFlistView extends BaseView {
                 dict._name = dict['Solution name'].length > self.maxTitleLength ?
                     dict['Solution name'].substring(0, self.maxTitleLength) + '...' : dict['Solution name'];
                 dict._ip = dict['IP Address']
-
+                dict._type = 'flist'
                 delete dict['chatflow']
                 self.parseData.push(dict)
             }

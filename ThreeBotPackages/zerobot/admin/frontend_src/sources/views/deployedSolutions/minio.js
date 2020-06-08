@@ -19,6 +19,7 @@ export default class DeployedMinioView extends BaseView {
                 let reservation = JSON.parse(String(solution.reservation))
                 let ip = reservation.data_reservation.containers[0].network_connection[0].ipaddress
                 console.log(ip)
+                dict._type = 'minio'
                 dict['IP address']=ip
                 dict.id = reservation.id
                 dict._name = dict['Solution name'].length > self.maxTitleLength ?
