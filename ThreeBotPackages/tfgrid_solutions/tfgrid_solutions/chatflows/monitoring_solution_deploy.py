@@ -28,7 +28,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         self.user_info = self.user_info()
         j.sal.reservation_chatflow.validate_user(self.user_info)
         self.user_form_data = {}
-        self.user_form_data["chatflow"] = "Monitoring"
+        self.user_form_data["chatflow"] = "monitoring"
         self.md_show(
             "# This wizard will help you deploy a monitoring system that includes Prometheus, Grafana, and redis",
             md=True,
@@ -62,7 +62,9 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Prometheus container resources")
     def prometheus_container_resources(self):
         form = self.new_form()
-        cpu = form.int_ask("Please add how many CPU cores are needed", default=1, required=True)
+        cpu = form.int_ask(
+            "Please add how many CPU cores are needed for the Prometheus container", default=1, required=True
+        )
         memory = form.int_ask("Please add the amount of memory in MB", default=1024, required=True)
         rootfs_type = form.single_choice(
             "Select the storage type for your root filesystem", ["SSD", "HDD"], default="SSD"
@@ -99,7 +101,9 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Grafana container resources")
     def grafana_container_resources(self):
         form = self.new_form()
-        cpu = form.int_ask("Please add how many CPU cores are needed", default=1, required=True)
+        cpu = form.int_ask(
+            "Please add how many CPU cores are needed for the Grafana container", default=1, required=True
+        )
         memory = form.int_ask("Please add the amount of memory in MB", default=1024, required=True)
         rootfs_type = form.single_choice(
             "Select the storage type for your root filesystem", ["SSD", "HDD"], default="SSD"
@@ -122,7 +126,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Redis container resources")
     def redis_container_resources(self):
         form = self.new_form()
-        cpu = form.int_ask("Please add how many CPU cores are needed", default=1, required=True)
+        cpu = form.int_ask("Please add how many CPU cores are needed for the redis container", default=1, required=True)
         memory = form.int_ask("Please add the amount of memory in MB", default=1024, required=True)
         rootfs_type = form.single_choice(
             "Select the storage type for your root filesystem", ["SSD", "HDD"], default="SSD"
@@ -142,7 +146,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         else:
             self.redis_query["hru"] = storage_units
 
-    @j.baseclasses.chatflow_step(title="Containers node id")
+    @j.baseclasses.chatflow_step(title="Containers' node id")
     def container_node_id(self):
         self.env_var_dict["SSH_KEY"] = self.user_form_data["Public key"]
         # create new reservation
@@ -171,7 +175,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     def farm_selection(self):
         for name, node_id in self.nodes_selected.items():
             if not node_id:
-                farms = j.sal.reservation_chatflow.farm_names_get(1, self, **self.query[name])
+                farms = j.sal.reservation_chatflow.farm_names_get(1, self, **self.query[name], message=name)
                 self.nodes_selected[name] = j.sal.reservation_chatflow.nodes_get(
                     1, farm_names=farms, **self.query[name]
                 )[0]
@@ -290,7 +294,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             storage_url=storage_url,
             disk_type=self.user_form_data["Grafana Root filesystem Type"],
             disk_size=self.user_form_data["Grafana Root filesystem Size"],
-            env=self.env_var_dict,
+            env={},
             interactive=False,
             entrypoint="",
             cpu=self.user_form_data["Grafana CPU"],
@@ -320,12 +324,15 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
     def success(self):
         res = f"""\
-            # Your containers been deployed successfully. Your reservation id is: {self.resv_id}
-            You can access each container using the following
-            Prometheus ```ssh root@{self.ip_addresses["Prometheus"]}```\
-            Grafana ```ssh root@{self.ip_addresses["Grafana"]}```\
-            Redis ```ssh root@{self.ip_addresses["Redis"]}```\
-            It may take a few minutes.
+            # Your containers have been deployed successfully. Your reservation id is: {self.resv_id}
+            ### Prometheus 
+            #### ```ssh root@{self.ip_addresses["Prometheus"]}``` where you can manually customize the solutions you want to monitor
+            #### ```{self.ip_addresses["Prometheus"]}/9090/graph``` accessed through your browser
+            ### Grafana 
+            #### ```{self.ip_addresses["Grafana"]}:3000``` accessed through your browser where you can manually configure to use the deployed prometheus
+            ### Redis 
+            #### ```redis-cli -h {self.ip_addresses["Redis"]}```
+            #### It may take a few minutes.
             """
         self.md_show(j.core.text.strip(res), md=True)
 

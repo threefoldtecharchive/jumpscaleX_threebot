@@ -2,7 +2,7 @@
 import { BaseView } from './baseview'
 import { solutions } from '../../services/deployedSolutions'
 
-const CHAT = "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=monitoring"
+const CHAT = "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solutions&chat=monitoring_solution_deploy"
 
 export default class DeployedMonitoringView extends BaseView {
     constructor(app, name) {
