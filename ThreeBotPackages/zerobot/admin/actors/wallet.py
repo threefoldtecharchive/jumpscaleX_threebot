@@ -57,8 +57,13 @@ class wallet(j.baseclasses.threebot_actor):
 
     @j.baseclasses.actor_method
     def get_wallets(self, schema_out=None, user_session=None):
-
-        wallets = j.clients.stellar.find()
+        while True:
+            try:
+                wallets = j.clients.stellar.find()
+                break
+            except j.exceptions.Input:
+                # cleaning broken wallets
+                pass
         ret = []
         for wallet in wallets:
             ret.append({"name": wallet.name, "address": wallet.address})
