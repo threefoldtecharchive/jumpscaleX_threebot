@@ -20,7 +20,10 @@ module.exports = new Promise(async (resolve, reject) => {
       ...vuex.mapActions("farmmanagement", ["setNodeFree"]),
 
       getPercentage(type) {
-        return (this.node.reservedResources[type] / this.node.totalResources[type]) * 100
+          const reservedResources = this.node.reservedResources[type]
+          const totalResources = this.node.totalResources[type]
+          if (reservedResources === 0 && totalResources === 0) return 0
+          return (reservedResources / totalResources) * 100
       },
 
       async setFree() {
