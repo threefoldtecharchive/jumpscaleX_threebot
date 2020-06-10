@@ -155,6 +155,11 @@ export default class TopView extends JetView {
             icon: "mdi mdi-play"
         },
         {
+            id: "grafana",
+            value: "Grafana",
+            icon: "mdi mdi-chart-areaspline-variant"
+        },
+        {
             id: "settings",
             value: "Settings",
             icon: "mdi mdi-settings"
