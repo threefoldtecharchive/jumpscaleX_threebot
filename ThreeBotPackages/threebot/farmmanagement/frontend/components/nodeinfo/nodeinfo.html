@@ -54,6 +54,14 @@
         </v-flex>
       </v-row>
       <v-row>
+        <v-flex xs3 class="text-left pr-2">Cloud production rate (<a
+            href="https://wiki.threefold.io/#/cloud_production_rate?id=cloud-production-rate-cpr"
+            target="_blank">CPR</a>)</v-flex>
+        <v-flex class="text-truncate font-weight-bold">
+          <span>{{cpr_total}}</span>
+        </v-flex>
+      </v-row>
+      <v-row>
         <v-flex xs3 class="text-left pr-2">Free to use</v-flex>
         <v-flex>
           <v-switch class="free-toggle pr-2" v-model="node.free_to_use" @change="setFree()"></v-switch>
@@ -72,7 +80,10 @@
           <template v-slot:activator="{ on }">
             <v-flex xs3 class="text-left pr-2">Network Health</v-flex>
             <v-flex class="text-truncate font-weight-bold">
-              <span v-on="on"><v-icon :color="healthyIcon.color">{{healthyIcon.icon}}</v-icon> <v-icon x-small>fa-question-circle</v-icon></span>
+              <span v-on="on">
+                <v-icon :color="healthyIcon.color">{{healthyIcon.icon}}</v-icon>
+                <v-icon x-small>fa-question-circle</v-icon>
+              </span>
             </v-flex>
           </template>
           <span v-if="!node.publicConfig6Error && !node.npub4HealthError && !node.publicConfig6Error">
@@ -107,7 +118,8 @@
                 <li v-else-if="node.publicConfig6Error">{{node.publicConfig6Error}}</li>
                 <li v-else>Public config ipv6: <strong>{{ node.publicConfig6Value }}</strong></li>
               </ul>
-              <a href="https://github.com/threefoldtech/zos/blob/master/docs/network/Deploy_Network-V2.md" target="blank">Network documentation</a>
+              <a href="https://github.com/threefoldtech/zos/blob/master/docs/network/Deploy_Network-V2.md"
+                target="blank">Network documentation</a>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -161,6 +173,7 @@
     </div>
 
     <v-row>
+
       <v-col v-for="(value, key) in node.totalResources" :key="key" align="center">
         <v-flex class="text-center pr-2">
           <span class="text-uppercase">{{ key }}</span>
@@ -185,6 +198,7 @@
           </v-tooltip>
         </v-flex>
       </v-col>
+
     </v-row>
   </v-col>
   </v-row>
