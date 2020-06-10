@@ -12,6 +12,12 @@
         </v-flex>
       </v-row>
       <v-row>
+        <v-flex xs3 class="text-left pr-2">Hostname </v-flex>
+        <v-flex class="text-truncate font-weight-bold">
+          <span>{{node.hostname}}</span>
+        </v-flex>
+      </v-row>
+      <v-row>
         <v-flex xs3 class="text-left pr-2">Node version</v-flex>
         <v-flex class="text-truncate font-weight-bold">
           <span>{{node.version}}</span>
