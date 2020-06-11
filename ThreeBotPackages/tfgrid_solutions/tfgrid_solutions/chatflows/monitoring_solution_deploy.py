@@ -325,14 +325,14 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     def success(self):
         res = f"""\
             # Your containers have been deployed successfully. Your reservation id is: {self.resv_id}
-            ### Prometheus 
-            #### ```ssh root@{self.ip_addresses["Prometheus"]}``` where you can manually customize the solutions you want to monitor
-            #### ```{self.ip_addresses["Prometheus"]}/9090/graph``` accessed through your browser
-            ### Grafana 
-            #### ```{self.ip_addresses["Grafana"]}:3000``` accessed through your browser where you can manually configure to use the deployed prometheus
-            ### Redis 
-            #### ```redis-cli -h {self.ip_addresses["Redis"]}```
-            #### It may take a few minutes.
+            ## Prometheus
+            #### Access container by ```ssh root@{self.ip_addresses["Prometheus"]}``` where you can manually customize the solutions you want to monitor
+            #### Access Prometheus UI through ```{self.ip_addresses["Prometheus"]}/9090/graph``` which is accessed through your browser
+            ## Grafana
+            #### Access Grafana UI through ```{self.ip_addresses["Grafana"]}:3000``` which is accessed through your browser where you can manually configure to use prometheus
+            ## Redis
+            ```redis-cli -h {self.ip_addresses["Redis"]}```
+            ## It may take a few minutes.
             """
         self.md_show(j.core.text.strip(res), md=True)
 
