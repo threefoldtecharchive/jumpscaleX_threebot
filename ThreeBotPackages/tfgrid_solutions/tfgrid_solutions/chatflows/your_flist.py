@@ -120,7 +120,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             vol_disk_type = form.drop_down_choice(
                 "Please choose the type of disk for the volume", ["SSD", "HDD"], required=True, default="SSD"
             )
-            vol_disk_size = form.int_ask("Please specify the volume size", required=True, default=10)
+            vol_disk_size = form.int_ask("Please specify the volume size in GiB", required=True, default=10)
             vol_mount_point = form.string_ask("Please enter the mount point", required=True, default="/data")
             form.ask()
             self.user_form_data["Volume Disk type"] = vol_disk_type.value

@@ -120,7 +120,7 @@ export default class TopView extends JetView {
                 value: '<span><img class="solutions-icon" src="static/img/ip.png"/>4 to 6 Gateway</span>'
             }, {
                 id: "deployed_monitoring",
-                value: '<span><img class="solutions-icon" src="static/img/redis.png"/>Monitoring</span>'
+                value: '<span><img class="solutions-icon" src="static/img/monitoring_graph.png"/>Monitoring</span>'
             }
             ]
         },

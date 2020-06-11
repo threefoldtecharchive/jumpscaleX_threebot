@@ -7,7 +7,7 @@ const CHAT = "solutions.chatflow?author=tfgrid_solutions&package=tfgrid_solution
 export default class DeployedMonitoringView extends BaseView {
     constructor(app, name) {
 
-        super(app, name, CHAT, "redis.png");
+        super(app, name, CHAT, "monitoring_graph.png");
     }
 
     init(view) {
@@ -23,7 +23,7 @@ export default class DeployedMonitoringView extends BaseView {
                 dict.id = reservation.id
                 dict._name = dict['Solution name'].length > self.maxTitleLength ?
                     dict['Solution name'].substring(0, self.maxTitleLength) + '...' : dict['Solution name'];
-                dict._ip = dict['IP Address']
+                dict._ip = dict['Prometheus IP'] + ', ' + dict['Grafana IP'] + ',' + dict['Redis IP']
 
 
                 self.parseData.push(dict)

@@ -65,7 +65,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         cpu = form.int_ask(
             "Please add how many CPU cores are needed for the Prometheus container", default=1, required=True
         )
-        memory = form.int_ask("Please add the amount of memory in MB", default=1024, required=True)
+        memory = form.int_ask("Please add the amount of memory in MB", default=3072, required=True)
         rootfs_type = form.single_choice(
             "Select the storage type for your root filesystem", ["SSD", "HDD"], default="SSD"
         )
@@ -93,7 +93,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             required=True,
             default="SSD",
         )
-        vol_disk_size = form.int_ask("Please specify the volume size", required=True, default=10)
+        vol_disk_size = form.int_ask("Please specify the volume size in GiB", required=True, default=10)
         form.ask()
         self.user_form_data["Prometheus Volume Disk type"] = vol_disk_type.value
         self.user_form_data["Prometheus Volume Size"] = vol_disk_size.value
@@ -308,6 +308,22 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         metadata["chatflow"] = self.user_form_data["chatflow"]
         metadata["Solution name"] = self.user_form_data["Solution name"]
         metadata["Solution expiration"] = self.user_form_data["Solution expiration"]
+        metadata["Prometheus CPU"] = self.user_form_data["Prometheus CPU"]
+        metadata["Prometheus Memory"] = self.user_form_data["Prometheus Memory"]
+        metadata["Prometheus Root filesystem Type"] = self.user_form_data["Prometheus Root filesystem Type"]
+        metadata["Prometheus Root filesystem Size"] = self.user_form_data["Prometheus Root filesystem Size"]
+        metadata["Grafana CPU"] = self.user_form_data["Grafana CPU"]
+        metadata["Grafana Memory"] = self.user_form_data["Grafana Memory"]
+        metadata["Grafana Root filesystem Type"] = self.user_form_data["Grafana Root filesystem Type"]
+        metadata["Grafana Root filesystem Size"] = self.user_form_data["Grafana Root filesystem Size"]
+        metadata["Redis CPU"] = self.user_form_data["Redis CPU"]
+        metadata["Redis Memory"] = self.user_form_data["Redis Memory"]
+        metadata["Redis Root filesystem Type"] = self.user_form_data["Redis Root filesystem Type"]
+        metadata["Redis Root filesystem Size"] = self.user_form_data["Redis Root filesystem Size"]
+
+        metadata["Prometheus IP"] = self.user_form_data["Prometheus IP Address"]
+        metadata["Grafana IP"] = self.user_form_data["Grafana IP Address"]
+        metadata["Redis IP"] = self.user_form_data["Redis IP Address"]
 
         res = j.sal.reservation_chatflow.solution_model_get(
             self.user_form_data["Solution name"], "tfgrid.solutions.monitoring.1", metadata
@@ -327,7 +343,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             # Your containers have been deployed successfully. Your reservation id is: {self.resv_id}
             ## Prometheus
             #### Access container by ```ssh root@{self.ip_addresses["Prometheus"]}``` where you can manually customize the solutions you want to monitor
-            #### Access Prometheus UI through ```{self.ip_addresses["Prometheus"]}/9090/graph``` which is accessed through your browser
+            #### Access Prometheus UI through ```{self.ip_addresses["Prometheus"]}:9090/graph``` which is accessed through your browser
             ## Grafana
             #### Access Grafana UI through ```{self.ip_addresses["Grafana"]}:3000``` which is accessed through your browser where you can manually configure to use prometheus
             ## Redis
