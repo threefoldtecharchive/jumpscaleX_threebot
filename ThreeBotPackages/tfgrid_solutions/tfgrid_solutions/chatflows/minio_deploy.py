@@ -80,7 +80,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
     def container_resources(self):
         form = self.new_form()
         cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
-        memory = form.int_ask("Please add the amount of memory in MB", default=1024)
+        memory = form.int_ask("Please add the amount of memory in MB", default=4096, min=4096)
         form.ask()
         self.user_form_data["CPU"] = cpu.value
         self.user_form_data["Memory"] = memory.value
