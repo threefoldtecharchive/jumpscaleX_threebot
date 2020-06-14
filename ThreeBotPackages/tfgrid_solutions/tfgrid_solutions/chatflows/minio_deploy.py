@@ -11,6 +11,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         "storage_type",
         "access_credentials",
         "container_resources",
+        "container_logs",
         "minio_resources",
         "public_key",
         "expiration_datetime",
@@ -84,6 +85,33 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         form.ask()
         self.user_form_data["CPU"] = cpu.value
         self.user_form_data["Memory"] = memory.value
+
+    @j.baseclasses.chatflow_step(title="Container logs")
+    def container_logs(self):
+        self.container_logs_option = self.single_choice(
+            "Do you want to push the container logs (stdout and stderr) onto an external redis channel",
+            ["YES", "NO"],
+            default="NO",
+        )
+        if self.container_logs_option == "YES":
+            form = self.new_form()
+            self.channel_type = form.string_ask("Please add the channel type", default="redis", required=True)
+            self.channel_host = form.string_ask(
+                "Please add the IP address where the logs will be output to", required=True
+            )
+            self.channel_port = form.int_ask(
+                "Please add the port available where the logs will be output to", required=True
+            )
+            self.channel_name = form.string_ask(
+                "Please add the channel name to be used. The channels will be in the form NAME-stdout and NAME-stderr",
+                default=self.user_form_data["Solution name"],
+                required=True,
+            )
+            form.ask()
+            self.user_form_data["Logs Channel type"] = self.channel_type.value
+            self.user_form_data["Logs Channel host"] = self.channel_host.value
+            self.user_form_data["Logs Channel port"] = self.channel_port.value
+            self.user_form_data["Logs Channel name"] = self.channel_name.value
 
     @j.baseclasses.chatflow_step(title="Resources for minio")
     def minio_resources(self):
@@ -257,6 +285,14 @@ class MinioDeploy(j.servers.chatflow.get_class()):
             },
             secret_env=secret_env,
         )
+        if self.container_logs_option == "YES":
+            j.sal.zosv2.container.add_logs(
+                cont,
+                channel_type=self.channel_type,
+                channel_host=self.channel_host,
+                channel_port=self.channel_port,
+                channel_name=self.channel_name,
+            )
 
         j.sal.zosv2.volume.attach_existing(
             container=cont, volume_id=f"{self.zdb_rid}-{self.volume.workload_id}", mount_point="/data"
