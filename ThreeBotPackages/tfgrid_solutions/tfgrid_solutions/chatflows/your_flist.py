@@ -54,8 +54,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
 
         if (
             "hub.grid.tf" not in self.user_form_data["Flist link"]
-            or ".md" in self.user_form_data["Flist link"]
-            or ".md5" in self.user_form_data["Flist link"]
+            or ".md" in self.user_form_data["Flist link"][-3:]
         ):
             raise StopChatFlow(
                 "This flist is not correct. Please make sure you enter a valid link to an existing flist For example: https://hub.grid.tf/usr/example.flist"
