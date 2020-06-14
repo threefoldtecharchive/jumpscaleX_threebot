@@ -214,10 +214,10 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         if self.container_logs_option == "YES":
             j.sal.zosv2.container.add_logs(
                 cont,
-                channel_type=self.channel_type,
-                channel_host=self.channel_host,
-                channel_port=self.channel_port,
-                channel_name=self.channel_name,
+                channel_type=self.user_form_data["Logs Channel type"],
+                channel_host=self.user_form_data["Logs Channel host"],
+                channel_port=self.user_form_data["Logs Channel port"],
+                channel_name=self.user_form_data["Logs Channel name"],
             )
         if self.container_volume_attach:
             self.volume = j.sal.zosv2.volume.create(
