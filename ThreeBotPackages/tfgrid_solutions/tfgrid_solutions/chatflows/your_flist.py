@@ -50,6 +50,11 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             required=True,
         )
 
+        self.user_form_data["Flist link"] = self.user_form_data["Flist link"].strip()
+        if ".md5" in self.user_form_data["Flist link"] or ".md" in self.user_form_data["Flist link"]:
+            self.user_form_data["Flist link"] = self.user_form_data["Flist link"].replace(".md5", "")
+            self.user_form_data["Flist link"] = self.user_form_data["Flist link"].replace(".md", "")
+
         if "hub.grid.tf" not in self.user_form_data["Flist link"]:
             raise StopChatFlow(
                 "This flist is not correct. Please make sure you enter a valid link to an existing flist"
