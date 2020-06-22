@@ -8,7 +8,6 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         "network_selection",
         "solution_name",
         "setup_type",
-        "storage_type",
         "access_credentials",
         "container_resources",
         "container_logs",
@@ -48,12 +47,6 @@ class MinioDeploy(j.servers.chatflow.get_class()):
             ["Single Setup", "Master/Slave Setup"],
             required=True,
             default="Single Setup",
-        )
-
-    @j.baseclasses.chatflow_step(title="Storage")
-    def storage_type(self):
-        self.user_form_data["Disk type"] = self.drop_down_choice(
-            "Please choose a the type of disk for zdb", ["SSD", "HDD"], required=True, default="SSD"
         )
 
     @j.baseclasses.chatflow_step(title="Access credentials")
@@ -157,10 +150,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
     def zdb_nodes(self):
         zdb_nodequery = {}
         zdb_nodequery["currency"] = self.network.currency
-        if self.user_form_data["Disk type"] == "SSD":
-            zdb_nodequery["sru"] = 10
-        if self.user_form_data["Disk type"] == "HDD":
-            zdb_nodequery["hru"] = 10
+        zdb_nodequery["hru"] = 10
 
         zdb_farms = j.sal.reservation_chatflow.farm_names_get(
             self.user_form_data["ZDB number"], self, message="zdb", **zdb_nodequery
