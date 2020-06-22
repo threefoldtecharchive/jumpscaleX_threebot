@@ -194,7 +194,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             ip_address=self.ip_address,
             flist=self.conatiner_flist,
             storage_url=self.storage_url,
-            disk_type=self.rootfs_type.value,
+            disk_type="SSD",
             disk_size=self.rootfs_size.value,
             env=self.env,
             interactive=self.interactive,

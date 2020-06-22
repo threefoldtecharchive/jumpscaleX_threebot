@@ -159,7 +159,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
             ip_address=self.ip_address,
             flist=container_flist,
             storage_url=storage_url,
-            disk_type=self.rootfs_type.value,
+            disk_type="SSD",
             disk_size=self.rootfs_size.value,
             env=self.var_dict,
             interactive=False,
