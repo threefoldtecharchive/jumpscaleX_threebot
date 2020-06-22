@@ -110,7 +110,7 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Container node id")
     def container_node_id(self):
-        self.query = {"mru": math.ceil(1024 / 1024), "cru": 2, "hru": 5, "sru": 1}
+        self.query = {"mru": math.ceil(1024 / 1024), "cru": 2, "sru": 6}
         # create new reservation
         self.reservation = j.sal.zosv2.reservation_create()
         self.nodeid = self.string_ask(

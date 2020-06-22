@@ -70,14 +70,10 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         form = self.new_form()
         self.cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
         self.memory = form.int_ask("Please add the amount of memory in MB", default=1024)
-        self.rootfs_type = form.single_choice(
-            "Select the storage type for your root filesystem", ["SSD", "HDD"], default="SSD"
-        )
         self.rootfs_size = form.int_ask("Choose the amount of storage for your root filesystem in MiB", default=256)
         form.ask()
         self.user_form_data["CPU"] = self.cpu.value
         self.user_form_data["Memory"] = self.memory.value
-        self.user_form_data["Rootfs Type"] = str(self.rootfs_type.value)
         self.user_form_data["Rootfs Size"] = self.rootfs_size.value
 
     @j.baseclasses.chatflow_step(title="Container ineractive & EntryPoint")
@@ -105,10 +101,8 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         query["cru"] = self.cpu.value
 
         storage_units = math.ceil(self.rootfs_size.value / 1024)
-        if self.rootfs_type.value == "SSD":
-            query["sru"] = storage_units
-        else:
-            query["hru"] = storage_units
+        query["sru"] = storage_units
+
         farms = j.sal.reservation_chatflow.farm_names_get(1, self, currency=self.currency, **query)
         self.node = j.sal.reservation_chatflow.nodes_get(1, farm_names=farms, currency=self.currency, **query)[0]
 
@@ -123,13 +117,9 @@ class FlistDeploy(j.servers.chatflow.get_class()):
     def container_volume_details(self):
         if self.container_volume_attach:
             form = self.new_form()
-            vol_disk_type = form.drop_down_choice(
-                "Please choose the type of disk for the volume", ["SSD", "HDD"], required=True, default="SSD"
-            )
             vol_disk_size = form.int_ask("Please specify the volume size in GiB", required=True, default=10)
             vol_mount_point = form.string_ask("Please enter the mount point", required=True, default="/data")
             form.ask()
-            self.user_form_data["Volume Disk type"] = vol_disk_type.value
             self.user_form_data["Volume Size"] = vol_disk_size.value
             self.user_form_data["Volume mount point"] = vol_mount_point.value
 
@@ -225,7 +215,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
                 self.reservation,
                 self.node.node_id,
                 size=self.user_form_data["Volume Size"],
-                type=self.user_form_data["Volume Disk type"],
+                type="SSD",
             )
             j.sal.zosv2.volume.attach(
                 container=cont, volume=self.volume, mount_point=self.user_form_data["Volume mount point"]

@@ -66,36 +66,27 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             "Please add how many CPU cores are needed for the Prometheus container", default=1, required=True
         )
         memory = form.int_ask("Please add the amount of memory in MB", default=3072, required=True)
-        rootfs_type = form.single_choice(
-            "Select the storage type for your root filesystem", ["SSD", "HDD"], default="SSD"
-        )
+
         rootfs_size = form.int_ask("Choose the amount of storage for your root filesystem in MiB", default=256)
         form.ask()
         self.user_form_data["Prometheus CPU"] = cpu.value
         self.user_form_data["Prometheus Memory"] = memory.value
-        self.user_form_data["Prometheus Root filesystem Type"] = str(rootfs_type.value)
         self.user_form_data["Prometheus Root filesystem Size"] = rootfs_size.value
 
         self.prometheus_query["mru"] = math.ceil(self.user_form_data["Prometheus Memory"] / 1024)
         self.prometheus_query["cru"] = self.user_form_data["Prometheus CPU"]
         storage_units = math.ceil(self.user_form_data["Prometheus Root filesystem Size"] / 1024)
-        if rootfs_type.value == "SSD":
-            self.prometheus_query["sru"] = storage_units
-        else:
-            self.prometheus_query["hru"] = storage_units
+
+        self.prometheus_query["sru"] = storage_units
+
 
     @j.baseclasses.chatflow_step(title="Prometheus volume details")
     def prometheus_volume_details(self):
         form = self.new_form()
-        vol_disk_type = form.drop_down_choice(
-            "Please choose the type of disk for the volume to be attached to the Prometheus container",
-            ["SSD", "HDD"],
-            required=True,
-            default="SSD",
-        )
+
         vol_disk_size = form.int_ask("Please specify the volume size in GiB", required=True, default=10)
         form.ask()
-        self.user_form_data["Prometheus Volume Disk type"] = vol_disk_type.value
+        self.user_form_data["Prometheus Volume Disk type"] = "SSD"
         self.user_form_data["Prometheus Volume Size"] = vol_disk_size.value
 
     @j.baseclasses.chatflow_step(title="Grafana container resources")
@@ -105,14 +96,12 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             "Please add how many CPU cores are needed for the Grafana container", default=1, required=True
         )
         memory = form.int_ask("Please add the amount of memory in MB", default=1024, required=True)
-        rootfs_type = form.single_choice(
-            "Select the storage type for your root filesystem", ["SSD", "HDD"], default="SSD"
-        )
+
         rootfs_size = form.int_ask("Choose the amount of storage for your root filesystem in MiB", default=256)
         form.ask()
         self.user_form_data["Grafana CPU"] = cpu.value
         self.user_form_data["Grafana Memory"] = memory.value
-        self.user_form_data["Grafana Root filesystem Type"] = str(rootfs_type.value)
+        self.user_form_data["Grafana Root filesystem Type"] = "SSD"
         self.user_form_data["Grafana Root filesystem Size"] = rootfs_size.value
 
         self.grafana_query["mru"] = math.ceil(self.user_form_data["Grafana Memory"] / 1024)
@@ -128,23 +117,19 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         form = self.new_form()
         cpu = form.int_ask("Please add how many CPU cores are needed for the redis container", default=1, required=True)
         memory = form.int_ask("Please add the amount of memory in MB", default=1024, required=True)
-        rootfs_type = form.single_choice(
-            "Select the storage type for your root filesystem", ["SSD", "HDD"], default="SSD"
-        )
+
         rootfs_size = form.int_ask("Choose the amount of storage for your root filesystem in MiB", default=256)
         form.ask()
         self.user_form_data["Redis CPU"] = cpu.value
         self.user_form_data["Redis Memory"] = memory.value
-        self.user_form_data["Redis Root filesystem Type"] = str(rootfs_type.value)
+        self.user_form_data["Redis Root filesystem Type"] = "SSD"
         self.user_form_data["Redis Root filesystem Size"] = rootfs_size.value
 
         self.redis_query["mru"] = math.ceil(self.user_form_data["Redis Memory"] / 1024)
         self.redis_query["cru"] = self.user_form_data["Redis CPU"]
         storage_units = math.ceil(self.user_form_data["Redis Root filesystem Size"] / 1024)
-        if rootfs_type.value == "SSD":
-            self.redis_query["sru"] = storage_units
-        else:
-            self.redis_query["hru"] = storage_units
+        self.redis_query["sru"] = storage_units
+
 
     @j.baseclasses.chatflow_step(title="Containers' node id")
     def container_node_id(self):
