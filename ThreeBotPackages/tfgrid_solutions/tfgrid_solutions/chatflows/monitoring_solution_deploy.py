@@ -71,6 +71,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         form.ask()
         self.user_form_data["Prometheus CPU"] = cpu.value
         self.user_form_data["Prometheus Memory"] = memory.value
+        self.user_form_data["Prometheus Root filesystem Type"] = "SSD"
         self.user_form_data["Prometheus Root filesystem Size"] = rootfs_size.value
 
         self.prometheus_query["mru"] = math.ceil(self.user_form_data["Prometheus Memory"] / 1024)
@@ -78,7 +79,6 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         storage_units = math.ceil(self.user_form_data["Prometheus Root filesystem Size"] / 1024)
 
         self.prometheus_query["sru"] = storage_units
-
 
     @j.baseclasses.chatflow_step(title="Prometheus volume details")
     def prometheus_volume_details(self):
@@ -107,10 +107,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         self.grafana_query["mru"] = math.ceil(self.user_form_data["Grafana Memory"] / 1024)
         self.grafana_query["cru"] = self.user_form_data["Grafana CPU"]
         storage_units = math.ceil(self.user_form_data["Grafana Root filesystem Size"] / 1024)
-        if rootfs_type.value == "SSD":
-            self.grafana_query["sru"] = storage_units
-        else:
-            self.grafana_query["hru"] = storage_units
+        self.grafana_query["sru"] = storage_units
 
     @j.baseclasses.chatflow_step(title="Redis container resources")
     def redis_container_resources(self):
@@ -129,7 +126,6 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         self.redis_query["cru"] = self.user_form_data["Redis CPU"]
         storage_units = math.ceil(self.user_form_data["Redis Root filesystem Size"] / 1024)
         self.redis_query["sru"] = storage_units
-
 
     @j.baseclasses.chatflow_step(title="Containers' node id")
     def container_node_id(self):
