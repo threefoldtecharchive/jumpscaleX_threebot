@@ -211,7 +211,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         redis_ip_address = self.ip_addresses["Redis"]
 
         # create redis container
-        redis_flist = f"https://hub.grid.tf/ranatarek.3bot/redis_zinit.flist"
+        redis_flist = f"https://hub.grid.tf/tf-official-apps/redis_zinit.flist"
 
         redis_cont = j.sal.zosv2.container.create(
             reservation=self.reservation,
