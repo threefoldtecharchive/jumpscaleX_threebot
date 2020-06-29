@@ -55,7 +55,8 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     def public_key_get(self):
         self.user_form_data["Public key"] = self.upload_file(
             """Please add your public ssh key, this will allow you to access the deployed containers using ssh.
-                    Just upload the file with the key""",
+                Just upload the file with the key.
+                Note: please use keys compatible with Dropbear server eg: rsa """,
             required=True,
         ).split("\n")[0]
 
