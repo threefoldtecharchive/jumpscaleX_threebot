@@ -1,4 +1,5 @@
 import { JetView } from "webix-jet";
+import { solutions } from '../../services/deployedSolutions'
 
 export default class SolutionDetailsView extends JetView {
     config() {
@@ -25,14 +26,24 @@ export default class SolutionDetailsView extends JetView {
                 rows: [
                     info,
                     {
-                        cols: [{
-                            view: "button",
-                            value: "Close",
-                            css: "webix_primary",
-                            click: function () {
-                                this.getTopParentView().hide();
+                        cols:  [{
+                                view: "button",
+                                value: "Delete",
+                                css: "webix_danger",
+                                click: function() {
+                                    this.$scope.deleteSolution();
+
+                                }
+                            },
+                            {
+                                view: "button",
+                                value: "Close",
+                                css: "webix_primary",
+                                click: function() {
+                                    this.getTopParentView().hide();
+                                }
                             }
-                        }]
+                        ]
                     }
                 ]
             }
@@ -44,8 +55,10 @@ export default class SolutionDetailsView extends JetView {
         self.info = this.$$("solution_info");
     }
 
-    showInfo(data) {
+    showInfo(data, type) {
         var self = this
+        self.type = type;
+        self.solution = data
         self.info.clearAll()
         for (let [key, value] of Object.entries(data)) {
             if(key == 'nodes'){
@@ -68,5 +81,22 @@ export default class SolutionDetailsView extends JetView {
 
         
         this.getRoot().show();
+    }
+    deleteSolution(){
+        const self = this
+        webix.confirm({
+              title: "Delete Solution",
+              ok: "Delete",
+              cancel: "No",
+              text: `Delete ${self.solution["Solution name"]} Solution ?<br>Warning: this action can't be undone`
+              }).then(() => {
+
+              solutions.delete(self.type, self.solution["Solution name"]).then(() => {
+                        this.app.refresh();
+                        webix.message({ type: "success", text: `${self.solution["Solution name"]} deleted successfully` });
+                    }).catch(error => {
+                        webix.message({ type: "error", text: "Could not delete solution" });
+                    })
+              });
     }
 }

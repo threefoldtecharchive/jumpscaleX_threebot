@@ -14,6 +14,9 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         "container_interactive",
         "container_env",
         "container_farm",
+        "container_volume",
+        "container_volume_details",
+        "container_logs",
         "expiration_time",
         "container_ip",
         "overview",
@@ -47,13 +50,19 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             required=True,
         )
 
-        if "hub.grid.tf" not in self.user_form_data["Flist link"]:
+        self.user_form_data["Flist link"] = self.user_form_data["Flist link"].strip()
+
+        if (
+            "hub.grid.tf" not in self.user_form_data["Flist link"]
+            or ".md" in self.user_form_data["Flist link"][-3:]
+        ):
             raise StopChatFlow(
-                "This flist is not correct. Please make sure you enter a valid link to an existing flist"
+                "This flist is not correct. Please make sure you enter a valid link to an existing flist For example: https://hub.grid.tf/usr/example.flist"
             )
 
         response = requests.head(self.user_form_data["Flist link"])
-        if response.status_code != 200:
+        response_md5 = requests.head(f"{self.user_form_data['Flist link']}.md5")
+        if response.status_code != 200 or response_md5.status_code != 200:
             raise StopChatFlow("This flist doesn't exist. Please make sure you enter a valid link to an existing flist")
 
     @j.baseclasses.chatflow_step(title="Container resources")
@@ -61,12 +70,10 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         form = self.new_form()
         self.cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
         self.memory = form.int_ask("Please add the amount of memory in MB", default=1024)
-        self.rootfs_type = form.single_choice("Select the storage type for your rootfs", ["SSD", "HDD"], default="SSD")
-        self.rootfs_size = form.int_ask("Choose the amount of (writeable) storage for your rootfs in MiB", default=256)
+        self.rootfs_size = form.int_ask("Choose the amount of storage for your root filesystem in MiB", default=256)
         form.ask()
         self.user_form_data["CPU"] = self.cpu.value
         self.user_form_data["Memory"] = self.memory.value
-        self.user_form_data["Rootfs Type"] = self.rootfs_type.value
         self.user_form_data["Rootfs Size"] = self.rootfs_size.value
 
     @j.baseclasses.chatflow_step(title="Container ineractive & EntryPoint")
@@ -75,27 +82,15 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"], required=True
         )
         if self.user_form_data["Interactive"] == "NO":
-            self.user_form_data["Entry point"] = self.string_ask("Please add your entrypoint for your flist")
+            self.user_form_data["Entry point"] = self.string_ask("Please add your entrypoint for your flist") or ""
         else:
             self.user_form_data["Port"] = "7681"
             self.user_form_data["Entry point"] = ""
 
     @j.baseclasses.chatflow_step(title="Environment variables")
     def container_env(self):
-        self.user_form_data["Env variables"] = self.string_ask(
-            """To set environment variables on your deployed container, enter comma-separated variable=value
-            For example: var1=value1, var2=value2.
-            Leave empty if not needed"""
-        )
-        if self.user_form_data["Env variables"]:
-            var_list = self.user_form_data["Env variables"].split(",")
-            var_dict = {}
-            for item in var_list:
-                splitted_item = item.split("=")
-                if len(splitted_item) == 2:
-                    var_dict[splitted_item[0]] = splitted_item[1]
-
-            self.env.update(var_dict)
+        self.user_form_data["Env variables"] = self.multi_values_ask("Set Environment Variables")
+        self.env.update(self.user_form_data["Env variables"])
 
     @j.baseclasses.chatflow_step(title="Container farm")
     def container_farm(self):
@@ -106,14 +101,54 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         query["cru"] = self.cpu.value
 
         storage_units = math.ceil(self.rootfs_size.value / 1024)
-        if self.rootfs_type.value == "SSD":
-            query["sru"] = storage_units
-        else:
-            query["hru"] = storage_units
+        query["sru"] = storage_units
+
         farms = j.sal.reservation_chatflow.farm_names_get(1, self, currency=self.currency, **query)
-        self.node = j.sal.reservation_chatflow.nodes_get(
-            1, farm_names=farms, currency=self.currency, **query
-        )[0]
+        self.node = j.sal.reservation_chatflow.nodes_get(1, farm_names=farms, currency=self.currency, **query)[0]
+
+    @j.baseclasses.chatflow_step(title="Attach Volume")
+    def container_volume(self):
+        volume_attach = self.drop_down_choice(
+            "Would you like to attach an extra volume to the container", ["YES", "NO"], required=True, default="NO"
+        )
+        self.container_volume_attach = volume_attach == "YES" or False
+
+    @j.baseclasses.chatflow_step(title="Volume details")
+    def container_volume_details(self):
+        if self.container_volume_attach:
+            form = self.new_form()
+            vol_disk_size = form.int_ask("Please specify the volume size in GiB", required=True, default=10)
+            vol_mount_point = form.string_ask("Please enter the mount point", required=True, default="/data")
+            form.ask()
+            self.user_form_data["Volume Size"] = vol_disk_size.value
+            self.user_form_data["Volume mount point"] = vol_mount_point.value
+
+    @j.baseclasses.chatflow_step(title="Container logs")
+    def container_logs(self):
+        self.container_logs_option = self.single_choice(
+            "Do you want to push the container logs (stdout and stderr) onto an external redis channel",
+            ["YES", "NO"],
+            default="NO",
+        )
+        if self.container_logs_option == "YES":
+            form = self.new_form()
+            self.channel_type = form.string_ask("Please add the channel type", default="redis", required=True)
+            self.channel_host = form.string_ask(
+                "Please add the IP address where the logs will be output to", required=True
+            )
+            self.channel_port = form.int_ask(
+                "Please add the port available where the logs will be output to", required=True
+            )
+            self.channel_name = form.string_ask(
+                "Please add the channel name to be used. The channels will be in the form NAME-stdout and NAME-stderr",
+                default=self.user_form_data["Solution name"],
+                required=True,
+            )
+            form.ask()
+            self.user_form_data["Logs Channel type"] = self.channel_type.value
+            self.user_form_data["Logs Channel host"] = self.channel_host.value
+            self.user_form_data["Logs Channel port"] = self.channel_port.value
+            self.user_form_data["Logs Channel name"] = self.channel_name.value
 
     @j.baseclasses.chatflow_step(title="Expiration time")
     def expiration_time(self):
@@ -145,21 +180,21 @@ class FlistDeploy(j.servers.chatflow.get_class()):
     def overview(self):
         self.md_show_confirm(self.user_form_data)
 
-    @j.baseclasses.chatflow_step(title="Payment", disable_previous=True)
+    @j.baseclasses.chatflow_step(title="Container Payment", disable_previous=True)
     def container_pay(self):
         self.network = self.network_copy
         # update network
         self.network.update(j.me.tid, currency=self.currency, bot=self)
 
         # create container
-        j.sal.zosv2.container.create(
+        cont = j.sal.zosv2.container.create(
             reservation=self.reservation,
             node_id=self.node.node_id,
             network_name=self.network.name,
             ip_address=self.ip_address,
             flist=self.conatiner_flist,
             storage_url=self.storage_url,
-            disk_type=self.rootfs_type.value,
+            disk_type="SSD",
             disk_size=self.rootfs_size.value,
             env=self.env,
             interactive=self.interactive,
@@ -167,6 +202,25 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             cpu=self.user_form_data["CPU"],
             memory=self.user_form_data["Memory"],
         )
+        if self.container_logs_option == "YES":
+            j.sal.zosv2.container.add_logs(
+                cont,
+                channel_type=self.user_form_data["Logs Channel type"],
+                channel_host=self.user_form_data["Logs Channel host"],
+                channel_port=self.user_form_data["Logs Channel port"],
+                channel_name=self.user_form_data["Logs Channel name"],
+            )
+        if self.container_volume_attach:
+            self.volume = j.sal.zosv2.volume.create(
+                self.reservation,
+                self.node.node_id,
+                size=self.user_form_data["Volume Size"],
+                type="SSD",
+            )
+            j.sal.zosv2.volume.attach(
+                container=cont, volume=self.volume, mount_point=self.user_form_data["Volume mount point"]
+            )
+
         metadata = dict()
         metadata["chatflow"] = self.user_form_data["chatflow"]
         metadata["Solution name"] = self.user_form_data["Solution name"]

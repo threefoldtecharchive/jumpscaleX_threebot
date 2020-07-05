@@ -16,19 +16,20 @@ export default class DeployedDomainDelegationView extends BaseView {
                 const solution = solutions[i];
                 let dict = JSON.parse(solution.form_info)
                 let reservation = JSON.parse(String(solution.reservation))
-                dict['Expiration Provisioning'] = reservation.data_reservation.expiration_provisioning
+                let reservation_json = JSON.parse(reservation.json)
+                dict['Expiration Provisioning'] = (new Date(reservation_json.expiration_provisioning * 1000)).toLocaleString()
                 dict['Currencies'] = reservation.data_reservation.currencies
                 dict.id = reservation.id
                 dict._name = dict["Domain"].length > self.maxTitleLength ?
                     dict["Domain"].substring(0, self.maxTitleLength) + '...' : dict["Domain"];
                 dict._name = dict["Domain"]
                 dict._ip = ""
-
+                dict._type = 'delegated_domain'
                 delete dict['rid']
                 self.parseData.push(dict)
             }
             self.solutionlist.parse(self.parseData);
-            self.solutionlist.showProgress({hide: true});
+            self.solutionlist.showProgress({ hide: true });
         });
     }
 }

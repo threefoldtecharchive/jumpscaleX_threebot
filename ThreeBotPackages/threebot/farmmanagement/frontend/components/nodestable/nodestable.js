@@ -117,6 +117,7 @@ module.exports = new Promise(async (resolve, reject) => {
                         uptime: moment.duration(node.uptime, 'seconds').format(),
                         version: node.os_version,
                         id: node.node_id,
+                        hostname: node.hostname,
                         farmer: this.farmselected,
                         name: 'node ' + node.node_id,
                         totalResources: node.total_resources,

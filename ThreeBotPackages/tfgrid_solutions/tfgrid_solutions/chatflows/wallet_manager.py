@@ -18,9 +18,10 @@ def create_wallet(bot):
     else:
         pass
 
-    bot.md_show("Will setup trustlines for TFT and FreeTFT")
+    bot.md_show("Will setup trustlines for TFT , FreeTFT and TFTA")
     wallet.add_known_trustline("TFT")
     wallet.add_known_trustline("FreeTFT")
+    wallet.add_known_trustline("TFTA")
 
     res = f"""\
         # Wallet has been created

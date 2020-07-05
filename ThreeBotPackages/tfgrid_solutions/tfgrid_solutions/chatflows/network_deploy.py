@@ -17,9 +17,12 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
         network_name = j.sal.reservation_chatflow.network_name_add(self, self.model)
 
         user_form_data["Currency"] = self.single_choice(
-            "Please choose a currency that will be used for the payment", ["FreeTFT", "TFT"], default="TFT", required=True
+            "Please choose a currency that will be used for the payment",
+            ["FreeTFT", "TFTA", "TFT"],
+            default="TFT",
+            required=True,
         )
-      
+
         expiration = self.datetime_picker(
             "Please enter network expiration time.",
             required=True,
@@ -30,9 +33,13 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
 
         ips = ["IPv6", "IPv4"]
         ipversion = self.single_choice(
-            "How would you like to connect to your network? IPv4 or IPv6? If unsure, choose IPv4",
-            ips, required=True
+            "How would you like to connect to your network? IPv4 or IPv6? If unsure, choose IPv4", ips, required=True
         )
+        # Check if reservation failed
+        farms = j.sal.reservation_chatflow.farm_names_get(1, self)
+        access_node = j.sal.reservation_chatflow.nodes_get(
+            1, farm_names=farms, currency=user_form_data["Currency"], ip_version=ipversion
+        )[0]
 
         # create new reservation
         reservation = j.sal.zosv2.reservation_create()
@@ -40,11 +47,11 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
         res = j.sal.reservation_chatflow.solution_model_get(network_name, "tfgrid.solutions.network.1", user_form_data)
         reservation = j.sal.reservation_chatflow.reservation_metadata_add(reservation, res)
 
-        # Check if reservation failed
         while True:
             self.config = j.sal.reservation_chatflow.network_create(
                 network_name,
                 reservation,
+                access_node,
                 ip_range,
                 j.me.tid,
                 ipversion,

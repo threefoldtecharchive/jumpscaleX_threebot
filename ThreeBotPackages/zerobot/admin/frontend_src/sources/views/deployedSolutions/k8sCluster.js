@@ -33,7 +33,7 @@ export default class DeployedK8sClustersView extends BaseView {
                 dict._name = dict['Solution name'].length > self.maxTitleLength ?
                     dict['Solution name'].substring(0, self.maxTitleLength) + '...' : dict['Solution name'];
                 dict._ip = Array.from(master_ips).join('<br>')
-                
+                dict._type = 'kubernetes'
                 delete dict['IP Address']
                 delete dict['chatflow']
 

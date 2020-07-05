@@ -198,7 +198,7 @@ export default class AlertView extends JetView {
             view: "template",
             id: tbId,
             scroll: "xy",
-            template: `<p>${ansiUp.ansi_to_html(tb.formatted)}</p>`
+            template: `<pre>${ansiUp.ansi_to_html(tb.formatted)}</pre>`
         });
 
         this.tbTabs.addOption(tbId, tbTitle, true);

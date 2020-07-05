@@ -1,6 +1,5 @@
-@url = tfgrid.solutions.network.1
+@url = tfgrid.solutions.monitoring.1
 name** = ""
 rid = ""
 form_info = (dict)
 explorer = ""
-parent_network = ""

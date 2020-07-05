@@ -207,10 +207,13 @@
       },
       reportWork (result) {
         axios({
+          method: 'post',
           url: `${baseUrl}/work_report`,
-          params: {
-            sessionid: this.sessionId,
-            result: result
+          data: {
+            args: {
+              sessionid: this.sessionId,
+              result: result
+            }
           }
         })
       },

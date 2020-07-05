@@ -18,11 +18,13 @@ export default class DeployedNetworkView extends BaseView {
                 const solution = solutions[i];
                 let dict = {}
                 let reservation = JSON.parse(String(solution.reservation))
+                let reservation_json = JSON.parse(reservation.json)
                 let nodes = reservation.data_reservation.networks[0].network_resources
                 dict.id = reservation.id
+                dict._type = 'network'
                 dict['Solution name'] = solution.name
-                dict.expiration_provisioning = reservation.data_reservation.expiration_provisioning
-                dict.expiration_reservation = reservation.data_reservation.expiration_reservation
+                dict.expiration_provisioning = (new Date(reservation_json.expiration_provisioning * 1000)).toLocaleString()
+                dict.expiration_reservation = (new Date(reservation_json.expiration_reservation * 1000)).toLocaleString()
                 dict.currencies = reservation.data_reservation.currencies.join(' ')
                 dict.expiration = JSON.parse(String(solution.form_info))['Solution expiration']
                 dict['IP Address'] = reservation.data_reservation.networks[0].iprange

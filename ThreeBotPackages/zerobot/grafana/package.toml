@@ -1,0 +1,5 @@
+[source]
+name = "grafana"
+description = "TBD"
+threebot = "zerobot"
+version = "1.0.0"
