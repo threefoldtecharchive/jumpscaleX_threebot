@@ -54,7 +54,7 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
         self.config = j.sal.chatflow_deployer.deploy_network(
             self.solution_name, self.reservation, self.access_node, self.ip_range, self.ipversion, self.pool
         )
-        for wid in self.config.ids:
+        for wid in self.config["ids"]:
             success = j.sal.chatflow_deployer.wait_workload(wid, self)
             if not success:
                 raise StopChatFlow(f"Failed to deploy workload {wid}")
