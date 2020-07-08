@@ -6,7 +6,6 @@ from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 class NetworkDeploy(j.servers.chatflow.get_class()):
     steps = [
         "start",
-        "set_expiration",
         "select_pool",
         "set_currency",
         "ip_config",
@@ -17,14 +16,9 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Deploy Network")
     def start(self):
-        user_form_data = {}
         user_info = self.user_info()
         j.sal.reservation_chatflow.validate_user(user_info)
         self.solution_name = j.sal.chatflow_deployer.ask_name(self)
-
-    @j.baseclasses.chatflow_step(title="Expiration")
-    def set_expiration(self):
-        self.expiration = j.sal.chatflow_deployer.ask_expiration(self)
 
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
