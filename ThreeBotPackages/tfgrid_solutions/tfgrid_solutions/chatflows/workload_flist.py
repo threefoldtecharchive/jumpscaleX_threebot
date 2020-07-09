@@ -140,7 +140,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Confirmation")
     def overview(self):
-        self.info = {
+        self.metadata = {
             "Solution Name": self.solution_name,
             "Network": self.network_view.name,
             "Node ID": self.selected_node.node_id,
@@ -148,12 +148,13 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             "CPU": self.resources["cpu"],
             "Memory": self.resources["memory"],
             "Disk Size": self.resources["disk_size"],
+            "IP Address": self.ip_address,
         }
         if self.container_volume_attach:
-            self.info["Volume Size"] = self.vol_size
-            self.info["Volume Mountpoint"] = self.vol_mount_point
-        self.info.update(self.log_config)
-        self.md_show_confirm(self.info)
+            self.metadata["Volume Size"] = self.vol_size
+            self.metadata["Volume Mountpoint"] = self.vol_mount_point
+        self.metadata.update(self.log_config)
+        self.md_show_confirm(self.metadata)
 
     @j.baseclasses.chatflow_step(title="Reservation")
     def reservation(self):

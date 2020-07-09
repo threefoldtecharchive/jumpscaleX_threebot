@@ -112,6 +112,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
             "CPU": self.resources["cpu"],
             "Memory": self.resources["memory"],
             "Disk Size": self.resources["disk_size"],
+            "IP Address": self.ip_address,
         }
         self.metadata.update(self.log_config)
         self.md_show_confirm(self.metadata)
