@@ -76,8 +76,6 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Container node id")
     def container_node_id(self):
         # TODO: remove hardcoded node
-        self.selected_node = j.sal.zosv2._explorer.nodes.get("qzuTJJVd5boi6Uyoco1WWnSgzTb7q8uN79AjBT9x9N3")
-        return
         query = {
             "cru": self.resources["cpu"],
             "mru": math.ceil(self.resources["memory"] / 1024),
