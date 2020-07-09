@@ -17,7 +17,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         "container_ip",
         "overview",
         "reservation",
-        "ubuntu_acess",
+        "ubuntu_access",
     ]
 
     @j.baseclasses.chatflow_step()
@@ -134,7 +134,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
             raise StopChatFlow(f"Failed to deploy workload {self.resv_id}")
 
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
-    def ubuntu_acess(self):
+    def ubuntu_access(self):
         res = f"""\
                 # Ubuntu has been deployed successfully: your reservation id is: {self.resv_id}
                 To connect ```ssh root@{self.ip_address}``` .It may take a few minutes.
