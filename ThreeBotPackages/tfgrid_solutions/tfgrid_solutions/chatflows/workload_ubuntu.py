@@ -130,7 +130,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
             disk_size=self.resources["disk_size"],
             env={"pub_key": self.public_key},
             interactive=False,
-            entry_point="/bin/bash /start.sh",
+            entrypoint="/bin/bash /start.sh",
             log_config=self.log_config,
         )
         success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
