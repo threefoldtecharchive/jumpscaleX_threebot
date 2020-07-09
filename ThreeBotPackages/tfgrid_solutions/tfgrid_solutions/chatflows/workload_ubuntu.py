@@ -110,6 +110,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
             "Memory": self.resources["memory"],
             "Disk Size": self.resources["disk_size"],
         }
+        self.info.update(self.log_config)
         self.md_show_confirm(self.info)
 
     @j.baseclasses.chatflow_step(title="Reservation")
