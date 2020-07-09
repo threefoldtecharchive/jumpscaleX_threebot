@@ -7,7 +7,6 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
     steps = [
         "start",
         "select_pool",
-        "set_currency",
         "ip_config",
         "network_reservation",
         "network_info",
@@ -24,10 +23,6 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
     def select_pool(self):
         self.pool = j.sal.chatflow_deployer.select_pool(self)
         self.farm_id = j.sal.chatflow_deployer.get_pool_farm_id(self.pool)
-
-    @j.baseclasses.chatflow_step(title="Currency")
-    def set_currency(self):
-        self.currency = j.sal.chatflow_deployer.ask_currency(self)
 
     @j.baseclasses.chatflow_step(title="IP Configuration")
     def ip_config(self):
