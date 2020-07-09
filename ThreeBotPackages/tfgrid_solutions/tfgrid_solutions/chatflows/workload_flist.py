@@ -176,7 +176,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             disk_size=self.resources["disk_size"],
             env=self.env,
             interactive=self.interactive,
-            entry_point=self.entrypoint,
+            entrypoint=self.entrypoint,
             log_config=self.log_config,
             volumes=volume_config,
         )
