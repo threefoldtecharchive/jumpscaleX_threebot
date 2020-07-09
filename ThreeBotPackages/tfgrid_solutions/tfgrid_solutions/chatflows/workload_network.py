@@ -1,5 +1,4 @@
 from Jumpscale import j
-import time
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 
 
@@ -31,9 +30,10 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
             "How would you like to connect to your network? IPv4 or IPv6? If unsure, choose IPv4", ips, required=True
         )
         self.farm_name = j.sal.zosv2._explorer.farms.get(self.farm_id).name
-        self.access_node = j.sal.reservation_chatflow.nodes_get(
-            1, farm_names=[self.farm_name], currency=self.currency, ip_version=self.ipversion
-        )[0]
+        # self.access_node = j.sal.reservation_chatflow.nodes_get(
+        #     1, farm_names=[self.farm_name], currency=self.currency, ip_version=self.ipversion
+        # )[0]
+        self.access_node = j.sal.zosv2._explorer.nodes.get("qzuTJJVd5boi6Uyoco1WWnSgzTb7q8uN79AjBT9x9N3")
         self.ip_range = j.sal.reservation_chatflow.ip_range_get(self)
 
     @j.baseclasses.chatflow_step(title="Reservation")

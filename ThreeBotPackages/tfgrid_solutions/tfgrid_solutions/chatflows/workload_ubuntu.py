@@ -1,6 +1,6 @@
 from Jumpscale import j
-import math
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
+import math
 
 
 class UbuntuDeploy(j.servers.chatflow.get_class()):
@@ -77,8 +77,8 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
     def container_node_id(self):
         query = {
             "cru": self.resources["cpu"],
-            "mru": self.resources["memory"] / 1024,
-            "mru": self.resources["memory"] / 1024,
+            "mru": math.ceil(self.resources["memory"] / 1024),
+            "mru": math.ceil(self.resources["memory"] / 1024),
             "sru": self.resources["disk_size"],
         }
         self.selected_node = j.sal.chatflow_deployer.ask_container_placement(self, self.pool_id, **query)
@@ -131,7 +131,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
         )
         success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
         if not success:
-            raise StopChatFlow(f"Failed to deploy workload {resv_id}")
+            raise StopChatFlow(f"Failed to deploy workload {self.resv_id}")
 
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
     def ubuntu_acess(self):
