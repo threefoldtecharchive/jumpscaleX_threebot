@@ -75,6 +75,9 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Container node id")
     def container_node_id(self):
+        # TODO: remove hardcoded node
+        self.selected_node = j.sal.zosv2._explorer.nodes.get("qzuTJJVd5boi6Uyoco1WWnSgzTb7q8uN79AjBT9x9N3")
+        return
         query = {
             "cru": self.resources["cpu"],
             "mru": math.ceil(self.resources["memory"] / 1024),
@@ -101,7 +104,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Confirmation")
     def overview(self):
-        self.info = {
+        self.metadata = {
             "Solution Name": self.solution_name,
             "Network": self.network_view.name,
             "Node ID": self.selected_node.node_id,
@@ -110,8 +113,8 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
             "Memory": self.resources["memory"],
             "Disk Size": self.resources["disk_size"],
         }
-        self.info.update(self.log_config)
-        self.md_show_confirm(self.info)
+        self.metadata.update(self.log_config)
+        self.md_show_confirm(self.metadata)
 
     @j.baseclasses.chatflow_step(title="Reservation")
     def reservation(self):
