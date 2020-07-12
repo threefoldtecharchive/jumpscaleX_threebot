@@ -149,11 +149,10 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
             ip_addresses=self.ipaddresses,
         )
 
-        # TODO: wait_workload on each reservation
-        # should be in deploy cluster
-        # success = j.sal.chatflow_deployer.wait_workload(self.grafana_resv_id, self)
-        # if not success:
-        #     raise StopChatFlow(f"Failed to deploy workload {self.grafana_resv_id}")
+        for resv in self.reservations:
+            success = j.sal.chatflow_deployer.wait_workload(resv, self)
+            if not success:
+                raise StopChatFlow(f"Failed to deploy workload {resv}")
 
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
     def success(self):
