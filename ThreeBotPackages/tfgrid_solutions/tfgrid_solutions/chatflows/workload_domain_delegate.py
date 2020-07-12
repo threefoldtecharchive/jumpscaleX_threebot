@@ -9,17 +9,16 @@ class DomainDelegation(j.servers.chatflow.get_class()):
     def select_pool(self):
         user_info = self.user_info()
         j.sal.reservation_chatflow.validate_user(user_info)
-        self.pool = j.sal.chatflow_deployer.select_pool(self)
-        self.farm_id = j.sal.chatflow_deployer.get_pool_farm_id(self.pool)
+        self.pool_id = j.sal.chatflow_deployer.select_pool(self)
 
     @j.baseclasses.chatflow_step(title="Domain delegation name")
     def domain_name(self):
         form = self.new_form()
         domain = form.string_ask("Please enter a domain name to delegate", required=True)
-        gateways = j.sal.reservation_chatflow.gateway_list(self, pool_farm_id=self.farm_id)
+        gateways = j.sal.chatflow_deployer.list_gateways(pool_id=self.pool_id)
         if not gateways:
             return self.stop("No available gateway")
-        options = sorted(list(gateways.keys()))
+        options = [sorted(list(gateways.keys()))]
         gateway_choice = form.drop_down_choice("Please choose a gateway", options, required=True)
         form.ask()
         self.domain = domain.value

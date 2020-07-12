@@ -41,6 +41,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
+        # FIXME: properly calculate cu and su (requires volume details before this step)
         cu = self.resources["cpu"]
         su = self.resources["disk_size"]
         self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu, su)

@@ -45,6 +45,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
+        # FIXME: properly calculate cu and su
         cu = self.resources["cpu"]
         su = self.resources["disk_size"]
         self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu, su)
@@ -75,7 +76,6 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Container node id")
     def container_node_id(self):
-        # TODO: remove hardcoded node
         query = {
             "cru": self.resources["cpu"],
             "mru": math.ceil(self.resources["memory"] / 1024),

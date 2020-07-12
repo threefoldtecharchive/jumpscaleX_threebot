@@ -3,6 +3,7 @@ import math
 import requests
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 
+
 class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     # TODO: merge containers resources steps, no?
     steps = [
@@ -38,7 +39,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             "# This wizard will help you deploy a monitoring system that includes Prometheus, Grafana, and redis",
             md=True,
         )
-    
+
     @j.baseclasses.chatflow_step(title="Solution name")
     def solution_name(self):
         self.solution_name = j.sal.chatflow_deployer.ask_name(self)
@@ -54,7 +55,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Prometheus container resources")
     def prometheus_container_resources(self):
-        self.prometheus_query = j.sal.chatflow_deployer.ask_container_resources(self) 
+        self.prometheus_query = j.sal.chatflow_deployer.ask_container_resources(self)
 
     @j.baseclasses.chatflow_step(title="Prometheus volume details")
     def prometheus_volume_details(self):
@@ -66,18 +67,19 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Grafana container resources")
     def grafana_container_resources(self):
-        self.grafana_query = j.sal.chatflow_deployer.ask_container_resources(self) 
+        self.grafana_query = j.sal.chatflow_deployer.ask_container_resources(self)
 
     @j.baseclasses.chatflow_step(title="Redis container resources")
     def redis_container_resources(self):
-        self.redis_query = j.sal.chatflow_deployer.ask_container_resources(self) 
+        self.redis_query = j.sal.chatflow_deployer.ask_container_resources(self)
 
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
+        # FIXME: properly calculate cu and su (ask volume details first)
         cu = self.prometheus_query["cpu"] + self.grafana_query["cpu"] + self.redis_query["cpu"]
         su = self.prometheus_query["disk_size"] + self.grafana_query["disk_size"] + self.redis_query["disk_size"]
         self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu, su)
-    
+
     @j.baseclasses.chatflow_step(title="Network")
     def network_selection(self):
         self.network_view = j.sal.chatflow_deployer.select_network(self, self.pool_id)
@@ -95,7 +97,9 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
                 "mru": math.ceil(self.query[name]["memory"] / 1024),
                 "sru": self.query[name]["disk_size"],
             }
-            self.nodes_selected[name] = j.sal.chatflow_deployer.ask_container_placement(self, self.pool_id, workload_name=name, **query)
+            self.nodes_selected[name] = j.sal.chatflow_deployer.ask_container_placement(
+                self, self.pool_id, workload_name=name, **query
+            )
             if not self.nodes_selected[name]:
                 self.nodes_selected[name] = j.sal.chatflow_deployer.schedule_container(self.pool_id, **query)
 
@@ -109,9 +113,13 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             for wid in result["ids"]:
                 success = j.sal.chatflow_deployer.wait_workload(wid, self)
                 if not success:
-                    raise StopChatFlow(f"Failed to add node {self.nodes_selected["Prometheus"].node_id} to network {wid}")
+                    raise StopChatFlow(
+                        f"Failed to add node {self.nodes_selected['Prometheus'].node_id} to network {wid}"
+                    )
         free_ips = self.prometheus_network.get_node_free_ips(self.nodes_selected["Prometheus"])
-        self.ip_addresses["Prometheus"] = self.drop_down_choice("Please choose IP Address for your Prometheus container", free_ips)
+        self.ip_addresses["Prometheus"] = self.drop_down_choice(
+            "Please choose IP Address for your Prometheus container", free_ips
+        )
 
     @j.baseclasses.chatflow_step(title="Grafana container IP")
     def grafana_container_ip(self):
@@ -123,10 +131,12 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             for wid in result["ids"]:
                 success = j.sal.chatflow_deployer.wait_workload(wid, self)
                 if not success:
-                    raise StopChatFlow(f"Failed to add node {self.nodes_selected["Grafana"].node_id} to network {wid}")
+                    raise StopChatFlow(f"Failed to add node {self.nodes_selected['Grafana'].node_id} to network {wid}")
         free_ips = self.prometheus_network.get_node_free_ips(self.nodes_selected["Grafana"])
-        self.ip_addresses["Grafana"] = self.drop_down_choice("Please choose IP Address for your Grafana container", free_ips)
-    
+        self.ip_addresses["Grafana"] = self.drop_down_choice(
+            "Please choose IP Address for your Grafana container", free_ips
+        )
+
     @j.baseclasses.chatflow_step(title="Redis container IP")
     def redis_container_ip(self):
         self.redis_network = self.grafana_network.copy()
@@ -137,10 +147,11 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             for wid in result["ids"]:
                 success = j.sal.chatflow_deployer.wait_workload(wid, self)
                 if not success:
-                    raise StopChatFlow(f"Failed to add node {self.nodes_selected["Redis"].node_id} to network {wid}")
+                    raise StopChatFlow(f"Failed to add node {self.nodes_selected['Redis'].node_id} to network {wid}")
         free_ips = self.prometheus_network.get_node_free_ips(self.nodes_selected["Redis"])
-        self.ip_addresses["Redis"] = self.drop_down_choice("Please choose IP Address for your Redis container", free_ips)
-    
+        self.ip_addresses["Redis"] = self.drop_down_choice(
+            "Please choose IP Address for your Redis container", free_ips
+        )
 
     @j.baseclasses.chatflow_step(title="Confirmation")
     def overview(self):
@@ -148,35 +159,31 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             "Solution Name": self.solution_name,
             "Pool": self.pool_id,
             "Network": self.network_view.name,
-            
             "Prometheus Node ID": self.nodes_selected["Prometheus"].node_id,
             "Prometheus CPU": self.self.query["Prometheus"]["cpu"],
             "Prometheus Memory": self.self.query["Prometheus"]["memory"],
             "Prometheus Disk Size": self.self.query["Prometheus"]["disk_size"],
             "Prometheus Disk Type": self.self.query["Prometheus"]["disk_type"],
             "Prometheus IP Address": self.ip_addresses["Prometheus"],
-
             "Grafana Node ID": self.nodes_selected["Grafana"].node_id,
             "Grafana CPU": self.self.query["Grafana"]["cpu"],
             "Grafana Memory": self.self.query["Grafana"]["memory"],
             "Grafana Disk Size": self.self.query["Grafana"]["disk_size"],
             "Grafana Disk Type": self.self.query["Grafana"]["disk_type"],
             "Grafana IP Address": self.ip_addresses["Grafana"],
-
             "Redis Node ID": self.nodes_selected["Redis"].node_id,
             "Redis CPU": self.self.query["Redis"]["cpu"],
             "Redis Memory": self.self.query["Redis"]["memory"],
             "Redis Disk Size": self.self.query["Redis"]["disk_size"],
             "Redis Disk Type": self.self.query["Redis"]["disk_type"],
             "Redis IP Address": self.ip_addresses["Redis"],
-
         }
         self.md_show_confirm(self.metatata)
-    
+
     @j.baseclasses.chatflow_step(title="Reservation")
     def reservation(self):
         self.network = self.redis_network
-        
+
         redis_ip_address = self.ip_addresses["Redis"]
 
         # create redis container
@@ -207,11 +214,13 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             "channel_port": 6379,
             "channel_name": "prometheus",
         }
-        vol_id = j.sal.chatflow_deployer.deploy_volume(self.pool_id, self.nodes_selected["Prometheus"].node_id, self.vol_size)
+        vol_id = j.sal.chatflow_deployer.deploy_volume(
+            self.pool_id, self.nodes_selected["Prometheus"].node_id, self.vol_size
+        )
         success = j.sal.chatflow_deployer.wait_workload(vol_id, self)
         if not success:
-            raise StopChatFlow(f"Failed to add node {self.nodes_selected["Prometheus"].node_id} to network {vol_id}")
-        volume_config = { self.vol_mount_point : vol_id}
+            raise StopChatFlow(f"Failed to add node {self.nodes_selected['Prometheus'].node_id} to network {vol_id}")
+        volume_config = {self.vol_mount_point: vol_id}
 
         self.prometheus_resv_id = j.sal.chatflow_deployer.deploy_container(
             pool_id=self.pool_id,
@@ -232,7 +241,6 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         success = j.sal.chatflow_deployer.wait_workload(self.prometheus_resv_id, self)
         if not success:
             raise StopChatFlow(f"Failed to deploy workload {self.prometheus_resv_id}")
-      
 
         # create grafana container
         grafana_flist = "https://hub.grid.tf/azmy.3bot/grafana-grafana-latest.flist"
@@ -275,5 +283,6 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             ## It may take a few minutes.
             """
         self.md_show(j.core.text.strip(res), md=True)
+
 
 chat = MonitoringSolutionDeploy

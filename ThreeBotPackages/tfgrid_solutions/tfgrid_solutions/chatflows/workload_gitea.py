@@ -25,6 +25,7 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
+        # FIXME: properly calculate cu and su
         cu = self.query["cru"]
         su = self.query["sru"]
         self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu, su)

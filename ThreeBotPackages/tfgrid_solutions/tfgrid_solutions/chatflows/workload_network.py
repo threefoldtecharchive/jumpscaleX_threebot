@@ -31,7 +31,7 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
         )
         self.farm_name = j.sal.zosv2._explorer.farms.get(self.farm_id).name
         self.access_node = j.sal.reservation_chatflow.nodes_get(
-            1, farm_names=[self.farm_name], currency=self.currency, ip_version=self.ipversion
+            1, farm_names=[self.farm_name], ip_version=self.ipversion
         )[0]
         self.ip_range = j.sal.reservation_chatflow.ip_range_get(self)
 
