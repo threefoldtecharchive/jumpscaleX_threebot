@@ -10,8 +10,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
         "solution_name",
         "public_key_get",
         "choose_flavor",
-        "select_pool"
-        "network_selection",
+        "select_pool" "network_selection",
         "nodes_selection",
         "ip_selection",
         "overview",
@@ -45,29 +44,26 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
     def choose_flavor(self):
         form = self.new_form()
         sizes = ["1 vCPU 2 GiB ram 50GiB disk space", "2 vCPUs 4 GiB ram 100GiB disk space"]
-        cluster_size_string = form.drop_down_choice(
-            "Choose the size of your nodes", sizes, default=sizes[0]
-        )
-        
+        cluster_size_string = form.drop_down_choice("Choose the size of your nodes", sizes, default=sizes[0])
+
         self.workernodes = form.int_ask(
             "Please specify the number of worker nodes", default=1, required=True, min=1
         )  # minimum should be 1
 
         form.ask()
         self.cluster_size = sizes.index(cluster_size_string.value) + 1
-    
+
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
-        # FIXME: properly calculate cu and su (ask volume details first)
         if self.cluster_size == 1:
             self.master_query = self.worker_query = {"sru": 50, "mru": 2, "cru": 1}
         else:
             self.master_query = self.worker_query = {"sru": 100, "mru": 4, "cru": 2}
         cu = self.master_query["cru"] + self.worker_query["cru"] * self.workernodes.value
-        su = self.master_query["sru"] + self.worker_query["sru"] * self.workernodes.
-        
-        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu, su)
-    
+        su = self.master_query["sru"] + self.worker_query["sru"] * self.workernodes.value
+        # FIXME: properly calculate cu and su (ask volume details first)
+        self.pool_id = j.sal.chatflow_deployer.select_pool(self, 2, 5)
+
     @j.baseclasses.chatflow_step(title="Network")
     def network_selection(self):
         self.network_view = j.sal.chatflow_deployer.select_network(self, self.pool_id)
@@ -76,7 +72,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
     def nodes_selection(self):
         # select master node
         master_node_selected = j.sal.chatflow_deployer.ask_container_placement(
-                self, self.pool_id, workload_name="master", **self.master_query
+            self, self.pool_id, workload_name="master", **self.master_query
         )
         if not master_node_selected:
             master_node_selected = j.sal.chatflow_deployer.schedule_container(self.pool_id, **self.master_query)
@@ -85,7 +81,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
         # select workers nodes
         for idx in range(self.workernodes.value):
             worker_node_selected = j.sal.chatflow_deployer.ask_container_placement(
-                    self, self.pool_id, workload_name=f"worker {idx+1}", **self.worker_query
+                self, self.pool_id, workload_name=f"worker {idx+1}", **self.worker_query
             )
             if not worker_node_selected:
                 worker_node_selected = j.sal.chatflow_deployer.schedule_container(self.pool_id, **self.worker_query)
@@ -104,29 +100,21 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
             for wid in result["ids"]:
                 success = j.sal.chatflow_deployer.wait_workload(wid, self)
                 if not success:
-                    raise StopChatFlow(
-                        f"Failed to add node {self.nodes_selected[0].node_id} to network {wid}"
-                    )
+                    raise StopChatFlow(f"Failed to add node {self.nodes_selected[0].node_id} to network {wid}")
         free_ips = self.master_network.get_node_free_ips(self.nodes_selected[0])
-        master_ipaddress = self.drop_down_choice(
-            "Please choose IP Address for your master node container", free_ips
-        )
+        master_ipaddress = self.drop_down_choice("Please choose IP Address for your master node container", free_ips)
         self.ipaddresses.append(master_ipaddress)
 
         latest_network = self.master_network
         # select workers IPs
         for idx, worker_node in enumerate(self.nodes_selected[1:]):
-            self.network_copy = self.latest_network.copy()
-            result = j.sal.chatflow_deployer.add_network_node(
-                self.latest_network.name, worker_node, self.network_copy
-            )
+            self.network_copy = latest_network.copy()
+            result = j.sal.chatflow_deployer.add_network_node(self.latest_network.name, worker_node, self.network_copy)
             if result:
                 for wid in result["ids"]:
                     success = j.sal.chatflow_deployer.wait_workload(wid, self)
                     if not success:
-                        raise StopChatFlow(
-                            f"Failed to add node {worker_node.node_id} to network {wid}"
-                        )
+                        raise StopChatFlow(f"Failed to add node {worker_node.node_id} to network {wid}")
             free_ips = self.network_copy.get_node_free_ips(worker_node)
             worker_ipaddress = self.drop_down_choice(
                 f"Please choose IP Address for your worker {idx+1} node container", free_ips
@@ -152,9 +140,15 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
         self.network = self.network_copy
 
         self.reservations = j.sal.chatflow_deployer.deploy_kubernetes_cluster(
-            self.pool_id, self.nodes_selected, self.network.name, self.cluster_secret, self.ssh_keys, size=self.cluster_size, ip_addresses=self.ipaddresses
-        ):
-        
+            self.pool_id,
+            self.nodes_selected,
+            self.network.name,
+            self.cluster_secret,
+            self.ssh_keys,
+            size=self.cluster_size,
+            ip_addresses=self.ipaddresses,
+        )
+
         # TODO: wait_workload on each reservation
         # should be in deploy cluster
         # success = j.sal.chatflow_deployer.wait_workload(self.grafana_resv_id, self)
@@ -174,5 +168,6 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
                 To connect ssh rancher@{resv["ip_address"]}
             """
         self.md_show(res)
+
 
 chat = KubernetesDeploy
