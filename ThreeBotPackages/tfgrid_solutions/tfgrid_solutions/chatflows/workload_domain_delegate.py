@@ -18,8 +18,7 @@ class DomainDelegation(j.servers.chatflow.get_class()):
         gateways = j.sal.chatflow_deployer.list_gateways(pool_id=self.pool_id)
         if not gateways:
             return self.stop("No available gateway")
-        options = [sorted(list(gateways.keys()))]
-        gateway_choice = form.drop_down_choice("Please choose a gateway", options, required=True)
+        gateway_choice = form.single_choice("Please choose a gateway", list(gateways.keys()), required=True)
         form.ask()
         self.domain = domain.value
         self.gateway = gateways[gateway_choice.value]
@@ -27,7 +26,7 @@ class DomainDelegation(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Reservation")
     def reservation(self):
-        self.resv_id = j.sal.chatflow_deployer.delegate_domain(self.pool, self.gateway_id, self.domain)
+        self.resv_id = j.sal.chatflow_deployer.delegate_domain(self.pool_id, self.gateway_id, self.domain)
         success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
         if not success:
             raise StopChatFlow(f"Failed to deploy workload {self.resv_id}")
