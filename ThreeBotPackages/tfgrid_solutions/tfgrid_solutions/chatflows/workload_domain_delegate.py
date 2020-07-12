@@ -26,7 +26,8 @@ class DomainDelegation(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Reservation")
     def reservation(self):
-        self.resv_id = j.sal.chatflow_deployer.delegate_domain(self.pool_id, self.gateway_id, self.domain)
+        metadata = {"SolutionName": self.domain, "ٍSolutionType": "domain_delegate"}
+        self.resv_id = j.sal.chatflow_deployer.delegate_domain(self.pool_id, self.gateway_id, self.domain, **metadata)
         success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
         if not success:
             raise StopChatFlow(f"Failed to deploy workload {self.resv_id}")

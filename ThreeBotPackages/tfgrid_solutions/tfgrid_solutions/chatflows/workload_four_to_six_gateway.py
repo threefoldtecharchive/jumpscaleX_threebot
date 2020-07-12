@@ -38,7 +38,9 @@ class FourToSixGateway(j.servers.chatflow.get_class()):
         if not self.publickey:
             self.privatekey, self.publickey = j.tools.wireguard.generate_key_pair()
 
-        self.resv_id = j.sal.chatflow_deployer.create_ipv6_gateway(self.gateway_id, self.pool_id, self.publickey)
+        self.resv_id = j.sal.chatflow_deployer.create_ipv6_gateway(
+            self.gateway_id, self.pool_id, self.publickey, SolutionType="4to6GW"
+        )
         success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
         if not success:
             raise StopChatFlow(f"Failed to deploy workload {self.resv_id}")

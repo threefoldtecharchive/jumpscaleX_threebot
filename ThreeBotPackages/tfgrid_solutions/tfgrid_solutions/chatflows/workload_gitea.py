@@ -117,6 +117,10 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
             "APP_NAME": self.repository_name,
             "ROOT_URL": f"http://{self.ip_address}:3000",
         }
+        metadata = {
+            "SolutionName": self.solution_name,
+            "SolutionType": "gitea",
+        }
         self.resv_id = j.sal.chatflow_deployer.deploy_container(
             pool_id=self.pool_id,
             node_id=self.selected_node.node_id,
@@ -131,6 +135,7 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
             log_config=self.log_config,
             public_ipv6=True,
             secret_env={"POSTGRES_PASSWORD": self.database_password},
+            **metadata,
         )
         success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
         if not success:

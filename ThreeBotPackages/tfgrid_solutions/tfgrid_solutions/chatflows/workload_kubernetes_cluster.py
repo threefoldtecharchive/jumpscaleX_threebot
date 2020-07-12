@@ -7,7 +7,7 @@ from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 class KubernetesDeploy(j.servers.chatflow.get_class()):
     steps = [
         "deployment_start",
-        "solution_name",
+        "kubernetes_name",
         "public_key_get",
         "choose_flavor",
         "select_pool" "network_selection",
@@ -25,7 +25,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
         self.md_show("# This wizard will help you deploy a kubernetes cluster")
 
     @j.baseclasses.chatflow_step(title="Solution name")
-    def solution_name(self):
+    def kubernetes_name(self):
         self.solution_name = j.sal.chatflow_deployer.ask_name(self)
 
     @j.baseclasses.chatflow_step(title="Access keys and secret")
@@ -138,7 +138,10 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Cluster reservations", disable_previous=True)
     def reservation(self):
         self.network = self.network_copy
-
+        metadata = {
+            "SolutionType": "kubernetes",
+            "SolutionName": self.solution_name,
+        }
         self.reservations = j.sal.chatflow_deployer.deploy_kubernetes_cluster(
             self.pool_id,
             self.nodes_selected,
@@ -147,6 +150,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
             self.ssh_keys,
             size=self.cluster_size,
             ip_addresses=self.ipaddresses,
+            **metadata,
         )
 
         for resv in self.reservations:

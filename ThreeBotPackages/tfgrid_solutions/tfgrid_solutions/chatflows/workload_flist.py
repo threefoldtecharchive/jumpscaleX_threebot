@@ -167,6 +167,10 @@ class FlistDeploy(j.servers.chatflow.get_class()):
                 raise StopChatFlow(f"Failed to add node {self.selected_node.node_id} to network {vol_id}")
             volume_config[self.vol_mount_point] = vol_id
 
+        metadata = {
+            "SolutionName": self.solution_name,
+            "SolutionType": "flist",
+        }
         self.resv_id = j.sal.chatflow_deployer.deploy_container(
             pool_id=self.pool_id,
             node_id=self.selected_node.node_id,
@@ -181,6 +185,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             entrypoint=self.entrypoint,
             log_config=self.log_config,
             volumes=volume_config,
+            **metadata,
         )
         success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
         if not success:

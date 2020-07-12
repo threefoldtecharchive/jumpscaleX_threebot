@@ -79,3 +79,6 @@ class MinioDeploy(j.servers.chatflow.get_class()):
             self.log_config = j.sal.chatflow_deployer.ask_container_logs(self, self.solution_name)
         else:
             self.log_config = {}
+
+
+chat = MinioDeploy
