@@ -125,7 +125,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Confirmation")
     def overview(self):
         self.metadata = {
-            "Solution Name": self.solution_name,
+            "Solution name": self.solution_name,
             "Network": self.network_view.name,
             "Masters count": 1,
             "Slaves count": self.workernodes.value,
@@ -139,9 +139,10 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
     def reservation(self):
         self.network = self.network_copy
         metadata = {
-            "SolutionType": "kubernetes",
-            "SolutionName": self.solution_name,
+            "name": self.solution_name,
+            "form_info": {"chatflow": "kubernetes", "Solution name": self.solution_name},
         }
+        metadata["form_info"].update(self.metadata)
         self.reservations = j.sal.chatflow_deployer.deploy_kubernetes_cluster(
             self.pool_id,
             self.nodes_selected,
