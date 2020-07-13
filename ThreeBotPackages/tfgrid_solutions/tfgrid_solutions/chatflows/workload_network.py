@@ -37,10 +37,9 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Reservation")
     def network_reservation(self):
-        self.reservation = j.sal.zosv2.reservation_create()
         try:
             self.config = j.sal.chatflow_deployer.deploy_network(
-                self.solution_name, self.reservation, self.access_node, self.ip_range, self.ipversion, self.pool
+                self.solution_name, self.access_node, self.ip_range, self.ipversion, self.pool
             )
         except Exception as e:
             raise StopChatFlow(f"Failed to register workload due to error {str(e)}")

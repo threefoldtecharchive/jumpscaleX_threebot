@@ -8,7 +8,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     # TODO: merge containers resources steps, no?
     steps = [
         "deployment_start",
-        "solution_name",
+        "choose_name",
         "public_key_get",
         "prometheus_container_resources",
         "prometheus_volume_details",
@@ -41,7 +41,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         )
 
     @j.baseclasses.chatflow_step(title="Solution name")
-    def solution_name(self):
+    def choose_name(self):
         self.solution_name = j.sal.chatflow_deployer.ask_name(self)
 
     @j.baseclasses.chatflow_step()
@@ -182,6 +182,11 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Reservation")
     def reservation(self):
+        metadata = {
+            "name": self.solution_name,
+            "form_info": {"chatflow": "monitoring", "Solution name": self.solution_name,},
+        }
+        metadata["form_info"].update(self.metatata)
         self.network = self.redis_network
 
         redis_ip_address = self.ip_addresses["Redis"]
@@ -201,6 +206,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             env=self.env_var_dict,
             interactive=False,
             entrypoint="",
+            **metadata,
         )
         success = j.sal.chatflow_deployer.wait_workload(self.redis_resv_id, self)
         if not success:
@@ -237,6 +243,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             entrypoint="",
             log_config=log_config,
             volumes=volume_config,
+            **metadata,
         )
         success = j.sal.chatflow_deployer.wait_workload(self.prometheus_resv_id, self)
         if not success:
@@ -264,6 +271,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             interactive=False,
             entrypoint="",
             log_config=log_config,
+            **metadata,
         )
         success = j.sal.chatflow_deployer.wait_workload(self.grafana_resv_id, self)
         if not success:

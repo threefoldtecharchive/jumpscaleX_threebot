@@ -168,8 +168,8 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             volume_config[self.vol_mount_point] = vol_id
 
         metadata = {
-            "SolutionName": self.solution_name,
-            "SolutionType": "flist",
+            "name": self.solution_name,
+            "form_info": {"chatflow": "flist", "Solution name": self.solution_name, "env": self.env},
         }
         self.resv_id = j.sal.chatflow_deployer.deploy_container(
             pool_id=self.pool_id,

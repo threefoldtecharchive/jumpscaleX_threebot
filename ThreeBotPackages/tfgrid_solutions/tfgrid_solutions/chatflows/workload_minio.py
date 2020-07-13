@@ -175,10 +175,13 @@ class MinioDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Confirmation")
     def overview(self):
         self.metadata = {
-            "SolutionName": self.solution_name,
-            "SolutionType": "minio",
-            "SetupType": self.mode,
+            "Solution Name": self.solution_name,
+            "Solution Type": "minio",
+            "Setup Type": self.mode,
+            "Master IP": self.master_ip_address,
         }
+        if self.mode == "Master/Slave":
+            self.metadata["Slave IP"] = self.slave_ip_address
         self.md_show_confirm(self.metadata)
 
     @j.baseclasses.chatflow_step(title="Reserve zdb", disable_previous=True)
@@ -198,10 +201,20 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         for zid in self.zdb_result:
             zdb_configs.append(j.sal.chatflow_deployer.get_zdb_url(zid, self.password))
 
+        metadata = {
+            "name": self.solution_name,
+            "form_info": {
+                "chatflow": "minio",
+                "Solution name": self.solution_name,
+                "Master IP": self.master_ip_address,
+                "ZDB URLS": zdb_configs,
+            },
+        }
         minio_nodes = [self.master_node]
         minio_ip_addresses = [self.master_ip_address]
 
         if self.mode == "Master/Slave":
+            metadata["form_info"]["Slave IP"] = self.slave_ip_address
             minio_nodes.append(self.slave_node)
             minio_ip_addresses.append(self.slave_ip_address)
 
@@ -222,7 +235,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
             disk_size=1,
             log_config=self.log_config,
             mode=self.mode,
-            **self.metadata,
+            **metadata,
         )
         for resv_id in self.minio_result:
             success = j.sal.chatflow_deployer.wait_workload(resv_id)

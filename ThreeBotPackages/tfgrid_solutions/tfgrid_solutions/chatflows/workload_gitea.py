@@ -117,10 +117,9 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
             "APP_NAME": self.repository_name,
             "ROOT_URL": f"http://{self.ip_address}:3000",
         }
-        metadata = {
-            "SolutionName": self.solution_name,
-            "SolutionType": "gitea",
-        }
+        metadata = {"name": self.solution_name, "form_info": {"name": self.solution_name, "chatflow": "gitea",}}
+        metadata["form_info"].update(var_dict)
+
         self.resv_id = j.sal.chatflow_deployer.deploy_container(
             pool_id=self.pool_id,
             node_id=self.selected_node.node_id,
