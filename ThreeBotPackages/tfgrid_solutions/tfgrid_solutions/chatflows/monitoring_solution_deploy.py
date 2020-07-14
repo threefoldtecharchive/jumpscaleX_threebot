@@ -75,10 +75,8 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
-        # FIXME: properly calculate cu and su (ask volume details first)
-        cu = self.prometheus_query["cpu"] + self.grafana_query["cpu"] + self.redis_query["cpu"]
-        su = self.prometheus_query["disk_size"] + self.grafana_query["disk_size"] + self.redis_query["disk_size"]
-        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu, su)
+        # FIXME: properly calculate cu and su
+        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=None, su=None)
 
     @j.baseclasses.chatflow_step(title="Network")
     def network_selection(self):

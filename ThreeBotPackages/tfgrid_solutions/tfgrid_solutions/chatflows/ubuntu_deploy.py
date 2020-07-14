@@ -46,9 +46,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
         # FIXME: properly calculate cu and su
-        cu = self.resources["cpu"]
-        su = self.resources["disk_size"]
-        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu, su)
+        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=None, su=None)
 
     @j.baseclasses.chatflow_step(title="Network")
     def ubuntu_network(self):

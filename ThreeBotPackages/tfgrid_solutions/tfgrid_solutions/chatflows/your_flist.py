@@ -39,12 +39,27 @@ class FlistDeploy(j.servers.chatflow.get_class()):
     def container_resources(self):
         self.resources = j.sal.chatflow_deployer.ask_container_resources(self)
 
+    @j.baseclasses.chatflow_step(title="Attach Volume")
+    def container_volume(self):
+        volume_attach = self.drop_down_choice(
+            "Would you like to attach an extra volume to the container", ["YES", "NO"], required=True, default="NO"
+        )
+        self.container_volume_attach = volume_attach == "YES" or False
+
+    @j.baseclasses.chatflow_step(title="Volume details")
+    def container_volume_details(self):
+        if self.container_volume_attach:
+            form = self.new_form()
+            vol_disk_size = form.int_ask("Please specify the volume size in GiB", required=True, default=10)
+            vol_mount_point = form.string_ask("Please enter the mount point", required=True, default="/data")
+            form.ask()
+            self.vol_size = vol_disk_size.value
+            self.vol_mount_point = vol_mount_point.value
+
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
-        # FIXME: properly calculate cu and su (requires volume details before this step)
-        cu = self.resources["cpu"]
-        su = self.resources["disk_size"]
-        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu, su)
+        # FIXME: properly calculate cu and su
+        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=None, su=None)
 
     @j.baseclasses.chatflow_step(title="Network")
     def flist_network(self):
@@ -95,23 +110,6 @@ class FlistDeploy(j.servers.chatflow.get_class()):
         self.selected_node = j.sal.chatflow_deployer.ask_container_placement(self, self.pool_id, **query)
         if not self.selected_node:
             self.selected_node = j.sal.chatflow_deployer.schedule_container(self.pool_id, **query)
-
-    @j.baseclasses.chatflow_step(title="Attach Volume")
-    def container_volume(self):
-        volume_attach = self.drop_down_choice(
-            "Would you like to attach an extra volume to the container", ["YES", "NO"], required=True, default="NO"
-        )
-        self.container_volume_attach = volume_attach == "YES" or False
-
-    @j.baseclasses.chatflow_step(title="Volume details")
-    def container_volume_details(self):
-        if self.container_volume_attach:
-            form = self.new_form()
-            vol_disk_size = form.int_ask("Please specify the volume size in GiB", required=True, default=10)
-            vol_mount_point = form.string_ask("Please enter the mount point", required=True, default="/data")
-            form.ask()
-            self.vol_size = vol_disk_size.value
-            self.vol_mount_point = vol_mount_point.value
 
     @j.baseclasses.chatflow_step(title="Container logs")
     def container_logs(self):
