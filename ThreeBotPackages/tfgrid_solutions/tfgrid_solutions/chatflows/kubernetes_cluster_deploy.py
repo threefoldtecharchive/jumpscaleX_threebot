@@ -60,7 +60,10 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
         else:
             self.master_query = self.worker_query = {"sru": 100, "mru": 4, "cru": 2}
         # FIXME: properly calculate cu and su
-        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=None, su=None)
+        cu, su = j.sal.chatflow_deployer.calculate_capacity_units(**self.master_query)
+        cu = cu * (1 + self.workernodes.value)
+        su = su * (1 + self.workernodes.value)
+        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=cu, su=su)
 
     @j.baseclasses.chatflow_step(title="Network")
     def network_selection(self):

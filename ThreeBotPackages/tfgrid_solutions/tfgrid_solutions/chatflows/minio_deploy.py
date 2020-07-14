@@ -75,8 +75,15 @@ class MinioDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
-        # FIXME: properly calculate cu and su
-        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=None, su=None)
+        query = {
+            "cru": self.minio_cont_resources["cpu"],
+            "mru": self.minio_cont_resources["memory"],
+            "sru": 2,  # zdb + single node
+        }
+        if self.mode == "Master/Slave":
+            query["sru"] += 1
+        cu, su = j.sal.chatflow_deployer.calculate_capacity_units(**query)
+        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=cu, su=su)
 
     @j.baseclasses.chatflow_step(title="Network")
     def minio_network(self):

@@ -58,8 +58,15 @@ class FlistDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
-        # FIXME: properly calculate cu and su
-        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=None, su=None)
+        query = {
+            "cru": self.resources["cpu"],
+            "mru": math.ceil(self.resources["memory"] / 1024),
+            "sru": math.ceil(self.resources["disk_size"] / 1024),
+        }
+        if self.container_volume_attach:
+            query["sru"] += math.ceil(self.vol_size / 1024)
+        cu, su = j.sal.chatflow_deployer.calculate_capacity_units(**query)
+        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=cu, su=su)
 
     @j.baseclasses.chatflow_step(title="Network")
     def flist_network(self):

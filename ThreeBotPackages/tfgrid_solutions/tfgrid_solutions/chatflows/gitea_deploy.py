@@ -17,7 +17,7 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
         user_info = self.user_info()
         j.sal.reservation_chatflow.validate_user(user_info)
         self.md_show("# This wizard wil help you deploy an gitea container", md=True)
-        self.query = {"mru": math.ceil(1024 / 1024), "cru": 2, "sru": 6}
+        self.query = {"mru": 1, "cru": 2, "sru": 6}
 
     @j.baseclasses.chatflow_step(title="Solution name")
     def gitea_name(self):
@@ -25,8 +25,8 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
-        # FIXME: properly calculate cu and su
-        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=None, su=None)
+        cu, su = j.sal.chatflow_deployer.calculate_capacity_units(**self.query)
+        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=cu, su=su)
 
     @j.baseclasses.chatflow_step(title="Network")
     def gitea_network(self):

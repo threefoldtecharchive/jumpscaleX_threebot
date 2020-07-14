@@ -76,7 +76,13 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
         # FIXME: properly calculate cu and su
-        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=None, su=None)
+        query = {"cru": 0, "mru": 0, "sru": math.ceil(self.vol_size / 1024)}
+        for name in self.tools_names:
+            query["cru"] += self.query[name]["cpu"]
+            query["mru"] += (math.ceil(self.query[name]["memory"] / 1024),)
+            query["sru"] += math.ceil(self.query[name]["disk_size"] / 1024)
+        cu, su = j.sal.chatflow_deployer.calculate_capacity_units(**query)
+        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=cu, su=su)
 
     @j.baseclasses.chatflow_step(title="Network")
     def network_selection(self):
@@ -84,16 +90,13 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Containers' node id")
     def container_node_id(self):
-        # create new reservation
-        self.reservation = j.sal.zosv2.reservation_create()
-        # form = self.new_form()
         self.nodes_selected = {"Prometheus": None, "Grafana": None, "Redis": None}
         self.tools_names = ["Prometheus", "Grafana", "Redis"]
         for name in self.tools_names:
             query = {
                 "cru": self.query[name]["cpu"],
                 "mru": math.ceil(self.query[name]["memory"] / 1024),
-                "sru": self.query[name]["disk_size"],
+                "sru": math.ceil(self.query[name]["disk_size"] / 1024),
             }
             self.nodes_selected[name] = j.sal.chatflow_deployer.ask_container_placement(
                 self, self.pool_id, workload_name=name, **query
