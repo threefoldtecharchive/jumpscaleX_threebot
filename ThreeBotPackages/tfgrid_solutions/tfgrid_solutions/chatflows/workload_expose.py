@@ -1,4 +1,5 @@
 from Jumpscale import j
+from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 import uuid
 
 kinds = {
@@ -48,6 +49,7 @@ class SolutionExpose(j.servers.chatflow.get_class()):
         form.ask()
         self.port = port.value
         self.tls_port = tlsport.value
+        self.solution_ip = j.sal.chatflow_solutions.get_solution_ip(self.solution)
 
     @j.baseclasses.chatflow_step(title="Domain 1")
     def domain_1(self):
@@ -102,6 +104,72 @@ class SolutionExpose(j.servers.chatflow.get_class()):
             self.domain = domain + "." + domain_name
             self.name_server = self.domain_gateway.dns_nameserver[0]
             self.gateway_id = self.domain_gateway.node_id
+            self.secret = f"{j.me.tid}:{uuid.uuid4().hex}"
+
+    @j.baseclasses.chatflow_step(title="Confirmation", disable_previous=True)
+    def confirmation(self):
+        self.metadata = {
+            "Exposed Solution": self.solution_name,
+            "Solution Type": self.kind,
+            "Solution Exposed IP": self.solution_ip,
+            "Port": self.port,
+            "TLS Port": self.tls_port,
+            "Gateway": self.gateway_id,
+            "Pool": self.pool_id,
+            "TRC Secret": self.secret,
+        }
+        self.md_show_confirm(self.metadata, html=True)
+
+    @j.baseclasses.chatflow_step(title="Reservation", disable_previous=True)
+    def reservation(self):
+        metadata = {"name": self.domain, "form_info": {"Solution name": self.domain, "chatflow": "exposed"}}
+        metadata["form_info"].update(self.metadata)
+        query = {"mru": 1, "cru": 1, "sru": 1}
+        self.selected_node = j.sal.chatflow_deployer.schedule_container(self.pool_id, **query)
+        self.network_name = j.sal.chatflow_solutions.get_solution_network_name(self.solution)
+        self.tcprouter_ip = self.network_view.get_free_ip(self.selected_node)
+        if not self.tcprouter_ip:
+            raise StopChatFlow(
+                f"No available ips one for network {self.network_view.name} node {self.selected_node.node_id}"
+            )
+
+        if self.chosen_domain != "Custom":
+            self.dom_id = j.sal.chatflow_deployer.create_subdomain(
+                pool_id=self.pool_id, gateway_id=self.gateway_id, subdomain=self.domain, **metadata
+            )
+            success = j.sal.chatflow_deployer.wait_workload(self.dom_id)
+            if not success:
+                raise StopChatFlow(f"Failed to reserve sub-domain workload {self.dom_id}")
+
+        self.proxy_id = j.sal.chatflow_deployer.create_proxy(
+            pool_id=self.pool_id,
+            gateway_id=self.gateway_id,
+            domain_name=self.domain,
+            trc_secret=self.secret,
+            **metadata,
+        )
+        success = j.sal.chatflow_deployer.wait_workload(self.proxy_id)
+        if not success:
+            raise StopChatFlow(f"Failed to reserve sub-domain workload {self.proxy_id}")
+
+        self.tcprouter_id = j.sal.chatflow_deployer.expose_address(
+            pool_id=self.pool_id,
+            gateway_id=self.gateway_id,
+            network_name=self.network_name,
+            local_ip=self.solution_ip,
+            port=self.port,
+            tls_port=self.tls_port,
+            trc_secret=self.secret,
+            **metadata,
+        )
+        success = j.sal.chatflow_deployer.wait_workload(self.tcprouter_id)
+        if not success:
+            raise StopChatFlow(f"Failed to reserve sub-domain workload {self.tcprouter_id}")
+
+    @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
+    def success(self):
+        res_md = f"Use this Gateway to connect to your exposed solution `{self.domain}`"
+        self.md_show(res_md)
 
 
 chat = SolutionExpose
