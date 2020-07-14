@@ -121,7 +121,10 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Reservation")
     def reservation(self):
         container_flist = f"{self.HUB_URL}/3bot-{self.version}.flist"
-        metadata = {"SolutionType": "ubuntu", "SolutionName": self.solution_name}
+        metadata = {
+            "name": self.solution_name,
+            "form_info": {"chatflow": "flist", "Solution name": self.solution_name},
+        }
         self.resv_id = j.sal.chatflow_deployer.deploy_container(
             pool_id=self.pool_id,
             node_id=self.selected_node.node_id,
