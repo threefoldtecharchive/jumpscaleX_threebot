@@ -62,7 +62,7 @@ export default class PoolsView extends JetView {
                     width: 170
                 },
                 {
-                    id: "active_sus",
+                    id: "active_su",
                     header: "Active storage units",
                     sort: "string",
                     width: 170
@@ -80,7 +80,7 @@ export default class PoolsView extends JetView {
                     width: 170
                 },
                 {
-                    id: "active_cus",
+                    id: "active_cu",
                     header: "Active cloud units",
                     sort: "string",
                     width: 170
@@ -96,6 +96,14 @@ export default class PoolsView extends JetView {
                     $init: function (obj) {
                         obj.available_cu = obj.cus - obj.active_cu
                         obj.available_su = obj.sus - obj.active_su
+                        if (obj.empty_at < 9223372036854775807) {
+                            var d = new Date(0)
+                            d.setUTCSeconds(obj.empty_at)
+                            obj.empty_at = d
+                        } else {
+                            obj.empty_at = "_"
+                        }
+
                         obj.index = this.count();
                     }
                 }
