@@ -150,7 +150,7 @@ class SolutionExpose(j.servers.chatflow.get_class()):
         )
         success = j.sal.chatflow_deployer.wait_workload(self.proxy_id)
         if not success:
-            raise StopChatFlow(f"Failed to reserve sub-domain workload {self.proxy_id}")
+            raise StopChatFlow(f"Failed to reserve reverse proxy workload {self.proxy_id}")
 
         self.tcprouter_id = j.sal.chatflow_deployer.expose_address(
             pool_id=self.pool_id,
@@ -164,7 +164,7 @@ class SolutionExpose(j.servers.chatflow.get_class()):
         )
         success = j.sal.chatflow_deployer.wait_workload(self.tcprouter_id)
         if not success:
-            raise StopChatFlow(f"Failed to reserve sub-domain workload {self.tcprouter_id}")
+            raise StopChatFlow(f"Failed to reserve tcprouter container workload {self.tcprouter_id}")
 
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
     def success(self):
