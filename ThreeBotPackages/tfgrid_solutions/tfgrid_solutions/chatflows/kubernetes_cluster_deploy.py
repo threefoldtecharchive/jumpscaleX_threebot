@@ -1,181 +1,177 @@
 from Jumpscale import j
+import math
+import requests
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 
 
-class kubernetesDeploy(j.servers.chatflow.get_class()):
+class KubernetesDeploy(j.servers.chatflow.get_class()):
     steps = [
         "deployment_start",
-        "network_selection",
-        "solution_name",
-        "nodes_selection",
+        "kubernetes_name",
         "public_key_get",
-        "expiration_datetime",
+        "choose_flavor",
+        "select_pool" "network_selection",
+        "nodes_selection",
         "ip_selection",
         "overview",
-        "cluster_reservation",
+        "reservation",
         "success",
     ]
 
-    @j.baseclasses.chatflow_step(title="")
+    @j.baseclasses.chatflow_step()
     def deployment_start(self):
         user_info = self.user_info()
         j.sal.reservation_chatflow.validate_user(user_info)
-
-        self.user_form_data = {}
-        self.user_form_data["chatflow"] = "kubernetes"
         self.md_show("# This wizard will help you deploy a kubernetes cluster")
 
-    @j.baseclasses.chatflow_step(title="Network")
-    def network_selection(self):
-        self.network = j.sal.reservation_chatflow.network_select(self, j.me.tid)
-
     @j.baseclasses.chatflow_step(title="Solution name")
-    def solution_name(self):
-        model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.kubernetes.1")
-        self.user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(self, model)
-
-    @j.baseclasses.chatflow_step(title="Master and Worker nodes selection")
-    def nodes_selection(self):
-        retry = False
-        while True:
-            form = self.new_form()
-            sizes = ["1 vCPU 2 GiB ram 50GiB disk space", "2 vCPUs 4 GiB ram 100GiB disk space"]
-            cluster_size_string = form.drop_down_choice(
-                "Choose the size of your nodes", sizes, default=sizes[0], retry=retry
-            )
-            masternodes = form.int_ask(
-                "Please specify the number of master nodes", default=1, required=True, min=1, retry=retry
-            )  # minimum should be 1
-            workernodes = form.int_ask(
-                "Please specify the number of worker nodes", default=1, required=True, min=1, retry=retry
-            )  # minimum should be 1
-
-            form.ask()
-            self.cluster_size = sizes.index(cluster_size_string.value) + 1  # sizes are index 1
-            # Select nodes
-            if self.cluster_size == 1:
-                nodequery = {"sru": 50, "mru": 2, "cru": 1, "currency": self.network.currency}
-            else:
-                nodequery = {"sru": 100, "mru": 4, "cru": 2, "currency": self.network.currency}
-            try:
-                farms = j.sal.reservation_chatflow.farm_names_get(
-                    masternodes.value + workernodes.value, self, **nodequery
-                )
-                self.master_nodes_selected = j.sal.reservation_chatflow.nodes_get(
-                    masternodes.value, farm_names=farms[: masternodes.value], **nodequery
-                )
-
-                self.worker_nodes_selected = j.sal.reservation_chatflow.nodes_get(
-                    workernodes.value, farm_names=farms[masternodes.value :], **nodequery
-                )
-                break
-            except StopChatFlow as e:
-                retry = True
-                self.md_show(e.msg)
-
-        self.user_form_data["Master number"] = masternodes.value
-        self.user_form_data["Workers number"] = workernodes.value
-        self.user_form_data["Cluster size"] = cluster_size_string.value
+    def kubernetes_name(self):
+        self.solution_name = j.sal.chatflow_deployer.ask_name(self)
 
     @j.baseclasses.chatflow_step(title="Access keys and secret")
     def public_key_get(self):
-        self.user_form_data["SSH keys"] = self.upload_file(
-            """Please add your public ssh key, this will allow you to access the deployed container using ssh.
-                Just upload the ssh keys file with each key on a seperate line"""
-        )
-        self.ssh_keys_list = self.user_form_data["SSH keys"].split("\n")
-
-        self.user_form_data["Cluster secret"] = self.string_ask("Please add the cluster secret", default="secret")
-
-    @j.baseclasses.chatflow_step(title="Expiration")
-    def expiration_datetime(self):
-        self.expiration = self.datetime_picker(
-            "Please enter solution expiration time.",
+        # TODO: check valide ssh ket file
+        self.ssh_keys = self.upload_file(
+            """Please add your public ssh key, this will allow you to access the deployed containers using ssh.
+                Just upload the file with the key.
+                Note: please use keys compatible with Dropbear server eg: rsa """,
             required=True,
-            min_time=[3600, "Date/time should be at least 1 hour from now"],
-            default=j.data.time.epoch + 3900,
+        ).split("\n")
+
+        self.cluster_secret = self.string_ask("Please add the cluster secret", default="secret")
+
+    @j.baseclasses.chatflow_step(title="Master and Worker flavors")
+    def choose_flavor(self):
+        form = self.new_form()
+        sizes = ["1 vCPU 2 GiB ram 50GiB disk space", "2 vCPUs 4 GiB ram 100GiB disk space"]
+        cluster_size_string = form.drop_down_choice("Choose the size of your nodes", sizes, default=sizes[0])
+
+        self.workernodes = form.int_ask(
+            "Please specify the number of worker nodes", default=1, required=True, min=1
+        )  # minimum should be 1
+
+        form.ask()
+        self.cluster_size = sizes.index(cluster_size_string.value) + 1
+
+    @j.baseclasses.chatflow_step(title="Pool")
+    def select_pool(self):
+        if self.cluster_size == 1:
+            self.master_query = self.worker_query = {"sru": 50, "mru": 2, "cru": 1}
+        else:
+            self.master_query = self.worker_query = {"sru": 100, "mru": 4, "cru": 2}
+        cu = self.master_query["cru"] + self.worker_query["cru"] * self.workernodes.value
+        su = self.master_query["sru"] + self.worker_query["sru"] * self.workernodes.value
+        # FIXME: properly calculate cu and su (ask volume details first)
+        self.pool_id = j.sal.chatflow_deployer.select_pool(self, 2, 5)
+
+    @j.baseclasses.chatflow_step(title="Network")
+    def network_selection(self):
+        self.network_view = j.sal.chatflow_deployer.select_network(self, self.pool_id)
+
+    @j.baseclasses.chatflow_step(title="Containers' node id")
+    def nodes_selection(self):
+        # select master node
+        master_node_selected = j.sal.chatflow_deployer.ask_container_placement(
+            self, self.pool_id, workload_name="master", **self.master_query
         )
-        self.user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(self.expiration - j.data.time.epoch)
+        if not master_node_selected:
+            master_node_selected = j.sal.chatflow_deployer.schedule_container(self.pool_id, **self.master_query)
+        self.nodes_selected.append(master_node_selected)
+
+        # select workers nodes
+        for idx in range(self.workernodes.value):
+            worker_node_selected = j.sal.chatflow_deployer.ask_container_placement(
+                self, self.pool_id, workload_name=f"worker {idx+1}", **self.worker_query
+            )
+            if not worker_node_selected:
+                worker_node_selected = j.sal.chatflow_deployer.schedule_container(self.pool_id, **self.worker_query)
+            self.nodes_selected.append(worker_node_selected)
 
     @j.baseclasses.chatflow_step(title="IP selection")
     def ip_selection(self):
-        self.network_copy = self.network.copy(j.me.tid)
-        ipaddresses = list()
-        for idx, node_selected in enumerate(self.master_nodes_selected):
-            self.network_copy.add_node(node_selected)
-            msg = f"Please choose IP Address for master node {idx + 1} of your kubernets cluster"
-            ip_address = self.network_copy.ask_ip_from_node(node_selected, msg)
-            ipaddresses.append(ip_address)
+        # Note:  nodes_selected[0] = master node
 
-        for idx, node_selected in enumerate(self.worker_nodes_selected):
-            if node_selected not in self.master_nodes_selected:
-                self.network_copy.add_node(node_selected)
-            msg = f"Please choose IP Address for worker node {idx + 1} of your kubernets cluster"
-            ip_address = self.network_copy.ask_ip_from_node(node_selected, msg)
-            ipaddresses.append(ip_address)
+        # select master IP
+        self.master_network = self.network_view.copy()
+        result = j.sal.chatflow_deployer.add_network_node(
+            self.network_view.name, self.nodes_selected[0], self.master_network
+        )
+        if result:
+            for wid in result["ids"]:
+                success = j.sal.chatflow_deployer.wait_workload(wid, self)
+                if not success:
+                    raise StopChatFlow(f"Failed to add node {self.nodes_selected[0].node_id} to network {wid}")
+        free_ips = self.master_network.get_node_free_ips(self.nodes_selected[0])
+        master_ipaddress = self.drop_down_choice("Please choose IP Address for your master node container", free_ips)
+        self.ipaddresses.append(master_ipaddress)
 
-        self.user_form_data["IP Address"] = ipaddresses
+        latest_network = self.master_network
+        # select workers IPs
+        for idx, worker_node in enumerate(self.nodes_selected[1:]):
+            self.network_copy = latest_network.copy()
+            result = j.sal.chatflow_deployer.add_network_node(self.latest_network.name, worker_node, self.network_copy)
+            if result:
+                for wid in result["ids"]:
+                    success = j.sal.chatflow_deployer.wait_workload(wid, self)
+                    if not success:
+                        raise StopChatFlow(f"Failed to add node {worker_node.node_id} to network {wid}")
+            free_ips = self.network_copy.get_node_free_ips(worker_node)
+            worker_ipaddress = self.drop_down_choice(
+                f"Please choose IP Address for your worker {idx+1} node container", free_ips
+            )
+            self.ipaddresses.append(worker_ipaddress)
+            latest_network = self.network_copy  # update latest_network variable
 
     @j.baseclasses.chatflow_step(title="Confirmation")
     def overview(self):
-        self.md_show_confirm(self.user_form_data)
+        self.metadata = {
+            "Solution name": self.solution_name,
+            "Network": self.network_view.name,
+            "Masters count": 1,
+            "Slaves count": self.workernodes.value,
+            "Cluster size": self.cluster_size,
+            "Cluster secret": self.cluster_secret,
+            "Nodes IP Addresses": self.ipaddresses,
+        }
+        self.md_show_confirm(self.metadata)
 
     @j.baseclasses.chatflow_step(title="Cluster reservations", disable_previous=True)
-    def cluster_reservation(self):
+    def reservation(self):
         self.network = self.network_copy
-        # update network
-        self.network.update(j.me.tid, currency=self.network.currency, bot=self)
-        # create new reservation
-        self.reservation = j.sal.zosv2.reservation_create()
-        # Create master and workers
-        # Master is in the first node from the selected nodes
-        for idx, master_node in enumerate(self.master_nodes_selected):
-            master = j.sal.zosv2.kubernetes.add_master(
-                reservation=self.reservation,
-                node_id=master_node.node_id,
-                network_name=self.network.name,
-                cluster_secret=self.user_form_data["Cluster secret"],
-                ip_address=self.user_form_data["IP Address"][idx],
-                size=self.cluster_size,
-                ssh_keys=self.ssh_keys_list,
-            )
+        metadata = {
+            "name": self.solution_name,
+            "form_info": {"chatflow": "kubernetes", "Solution name": self.solution_name},
+        }
+        metadata["form_info"].update(self.metadata)
+        self.reservations = j.sal.chatflow_deployer.deploy_kubernetes_cluster(
+            self.pool_id,
+            self.nodes_selected,
+            self.network.name,
+            self.cluster_secret,
+            self.ssh_keys,
+            size=self.cluster_size,
+            ip_addresses=self.ipaddresses,
+            **metadata,
+        )
 
-        # Workers are in the rest of the nodes
-        for i, worker_node in enumerate(self.worker_nodes_selected):
-            j.sal.zosv2.kubernetes.add_worker(
-                reservation=self.reservation,
-                node_id=worker_node.node_id,
-                network_name=self.network.name,
-                cluster_secret=self.user_form_data["Cluster secret"],
-                ip_address=self.user_form_data["IP Address"][i + self.user_form_data["Master number"]],
-                size=self.cluster_size,
-                master_ip=master.ipaddress,
-                ssh_keys=self.ssh_keys_list,
-            )
-
-        # register the reservation
-        metadata = self.user_form_data.copy()
-        metadata.pop("SSH keys")
-        res = j.sal.reservation_chatflow.solution_model_get(
-            self.user_form_data["Solution name"], "tfgrid.solutions.kubernetes.1", metadata
-        )
-        self.reservation = j.sal.reservation_chatflow.reservation_metadata_add(self.reservation, res)
-        self.resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
-            self.reservation, self.expiration, customer_tid=j.me.tid, currency=self.network.currency, bot=self
-        )
-        j.sal.reservation_chatflow.reservation_save(
-            self.resv_id, self.user_form_data["Solution name"], "tfgrid.solutions.kubernetes.1", self.user_form_data
-        )
+        for resv in self.reservations:
+            success = j.sal.chatflow_deployer.wait_workload(resv, self)
+            if not success:
+                raise StopChatFlow(f"Failed to deploy workload {resv}")
 
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
     def success(self):
-        res = f"# Kubernetes cluster has been deployed successfully: your reservation id is: {self.resv_id}"
-        for i, ip in enumerate(self.user_form_data["IP Address"]):
-            res += f"""
-## kubernete {i +1} IP : {ip}
-To connect ssh rancher@{ip}
+        res = f"""# Kubernetes cluster has been deployed successfully:
+            Master reservation id is: {self.reservations[0]["reservation_id"]}
+            IP: {self.reservations[0]["ip_address"]}
+            To connect ssh rancher@{self.reservations[0]["ip_address"]}
+        """
+        for idx, resv in enumerate(self.reservations):
+            res += f"""Worker {idx} reservation id is: {resv["reservation_id"]}
+                IP: {resv["ip_address"]}
+                To connect ssh rancher@{resv["ip_address"]}
             """
         self.md_show(res)
 
 
-chat = kubernetesDeploy
+chat = KubernetesDeploy

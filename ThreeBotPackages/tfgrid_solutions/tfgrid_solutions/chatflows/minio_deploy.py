@@ -1,23 +1,24 @@
 from Jumpscale import j
 import math
+from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 
 
 class MinioDeploy(j.servers.chatflow.get_class()):
     steps = [
         "deployment_start",
-        "network_selection",
-        "solution_name",
+        "minio_name",
         "setup_type",
-        "storage_type",
-        "access_credentials",
+        "zdb_storage_type",
         "container_resources",
-        "container_logs",
         "minio_resources",
+        "select_pool",
+        "minio_network",
+        "access_credentials",
+        "container_logs",
         "public_key",
-        "expiration_datetime",
-        "zdb_nodes",
         "minio_node",
-        "ip_selection",
+        "master_ip_selection",
+        "slave_ip_selection",
         "overview",
         "zdb_reservation",
         "minio_reservation",
@@ -32,29 +33,55 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         self.user_form_data["chatflow"] = "minio"
         self.md_show("# This wizard will help you deploy a minio cluster")
 
-    @j.baseclasses.chatflow_step(title="Network")
-    def network_selection(self):
-        self.network = j.sal.reservation_chatflow.network_select(self, j.me.tid)
-
     @j.baseclasses.chatflow_step(title="Solution name")
-    def solution_name(self):
-        model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.minio.1")
-        self.user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(self, model)
+    def minio_name(self):
+        self.solution_name = j.sal.chatflow_deployer.ask_name(self)
 
     @j.baseclasses.chatflow_step(title="Setup type")
     def setup_type(self):
-        self.user_form_data["Setup type"] = self.drop_down_choice(
+        self.mode = self.drop_down_choice(
             "Please choose the type of setup you need. Single setup is the basic setup while master/slave setup includes TLOG use to be able to reconstruct the metadata",
-            ["Single Setup", "Master/Slave Setup"],
+            ["Single", "Master/Slave"],
             required=True,
-            default="Single Setup",
+            default="Single",
         )
 
-    @j.baseclasses.chatflow_step(title="Storage")
-    def storage_type(self):
-        self.user_form_data["Disk type"] = self.drop_down_choice(
+    @j.baseclasses.chatflow_step(title="ZDB Storage")
+    def zdb_storage_type(self):
+        self.zdb_disk_type = self.drop_down_choice(
             "Please choose a the type of disk for zdb", ["SSD", "HDD"], required=True, default="SSD"
         )
+
+    @j.baseclasses.chatflow_step(title="Container resources")
+    def container_resources(self):
+        self.minio_cont_resources = j.sal.chatflow_deployer.ask_container_resources(self, disk_size=False)
+
+    @j.baseclasses.chatflow_step(title="Resources for minio")
+    def minio_resources(self):
+        form = self.new_form()
+        data_number = form.int_ask(
+            "Please add the number of locations you need. Take care of the ratio between the locations and locations allowed to fail that you will specify next",
+            default=2,
+        )
+        parity = form.int_ask("Please add the number of locations allowed to fail", default=1)
+        form.ask()
+        self.data = data_number.value
+        self.parity = parity.value
+        self.zdb_number = self.data + self.parity
+        self.minio_number = 1
+        if self.mode == "Master/Slave":
+            self.minio_number += 1
+            self.zdb_number += 1
+
+    @j.baseclasses.chatflow_step(title="Pool")
+    def select_pool(self):
+        # FIXME: properly calculate cu and su (requires volume details before this step)
+        cu = (self.minio_cont_resources["cpu"] * self.minio_number) + self.zdb_number
+        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu)
+
+    @j.baseclasses.chatflow_step(title="Network")
+    def minio_network(self):
+        self.network_view = j.sal.chatflow_deployer.select_network(self, self.pool_id)
 
     @j.baseclasses.chatflow_step(title="Access credentials")
     def access_credentials(self):
@@ -74,17 +101,8 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         )
         form.ask()
 
-        self.user_form_data["Access key"] = accesskey.value
-        self.user_form_data["Secret"] = secret.value
-
-    @j.baseclasses.chatflow_step(title="Container resources")
-    def container_resources(self):
-        form = self.new_form()
-        cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
-        memory = form.int_ask("Please add the amount of memory in MB", default=4096, min=4096)
-        form.ask()
-        self.user_form_data["CPU"] = cpu.value
-        self.user_form_data["Memory"] = memory.value
+        self.ak = accesskey.value
+        self.sk = secret.value
 
     @j.baseclasses.chatflow_step(title="Container logs")
     def container_logs(self):
@@ -94,43 +112,9 @@ class MinioDeploy(j.servers.chatflow.get_class()):
             default="NO",
         )
         if self.container_logs_option == "YES":
-            form = self.new_form()
-            self.channel_type = form.string_ask("Please add the channel type", default="redis", required=True)
-            self.channel_host = form.string_ask(
-                "Please add the IP address where the logs will be output to", required=True
-            )
-            self.channel_port = form.int_ask(
-                "Please add the port available where the logs will be output to", required=True
-            )
-            self.channel_name = form.string_ask(
-                "Please add the channel name to be used. The channels will be in the form NAME-stdout and NAME-stderr",
-                default=self.user_form_data["Solution name"],
-                required=True,
-            )
-            form.ask()
-            self.user_form_data["Logs Channel type"] = self.channel_type.value
-            self.user_form_data["Logs Channel host"] = self.channel_host.value
-            self.user_form_data["Logs Channel port"] = self.channel_port.value
-            self.user_form_data["Logs Channel name"] = self.channel_name.value
-
-    @j.baseclasses.chatflow_step(title="Resources for minio")
-    def minio_resources(self):
-        form = self.new_form()
-        data_number = form.int_ask(
-            "Please add the number of locations you need. Take care of the ratio between the locations and locations allowed to fail that you will specify next",
-            default=2,
-        )
-        parity = form.int_ask("Please add the number of locations allowed to fail", default=1)
-
-        form.ask()
-        self.user_form_data["Locations"] = int(data_number.value)
-        self.user_form_data["Locations allowed to fail"] = int(parity.value)
-        self.user_form_data["ZDB number"] = int(data_number.value) + int(parity.value)
-        if self.user_form_data["Setup type"] == "Single Setup":
-            self.number_of_minio_nodes = 1
-        elif self.user_form_data["Setup type"] == "Master/Slave Setup":
-            self.user_form_data["ZDB number"] += 1
-            self.number_of_minio_nodes = 2
+            self.log_config = j.sal.chatflow_deployer.ask_container_logs(self, self.solution_name)
+        else:
+            self.log_config = {}
 
     @j.baseclasses.chatflow_step(title="Public key")
     def public_key(self):
@@ -143,225 +127,131 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         else:
             self.public_ssh_key = ""
 
-    @j.baseclasses.chatflow_step(title="Expiration")
-    def expiration_datetime(self):
-        self.expiration = self.datetime_picker(
-            "Please enter solution expiration time.",
-            required=True,
-            min_time=[3600, "Date/time should be at least 1 hour from now"],
-            default=j.data.time.epoch + 3900,
-        )
-        self.user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(self.expiration - j.data.time.epoch)
-
-    @j.baseclasses.chatflow_step(title="Zdb (storage) nodes selection")
-    def zdb_nodes(self):
-        zdb_nodequery = {}
-        zdb_nodequery["currency"] = self.network.currency
-        if self.user_form_data["Disk type"] == "SSD":
-            zdb_nodequery["sru"] = 10
-        if self.user_form_data["Disk type"] == "HDD":
-            zdb_nodequery["hru"] = 10
-
-        zdb_farms = j.sal.reservation_chatflow.farm_names_get(
-            self.user_form_data["ZDB number"], self, message="zdb", **zdb_nodequery
-        )
-        self.nodes_selected = j.sal.reservation_chatflow.nodes_get(
-            number_of_nodes=self.user_form_data["ZDB number"], farm_names=zdb_farms, **zdb_nodequery
-        )
-
     @j.baseclasses.chatflow_step(title="Minio container node selection")
     def minio_node(self):
         nodequery = {}
-        nodequery["currency"] = self.network.currency
-        nodequery["mru"] = math.ceil(self.user_form_data["Memory"] / 1024)
-        nodequery["cru"] = self.user_form_data["CPU"]
         nodequery["sru"] = 1
-        cont_farms = j.sal.reservation_chatflow.farm_names_get(1, self, message="minio container", **nodequery)
-        minio_nodes = j.sal.reservation_chatflow.nodes_get(
-            number_of_nodes=self.number_of_minio_nodes, farm_names=cont_farms, **nodequery
-        )
-        self.cont_node = minio_nodes[0]
-        if self.user_form_data["Setup type"] == "Master/Slave Setup" and len(minio_nodes) > 1:
-            self.slave_node = minio_nodes[1]
+        nodequery["cru"] = self.minio_cont_resources["cpu"]
+        nodequery["mru"] = self.minio_cont_resources["memory"]
+        self.master_node = j.sal.chatflow_deployer.ask_container_placement(self, self.pool_id, **nodequery)
+        if not self.master_node:
+            self.master_node = j.sal.chatflow_deployer.schedule_container(self.pool_id, **nodequery)
+
+        if self.mode == "Master/Salve":
+            self.slave_node = j.sal.chatflow_deployer.ask_container_placement(self, self.pool_id, **nodequery)
+            if not self.slave_node:
+                self.slave_node = j.sal.chatflow_deployer.schedule_container(self.pool_id, **nodequery)
 
     @j.baseclasses.chatflow_step(title="Minio container IP")
-    def ip_selection(self):
-        self.network_copy = self.network.copy(j.me.tid)
-        for node_selected in self.nodes_selected:
-            self.network_copy.add_node(node_selected)
-
-        if self.cont_node not in self.nodes_selected:
-            self.network_copy.add_node(self.cont_node)
-
-        self.ip_address = self.network_copy.ask_ip_from_node(
-            self.cont_node, "Please choose IP Address for your solution"
+    def master_ip_selection(self):
+        self.network_view_copy = self.network_view.copy()
+        result = j.sal.chatflow_deployer.add_network_node(
+            self.network_view.name, self.master_node, self.network_view_copy
         )
-        self.user_form_data["IP Address"] = self.ip_address
-        if self.user_form_data["Setup type"] == "Master/Slave Setup":
-            self.slave_ip_address = self.network_copy.ask_ip_from_node(
-                self.slave_node, "Please choose IP Address for your backup (slave)"
-            )
-            self.user_form_data["Slave IP Address"] = self.slave_ip_address
+        if result:
+            for wid in result["ids"]:
+                success = j.sal.chatflow_deployer.wait_workload(wid, self)
+                if not success:
+                    raise StopChatFlow(f"Failed to add node {self.master_node.node_id} to network {wid}")
+        free_ips = self.network_view_copy.get_node_free_ips(self.master_node)
+        self.master_ip_address = self.drop_down_choice("Please choose IP Address for your solution", free_ips)
+
+    @j.baseclasses.chatflow_step(title="Minio container IP")
+    def slave_ip_selection(self):
+        if self.mode != "Master/Slave":
+            return
+        self.network_view_copy = self.network_view.copy()
+        result = j.sal.chatflow_deployer.add_network_node(
+            self.network_view.name, self.slave_node, self.network_view_copy
+        )
+        if result:
+            for wid in result["ids"]:
+                success = j.sal.chatflow_deployer.wait_workload(wid, self)
+                if not success:
+                    raise StopChatFlow(f"Failed to add node {self.slave_node.node_id} to network {wid}")
+        free_ips = self.network_view_copy.get_node_free_ips(self.slave_node)
+        self.slave_ip_address = self.drop_down_choice("Please choose IP Address for your solution", free_ips)
 
     @j.baseclasses.chatflow_step(title="Confirmation")
     def overview(self):
-        self.md_show_confirm(self.user_form_data)
+        self.metadata = {
+            "Solution Name": self.solution_name,
+            "Solution Type": "minio",
+            "Setup Type": self.mode,
+            "Master IP": self.master_ip_address,
+        }
+        if self.mode == "Master/Slave":
+            self.metadata["Slave IP"] = self.slave_ip_address
+        self.md_show_confirm(self.metadata)
 
     @j.baseclasses.chatflow_step(title="Reserve zdb", disable_previous=True)
     def zdb_reservation(self):
-        self.network = self.network_copy
-        self.network.update(j.me.tid, currency=self.network.currency, bot=self)
-        # create new reservation
-        self.reservation = j.sal.zosv2.reservation_create()
-
         self.password = j.data.idgenerator.generateGUID()
-
-        for node in self.nodes_selected:
-            j.sal.zosv2.zdb.create(
-                reservation=self.reservation,
-                node_id=node.node_id,
-                size=10,
-                mode="seq",
-                password=self.password,
-                disk_type=self.user_form_data["Disk type"],
-                public=False,
-            )
-        self.volume = j.sal.zosv2.volume.create(
-            self.reservation, self.cont_node.node_id, size=10, type=self.user_form_data["Disk type"]
+        self.zdb_result = j.sal.chatflow_deployer.deploy_minio_zdb(
+            pool_id=self.pool_id, password=self.password, zdb_no=self.zdb_number, **self.metadata
         )
-        if self.user_form_data["Setup type"] == "Master/Slave Setup":
-            self.slave_volume = j.sal.zosv2.volume.create(
-                self.reservation, self.slave_node.node_id, size=10, type=self.user_form_data["Disk type"]
-            )
-
-        # register the reservation for zdb db
-        self.zdb_rid = j.sal.reservation_chatflow.reservation_register_and_pay(
-            self.reservation, self.expiration, customer_tid=j.me.tid, currency=self.network.currency, bot=self
-        )
-        res = f"# Database has been deployed with reservation id: {self.zdb_rid}. Click next to continue with deployment of the minio container"
-
-        self.reservation_result = j.sal.reservation_chatflow.reservation_wait(self, self.zdb_rid)
-        self.md_show(res)
+        for resv_id in self.zdb_result:
+            success = j.sal.chatflow_deployer.wait_workload(resv_id, self)
+            if not success:
+                raise StopChatFlow(f"failed to deploy zdb workload {resv_id}")
 
     @j.baseclasses.chatflow_step(title="Reserve minio container", disable_previous=True)
     def minio_reservation(self):
-        # read the IP address of the 0-db namespaces after they are deployed to be used in the creation of the minio container
-        self.namespace_config = []
-        for result in self.reservation_result:
-            if result.category == "ZDB":
-                data = result.data_json
+        zdb_configs = []
+        for zid in self.zdb_result:
+            zdb_configs.append(j.sal.chatflow_deployer.get_zdb_url(zid, self.password))
 
-                if "IPs" in data:
-                    ip = data["IPs"][0]
-                elif "IP" in data:
-                    ip = data["IP"]
-                else:
-                    raise j.exceptions.RuntimeError("missing IP field in the 0-DB result")
-
-                cfg = f"{data['Namespace']}:{self.password}@[{ip}]:{data['Port']}"
-                self.namespace_config.append(cfg)
-        if self.user_form_data["Setup type"] == "Master/Slave Setup":
-            self.tlog_access = self.namespace_config.pop(-1)
-
-        flist_url = "https://hub.grid.tf/tf-official-apps/minio:latest.flist"
-
-        minio_secret_encrypted = j.sal.zosv2.container.encrypt_secret(
-            self.cont_node.node_id, self.user_form_data["Secret"]
-        )
-        shards_encrypted = j.sal.zosv2.container.encrypt_secret(self.cont_node.node_id, ",".join(self.namespace_config))
-        secret_env = {"SHARDS": shards_encrypted, "SECRET_KEY": minio_secret_encrypted}
-        if self.user_form_data["Setup type"] == "Master/Slave Setup":
-            tlog_access_encrypted = j.sal.zosv2.container.encrypt_secret(self.cont_node.node_id, self.tlog_access)
-            secret_env["TLOG"] = tlog_access_encrypted
-
-        # create container
-        cont = j.sal.zosv2.container.create(
-            reservation=self.reservation,
-            node_id=self.cont_node.node_id,
-            network_name=self.network.name,
-            ip_address=self.ip_address,
-            flist=flist_url,
-            entrypoint="",
-            cpu=self.user_form_data["CPU"],
-            memory=self.user_form_data["Memory"],
-            env={
-                "DATA": str(self.user_form_data["Locations"]),
-                "PARITY": str(self.user_form_data["Locations allowed to fail"]),
-                "ACCESS_KEY": self.user_form_data["Access key"],
-                "SSH_KEY": self.public_ssh_key,
-                "MINIO_PROMETHEUS_AUTH_TYPE": "public",
+        metadata = {
+            "name": self.solution_name,
+            "form_info": {
+                "chatflow": "minio",
+                "Solution name": self.solution_name,
+                "Master IP": self.master_ip_address,
+                "ZDB URLS": zdb_configs,
             },
-            secret_env=secret_env,
-        )
-        if self.container_logs_option == "YES":
-            j.sal.zosv2.container.add_logs(
-                cont,
-                channel_type=self.user_form_data["Logs Channel type"],
-                channel_host=self.user_form_data["Logs Channel host"],
-                channel_port=self.user_form_data["Logs Channel port"],
-                channel_name=self.user_form_data["Logs Channel name"],
-            )
+        }
+        minio_nodes = [self.master_node]
+        minio_ip_addresses = [self.master_ip_address]
 
-        j.sal.zosv2.volume.attach_existing(
-            container=cont, volume_id=f"{self.zdb_rid}-{self.volume.workload_id}", mount_point="/data"
-        )
+        if self.mode == "Master/Slave":
+            metadata["form_info"]["Slave IP"] = self.slave_ip_address
+            minio_nodes.append(self.slave_node)
+            minio_ip_addresses.append(self.slave_ip_address)
 
-        if self.user_form_data["Setup type"] == "Master/Slave Setup":
-            slave_secret_encrypted = j.sal.zosv2.container.encrypt_secret(
-                self.slave_node.node_id, self.user_form_data["Secret"]
-            )
-            slave_shards_encrypted = j.sal.zosv2.container.encrypt_secret(
-                self.slave_node.node_id, ",".join(self.namespace_config)
-            )
-            tlog_access_encrypted = j.sal.zosv2.container.encrypt_secret(self.slave_node.node_id, self.tlog_access)
-            secret_env = {
-                "SHARDS": slave_shards_encrypted,
-                "SECRET_KEY": slave_secret_encrypted,
-                "MASTER": tlog_access_encrypted,
-            }
-            slave_cont = j.sal.zosv2.container.create(
-                reservation=self.reservation,
-                node_id=self.slave_node.node_id,
-                network_name=self.network.name,
-                ip_address=self.slave_ip_address,
-                flist=flist_url,
-                entrypoint="",
-                cpu=self.user_form_data["CPU"],
-                memory=self.user_form_data["Memory"],
-                env={
-                    "DATA": str(self.user_form_data["Locations"]),
-                    "PARITY": str(self.user_form_data["Locations allowed to fail"]),
-                    "ACCESS_KEY": self.user_form_data["Access key"],
-                    "SSH_KEY": self.public_ssh_key,
-                    "MINIO_PROMETHEUS_AUTH_TYPE": "public",
-                },
-                secret_env=secret_env,
-            )
-            j.sal.zosv2.volume.attach_existing(
-                container=slave_cont, volume_id=f"{self.zdb_rid}-{self.slave_volume.workload_id}", mount_point="/data"
-            )
-
-        res = j.sal.reservation_chatflow.solution_model_get(
-            self.user_form_data["Solution name"], "tfgrid.solutions.minio.1", self.user_form_data
+        self.minio_result = j.sal.chatflow_deployer.deploy_minio_containers(
+            pool_id=self.pool_id,
+            network_name=self.network_view.name,
+            minio_nodes=minio_nodes,
+            minio_ip_addresses=minio_ip_addresses,
+            zdb_configs=zdb_configs,
+            ak=self.ak,
+            sk=self.sk,
+            ssh_key=self.public_ssh_key,
+            cpu=self.minio_cont_resources["cpu"],
+            memory=self.minio_cont_resources["memory"],
+            data=self.data,
+            parity=self.parity,
+            disk_type="SSD",
+            disk_size=1,
+            log_config=self.log_config,
+            mode=self.mode,
+            **metadata,
         )
-        self.reservation = j.sal.reservation_chatflow.reservation_metadata_add(self.reservation, res)
-        self.resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
-            self.reservation, self.expiration, customer_tid=j.me.tid, currency=self.network.currency, bot=self
-        )
-        j.sal.reservation_chatflow.reservation_save(
-            self.resv_id, self.user_form_data["Solution name"], "tfgrid.solutions.minio.1", self.user_form_data
-        )
+        for resv_id in self.minio_result:
+            success = j.sal.chatflow_deployer.wait_workload(resv_id)
+            if not success:
+                raise StopChatFlow(f"Failed to deploy Minio container workload {resv_id}")
 
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
     def success(self):
         res = f"""\
-            # Minio cluster has been deployed successfully. Your reservation id is: {self.resv_id}
-            Open your browser at [http://{self.ip_address}:9000](http://{self.ip_address}:9000). It may take a few minutes.
-            """
+                # Minio cluster has been deployed successfully.
+                Open your browser at [http://{self.master_ip_address}:9000](http://{self.master_ip_address}:9000). It may take a few minutes.
+                """
         if self.user_form_data["Setup type"] == "Master/Slave Setup":
             res += f"""\
-            You can access the slave machine at [http://{self.slave_ip_address}:9000](http://{self.slave_ip_address}:9000)
-            """
+                You can access the slave machine at [http://{self.slave_ip_address}:9000](http://{self.slave_ip_address}:9000)
+                """
         self.md_show(j.core.text.strip(res))
 
 
