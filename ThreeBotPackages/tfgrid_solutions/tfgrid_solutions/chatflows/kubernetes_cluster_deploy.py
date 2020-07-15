@@ -1,6 +1,5 @@
 from Jumpscale import j
-import math
-import requests
+import uuid
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 
 
@@ -21,6 +20,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step()
     def deployment_start(self):
+        self.solution_id = uuid.uuid4().hex
         user_info = self.user_info()
         j.sal.reservation_chatflow.validate_user(user_info)
         self.md_show("# This wizard will help you deploy a kubernetes cluster")
@@ -156,6 +156,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
             size=self.cluster_size,
             ip_addresses=self.ipaddresses,
             **metadata,
+            solution_uuid=self.solution_id,
         )
 
         for resv in self.reservations:

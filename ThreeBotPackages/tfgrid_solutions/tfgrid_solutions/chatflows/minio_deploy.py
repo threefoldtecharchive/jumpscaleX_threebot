@@ -1,5 +1,5 @@
 from Jumpscale import j
-import math
+import uuid
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 
 
@@ -27,6 +27,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="")
     def deployment_start(self):
+        self.solution_id = uuid.uuid4().hex
         self.user_info = self.user_info()
         j.sal.reservation_chatflow.validate_user(self.user_info)
         self.user_form_data = {}
@@ -196,7 +197,11 @@ class MinioDeploy(j.servers.chatflow.get_class()):
     def zdb_reservation(self):
         self.password = j.data.idgenerator.generateGUID()
         self.zdb_result = j.sal.chatflow_deployer.deploy_minio_zdb(
-            pool_id=self.pool_id, password=self.password, zdb_no=self.zdb_number, **self.metadata
+            pool_id=self.pool_id,
+            password=self.password,
+            zdb_no=self.zdb_number,
+            **self.metadata,
+            solution_uuid=self.solution_id,
         )
         for resv_id in self.zdb_result:
             success = j.sal.chatflow_deployer.wait_workload(resv_id, self)
@@ -244,6 +249,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
             log_config=self.log_config,
             mode=self.mode,
             **metadata,
+            solution_uuid=self.solution_id,
         )
         for resv_id in self.minio_result:
             success = j.sal.chatflow_deployer.wait_workload(resv_id)

@@ -1,6 +1,6 @@
 from Jumpscale import j
 import math
-import requests
+import uuid
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 
 
@@ -27,6 +27,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step()
     def deployment_start(self):
+        self.solution_id = uuid.uuid4().hex
         user_info = self.user_info()
         j.sal.reservation_chatflow.validate_user(user_info)
         self.env_var_dict = dict()
@@ -210,6 +211,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             interactive=False,
             entrypoint="",
             **metadata,
+            solution_uuid=self.solution_id,
         )
         success = j.sal.chatflow_deployer.wait_workload(self.redis_resv_id, self)
         if not success:
@@ -224,7 +226,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             "channel_name": "prometheus",
         }
         vol_id = j.sal.chatflow_deployer.deploy_volume(
-            self.pool_id, self.nodes_selected["Prometheus"].node_id, self.vol_size
+            self.pool_id, self.nodes_selected["Prometheus"].node_id, self.vol_size, solution_uuid=self.solution_id
         )
         success = j.sal.chatflow_deployer.wait_workload(vol_id, self)
         if not success:
@@ -247,6 +249,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             log_config=log_config,
             volumes=volume_config,
             **metadata,
+            solution_uuid=self.solution_id,
         )
         success = j.sal.chatflow_deployer.wait_workload(self.prometheus_resv_id, self)
         if not success:
@@ -275,6 +278,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             entrypoint="",
             log_config=log_config,
             **metadata,
+            solution_uuid=self.solution_id,
         )
         success = j.sal.chatflow_deployer.wait_workload(self.grafana_resv_id, self)
         if not success:

@@ -17,6 +17,7 @@ ports = {"minio": 9000, "kubernetes": 6443}
 class SolutionExpose(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="")
     def deployment_start(self):
+        self.solution_id = uuid.uuid4().hex
         self.user_form_data = {}
         user_info = self.user_info()
         j.sal.reservation_chatflow.validate_user(user_info)
@@ -144,7 +145,11 @@ class SolutionExpose(j.servers.chatflow.get_class()):
 
         if self.chosen_domain != "Custom":
             self.dom_id = j.sal.chatflow_deployer.create_subdomain(
-                pool_id=self.pool_id, gateway_id=self.gateway_id, subdomain=self.domain, **metadata
+                pool_id=self.pool_id,
+                gateway_id=self.gateway_id,
+                subdomain=self.domain,
+                **metadata,
+                solution_uuid=self.solution_id,
             )
             success = j.sal.chatflow_deployer.wait_workload(self.dom_id)
             if not success:
@@ -156,6 +161,7 @@ class SolutionExpose(j.servers.chatflow.get_class()):
             domain_name=self.domain,
             trc_secret=self.secret,
             **metadata,
+            solution_uuid=self.solution_id,
         )
         success = j.sal.chatflow_deployer.wait_workload(self.proxy_id)
         if not success:
@@ -170,6 +176,7 @@ class SolutionExpose(j.servers.chatflow.get_class()):
             tls_port=self.tls_port,
             trc_secret=self.secret,
             **metadata,
+            solution_uuid=self.solution_id,
         )
         success = j.sal.chatflow_deployer.wait_workload(self.tcprouter_id)
         if not success:

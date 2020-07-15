@@ -1,6 +1,7 @@
 from Jumpscale import j
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 import math
+import uuid
 
 
 class UbuntuDeploy(j.servers.chatflow.get_class()):
@@ -22,6 +23,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step()
     def ubuntu_start(self):
+        self.solution_id = uuid.uuid4().hex
         self.user_form_data = dict()
         self.query = dict()
         self.HUB_URL = "https://hub.grid.tf/tf-bootable"
@@ -140,6 +142,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
             entrypoint="/bin/bash /start.sh",
             log_config=self.log_config,
             **metadata,
+            solution_uuid=self.solution_id,
         )
         success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
         if not success:

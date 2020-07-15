@@ -1,5 +1,6 @@
 from Jumpscale import j
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
+import uuid
 
 
 class DomainDelegation(j.servers.chatflow.get_class()):
@@ -7,6 +8,7 @@ class DomainDelegation(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
+        self.solution_id = uuid.uuid4().hex
         user_info = self.user_info()
         j.sal.reservation_chatflow.validate_user(user_info)
         self.pool_id = j.sal.chatflow_deployer.select_pool(self)
@@ -27,7 +29,9 @@ class DomainDelegation(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Reservation")
     def reservation(self):
         metadata = {"SolutionName": self.domain, "ٍSolutionType": "domain_delegate"}
-        self.resv_id = j.sal.chatflow_deployer.delegate_domain(self.pool_id, self.gateway_id, self.domain, **metadata)
+        self.resv_id = j.sal.chatflow_deployer.delegate_domain(
+            self.pool_id, self.gateway_id, self.domain, **metadata, solution_uuid=self.solution_id
+        )
         success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
         if not success:
             raise StopChatFlow(f"Failed to deploy workload {self.resv_id}")

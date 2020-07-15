@@ -1,5 +1,6 @@
 from Jumpscale import j
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
+import uuid
 
 
 class FourToSixGateway(j.servers.chatflow.get_class()):
@@ -13,6 +14,7 @@ class FourToSixGateway(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
+        self.solution_id = uuid.uuid4().hex
         user_info = self.user_info()
         j.sal.reservation_chatflow.validate_user(user_info)
         user_info = self.user_info()
@@ -39,7 +41,7 @@ class FourToSixGateway(j.servers.chatflow.get_class()):
             self.privatekey, self.publickey = j.tools.wireguard.generate_key_pair()
 
         self.resv_id = j.sal.chatflow_deployer.create_ipv6_gateway(
-            self.gateway_id, self.pool_id, self.publickey, SolutionType="4to6GW"
+            self.gateway_id, self.pool_id, self.publickey, SolutionType="4to6GW", solution_uuid=self.solution_id
         )
         success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
         if not success:

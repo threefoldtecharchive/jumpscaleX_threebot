@@ -1,5 +1,5 @@
 from Jumpscale import j
-import math
+import uuid
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 
 
@@ -12,6 +12,7 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step()
     def gitea_start(self):
+        self.solution_id = uuid.uuid4().hex
         self.user_form_data = dict()
         self.HUB_URL = "https://hub.grid.tf/tf-official-apps/gitea-latest.flist"
         user_info = self.user_info()
@@ -134,6 +135,7 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
             public_ipv6=True,
             secret_env={"POSTGRES_PASSWORD": self.database_password},
             **metadata,
+            solution_uuid=self.solution_id,
         )
         success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
         if not success:

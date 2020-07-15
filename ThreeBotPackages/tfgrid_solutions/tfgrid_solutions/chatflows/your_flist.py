@@ -2,6 +2,7 @@ from Jumpscale import j
 import math
 import requests
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
+import uuid
 
 
 class FlistDeploy(j.servers.chatflow.get_class()):
@@ -26,6 +27,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step()
     def flist_start(self):
+        self.solution_id = uuid.uuid4().hex
         user_info = self.user_info()
         self.env = dict()
         j.sal.reservation_chatflow.validate_user(user_info)
@@ -167,7 +169,9 @@ class FlistDeploy(j.servers.chatflow.get_class()):
     def reservation(self):
         volume_config = {}
         if self.container_volume_attach:
-            vol_id = j.sal.chatflow_deployer.deploy_volume(self.pool_id, self.selected_node.node_id, self.vol_size)
+            vol_id = j.sal.chatflow_deployer.deploy_volume(
+                self.pool_id, self.selected_node.node_id, self.vol_size, solution_uuid=self.solution_id
+            )
             success = j.sal.chatflow_deployer.wait_workload(vol_id, self)
             if not success:
                 raise StopChatFlow(f"Failed to add node {self.selected_node.node_id} to network {vol_id}")
@@ -192,6 +196,7 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             log_config=self.log_config,
             volumes=volume_config,
             **metadata,
+            solution_uuid=self.solution_id,
         )
         success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
         if not success:
