@@ -37,7 +37,17 @@ class MinioDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Solution name")
     def minio_name(self):
-        self.solution_name = j.sal.chatflow_deployer.ask_name(self)
+        valid = False
+        while not valid:
+            self.solution_name = j.sal.chatflow_deployer.ask_name(self)
+            solutions = j.sal.chatflow_solutions.list_minio_solutions(sync=False)
+            valid = True
+            for sol in solutions:
+                if sol["Name"] == self.solution_name:
+                    valid = False
+                    self.md_show("The specified solution name already exists. please choose another.")
+                    break
+                valid = True
 
     @j.baseclasses.chatflow_step(title="Setup type")
     def setup_type(self):
