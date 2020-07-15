@@ -29,10 +29,21 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
         form_info = (S)
         ```
         """
+        listings = {
+            "network": j.sal.chatflow_solutions.list_network_solutions,
+            "ubuntu": j.sal.chatflow_solutions.list_ubuntu_solutions,
+            "flist": j.sal.chatflow_solutions.list_flist_solutions,
+            "minio": j.sal.chatflow_solutions.list_minio_solutions,
+            "kubernetes": j.sal.chatflow_solutions.list_kubernetes_solutions,
+            "gitea": j.sal.chatflow_solutions.list_gitea_solutions,
+            "4to6gw": j.sal.chatflow_solutions.list_4to6gw_solutions,
+            "delegated_domain": j.sal.chatflow_solutions.list_delegated_domain_solutions,
+            "exposed": j.sal.chatflow_solutions.list_exposed_solutions,
+        }
 
         solutions = []
-        if solution_type == "network":
-            solutions = j.sal.chatflow_solutions.list_network_solutions()
+        if solution_type in listings:
+            solutions = listings[solution_type]()
         out = schema_out.new()
         out.solutions = solutions  # each item is [{name:(S),reservation:(O),type:(S)}]
         return out
