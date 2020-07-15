@@ -18,16 +18,6 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
         ```in
         solution_type = "all" (S)
         ```
-
-        ```out
-        solutions = (LO) !tfgrid.solutions.1
-
-        @url = tfgrid.solutions.1
-        name = ""
-        reservation = (S)
-        type = ""
-        form_info = (S)
-        ```
         """
         listings = {
             "network": j.sal.chatflow_solutions.list_network_solutions,
@@ -44,9 +34,8 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
         solutions = []
         if solution_type in listings:
             solutions = listings[solution_type]()
-        out = schema_out.new()
-        out.solutions = solutions  # each item is [{name:(S),reservation:(O),type:(S)}]
-        return out
+
+        return {"solutions": solutions}
 
     @j.baseclasses.actor_method
     def solution_delete(self, solution_type=None, solution_name=None, schema_out=None, user_session=None):
