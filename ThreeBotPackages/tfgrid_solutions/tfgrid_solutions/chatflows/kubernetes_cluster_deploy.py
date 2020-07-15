@@ -30,7 +30,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
         valid = False
         while not valid:
             self.solution_name = j.sal.chatflow_deployer.ask_name(self)
-            solutions = j.sal.chatflow_solutions.list_kubernetes_solutions("DELETED", sync=False)
+            solutions = j.sal.chatflow_solutions.list_kubernetes_solutions(sync=False)
             valid = True
             for sol in solutions:
                 if sol["Name"] == self.solution_name:

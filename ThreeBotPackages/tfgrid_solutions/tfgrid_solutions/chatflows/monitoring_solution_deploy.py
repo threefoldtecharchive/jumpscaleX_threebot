@@ -43,7 +43,17 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Solution name")
     def choose_name(self):
-        self.solution_name = j.sal.chatflow_deployer.ask_name(self)
+        valid = False
+        while not valid:
+            self.solution_name = j.sal.chatflow_deployer.ask_name(self)
+            solutions = j.sal.chatflow_solutions.list_monitoring_solutions(sync=False)
+            valid = True
+            for sol in solutions:
+                if sol["Name"] == self.solution_name:
+                    valid = False
+                    self.md_show("The specified solution name already exists. please choose another.")
+                    break
+                valid = True
 
     @j.baseclasses.chatflow_step()
     def public_key_get(self):
