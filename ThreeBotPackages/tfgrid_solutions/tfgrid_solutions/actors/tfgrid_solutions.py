@@ -30,29 +30,9 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
         ```
         """
 
-        # Update the solutions from the explorer
-        j.sal.reservation_chatflow.solutions_explorer_get()
-
         solutions = []
-        urls = [
-            "tfgrid.solutions.minio.1",
-            "tfgrid.solutions.flist.1",
-            "tfgrid.solutions.kubernetes.1",
-            "tfgrid.solutions.ubuntu.1",
-            "tfgrid.solutions.network.1",
-            "tfgrid.solutions.exposed.1",
-            "tfgrid.solutions.delegated_domain.1",
-            "tfgrid.solutions.4to6gw.1",
-            "tfgrid.solutions.gitea.1",
-            "tfgrid.solutions.monitoring.1",
-        ]
-
-        if solution_type == "all":
-            for url in urls:
-                solutions += j.sal.reservation_chatflow.solutions_get(url)
-        else:
-            url = "tfgrid.solutions." + solution_type + ".1"
-            solutions += j.sal.reservation_chatflow.solutions_get(url)
+        if solution_type == "network":
+            solutions = j.sal.chatflow_solutions.list_network_solutions()
         out = schema_out.new()
         out.solutions = solutions  # each item is [{name:(S),reservation:(O),type:(S)}]
         return out

@@ -103,6 +103,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
                 success = j.sal.chatflow_deployer.wait_workload(wid, self)
                 if not success:
                     raise StopChatFlow(f"Failed to add node {self.nodes_selected[0].node_id} to network {wid}")
+        self.master_network = self.master_network.copy()
         free_ips = self.master_network.get_node_free_ips(self.nodes_selected[0])
         master_ipaddress = self.drop_down_choice("Please choose IP Address for your master node container", free_ips)
         self.ipaddresses.append(master_ipaddress)
@@ -117,6 +118,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
                     success = j.sal.chatflow_deployer.wait_workload(wid, self)
                     if not success:
                         raise StopChatFlow(f"Failed to add node {worker_node.node_id} to network {wid}")
+                self.network_copy = self.network_copy.copy()
             free_ips = self.network_copy.get_node_free_ips(worker_node)
             worker_ipaddress = self.drop_down_choice(
                 f"Please choose IP Address for your worker {idx+1} node container", free_ips

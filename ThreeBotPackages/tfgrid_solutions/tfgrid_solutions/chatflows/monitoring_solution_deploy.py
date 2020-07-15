@@ -75,7 +75,6 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
-        # FIXME: properly calculate cu and su
         query = {"cru": 0, "mru": 0, "sru": math.ceil(self.vol_size / 1024)}
         for name in self.tools_names:
             query["cru"] += self.query[name]["cpu"]
@@ -117,6 +116,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
                     raise StopChatFlow(
                         f"Failed to add node {self.nodes_selected['Prometheus'].node_id} to network {wid}"
                     )
+            self.prometheus_network = self.prometheus_network.copy()
         free_ips = self.prometheus_network.get_node_free_ips(self.nodes_selected["Prometheus"])
         self.ip_addresses["Prometheus"] = self.drop_down_choice(
             "Please choose IP Address for your Prometheus container", free_ips
@@ -133,6 +133,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
                 success = j.sal.chatflow_deployer.wait_workload(wid, self)
                 if not success:
                     raise StopChatFlow(f"Failed to add node {self.nodes_selected['Grafana'].node_id} to network {wid}")
+            self.grafana_network = self.grafana_network.copy()
         free_ips = self.prometheus_network.get_node_free_ips(self.nodes_selected["Grafana"])
         self.ip_addresses["Grafana"] = self.drop_down_choice(
             "Please choose IP Address for your Grafana container", free_ips
@@ -149,6 +150,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
                 success = j.sal.chatflow_deployer.wait_workload(wid, self)
                 if not success:
                     raise StopChatFlow(f"Failed to add node {self.nodes_selected['Redis'].node_id} to network {wid}")
+            self.redis_network = self.redis_network.copy()
         free_ips = self.prometheus_network.get_node_free_ips(self.nodes_selected["Redis"])
         self.ip_addresses["Redis"] = self.drop_down_choice(
             "Please choose IP Address for your Redis container", free_ips

@@ -159,6 +159,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
                 success = j.sal.chatflow_deployer.wait_workload(wid, self)
                 if not success:
                     raise StopChatFlow(f"Failed to add node {self.master_node.node_id} to network {wid}")
+            self.network_view_copy = self.network_view_copy.copy()
         free_ips = self.network_view_copy.get_node_free_ips(self.master_node)
         self.master_ip_address = self.drop_down_choice("Please choose IP Address for your solution", free_ips)
 
@@ -175,6 +176,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
                 success = j.sal.chatflow_deployer.wait_workload(wid, self)
                 if not success:
                     raise StopChatFlow(f"Failed to add node {self.slave_node.node_id} to network {wid}")
+            self.network_view_copy = self.network_view_copy.copy()
         free_ips = self.network_view_copy.get_node_free_ips(self.slave_node)
         self.slave_ip_address = self.drop_down_choice("Please choose IP Address for your solution", free_ips)
 
