@@ -38,23 +38,11 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
         return {"solutions": solutions}
 
     @j.baseclasses.actor_method
-    def solution_delete(self, solution_type=None, solution_name=None, schema_out=None, user_session=None):
-        """
-        ```in
-        solution_type = "" (S)
-        solution_name = "" (S)
-        ```
-
-        ```out
-        solutions = (B)
-
-        ```
-        """
-        if solution_type:
-            url = "tfgrid.solutions." + solution_type + ".1"
-            j.sal.reservation_chatflow.reservation_cancel_for_solution(url, solution_name)
-            return True
-        return False
+    def solution_cancel(self, wids, schema_out=None, user_session=None):
+        try:
+            j.sal.chatflow_solutions.cancel_solution(wids)
+        except Exception as e:
+            raise str(e)
 
     @j.baseclasses.actor_method
     def payments_list(self, payment_id=None, rid=None, schema_out=None, user_session=None):

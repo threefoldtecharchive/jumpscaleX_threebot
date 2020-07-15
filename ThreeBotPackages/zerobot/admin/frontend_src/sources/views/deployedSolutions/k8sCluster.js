@@ -14,35 +14,14 @@ export default class DeployedK8sClustersView extends BaseView {
         solutions.listSolution('kubernetes').then((data) => {
             const solutions = data.json().solutions
             for (let i = 0; i < solutions.length; i++) {
-                const solution = solutions[i];
-                let master_ips = new Set();
-                let slaves_ips = new Set()
-                let dict = JSON.parse(solution.form_info)
-                let reservation = JSON.parse(String(solution.reservation))
-                let nodes = reservation.data_reservation.kubernetes
-                for (let i = 0; i < nodes.length; i++) {
-                    const node = nodes[i];
-                    if(node.master_ips.length === 0)
-                        master_ips.add(node.ipaddress)
-                    else
-                        slaves_ips.add(node.ipaddress)
-                }
-                dict['Master IPs'] = Array.from(master_ips).join('<br>')
-                dict['Slaves IPs'] = Array.from(slaves_ips).join('<br>')
-                dict.id = reservation.id
-                dict._name = dict['Solution name'].length > self.maxTitleLength ?
-                    dict['Solution name'].substring(0, self.maxTitleLength) + '...' : dict['Solution name'];
-                dict._ip = Array.from(master_ips).join('<br>')
-                dict._type = 'kubernetes'
-                delete dict['IP Address']
-                delete dict['chatflow']
-
-                self.parseData.push(dict)
+                let solution = solutions[i];
+                solution._ip = solution["Master IP"]
+                solution._name = solution.Name.length > self.maxTitleLength ?
+                    solution.Name.substring(0, self.maxTitleLength) + '...' : solution.Name
+                self.parseData.push(solution)
             }
             self.solutionlist.parse(self.parseData);
-            self.solutionlist.showProgress({hide: true});
+            self.solutionlist.showProgress({ hide: true });
         });
     }
-
 }
-

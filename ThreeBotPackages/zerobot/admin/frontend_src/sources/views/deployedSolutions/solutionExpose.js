@@ -6,6 +6,7 @@ export default class DeployedSolutionExposeView extends BaseView {
     constructor(app, name) {
         super(app, name, CHAT, "wan.png");
     }
+
     init(view) {
         super.init(view)
         let self = this
@@ -13,21 +14,14 @@ export default class DeployedSolutionExposeView extends BaseView {
         solutions.listSolution('exposed').then((data) => {
             const solutions = data.json().solutions
             for (let i = 0; i < solutions.length; i++) {
-                const solution = solutions[i];
-                let dict = JSON.parse(solution.form_info)
-                let reservation = JSON.parse(String(solution.reservation))
-                dict.id = reservation.id
-                dict._type = 'exposed'
-                dict._name = dict['Solution name'].length > self.maxTitleLength ?
-                    dict['Solution name'].substring(0, self.maxTitleLength) + '...' : dict['Solution name'];
-                dict._ip = ""
-
-                self.parseData.push(dict)
+                let solution = solutions[i];
+                solution._ip = ""
+                solution._name = solution.Name.length > self.maxTitleLength ?
+                    solution.Name.substring(0, self.maxTitleLength) + '...' : solution.Name
+                self.parseData.push(solution)
             }
             self.solutionlist.parse(self.parseData);
-            self.solutionlist.showProgress({hide: true});
+            self.solutionlist.showProgress({ hide: true });
         });
     }
 }
-
-
