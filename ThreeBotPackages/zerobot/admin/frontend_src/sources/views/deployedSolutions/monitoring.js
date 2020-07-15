@@ -18,8 +18,7 @@ export default class DeployedMonitoringView extends BaseView {
             const solutions = data.json().solutions
             for (let i = 0; i < solutions.length; i++) {
                 let solution = solutions[i];
-                solution._type = 'monitoring'
-                solution._ip = solution.ip
+                solution._ip = solution["Prometheus IP"]
                 solution._name = solution.name.length > self.maxTitleLength ?
                     solution.name.substring(0, self.maxTitleLength) + '...' : solution.name
                 self.parseData.push(solution)

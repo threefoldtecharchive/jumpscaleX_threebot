@@ -29,6 +29,7 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
             "4to6gw": j.sal.chatflow_solutions.list_4to6gw_solutions,
             "delegated_domain": j.sal.chatflow_solutions.list_delegated_domain_solutions,
             "exposed": j.sal.chatflow_solutions.list_exposed_solutions,
+            "monitoring": j.sal.chatflow_solutions.list_monitoring_solutions,
         }
 
         solutions = []
