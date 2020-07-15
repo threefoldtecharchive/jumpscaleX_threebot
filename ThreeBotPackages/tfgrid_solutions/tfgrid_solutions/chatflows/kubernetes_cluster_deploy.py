@@ -171,9 +171,9 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
         )
 
         for resv in self.reservations:
-            success = j.sal.chatflow_deployer.wait_workload(resv, self)
+            success = j.sal.chatflow_deployer.wait_workload(resv["reservation_id"], self)
             if not success:
-                raise StopChatFlow(f"Failed to deploy workload {resv}")
+                raise StopChatFlow(f"Failed to deploy workload {resv['reservation_id']}")
 
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
     def success(self):
