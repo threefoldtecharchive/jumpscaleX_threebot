@@ -60,7 +60,6 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
             self.master_query = self.worker_query = {"sru": 50, "mru": 2, "cru": 1}
         else:
             self.master_query = self.worker_query = {"sru": 100, "mru": 4, "cru": 2}
-        # FIXME: properly calculate cu and su
         cu, su = j.sal.chatflow_deployer.calculate_capacity_units(**self.master_query)
         cu = cu * (1 + self.workernodes.value)
         su = su * (1 + self.workernodes.value)
@@ -73,6 +72,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Containers' node id")
     def nodes_selection(self):
         # select master node
+        self.nodes_selected = []
         master_node_selected = j.sal.chatflow_deployer.ask_container_placement(
             self, self.pool_id, workload_name="master", **self.master_query
         )
@@ -94,6 +94,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
         # Note:  nodes_selected[0] = master node
 
         # select master IP
+        self.ipaddresses = []
         self.master_network = self.network_view.copy()
         result = j.sal.chatflow_deployer.add_network_node(
             self.network_view.name, self.nodes_selected[0], self.master_network
@@ -112,7 +113,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
         # select workers IPs
         for idx, worker_node in enumerate(self.nodes_selected[1:]):
             self.network_copy = latest_network.copy()
-            result = j.sal.chatflow_deployer.add_network_node(self.latest_network.name, worker_node, self.network_copy)
+            result = j.sal.chatflow_deployer.add_network_node(latest_network.name, worker_node, self.network_copy)
             if result:
                 for wid in result["ids"]:
                     success = j.sal.chatflow_deployer.wait_workload(wid, self)
@@ -149,7 +150,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
         metadata["form_info"].update(self.metadata)
         self.reservations = j.sal.chatflow_deployer.deploy_kubernetes_cluster(
             self.pool_id,
-            self.nodes_selected,
+            [n.node_id for n in self.nodes_selected],
             self.network.name,
             self.cluster_secret,
             self.ssh_keys,

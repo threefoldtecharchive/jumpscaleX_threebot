@@ -1,6 +1,7 @@
 from Jumpscale import j
 import uuid
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
+import math
 
 
 class MinioDeploy(j.servers.chatflow.get_class()):
@@ -139,7 +140,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         nodequery = {}
         nodequery["sru"] = 1
         nodequery["cru"] = self.minio_cont_resources["cpu"]
-        nodequery["mru"] = self.minio_cont_resources["memory"]
+        nodequery["mru"] = math.ceil(self.minio_cont_resources["memory"] / 1024)
         self.master_node = j.sal.chatflow_deployer.ask_container_placement(self, self.pool_id, **nodequery)
         if not self.master_node:
             self.master_node = j.sal.chatflow_deployer.schedule_container(self.pool_id, **nodequery)
