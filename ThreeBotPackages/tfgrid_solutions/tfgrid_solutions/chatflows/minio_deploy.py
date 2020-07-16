@@ -246,7 +246,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         self.minio_result = j.sal.chatflow_deployer.deploy_minio_containers(
             pool_id=self.pool_id,
             network_name=self.network_view.name,
-            minio_nodes=minio_nodes,
+            minio_nodes=[n.node_id for n in minio_nodes],
             minio_ip_addresses=minio_ip_addresses,
             zdb_configs=zdb_configs,
             ak=self.ak,
