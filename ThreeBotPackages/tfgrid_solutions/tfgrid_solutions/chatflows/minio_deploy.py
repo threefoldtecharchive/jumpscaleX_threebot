@@ -217,6 +217,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         for resv_id in self.zdb_result:
             success = j.sal.chatflow_deployer.wait_workload(resv_id, self)
             if not success:
+                j.sal.chatflow_solutions.cancel_solution([resv_id])
                 raise StopChatFlow(f"failed to deploy zdb workload {resv_id}")
 
     @j.baseclasses.chatflow_step(title="Reserve minio container", disable_previous=True)
@@ -265,6 +266,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         for resv_id in self.minio_result:
             success = j.sal.chatflow_deployer.wait_workload(resv_id)
             if not success:
+                j.sal.chatflow_solutions.cancel_solution([resv_id])
                 raise StopChatFlow(f"Failed to deploy Minio container workload {resv_id}")
 
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)

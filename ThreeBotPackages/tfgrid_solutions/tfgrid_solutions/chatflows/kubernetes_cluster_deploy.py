@@ -41,7 +41,6 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Access keys and secret")
     def public_key_get(self):
-        # TODO: check valide ssh ket file
         self.ssh_keys = self.upload_file(
             """Please add your public ssh key, this will allow you to access the deployed containers using ssh.
                 Just upload the file with the key.
@@ -173,6 +172,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
         for resv in self.reservations:
             success = j.sal.chatflow_deployer.wait_workload(resv["reservation_id"], self)
             if not success:
+                j.sal.chatflow_solutions.cancel_solution([resv["reservation_id"]])
                 raise StopChatFlow(f"Failed to deploy workload {resv['reservation_id']}")
 
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)

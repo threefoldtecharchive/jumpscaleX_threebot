@@ -139,6 +139,7 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
         )
         success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
         if not success:
+            j.sal.chatflow_solutions.cancel_solution([self.resv_id])
             raise StopChatFlow(f"Failed to deploy workload {self.resv_id}")
 
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
