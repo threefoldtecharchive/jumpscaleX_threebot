@@ -260,6 +260,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
             disk_size=1,
             log_config=self.log_config,
             mode=self.mode,
+            bot=self,
             **metadata,
             solution_uuid=self.solution_id,
         )
@@ -275,7 +276,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
                 # Minio cluster has been deployed successfully.
                 Open your browser at [http://{self.master_ip_address}:9000](http://{self.master_ip_address}:9000). It may take a few minutes.
                 """
-        if self.user_form_data["Setup type"] == "Master/Slave Setup":
+        if self.mode == "Master/Slave Setup":
             res += f"""\
                 You can access the slave machine at [http://{self.slave_ip_address}:9000](http://{self.slave_ip_address}:9000)
                 """
