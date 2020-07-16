@@ -125,7 +125,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     def prometheus_container_ip(self):
         self.prometheus_network = self.network_view.copy()
         result = j.sal.chatflow_deployer.add_network_node(
-            self.network_view.name, self.nodes_selected["Prometheus"], self.prometheus_network
+            self.network_view.name, self.nodes_selected["Prometheus"], self.pool_id, self.prometheus_network
         )
         if result:
             for wid in result["ids"]:
@@ -144,7 +144,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     def grafana_container_ip(self):
         self.grafana_network = self.prometheus_network.copy()
         result = j.sal.chatflow_deployer.add_network_node(
-            self.network_view.name, self.nodes_selected["Grafana"], self.prometheus_network
+            self.network_view.name, self.nodes_selected["Grafana"], self.pool_id, self.prometheus_network
         )
         if result:
             for wid in result["ids"]:
@@ -161,7 +161,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     def redis_container_ip(self):
         self.redis_network = self.grafana_network.copy()
         result = j.sal.chatflow_deployer.add_network_node(
-            self.network_view.name, self.nodes_selected["Redis"], self.prometheus_network
+            self.network_view.name, self.nodes_selected["Redis"], self.pool_id, self.prometheus_network
         )
         if result:
             for wid in result["ids"]:

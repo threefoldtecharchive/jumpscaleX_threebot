@@ -164,7 +164,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
     def master_ip_selection(self):
         self.network_view_copy = self.network_view.copy()
         result = j.sal.chatflow_deployer.add_network_node(
-            self.network_view.name, self.master_node, self.network_view_copy
+            self.network_view.name, self.master_node, self.pool_id, self.network_view_copy
         )
         if result:
             for wid in result["ids"]:
@@ -181,7 +181,7 @@ class MinioDeploy(j.servers.chatflow.get_class()):
             return
         self.network_view_copy = self.network_view.copy()
         result = j.sal.chatflow_deployer.add_network_node(
-            self.network_view.name, self.slave_node, self.network_view_copy
+            self.network_view.name, self.slave_node, self.pool_id, self.network_view_copy
         )
         if result:
             for wid in result["ids"]:

@@ -95,7 +95,7 @@ class UbuntuDeploy(j.servers.chatflow.get_class()):
     def container_ip(self):
         self.network_view_copy = self.network_view.copy()
         result = j.sal.chatflow_deployer.add_network_node(
-            self.network_view.name, self.selected_node, self.network_view_copy
+            self.network_view.name, self.selected_node, self.pool_id, self.network_view_copy
         )
         if result:
             for wid in result["ids"]:
