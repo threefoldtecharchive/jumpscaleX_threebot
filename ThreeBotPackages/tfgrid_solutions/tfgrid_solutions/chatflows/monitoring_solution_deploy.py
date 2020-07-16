@@ -307,7 +307,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
     def success(self):
         res = f"""\
-            # Your containers have been deployed successfully. Your reservation id is: {self.resv_id}
+            # Your containers have been deployed successfully. Your reservation ids are: {self.prometheus_resv_id}, {self.grafana_resv_id}, {self.redis_resv_id}
             ## Prometheus
             #### Access container by ```ssh root@{self.ip_addresses["Prometheus"]}``` where you can manually customize the solutions you want to monitor
             #### Access Prometheus UI through ```{self.ip_addresses["Prometheus"]}:9090/graph``` which is accessed through your browser
