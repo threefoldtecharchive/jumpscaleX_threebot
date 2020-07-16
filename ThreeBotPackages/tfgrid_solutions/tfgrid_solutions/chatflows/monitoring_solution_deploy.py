@@ -27,6 +27,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step()
     def deployment_start(self):
+        self.tools_names = ["Prometheus", "Grafana", "Redis"]
         self.solution_id = uuid.uuid4().hex
         user_info = self.user_info()
         j.sal.reservation_chatflow.validate_user(user_info)
@@ -66,7 +67,8 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Prometheus container resources")
     def prometheus_container_resources(self):
-        self.prometheus_query = j.sal.chatflow_deployer.ask_container_resources(self)
+        self.prometheus_query = j.sal.chatflow_deployer.ask_container_resources(self, disk_type=True)
+        self.query["Prometheus"] = self.prometheus_query
 
     @j.baseclasses.chatflow_step(title="Prometheus volume details")
     def prometheus_volume_details(self):
@@ -78,19 +80,25 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Grafana container resources")
     def grafana_container_resources(self):
-        self.grafana_query = j.sal.chatflow_deployer.ask_container_resources(self)
+        self.grafana_query = j.sal.chatflow_deployer.ask_container_resources(self, disk_type=True)
+        self.query["Grafana"] = self.grafana_query
 
     @j.baseclasses.chatflow_step(title="Redis container resources")
     def redis_container_resources(self):
-        self.redis_query = j.sal.chatflow_deployer.ask_container_resources(self)
+        self.redis_query = j.sal.chatflow_deployer.ask_container_resources(self, disk_type=True)
+        self.query["Redis"] = self.redis_query
 
     @j.baseclasses.chatflow_step(title="Pool")
     def select_pool(self):
-        query = {"cru": 0, "mru": 0, "sru": math.ceil(self.vol_size / 1024)}
+        query = {"cru": 0, "mru": 0, "sru": 0, "hru": 0}
         for name in self.tools_names:
             query["cru"] += self.query[name]["cpu"]
-            query["mru"] += (math.ceil(self.query[name]["memory"] / 1024),)
-            query["sru"] += math.ceil(self.query[name]["disk_size"] / 1024)
+            query["mru"] += math.ceil(self.query[name]["memory"] / 1024)
+            if self.query[name]["disk_type"] == "SSD":
+                query["sru"] += math.ceil(self.query[name]["disk_size"] / 1024)
+            else:
+                query["hru"] += math.ceil(self.query[name]["disk_size"] / 1024)
+        query["sru"] += self.vol_size
         cu, su = j.sal.chatflow_deployer.calculate_capacity_units(**query)
         self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=cu, su=su)
 
@@ -101,7 +109,6 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Containers' node id")
     def container_node_id(self):
         self.nodes_selected = {"Prometheus": None, "Grafana": None, "Redis": None}
-        self.tools_names = ["Prometheus", "Grafana", "Redis"]
         for name in self.tools_names:
             query = {
                 "cru": self.query[name]["cpu"],
@@ -145,7 +152,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
                 if not success:
                     raise StopChatFlow(f"Failed to add node {self.nodes_selected['Grafana'].node_id} to network {wid}")
             self.grafana_network = self.grafana_network.copy()
-        free_ips = self.prometheus_network.get_node_free_ips(self.nodes_selected["Grafana"])
+        free_ips = self.grafana_network.get_node_free_ips(self.nodes_selected["Grafana"])
         self.ip_addresses["Grafana"] = self.drop_down_choice(
             "Please choose IP Address for your Grafana container", free_ips
         )
@@ -162,7 +169,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
                 if not success:
                     raise StopChatFlow(f"Failed to add node {self.nodes_selected['Redis'].node_id} to network {wid}")
             self.redis_network = self.redis_network.copy()
-        free_ips = self.prometheus_network.get_node_free_ips(self.nodes_selected["Redis"])
+        free_ips = self.redis_network.get_node_free_ips(self.nodes_selected["Redis"])
         self.ip_addresses["Redis"] = self.drop_down_choice(
             "Please choose IP Address for your Redis container", free_ips
         )
@@ -174,22 +181,22 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             "Pool": self.pool_id,
             "Network": self.network_view.name,
             "Prometheus Node ID": self.nodes_selected["Prometheus"].node_id,
-            "Prometheus CPU": self.self.query["Prometheus"]["cpu"],
-            "Prometheus Memory": self.self.query["Prometheus"]["memory"],
-            "Prometheus Disk Size": self.self.query["Prometheus"]["disk_size"],
-            "Prometheus Disk Type": self.self.query["Prometheus"]["disk_type"],
+            "Prometheus CPU": self.query["Prometheus"]["cpu"],
+            "Prometheus Memory": self.query["Prometheus"]["memory"],
+            "Prometheus Disk Size": self.query["Prometheus"]["disk_size"],
+            "Prometheus Disk Type": self.query["Prometheus"]["disk_type"],
             "Prometheus IP Address": self.ip_addresses["Prometheus"],
             "Grafana Node ID": self.nodes_selected["Grafana"].node_id,
-            "Grafana CPU": self.self.query["Grafana"]["cpu"],
-            "Grafana Memory": self.self.query["Grafana"]["memory"],
-            "Grafana Disk Size": self.self.query["Grafana"]["disk_size"],
-            "Grafana Disk Type": self.self.query["Grafana"]["disk_type"],
+            "Grafana CPU": self.query["Grafana"]["cpu"],
+            "Grafana Memory": self.query["Grafana"]["memory"],
+            "Grafana Disk Size": self.query["Grafana"]["disk_size"],
+            "Grafana Disk Type": self.query["Grafana"]["disk_type"],
             "Grafana IP Address": self.ip_addresses["Grafana"],
             "Redis Node ID": self.nodes_selected["Redis"].node_id,
-            "Redis CPU": self.self.query["Redis"]["cpu"],
-            "Redis Memory": self.self.query["Redis"]["memory"],
-            "Redis Disk Size": self.self.query["Redis"]["disk_size"],
-            "Redis Disk Type": self.self.query["Redis"]["disk_type"],
+            "Redis CPU": self.query["Redis"]["cpu"],
+            "Redis Memory": self.query["Redis"]["memory"],
+            "Redis Disk Size": self.query["Redis"]["disk_size"],
+            "Redis Disk Type": self.query["Redis"]["disk_type"],
             "Redis IP Address": self.ip_addresses["Redis"],
         }
         self.md_show_confirm(self.metatata)
@@ -200,7 +207,6 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
             "name": self.solution_name,
             "form_info": {"chatflow": "monitoring", "Solution name": self.solution_name,},
         }
-        metadata["form_info"].update(self.metatata)
         self.network = self.redis_network
 
         redis_ip_address = self.ip_addresses["Redis"]
