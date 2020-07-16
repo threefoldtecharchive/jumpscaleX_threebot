@@ -225,6 +225,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         )
         success = j.sal.chatflow_deployer.wait_workload(self.redis_resv_id, self)
         if not success:
+            j.sal.chatflow_solutions.cancel_solution([self.redis_resv_id])
             raise StopChatFlow(f"Failed to deploy workload {self.redis_resv_id}")
 
         # create prometheus container
@@ -240,6 +241,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         )
         success = j.sal.chatflow_deployer.wait_workload(vol_id, self)
         if not success:
+            j.sal.chatflow_solutions.cancel_solution([self.redis_resv_id])
             raise StopChatFlow(f"Failed to add node {self.nodes_selected['Prometheus'].node_id} to network {vol_id}")
         volume_config = {self.vol_mount_point: vol_id}
 
@@ -263,6 +265,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         )
         success = j.sal.chatflow_deployer.wait_workload(self.prometheus_resv_id, self)
         if not success:
+            j.sal.chatflow_solutions.cancel_solution([self.redis_resv_id])
             raise StopChatFlow(f"Failed to deploy workload {self.prometheus_resv_id}")
 
         # create grafana container
@@ -292,6 +295,7 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
         )
         success = j.sal.chatflow_deployer.wait_workload(self.grafana_resv_id, self)
         if not success:
+            j.sal.chatflow_solutions.cancel_solution([self.redis_resv_id])
             raise StopChatFlow(f"Failed to deploy workload {self.grafana_resv_id}")
 
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
