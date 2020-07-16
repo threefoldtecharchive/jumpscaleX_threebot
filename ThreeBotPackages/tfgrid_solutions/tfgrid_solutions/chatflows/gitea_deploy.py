@@ -4,11 +4,20 @@ from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 
 
 class GiteaDeploy(j.servers.chatflow.get_class()):
-    """
-    gitea container deploy
-    """
-
-    steps = []
+    steps = [
+        "gitea_start",
+        "gitea_name",
+        "select_pool",
+        "gitea_network",
+        "public_key_get",
+        "gitea_credentials",
+        "container_logs",
+        "container_node_id",
+        "container_ip",
+        "overview",
+        "reservation",
+        "container_acess",
+    ]
 
     @j.baseclasses.chatflow_step()
     def gitea_start(self):
@@ -117,8 +126,10 @@ class GiteaDeploy(j.servers.chatflow.get_class()):
             "APP_NAME": self.repository_name,
             "ROOT_URL": f"http://{self.ip_address}:3000",
         }
-        metadata = {"name": self.solution_name, "form_info": {"name": self.solution_name, "chatflow": "gitea",}}
-        metadata["form_info"].update(var_dict)
+        metadata = {
+            "name": self.solution_name,
+            "form_info": {"Solution name": self.solution_name, "chatflow": "gitea",},
+        }
 
         self.resv_id = j.sal.chatflow_deployer.deploy_container(
             pool_id=self.pool_id,

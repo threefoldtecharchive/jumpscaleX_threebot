@@ -88,12 +88,12 @@ export default class SolutionDetailsView extends JetView {
               title: "Delete Solution",
               ok: "Delete",
               cancel: "No",
-              text: `Delete ${self.solution["Solution name"]} Solution ?<br>Warning: this action can't be undone`
+              text: `Delete ${self.solution["Name"]} Solution ?<br>Warning: this action can't be undone`
               }).then(() => {
 
               solutions.cancel(self.wids).then(() => {
                         this.app.refresh();
-                        webix.message({ type: "success", text: `${self.solution["Solution name"]} deleted successfully` });
+                        webix.message({ type: "success", text: `${self.solution["Name"]} deleted successfully` });
                     }).catch(error => {
                         webix.message({ type: "error", text: "Could not delete solution" });
                     })
