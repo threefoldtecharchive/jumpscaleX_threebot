@@ -184,7 +184,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
             IP: {self.reservations[0]["ip_address"]}
             To connect ssh rancher@{self.reservations[0]["ip_address"]}
         """
-        for idx, resv in enumerate(self.reservations):
+        for idx, resv in enumerate(self.reservations[1:]):
             res += f"""Worker {idx} reservation id is: {resv["reservation_id"]}
                 IP: {resv["ip_address"]}
                 To connect ssh rancher@{resv["ip_address"]}
