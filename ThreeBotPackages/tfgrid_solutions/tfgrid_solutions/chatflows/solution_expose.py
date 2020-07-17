@@ -15,6 +15,18 @@ ports = {"minio": 9000, "kubernetes": 6443}
 
 
 class SolutionExpose(j.servers.chatflow.get_class()):
+    steps = [
+        "deployment_start",
+        "solution_type",
+        "exposed_solution",
+        "exposed_ports",
+        "domain_1",
+        "domain_2",
+        "confirmation",
+        "reservation",
+        "success",
+    ]
+
     @j.baseclasses.chatflow_step(title="")
     def deployment_start(self):
         self.solution_id = uuid.uuid4().hex
@@ -124,7 +136,6 @@ class SolutionExpose(j.servers.chatflow.get_class()):
     @j.baseclasses.chatflow_step(title="Reservation", disable_previous=True)
     def reservation(self):
         metadata = {"name": self.domain, "form_info": {"Solution name": self.domain, "chatflow": "exposed"}}
-        metadata["form_info"].update(self.metadata)
         query = {"mru": 1, "cru": 1, "sru": 1}
         self.selected_node = j.sal.chatflow_deployer.schedule_container(self.pool_id, **query)
         self.network_name = j.sal.chatflow_solutions.get_solution_network_name(self.solution)
