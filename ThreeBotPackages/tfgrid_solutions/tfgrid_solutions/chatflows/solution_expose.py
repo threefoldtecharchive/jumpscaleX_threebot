@@ -153,6 +153,7 @@ class SolutionExpose(j.servers.chatflow.get_class()):
             )
             success = j.sal.chatflow_deployer.wait_workload(self.dom_id)
             if not success:
+                j.sal.chatflow_solutions.cancel_solution([self.dom_id])
                 raise StopChatFlow(f"Failed to reserve sub-domain workload {self.dom_id}")
 
         self.proxy_id = j.sal.chatflow_deployer.create_proxy(
@@ -165,6 +166,7 @@ class SolutionExpose(j.servers.chatflow.get_class()):
         )
         success = j.sal.chatflow_deployer.wait_workload(self.proxy_id)
         if not success:
+            j.sal.chatflow_solutions.cancel_solution([self.proxy_id])
             raise StopChatFlow(f"Failed to reserve reverse proxy workload {self.proxy_id}")
 
         self.tcprouter_id = j.sal.chatflow_deployer.expose_address(
