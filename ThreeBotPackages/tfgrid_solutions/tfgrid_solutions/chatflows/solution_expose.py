@@ -180,6 +180,7 @@ class SolutionExpose(j.servers.chatflow.get_class()):
         )
         success = j.sal.chatflow_deployer.wait_workload(self.tcprouter_id)
         if not success:
+            j.sal.chatflow_solutions.cancel_solution([self.tcprouter_id])
             raise StopChatFlow(f"Failed to reserve tcprouter container workload {self.tcprouter_id}")
 
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
