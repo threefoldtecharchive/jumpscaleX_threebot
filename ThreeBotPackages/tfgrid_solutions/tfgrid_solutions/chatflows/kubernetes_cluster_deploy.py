@@ -106,7 +106,7 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
         self.ipaddresses = []
         self.master_network = self.network_view.copy()
         result = j.sal.chatflow_deployer.add_network_node(
-            self.network_view.name, self.nodes_selected[0], self.master_network
+            self.network_view.name, self.nodes_selected[0], self.pool_id, self.master_network
         )
         if result:
             for wid in result["ids"]:
@@ -122,7 +122,9 @@ class KubernetesDeploy(j.servers.chatflow.get_class()):
         # select workers IPs
         for idx, worker_node in enumerate(self.nodes_selected[1:]):
             self.network_copy = latest_network.copy()
-            result = j.sal.chatflow_deployer.add_network_node(latest_network.name, worker_node, self.network_copy)
+            result = j.sal.chatflow_deployer.add_network_node(
+                latest_network.name, worker_node, self.pool_id, self.network_copy
+            )
             if result:
                 for wid in result["ids"]:
                     success = j.sal.chatflow_deployer.wait_workload(wid, self)

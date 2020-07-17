@@ -190,6 +190,8 @@ class MinioDeploy(j.servers.chatflow.get_class()):
                     raise StopChatFlow(f"Failed to add node {self.slave_node.node_id} to network {wid}")
             self.network_view_copy = self.network_view_copy.copy()
         free_ips = self.network_view_copy.get_node_free_ips(self.slave_node)
+        if self.master_ip_address in free_ips:
+            free_ips.remove(self.master_ip_address)
         self.slave_ip_address = self.drop_down_choice("Please choose IP Address for your solution", free_ips)
 
     @j.baseclasses.chatflow_step(title="Confirmation")

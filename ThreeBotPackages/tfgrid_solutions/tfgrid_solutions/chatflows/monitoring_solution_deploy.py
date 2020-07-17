@@ -153,6 +153,8 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
                     raise StopChatFlow(f"Failed to add node {self.nodes_selected['Grafana'].node_id} to network {wid}")
             self.grafana_network = self.grafana_network.copy()
         free_ips = self.grafana_network.get_node_free_ips(self.nodes_selected["Grafana"])
+        if self.ip_addresses["Prometheus"] in free_ips:
+            free_ips.remove(self.ip_addresses["Prometheus"])
         self.ip_addresses["Grafana"] = self.drop_down_choice(
             "Please choose IP Address for your Grafana container", free_ips
         )
@@ -170,6 +172,10 @@ class MonitoringSolutionDeploy(j.servers.chatflow.get_class()):
                     raise StopChatFlow(f"Failed to add node {self.nodes_selected['Redis'].node_id} to network {wid}")
             self.redis_network = self.redis_network.copy()
         free_ips = self.redis_network.get_node_free_ips(self.nodes_selected["Redis"])
+        if self.ip_addresses["Prometheus"] in free_ips:
+            free_ips.remove(self.ip_addresses["Prometheus"])
+        if self.ip_addresses["Grafana"] in free_ips:
+            free_ips.remove(self.ip_addresses["Grafana"])
         self.ip_addresses["Redis"] = self.drop_down_choice(
             "Please choose IP Address for your Redis container", free_ips
         )
