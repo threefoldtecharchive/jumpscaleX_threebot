@@ -144,14 +144,14 @@ class SolutionExpose(j.servers.chatflow.get_class()):
         self.selected_node = j.sal.chatflow_deployer.schedule_container(self.pool_id, **query)
         self.network_name = self.solution["Network"]
 
-        result = j.sal.chatflow_deployer.add_network_node(self.network_name, self.selected_node)
+        result = j.sal.chatflow_deployer.add_network_node(self.network_name, self.selected_node, self.pool_id)
         if result:
             for wid in result["ids"]:
                 success = j.sal.chatflow_deployer.wait_workload(wid, self)
                 if not success:
                     raise StopChatFlow(f"Failed to add node to network {wid}")
 
-        self.network_view = j.sal.chatflow_deployer.get_network_view(self.network_name)
+        self.network_view = j.sal.chatflow_deployer.get_network_view(self.network_name, self.pool_id)
         self.tcprouter_ip = self.network_view.get_free_ip(self.selected_node)
         if not self.tcprouter_ip:
             raise StopChatFlow(
