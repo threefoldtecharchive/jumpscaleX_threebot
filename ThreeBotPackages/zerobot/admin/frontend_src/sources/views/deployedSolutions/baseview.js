@@ -74,6 +74,7 @@ export class BaseView extends JetView {
                 let filtered = Object.assign({}, ret);
                 let wids =  filtered.wids;
                 delete filtered['wids']
+                delete filtered['id'];
                 // remove keys start with _
                 for (let i = 0; i < Object.keys(filtered).length; i++) {
                     const key = Object.keys(filtered)[i];
