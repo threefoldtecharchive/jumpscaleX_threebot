@@ -41,9 +41,8 @@ class SolutionExpose(j.servers.chatflow.get_class()):
         solutions = kinds[self.kind]()
         self.sols = {}
         for sol in solutions:
-            name = sol.metadata.get("name", sol.metadata["form_info"].get("name"))
-            if name:
-                self.sols[name] = sol
+            name = sol["Name"]
+            self.sols[name] = sol
 
     @j.baseclasses.chatflow_step(title="Solution to be exposed")
     def exposed_solution(self):
@@ -51,7 +50,7 @@ class SolutionExpose(j.servers.chatflow.get_class()):
             "Please choose the solution to expose", list(self.sols.keys()), required=True
         )
         self.solution = self.sols[self.solution_name]
-        self.pool_id = self.solution.info.pool_id
+        self.pool_id = self.solution["Pool"]
 
     @j.baseclasses.chatflow_step(title="Ports")
     def exposed_ports(self):
@@ -62,7 +61,12 @@ class SolutionExpose(j.servers.chatflow.get_class()):
         form.ask()
         self.port = port.value
         self.tls_port = tlsport.value
-        self.solution_ip = j.sal.chatflow_solutions.get_solution_ip(self.solution)
+        if self.kind == "kubernetes":
+            self.solution_ip = self.solution["Master IP"]
+        elif self.kind == "minio":
+            self.solution_ip = self.solution["Primary IP"]
+        else:
+            self.solution_ip = self.solution["IP Address"]
 
     @j.baseclasses.chatflow_step(title="Domain 1")
     def domain_1(self):
@@ -73,7 +77,7 @@ class SolutionExpose(j.servers.chatflow.get_class()):
             domain_ask_list.append(f"Delegated Domain: {dom.domain}")
             self.user_domains[dom.domain] = dom
         self.managed_domains = {}
-        for gateway in self.gateways:
+        for gateway in self.gateways.values():
             for dom in gateway.managed_domains:
                 self.managed_domains[dom] = gateway
                 domain_ask_list.append(f"Managed Domain: {dom}")
@@ -138,7 +142,7 @@ class SolutionExpose(j.servers.chatflow.get_class()):
         metadata = {"name": self.domain, "form_info": {"Solution name": self.domain, "chatflow": "exposed"}}
         query = {"mru": 1, "cru": 1, "sru": 1}
         self.selected_node = j.sal.chatflow_deployer.schedule_container(self.pool_id, **query)
-        self.network_name = j.sal.chatflow_solutions.get_solution_network_name(self.solution)
+        self.network_name = self.solution["Network"]
 
         result = j.sal.chatflow_deployer.add_network_node(self.network_name, self.selected_node)
         if result:
