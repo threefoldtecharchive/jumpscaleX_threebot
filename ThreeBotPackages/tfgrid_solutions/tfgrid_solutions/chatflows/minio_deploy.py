@@ -151,12 +151,16 @@ class MinioDeploy(j.servers.chatflow.get_class()):
         nodequery["sru"] = 1
         nodequery["cru"] = self.minio_cont_resources["cpu"]
         nodequery["mru"] = math.ceil(self.minio_cont_resources["memory"] / 1024)
-        self.master_node = j.sal.chatflow_deployer.ask_container_placement(self, self.pool_id, **nodequery)
+        self.master_node = j.sal.chatflow_deployer.ask_container_placement(
+            self, self.pool_id, workload_name="Master", **nodequery
+        )
         if not self.master_node:
             self.master_node = j.sal.chatflow_deployer.schedule_container(self.pool_id, **nodequery)
 
-        if self.mode == "Master/Salve":
-            self.slave_node = j.sal.chatflow_deployer.ask_container_placement(self, self.pool_id, **nodequery)
+        if self.mode == "Master/Slave":
+            self.slave_node = j.sal.chatflow_deployer.ask_container_placement(
+                self, self.pool_id, workload_name="Slave", **nodequery
+            )
             if not self.slave_node:
                 self.slave_node = j.sal.chatflow_deployer.schedule_container(self.pool_id, **nodequery)
 
