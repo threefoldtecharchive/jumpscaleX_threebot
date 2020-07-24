@@ -5,7 +5,6 @@ from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
 class NetworkDeploy(j.servers.chatflow.get_class()):
     steps = [
         "start",
-        "select_pool",
         "ip_config",
         "network_reservation",
         "network_info",
@@ -18,21 +17,25 @@ class NetworkDeploy(j.servers.chatflow.get_class()):
         j.sal.reservation_chatflow.validate_user(user_info)
         self.solution_name = j.sal.chatflow_deployer.ask_name(self)
 
-    @j.baseclasses.chatflow_step(title="Pool")
-    def select_pool(self):
-        self.pool = j.sal.chatflow_deployer.select_pool(self)
-        self.farm_id = j.sal.chatflow_deployer.get_pool_farm_id(self.pool)
-
     @j.baseclasses.chatflow_step(title="IP Configuration")
     def ip_config(self):
         ips = ["IPv6", "IPv4"]
         self.ipversion = self.single_choice(
             "How would you like to connect to your network? IPv4 or IPv6? If unsure, choose IPv4", ips, required=True
         )
-        self.farm_name = j.sal.zosv2._explorer.farms.get(self.farm_id).name
-        self.access_node = j.sal.reservation_chatflow.nodes_get(
-            1, farm_names=[self.farm_name], ip_version=self.ipversion
-        )[0]
+
+        pools = j.sal.zosv2.pools.list()
+        farms = {j.sal.chatflow_deployer.get_pool_farm_id(p.pool_id): p.pool_id for p in pools}
+        self.access_node = None
+        for farm_id in farms:
+            farm_name = j.sal.zosv2._explorer.farms.get(farm_id).name
+            access_nodes = j.sal.reservation_chatflow.nodes_get(1, farm_names=[farm_name], ip_version=self.ipversion)
+            if access_nodes:
+                self.access_node = access_nodes[0]
+                self.pool = farms[farm_id]
+                break
+        if not self.access_node:
+            raise StopChatFlow("There are no available access nodes in your existing pools")
         self.ip_range = j.sal.reservation_chatflow.ip_range_get(self)
 
     @j.baseclasses.chatflow_step(title="Reservation")
