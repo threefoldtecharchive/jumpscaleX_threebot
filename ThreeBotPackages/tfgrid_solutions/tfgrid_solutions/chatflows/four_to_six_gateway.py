@@ -58,7 +58,7 @@ class FourToSixGateway(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Wireguard configuration", disable_previous=True)
     def wg_config(self):
-        cfg = self.reservation_result.data_json
+        cfg = self.reservation_result.info.data_json
         wgconfigtemplate = """\
             [Interface]
             Address = {{cfg.ips[0]}}
