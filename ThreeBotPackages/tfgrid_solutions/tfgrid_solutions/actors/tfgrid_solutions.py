@@ -1,5 +1,6 @@
 import json
 from Jumpscale import j
+from JumpscaleLibs.clients.explorer.convertion import AlreadyConvertedError
 
 
 class tfgrid_solutions(j.baseclasses.threebot_actor):
@@ -40,8 +41,11 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
 
     @j.baseclasses.actor_method
     def has_migrated(self, schema_out=None, user_session=None):
-        if j.sal.zosv2._explorer.convertion.initialize():
-            return {"result": False}
+        try:
+            if j.sal.zosv2._explorer.convertion.initialize():
+                return {"result": False}
+        except AlreadyConvertedError:
+            pass
         return {"result": True}
 
     @j.baseclasses.actor_method
