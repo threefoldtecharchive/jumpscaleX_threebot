@@ -19,9 +19,17 @@ class SolutionsService extends Service {
     }
 
 
-    delete(solutionType, solutionName) {
-        return this.postCall("solution_delete", { solution_type: solutionType, solution_name: solutionName });
+    cancel(wids) {
+        return this.postCall("solution_cancel", { wids: wids });
 
+    }
+
+    hasMigrated() {
+        return this.getCall("has_migrated");
+    }
+
+    migrate() {
+        return this.getCall("migrate");
     }
 
 }

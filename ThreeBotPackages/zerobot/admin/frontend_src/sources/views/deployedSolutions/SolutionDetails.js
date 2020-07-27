@@ -55,9 +55,9 @@ export default class SolutionDetailsView extends JetView {
         self.info = this.$$("solution_info");
     }
 
-    showInfo(data, type) {
+    showInfo(data, wids) {
         var self = this
-        self.type = type;
+        self.wids = wids;
         self.solution = data
         self.info.clearAll()
         for (let [key, value] of Object.entries(data)) {
@@ -79,7 +79,7 @@ export default class SolutionDetailsView extends JetView {
             }
         }
 
-        
+
         this.getRoot().show();
     }
     deleteSolution(){
@@ -88,12 +88,12 @@ export default class SolutionDetailsView extends JetView {
               title: "Delete Solution",
               ok: "Delete",
               cancel: "No",
-              text: `Delete ${self.solution["Solution name"]} Solution ?<br>Warning: this action can't be undone`
+              text: `Delete ${self.solution["Name"]} Solution ?<br>Warning: this action can't be undone`
               }).then(() => {
 
-              solutions.delete(self.type, self.solution["Solution name"]).then(() => {
+              solutions.cancel(self.wids).then(() => {
                         this.app.refresh();
-                        webix.message({ type: "success", text: `${self.solution["Solution name"]} deleted successfully` });
+                        webix.message({ type: "success", text: `${self.solution["Name"]} deleted successfully` });
                     }).catch(error => {
                         webix.message({ type: "error", text: "Could not delete solution" });
                     })

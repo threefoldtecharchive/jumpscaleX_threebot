@@ -2,109 +2,44 @@ from Jumpscale import j
 import math
 import requests
 from Jumpscale.servers.gedis.GedisChatBot import StopChatFlow
+import uuid
 
 
 class FlistDeploy(j.servers.chatflow.get_class()):
     steps = [
         "flist_start",
-        "flist_network",
-        "flist_solution_name",
-        "flist_url",
+        "flist_name",
         "container_resources",
-        "container_interactive",
-        "container_env",
-        "container_farm",
         "container_volume",
         "container_volume_details",
+        "select_pool",
+        "flist_network",
+        "flist_url",
+        "container_interactive",
+        "container_env",
+        "container_node_id",
         "container_logs",
-        "expiration_time",
         "container_ip",
         "overview",
-        "container_pay",
-        "container_acess",
+        "reservation",
+        "container_access",
     ]
 
     @j.baseclasses.chatflow_step()
     def flist_start(self):
+        self.solution_id = uuid.uuid4().hex
         user_info = self.user_info()
-        self.user_form_data = dict()
-        self.model = j.threebot.packages.tfgrid_solutions.tfgrid_solutions.bcdb_model_get("tfgrid.solutions.flist.1")
         self.env = dict()
-        self.user_form_data["chatflow"] = "flist"
         j.sal.reservation_chatflow.validate_user(user_info)
         self.md_show("# This wizard will help you deploy a container using any flist provided", md=True)
 
-    @j.baseclasses.chatflow_step(title="Network")
-    def flist_network(self):
-        self.network = j.sal.reservation_chatflow.network_select(self, j.me.tid)
-        self.currency = self.network.currency
-
     @j.baseclasses.chatflow_step(title="Solution name")
-    def flist_solution_name(self):
-        self.user_form_data["Solution name"] = j.sal.reservation_chatflow.solution_name_add(self, self.model)
-
-    @j.baseclasses.chatflow_step(title="Flist url")
-    def flist_url(self):
-        self.user_form_data["Flist link"] = self.string_ask(
-            "Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist",
-            required=True,
-        )
-
-        self.user_form_data["Flist link"] = self.user_form_data["Flist link"].strip()
-
-        if (
-            "hub.grid.tf" not in self.user_form_data["Flist link"]
-            or ".md" in self.user_form_data["Flist link"][-3:]
-        ):
-            raise StopChatFlow(
-                "This flist is not correct. Please make sure you enter a valid link to an existing flist For example: https://hub.grid.tf/usr/example.flist"
-            )
-
-        response = requests.head(self.user_form_data["Flist link"])
-        response_md5 = requests.head(f"{self.user_form_data['Flist link']}.md5")
-        if response.status_code != 200 or response_md5.status_code != 200:
-            raise StopChatFlow("This flist doesn't exist. Please make sure you enter a valid link to an existing flist")
+    def flist_name(self):
+        self.solution_name = j.sal.chatflow_deployer.ask_name(self)
 
     @j.baseclasses.chatflow_step(title="Container resources")
     def container_resources(self):
-        form = self.new_form()
-        self.cpu = form.int_ask("Please add how many CPU cores are needed", default=1)
-        self.memory = form.int_ask("Please add the amount of memory in MB", default=1024)
-        self.rootfs_size = form.int_ask("Choose the amount of storage for your root filesystem in MiB", default=256)
-        form.ask()
-        self.user_form_data["CPU"] = self.cpu.value
-        self.user_form_data["Memory"] = self.memory.value
-        self.user_form_data["Rootfs Size"] = self.rootfs_size.value
-
-    @j.baseclasses.chatflow_step(title="Container ineractive & EntryPoint")
-    def container_interactive(self):
-        self.user_form_data["Interactive"] = self.single_choice(
-            "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"], required=True
-        )
-        if self.user_form_data["Interactive"] == "NO":
-            self.user_form_data["Entry point"] = self.string_ask("Please add your entrypoint for your flist") or ""
-        else:
-            self.user_form_data["Port"] = "7681"
-            self.user_form_data["Entry point"] = ""
-
-    @j.baseclasses.chatflow_step(title="Environment variables")
-    def container_env(self):
-        self.user_form_data["Env variables"] = self.multi_values_ask("Set Environment Variables")
-        self.env.update(self.user_form_data["Env variables"])
-
-    @j.baseclasses.chatflow_step(title="Container farm")
-    def container_farm(self):
-        # create new reservation
-        self.reservation = j.sal.zosv2.reservation_create()
-        query = {}
-        query["mru"] = math.ceil(self.memory.value / 1024)
-        query["cru"] = self.cpu.value
-
-        storage_units = math.ceil(self.rootfs_size.value / 1024)
-        query["sru"] = storage_units
-
-        farms = j.sal.reservation_chatflow.farm_names_get(1, self, currency=self.currency, **query)
-        self.node = j.sal.reservation_chatflow.nodes_get(1, farm_names=farms, currency=self.currency, **query)[0]
+        self.resources = j.sal.chatflow_deployer.ask_container_resources(self)
 
     @j.baseclasses.chatflow_step(title="Attach Volume")
     def container_volume(self):
@@ -120,8 +55,70 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             vol_disk_size = form.int_ask("Please specify the volume size in GiB", required=True, default=10)
             vol_mount_point = form.string_ask("Please enter the mount point", required=True, default="/data")
             form.ask()
-            self.user_form_data["Volume Size"] = vol_disk_size.value
-            self.user_form_data["Volume mount point"] = vol_mount_point.value
+            self.vol_size = vol_disk_size.value
+            self.vol_mount_point = vol_mount_point.value
+
+    @j.baseclasses.chatflow_step(title="Pool")
+    def select_pool(self):
+        query = {
+            "cru": self.resources["cpu"],
+            "mru": math.ceil(self.resources["memory"] / 1024),
+            "sru": math.ceil(self.resources["disk_size"] / 1024),
+        }
+        if self.container_volume_attach:
+            query["sru"] += math.ceil(self.vol_size / 1024)
+        cu, su = j.sal.chatflow_deployer.calculate_capacity_units(**query)
+        self.pool_id = j.sal.chatflow_deployer.select_pool(self, cu=cu, su=su)
+
+    @j.baseclasses.chatflow_step(title="Network")
+    def flist_network(self):
+        self.network_view = j.sal.chatflow_deployer.select_network(self, self.pool_id)
+
+    @j.baseclasses.chatflow_step(title="Flist url")
+    def flist_url(self):
+        self.flist_link = self.string_ask(
+            "Please add the link to your flist to be deployed. For example: https://hub.grid.tf/usr/example.flist",
+            required=True,
+        )
+
+        self.flist_link = self.flist_link.strip()
+
+        if "hub.grid.tf" not in self.flist_link or ".md" in self.flist_link[-3:]:
+            raise StopChatFlow(
+                "This flist is not correct. Please make sure you enter a valid link to an existing flist For example: https://hub.grid.tf/usr/example.flist"
+            )
+
+        response = requests.head(self.flist_link)
+        response_md5 = requests.head(f"{self.flist_link}.md5")
+        if response.status_code != 200 or response_md5.status_code != 200:
+            raise StopChatFlow("This flist doesn't exist. Please make sure you enter a valid link to an existing flist")
+
+    @j.baseclasses.chatflow_step(title="Container ineractive & EntryPoint")
+    def container_interactive(self):
+        self.interactive = self.single_choice(
+            "Would you like access to your container through the web browser (coreX)?", ["YES", "NO"], required=True
+        )
+        if self.interactive == "NO":
+            self.entrypoint = self.string_ask("Please add your entrypoint for your flist") or ""
+        else:
+            self.port = "7681"
+            self.entrypoint = ""
+
+    @j.baseclasses.chatflow_step(title="Environment variables")
+    def container_env(self):
+        self.env.update(self.multi_values_ask("Set Environment Variables"))
+
+    @j.baseclasses.chatflow_step(title="Container node id")
+    def container_node_id(self):
+        query = {
+            "cru": self.resources["cpu"],
+            "mru": math.ceil(self.resources["memory"] / 1024),
+            "mru": math.ceil(self.resources["memory"] / 1024),
+            "sru": self.resources["disk_size"],
+        }
+        self.selected_node = j.sal.chatflow_deployer.ask_container_placement(self, self.pool_id, **query)
+        if not self.selected_node:
+            self.selected_node = j.sal.chatflow_deployer.schedule_container(self.pool_id, **query)
 
     @j.baseclasses.chatflow_step(title="Container logs")
     def container_logs(self):
@@ -131,125 +128,94 @@ class FlistDeploy(j.servers.chatflow.get_class()):
             default="NO",
         )
         if self.container_logs_option == "YES":
-            form = self.new_form()
-            self.channel_type = form.string_ask("Please add the channel type", default="redis", required=True)
-            self.channel_host = form.string_ask(
-                "Please add the IP address where the logs will be output to", required=True
-            )
-            self.channel_port = form.int_ask(
-                "Please add the port available where the logs will be output to", required=True
-            )
-            self.channel_name = form.string_ask(
-                "Please add the channel name to be used. The channels will be in the form NAME-stdout and NAME-stderr",
-                default=self.user_form_data["Solution name"],
-                required=True,
-            )
-            form.ask()
-            self.user_form_data["Logs Channel type"] = self.channel_type.value
-            self.user_form_data["Logs Channel host"] = self.channel_host.value
-            self.user_form_data["Logs Channel port"] = self.channel_port.value
-            self.user_form_data["Logs Channel name"] = self.channel_name.value
-
-    @j.baseclasses.chatflow_step(title="Expiration time")
-    def expiration_time(self):
-        self.expiration = self.datetime_picker(
-            "Please enter solution expiration time.",
-            required=True,
-            min_time=[3600, "Date/time should be at least 1 hour from now"],
-            default=j.data.time.epoch + 3900,
-        )
-        self.user_form_data["Solution expiration"] = j.data.time.secondsToHRDelta(self.expiration - j.data.time.epoch)
-
-    @j.baseclasses.chatflow_step(title="Container IP & Confirmation about conatiner details")
-    def container_ip(self):
-        self.network_copy = self.network.copy(j.me.tid)
-        self.network_copy.add_node(self.node)
-        self.ip_address = self.network_copy.ask_ip_from_node(
-            self.node, "Please choose your IP Address for this solution"
-        )
-        self.user_form_data["IP Address"] = self.ip_address
-
-        self.conatiner_flist = self.user_form_data["Flist link"]
-        self.storage_url = "zdb://hub.grid.tf:9900"
-        if self.user_form_data["Interactive"] == "YES":
-            self.interactive = True
+            self.log_config = j.sal.chatflow_deployer.ask_container_logs(self, self.solution_name)
         else:
-            self.interactive = False
+            self.log_config = {}
+
+    @j.baseclasses.chatflow_step(title="Container IP")
+    def container_ip(self):
+        self.network_view_copy = self.network_view.copy()
+        result = j.sal.chatflow_deployer.add_network_node(
+            self.network_view.name, self.selected_node, self.pool_id, self.network_view_copy
+        )
+        if result:
+            for wid in result["ids"]:
+                success = j.sal.chatflow_deployer.wait_workload(wid, self)
+                if not success:
+                    raise StopChatFlow(f"Failed to add node {self.selected_node.node_id} to network {wid}")
+            self.network_view_copy = self.network_view_copy.copy()
+        free_ips = self.network_view_copy.get_node_free_ips(self.selected_node)
+        self.ip_address = self.drop_down_choice("Please choose IP Address for your solution", free_ips)
 
     @j.baseclasses.chatflow_step(title="Confirmation")
     def overview(self):
-        self.md_show_confirm(self.user_form_data)
+        self.metadata = {
+            "Solution Name": self.solution_name,
+            "Network": self.network_view.name,
+            "Node ID": self.selected_node.node_id,
+            "Pool": self.pool_id,
+            "CPU": self.resources["cpu"],
+            "Memory": self.resources["memory"],
+            "Disk Size": self.resources["disk_size"],
+            "IP Address": self.ip_address,
+        }
+        if self.container_volume_attach:
+            self.metadata["Volume Size"] = self.vol_size
+            self.metadata["Volume Mountpoint"] = self.vol_mount_point
+        self.metadata.update(self.log_config)
+        self.md_show_confirm(self.metadata)
 
-    @j.baseclasses.chatflow_step(title="Container Payment", disable_previous=True)
-    def container_pay(self):
-        self.network = self.network_copy
-        # update network
-        self.network.update(j.me.tid, currency=self.currency, bot=self)
+    @j.baseclasses.chatflow_step(title="Reservation")
+    def reservation(self):
+        volume_config = {}
+        if self.container_volume_attach:
+            vol_id = j.sal.chatflow_deployer.deploy_volume(
+                self.pool_id, self.selected_node.node_id, self.vol_size, solution_uuid=self.solution_id
+            )
+            success = j.sal.chatflow_deployer.wait_workload(vol_id, self)
+            if not success:
+                raise StopChatFlow(f"Failed to add node {self.selected_node.node_id} to network {vol_id}")
+            volume_config[self.vol_mount_point] = vol_id
 
-        # create container
-        cont = j.sal.zosv2.container.create(
-            reservation=self.reservation,
-            node_id=self.node.node_id,
-            network_name=self.network.name,
+        metadata = {
+            "name": self.solution_name,
+            "form_info": {"chatflow": "flist", "Solution name": self.solution_name, "env": self.env},
+        }
+        self.resv_id = j.sal.chatflow_deployer.deploy_container(
+            pool_id=self.pool_id,
+            node_id=self.selected_node.node_id,
+            network_name=self.network_view.name,
             ip_address=self.ip_address,
-            flist=self.conatiner_flist,
-            storage_url=self.storage_url,
-            disk_type="SSD",
-            disk_size=self.rootfs_size.value,
+            flist=self.flist_link,
+            cpu=self.resources["cpu"],
+            memory=self.resources["memory"],
+            disk_size=self.resources["disk_size"],
             env=self.env,
             interactive=self.interactive,
-            entrypoint=self.user_form_data["Entry point"],
-            cpu=self.user_form_data["CPU"],
-            memory=self.user_form_data["Memory"],
+            entrypoint=self.entrypoint,
+            log_config=self.log_config,
+            volumes=volume_config,
+            **metadata,
+            solution_uuid=self.solution_id,
         )
-        if self.container_logs_option == "YES":
-            j.sal.zosv2.container.add_logs(
-                cont,
-                channel_type=self.user_form_data["Logs Channel type"],
-                channel_host=self.user_form_data["Logs Channel host"],
-                channel_port=self.user_form_data["Logs Channel port"],
-                channel_name=self.user_form_data["Logs Channel name"],
-            )
-        if self.container_volume_attach:
-            self.volume = j.sal.zosv2.volume.create(
-                self.reservation,
-                self.node.node_id,
-                size=self.user_form_data["Volume Size"],
-                type="SSD",
-            )
-            j.sal.zosv2.volume.attach(
-                container=cont, volume=self.volume, mount_point=self.user_form_data["Volume mount point"]
-            )
-
-        metadata = dict()
-        metadata["chatflow"] = self.user_form_data["chatflow"]
-        metadata["Solution name"] = self.user_form_data["Solution name"]
-        metadata["Solution expiration"] = self.user_form_data["Solution expiration"]
-
-        res = j.sal.reservation_chatflow.solution_model_get(
-            self.user_form_data["Solution name"], "tfgrid.solutions.flist.1", metadata
-        )
-        reservation = j.sal.reservation_chatflow.reservation_metadata_add(self.reservation, res)
-        self.resv_id = j.sal.reservation_chatflow.reservation_register_and_pay(
-            reservation, self.expiration, customer_tid=j.me.tid, currency=self.currency, bot=self
-        )
-        j.sal.reservation_chatflow.reservation_save(
-            self.resv_id, self.user_form_data["Solution name"], "tfgrid.solutions.flist.1", self.user_form_data
-        )
+        success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
+        if not success:
+            j.sal.chatflow_solutions.cancel_solution([self.resv_id])
+            raise StopChatFlow(f"Failed to deploy workload {self.resv_id}")
 
     @j.baseclasses.chatflow_step(title="Success", disable_previous=True)
-    def container_acess(self):
+    def container_access(self):
         if self.interactive:
             res = f"""\
-                # Container has been deployed successfully: your reservation id is: {self.resv_id}
-                Open your browser at [http://{self.ip_address}:7681](http://{self.ip_address}:7681)
-                """
+                    # Container has been deployed successfully: your reservation id is: {self.resv_id}
+                    Open your browser at [http://{self.ip_address}:7681](http://{self.ip_address}:7681)
+                    """
             self.md_show(j.core.text.strip(res), md=True)
         else:
             res = f"""\
-                # Container has been deployed successfully: your reservation id is: {self.resv_id}
-                Your IP is  ```{self.ip_address}```
-                """
+                    # Container has been deployed successfully: your reservation id is: {self.resv_id}
+                    Your IP is  ```{self.ip_address}```
+                    """
             self.md_show(j.core.text.strip(res), md=True)
 
 
