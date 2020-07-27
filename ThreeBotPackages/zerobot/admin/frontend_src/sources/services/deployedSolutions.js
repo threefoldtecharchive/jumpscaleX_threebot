@@ -24,6 +24,14 @@ class SolutionsService extends Service {
 
     }
 
+    hasMigrated() {
+        return this.getCall("has_migrated");
+    }
+
+    migrate() {
+        return this.getCall("migrate");
+    }
+
 }
 
 export const solutions = new SolutionsService();
