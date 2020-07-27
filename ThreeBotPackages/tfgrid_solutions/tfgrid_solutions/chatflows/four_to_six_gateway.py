@@ -46,7 +46,7 @@ class FourToSixGateway(j.servers.chatflow.get_class()):
         success = j.sal.chatflow_deployer.wait_workload(self.resv_id, self)
         if not success:
             raise StopChatFlow(f"Failed to deploy workload {self.resv_id}")
-        self.reservation_result = j.sal.zosv2.workloads.get(self.resv_id).result
+        self.reservation_result = j.sal.zosv2.workloads.get(self.resv_id).info.result
         print(self.reservation_result)
         res = """
                         # Use the following template to configure your wireguard connection. This will give you access to your network.
@@ -58,7 +58,7 @@ class FourToSixGateway(j.servers.chatflow.get_class()):
 
     @j.baseclasses.chatflow_step(title="Wireguard configuration", disable_previous=True)
     def wg_config(self):
-        cfg = self.reservation_result.info.data_json
+        cfg = self.reservation_result.data_json
         wgconfigtemplate = """\
             [Interface]
             Address = {{cfg.ips[0]}}
