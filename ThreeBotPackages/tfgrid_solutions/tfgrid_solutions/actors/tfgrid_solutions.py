@@ -39,6 +39,16 @@ class tfgrid_solutions(j.baseclasses.threebot_actor):
         return {"solutions": solutions}
 
     @j.baseclasses.actor_method
+    def has_migrated(self, schema_out=None, user_session=None):
+        if j.sal.zosv2._explorer.convertion.initialize():
+            return {"result": False}
+        return {"result": True}
+
+    @j.baseclasses.actor_method
+    def migrate(self, schema_out=None, user_session=None):
+        j.sal.zosv2.conversion()
+
+    @j.baseclasses.actor_method
     def solution_cancel(self, wids, schema_out=None, user_session=None):
         j.sal.chatflow_solutions.cancel_solution(wids)
 
