@@ -13,11 +13,12 @@ export class BaseView extends JetView {
 
         const migrationView = {
             id: "migrateView",
-            cols: [
+            rows: [
                 {
                     view: "template",
-                    hidden: true,
                     id: "migratMessage",
+                    width: 600,
+                    height:150,
                     template: `<h2 class="message_migration">The explporer has been upgraded, so you need to initialize the migration of your old reservations to be able to use them. To migrate please click on the bellow button.</h2>`,
                     css: 'message_migration',
                     align: "center",
@@ -26,10 +27,10 @@ export class BaseView extends JetView {
                 {
                     view: "button",
                     id: "btnMigrate",
-                    hidden: true,
                     value: "Migrate",
                     width: 170,
                     height: 70,
+                    align:"center",
                     css: "webix_primary btnCreateNew",
                     click: function () {
                         solutions.migrate().then(data => {
@@ -42,6 +43,7 @@ export class BaseView extends JetView {
 
         const logo = {
             view: "template",
+            batch:"solution",
             id:"logo",
             template: `<img class="deployed-solution-icon" src="static/img/${this.logo}">`,
             css: 'deployed-solution-logo-view',
@@ -67,10 +69,13 @@ export class BaseView extends JetView {
 
         return {
             type: "space",
+            id:"mainView",
+            visibleBatch:"solution",
             rows:
                 [
                     logo,
                     {
+                        batch:"solution",
                         cols: [{}, {
                             view: "button",
                             id: "btnAddNew",
@@ -83,8 +88,9 @@ export class BaseView extends JetView {
                             }
                         }, {}]
                     },
-                    migrationView,
-                    { cols: [{}, view, {}] }
+                    { batch:"migrate" , height:200 },
+                    { batch:"migrate",cols: [{}, migrationView, {}] },
+                    { batch:"solution",cols: [{}, view, {}] }
                 ]
         };
     }
@@ -93,16 +99,13 @@ export class BaseView extends JetView {
         let self = this;
         self.solutionlist = $$("solutionlist");
         self.migrateView = $$("migrateView");
-        self.migrateView.hide();
+        self.mainView = $$("mainView");
         self.maxTitleLength = 20;
         solutions.hasMigrated().then(data => {
-            const result = data.result;
+            const result = data.json().result;
+            console.log(result)
             if (!result) {
-                self.solutionlist.hide()
-                $$("logo").hide()
-                $$("btnAddNew").hide()
-
-                self.migrateView.show()
+                self.mainView.showBatch("migrate")
                 return;
             }
         });
